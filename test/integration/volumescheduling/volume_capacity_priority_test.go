@@ -23,6 +23,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	v1 "k8s.io/api/core/v1"
 	storagev1 "k8s.io/api/storage/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -55,9 +57,7 @@ func setupClusterForVolumeCapacityPriority(t *testing.T, nsName string, resyncPe
 	ns := testCtx.NS.Name
 
 	ctrl, informerFactory, err := initPVController(t, testCtx, provisionDelaySeconds)
-	if err != nil {
-		t.Fatalf("Failed to create PV controller: %v", err)
-	}
+	require.NoErrorf(t, err, "Failed to create PV controller: %v", err)
 	go ctrl.Run(testCtx.Ctx)
 
 	// Start informer factory after all controllers are configured and running.
@@ -212,58 +212,47 @@ func TestVolumeCapacityPriority(t *testing.T) {
 	classes[waitSSDSC.Name] = waitSSDSC
 	classes[waitHDDSC.Name] = waitHDDSC
 	for _, sc := range classes {
-		if _, err := c.StorageV1().StorageClasses().Create(context.TODO(), sc, metav1.CreateOptions{}); err != nil {
-			t.Fatalf("failed to create StorageClass %q: %v", sc.Name, err)
-		}
+		_, err := c.StorageV1().StorageClasses().Create(context.TODO(), sc, metav1.CreateOptions{})
+		require.NoErrorf(t, err, "failed to create StorageClass %q: %v", sc.Name, err)
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Log("Creating Nodes")
 			for _, node := range tt.nodes {
-				if _, err := c.CoreV1().Nodes().Create(context.TODO(), node, metav1.CreateOptions{}); err != nil {
-					t.Fatalf("failed to create Node %q: %v", node.Name, err)
-				}
+				_, err := c.CoreV1().Nodes().Create(context.TODO(), node, metav1.CreateOptions{})
+				require.NoErrorf(t, err, "failed to create Node %q: %v", node.Name, err)
 			}
 
 			t.Log("Creating PVs")
 			for _, pv := range tt.pvs {
-				if _, err := c.CoreV1().PersistentVolumes().Create(context.TODO(), pv, metav1.CreateOptions{}); err != nil {
-					t.Fatalf("failed to create PersistentVolume %q: %v", pv.Name, err)
-				}
+				_, err := c.CoreV1().PersistentVolumes().Create(context.TODO(), pv, metav1.CreateOptions{})
+				require.NoErrorf(t, err, "failed to create PersistentVolume %q: %v", pv.Name, err)
 			}
 
 			// https://github.com/kubernetes/kubernetes/issues/85320
 			t.Log("Waiting for PVs to become available to avoid race condition in PV controller")
 			for _, pv := range tt.pvs {
-				if err := waitForPVPhase(c, pv.Name, v1.VolumeAvailable); err != nil {
-					t.Fatalf("failed to wait for PersistentVolume %q to become available: %v", pv.Name, err)
-				}
+				err := waitForPVPhase(c, pv.Name, v1.VolumeAvailable)
+				require.NoErrorf(t, err, "failed to wait for PersistentVolume %q to become available: %v", pv.Name, err)
 			}
 
 			t.Log("Creating PVCs")
 			for _, pvc := range tt.pvcs {
-				if _, err := c.CoreV1().PersistentVolumeClaims(config.ns).Create(context.TODO(), pvc, metav1.CreateOptions{}); err != nil {
-					t.Fatalf("failed to create PersistentVolumeClaim %q: %v", pvc.Name, err)
-				}
+				_, err := c.CoreV1().PersistentVolumeClaims(config.ns).Create(context.TODO(), pvc, metav1.CreateOptions{})
+				require.NoErrorf(t, err, "failed to create PersistentVolumeClaim %q: %v", pvc.Name, err)
 			}
 
 			t.Log("Create Pod")
-			if _, err := c.CoreV1().Pods(config.ns).Create(context.TODO(), tt.pod, metav1.CreateOptions{}); err != nil {
-				t.Fatalf("failed to create Pod %q: %v", tt.pod.Name, err)
-			}
-			if err := waitForPodToSchedule(c, tt.pod); err != nil {
-				t.Errorf("failed to schedule Pod %q: %v", tt.pod.Name, err)
-			}
+			_, err := c.CoreV1().Pods(config.ns).Create(context.TODO(), tt.pod, metav1.CreateOptions{})
+			require.NoErrorf(t, err, "failed to create Pod %q: %v", tt.pod.Name, err)
+			err = waitForPodToSchedule(c, tt.pod)
+			require.NoErrorf(t, err, "failed to schedule Pod %q: %v", tt.pod.Name, err)
 
 			t.Log("Verify the assigned node")
 			pod, err := c.CoreV1().Pods(config.ns).Get(context.TODO(), tt.pod.Name, metav1.GetOptions{})
-			if err != nil {
-				t.Fatalf("failed to get Pod %q: %v", tt.pod.Name, err)
-			}
-			if pod.Spec.NodeName != tt.wantNodeName {
-				t.Errorf("pod %s assigned node expects %q, got %q", pod.Name, tt.wantNodeName, pod.Spec.NodeName)
-			}
+			require.NoErrorf(t, err, "failed to get Pod %q: %v", tt.pod.Name, err)
+			assert.Equalf(t, tt.wantNodeName, pod.Spec.NodeName, "pod %s assigned node expects %q, got %q", pod.Name, tt.wantNodeName, pod.Spec.NodeName)
 
 			t.Log("Cleanup test objects")
 			c.CoreV1().Nodes().DeleteCollection(context.TODO(), deleteOption, metav1.ListOptions{})

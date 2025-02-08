@@ -22,6 +22,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -174,14 +176,11 @@ func TestPodTerminationWithNodeOOSDetach(t *testing.T) {
 	defer framework.DeleteNamespaceOrDie(testClient, ns, t)
 
 	_, err := testClient.CoreV1().Nodes().Create(context.TODO(), node, metav1.CreateOptions{})
-	if err != nil {
-		t.Fatalf("Failed to created node : %v", err)
-	}
+	require.NoErrorf(t, err, "Failed to created node : %v", err)
 
 	pod := fakePodWithVol(namespaceName)
-	if _, err := testClient.CoreV1().Pods(pod.Namespace).Create(context.TODO(), pod, metav1.CreateOptions{}); err != nil {
-		t.Errorf("Failed to create pod : %v", err)
-	}
+	_, err = testClient.CoreV1().Pods(pod.Namespace).Create(context.TODO(), pod, metav1.CreateOptions{})
+	require.NoErrorf(t, err, "Failed to create pod : %v", err)
 
 	// start controller loop
 	podInformer := informers.Core().V1().Pods().Informer()
@@ -199,17 +198,13 @@ func TestPodTerminationWithNodeOOSDetach(t *testing.T) {
 	// based on that.
 	node.Status.VolumesInUse = append(node.Status.VolumesInUse, "kubernetes.io/mock-provisioner/fake-mount")
 	node, err = testClient.CoreV1().Nodes().UpdateStatus(context.TODO(), node, metav1.UpdateOptions{})
-	if err != nil {
-		t.Fatalf("error in patch volumeInUse status to nodes: %s", err)
-	}
+	require.NoErrorf(t, err, "error in patch volumeInUse status to nodes: %s", err)
 	// Delete the pod with grace period time so that it is stuck in terminating state
 	gracePeriod := int64(300)
 	err = testClient.CoreV1().Pods(namespaceName).Delete(context.TODO(), pod.Name, metav1.DeleteOptions{
 		GracePeriodSeconds: &gracePeriod,
 	})
-	if err != nil {
-		t.Fatalf("error in deleting pod: %v", err)
-	}
+	require.NoErrorf(t, err, "error in deleting pod: %v", err)
 
 	// varify that DeletionTimestamp is not nil, means pod is in `Terminating` stsate
 	waitForPodDeletionTimestampToSet(tCtx, t, testClient, pod.Name, pod.Namespace)
@@ -220,9 +215,8 @@ func TestPodTerminationWithNodeOOSDetach(t *testing.T) {
 		Effect: v1.TaintEffectNoExecute,
 	}
 	node.Spec.Taints = append(node.Spec.Taints, taint)
-	if _, err := testClient.CoreV1().Nodes().Update(context.TODO(), node, metav1.UpdateOptions{}); err != nil {
-		t.Fatalf("error in patch oos taint to node: %v", err)
-	}
+	_, err = testClient.CoreV1().Nodes().Update(context.TODO(), node, metav1.UpdateOptions{})
+	require.NoErrorf(t, err, "error in patch oos taint to node: %v", err)
 	waitForNodeToBeTainted(tCtx, t, testClient, v1.TaintNodeOutOfService, nodeName)
 
 	// Verify if the pod was force deleted.
@@ -261,15 +255,13 @@ func TestPodDeletionWithDswp(t *testing.T) {
 
 	pod := fakePodWithVol(namespaceName)
 
-	if _, err := testClient.CoreV1().Nodes().Create(tCtx, node, metav1.CreateOptions{}); err != nil {
-		t.Fatalf("Failed to created node : %v", err)
-	}
+	_, err := testClient.CoreV1().Nodes().Create(tCtx, node, metav1.CreateOptions{})
+	require.NoErrorf(t, err, "Failed to created node : %v", err)
 
 	// start controller loop
 	go informers.Core().V1().Nodes().Informer().Run(tCtx.Done())
-	if _, err := testClient.CoreV1().Pods(ns.Name).Create(tCtx, pod, metav1.CreateOptions{}); err != nil {
-		t.Errorf("Failed to create pod : %v", err)
-	}
+	_, err = testClient.CoreV1().Pods(ns.Name).Create(tCtx, pod, metav1.CreateOptions{})
+	require.NoErrorf(t, err, "Failed to create pod : %v", err)
 
 	podInformer := informers.Core().V1().Pods().Informer()
 	go podInformer.Run(tCtx.Done())
@@ -285,22 +277,16 @@ func TestPodDeletionWithDswp(t *testing.T) {
 
 	waitToObservePods(t, podInformer, 1)
 	podKey, err := cache.MetaNamespaceKeyFunc(pod)
-	if err != nil {
-		t.Fatalf("MetaNamespaceKeyFunc failed with : %v", err)
-	}
+	require.NoErrorf(t, err, "MetaNamespaceKeyFunc failed with : %v", err)
 
 	podInformerObj, _, err := podInformer.GetStore().GetByKey(podKey)
 
-	if err != nil {
-		t.Fatalf("Pod not found in Pod Informer cache : %v", err)
-	}
+	require.NoErrorf(t, err, "Pod not found in Pod Informer cache : %v", err)
 
 	waitForPodsInDSWP(t, ctrl.GetDesiredStateOfWorld())
 	// let's stop pod events from getting triggered
 	err = podInformer.GetStore().Delete(podInformerObj)
-	if err != nil {
-		t.Fatalf("Error deleting pod : %v", err)
-	}
+	require.NoErrorf(t, err, "Error deleting pod : %v", err)
 
 	waitToObservePods(t, podInformer, 0)
 	// the populator loop turns every 1 minute
@@ -338,15 +324,13 @@ func TestPodUpdateWithADC(t *testing.T) {
 	podStopCh := make(chan struct{})
 	defer close(podStopCh)
 
-	if _, err := testClient.CoreV1().Nodes().Create(context.TODO(), node, metav1.CreateOptions{}); err != nil {
-		t.Fatalf("Failed to created node : %v", err)
-	}
+	_, err := testClient.CoreV1().Nodes().Create(context.TODO(), node, metav1.CreateOptions{})
+	require.NoErrorf(t, err, "Failed to created node : %v", err)
 
 	go informers.Core().V1().Nodes().Informer().Run(podStopCh)
 
-	if _, err := testClient.CoreV1().Pods(ns.Name).Create(context.TODO(), pod, metav1.CreateOptions{}); err != nil {
-		t.Errorf("Failed to create pod : %v", err)
-	}
+	_, err = testClient.CoreV1().Pods(ns.Name).Create(context.TODO(), pod, metav1.CreateOptions{})
+	require.NoErrorf(t, err, "Failed to create pod : %v", err)
 
 	podInformer := informers.Core().V1().Pods().Informer()
 	go podInformer.Run(podStopCh)
@@ -363,23 +347,18 @@ func TestPodUpdateWithADC(t *testing.T) {
 
 	waitToObservePods(t, podInformer, 1)
 	podKey, err := cache.MetaNamespaceKeyFunc(pod)
-	if err != nil {
-		t.Fatalf("MetaNamespaceKeyFunc failed with : %v", err)
-	}
+	require.NoErrorf(t, err, "MetaNamespaceKeyFunc failed with : %v", err)
 
 	_, _, err = podInformer.GetStore().GetByKey(podKey)
 
-	if err != nil {
-		t.Fatalf("Pod not found in Pod Informer cache : %v", err)
-	}
+	require.NoErrorf(t, err, "Pod not found in Pod Informer cache : %v", err)
 
 	waitForPodsInDSWP(t, ctrl.GetDesiredStateOfWorld())
 
 	pod.Status.Phase = v1.PodSucceeded
 
-	if _, err := testClient.CoreV1().Pods(ns.Name).UpdateStatus(context.TODO(), pod, metav1.UpdateOptions{}); err != nil {
-		t.Errorf("Failed to update pod : %v", err)
-	}
+	_, err = testClient.CoreV1().Pods(ns.Name).UpdateStatus(context.TODO(), pod, metav1.UpdateOptions{})
+	require.NoErrorf(t, err, "Failed to update pod : %v", err)
 
 	waitForPodFuncInDSWP(t, ctrl.GetDesiredStateOfWorld(), 20*time.Second, "expected 0 pods in dsw after pod completion", 0)
 }
@@ -388,41 +367,38 @@ func TestPodUpdateWithADC(t *testing.T) {
 // running the RC manager to prevent the rc manager from creating new pods
 // rather than adopting the existing ones.
 func waitToObservePods(t *testing.T, podInformer cache.SharedIndexInformer, podNum int) {
-	if err := wait.Poll(100*time.Millisecond, 60*time.Second, func() (bool, error) {
+	err := wait.Poll(100*time.Millisecond, 60*time.Second, func() (bool, error) {
 		objects := podInformer.GetIndexer().List()
 		if len(objects) == podNum {
 			return true, nil
 		}
 		return false, nil
-	}); err != nil {
-		t.Fatal(err)
-	}
+	})
+	require.NoError(t, err)
 }
 
 // wait for pods to be observed in desired state of world
 func waitForPodsInDSWP(t *testing.T, dswp volumecache.DesiredStateOfWorld) {
-	if err := wait.Poll(time.Millisecond*500, wait.ForeverTestTimeout, func() (bool, error) {
+	err := wait.Poll(time.Millisecond*500, wait.ForeverTestTimeout, func() (bool, error) {
 		pods := dswp.GetPodToAdd()
 		if len(pods) > 0 {
 			return true, nil
 		}
 		return false, nil
-	}); err != nil {
-		t.Fatalf("Pod not added to desired state of world : %v", err)
-	}
+	})
+	require.NoErrorf(t, err, "Pod not added to desired state of world : %v", err)
 }
 
 // wait for pods to be observed in desired state of world
 func waitForPodFuncInDSWP(t *testing.T, dswp volumecache.DesiredStateOfWorld, checkTimeout time.Duration, failMessage string, podCount int) {
-	if err := wait.Poll(time.Millisecond*500, checkTimeout, func() (bool, error) {
+	err := wait.Poll(time.Millisecond*500, checkTimeout, func() (bool, error) {
 		pods := dswp.GetPodToAdd()
 		if len(pods) == podCount {
 			return true, nil
 		}
 		return false, nil
-	}); err != nil {
-		t.Fatalf("%s but got error %v", failMessage, err)
-	}
+	})
+	require.NoErrorf(t, err, "%s but got error %v", failMessage, err)
 }
 
 func createAdClients(ctx context.Context, t *testing.T, server *kubeapiservertesting.TestServer, syncPeriod time.Duration, timers attachdetach.TimerConfig) (*clientset.Clientset, attachdetach.AttachDetachController, *persistentvolume.PersistentVolumeController, *podgc.PodGCController, clientgoinformers.SharedInformerFactory) {
@@ -465,9 +441,7 @@ func createAdClients(ctx context.Context, t *testing.T, server *kubeapiservertes
 		timers,
 	)
 
-	if err != nil {
-		t.Fatalf("Error creating AttachDetach : %v", err)
-	}
+	require.NoErrorf(t, err, "Error creating AttachDetach : %v", err)
 
 	// create pv controller
 	controllerOptions := persistentvolumeoptions.NewPersistentVolumeControllerOptions()
@@ -492,9 +466,7 @@ func createAdClients(ctx context.Context, t *testing.T, server *kubeapiservertes
 		time.Second,
 	)
 	pvCtrl, err := persistentvolume.NewController(ctx, params)
-	if err != nil {
-		t.Fatalf("Failed to create PV controller: %v", err)
-	}
+	require.NoErrorf(t, err, "Failed to create PV controller: %v", err)
 	return testClient, ctrl, pvCtrl, podgcCtrl, informers
 }
 
@@ -526,15 +498,13 @@ func TestPodAddedByDswp(t *testing.T) {
 	pod := fakePodWithVol(namespaceName)
 	podStopCh := make(chan struct{})
 
-	if _, err := testClient.CoreV1().Nodes().Create(tCtx, node, metav1.CreateOptions{}); err != nil {
-		t.Fatalf("Failed to created node : %v", err)
-	}
+	_, err := testClient.CoreV1().Nodes().Create(tCtx, node, metav1.CreateOptions{})
+	require.NoErrorf(t, err, "Failed to created node : %v", err)
 
 	go informers.Core().V1().Nodes().Informer().Run(podStopCh)
 
-	if _, err := testClient.CoreV1().Pods(ns.Name).Create(tCtx, pod, metav1.CreateOptions{}); err != nil {
-		t.Errorf("Failed to create pod : %v", err)
-	}
+	_, err = testClient.CoreV1().Pods(ns.Name).Create(tCtx, pod, metav1.CreateOptions{})
+	require.NoErrorf(t, err, "Failed to create pod : %v", err)
 
 	podInformer := informers.Core().V1().Pods().Informer()
 	go podInformer.Run(podStopCh)
@@ -551,15 +521,11 @@ func TestPodAddedByDswp(t *testing.T) {
 
 	waitToObservePods(t, podInformer, 1)
 	podKey, err := cache.MetaNamespaceKeyFunc(pod)
-	if err != nil {
-		t.Fatalf("MetaNamespaceKeyFunc failed with : %v", err)
-	}
+	require.NoErrorf(t, err, "MetaNamespaceKeyFunc failed with : %v", err)
 
 	_, _, err = podInformer.GetStore().GetByKey(podKey)
 
-	if err != nil {
-		t.Fatalf("Pod not found in Pod Informer cache : %v", err)
-	}
+	require.NoErrorf(t, err, "Pod not found in Pod Informer cache : %v", err)
 
 	waitForPodsInDSWP(t, ctrl.GetDesiredStateOfWorld())
 
@@ -569,9 +535,7 @@ func TestPodAddedByDswp(t *testing.T) {
 	newPodName := "newFakepod"
 	podNew.SetName(newPodName)
 	err = podInformer.GetStore().Add(podNew)
-	if err != nil {
-		t.Fatalf("Error adding pod : %v", err)
-	}
+	require.NoErrorf(t, err, "Error adding pod : %v", err)
 
 	waitToObservePods(t, podInformer, 2)
 
@@ -608,28 +572,24 @@ func TestPVCBoundWithADC(t *testing.T) {
 			},
 		},
 	}
-	if _, err := testClient.CoreV1().Nodes().Create(context.TODO(), node, metav1.CreateOptions{}); err != nil {
-		t.Fatalf("Failed to created node : %v", err)
-	}
+	_, err := testClient.CoreV1().Nodes().Create(context.TODO(), node, metav1.CreateOptions{})
+	require.NoErrorf(t, err, "Failed to created node : %v", err)
 
 	// pods with pvc not bound
 	pvcs := []*v1.PersistentVolumeClaim{}
 	for i := 0; i < 3; i++ {
 		pod, pvc := fakePodWithPVC(fmt.Sprintf("fakepod-pvcnotbound-%d", i), fmt.Sprintf("fakepvc-%d", i), namespaceName)
-		if _, err := testClient.CoreV1().Pods(pod.Namespace).Create(context.TODO(), pod, metav1.CreateOptions{}); err != nil {
-			t.Errorf("Failed to create pod : %v", err)
-		}
-		if _, err := testClient.CoreV1().PersistentVolumeClaims(pvc.Namespace).Create(context.TODO(), pvc, metav1.CreateOptions{}); err != nil {
-			t.Errorf("Failed to create pvc : %v", err)
-		}
+		_, err := testClient.CoreV1().Pods(pod.Namespace).Create(context.TODO(), pod, metav1.CreateOptions{})
+		require.NoErrorf(t, err, "Failed to create pod : %v", err)
+		_, err = testClient.CoreV1().PersistentVolumeClaims(pvc.Namespace).Create(context.TODO(), pvc, metav1.CreateOptions{})
+		require.NoErrorf(t, err, "Failed to create pvc : %v", err)
 		pvcs = append(pvcs, pvc)
 	}
 	// pod with no pvc
 	podNew := fakePodWithVol(namespaceName)
 	podNew.SetName("fakepod")
-	if _, err := testClient.CoreV1().Pods(podNew.Namespace).Create(context.TODO(), podNew, metav1.CreateOptions{}); err != nil {
-		t.Errorf("Failed to create pod : %v", err)
-	}
+	_, err = testClient.CoreV1().Pods(podNew.Namespace).Create(context.TODO(), podNew, metav1.CreateOptions{})
+	require.NoErrorf(t, err, "Failed to create pod : %v", err)
 
 	// start controller loop
 	informers.Start(tCtx.Done())
@@ -667,74 +627,61 @@ func createPVForPVC(t *testing.T, testClient *clientset.Clientset, pvc *v1.Persi
 			StorageClassName: *pvc.Spec.StorageClassName,
 		},
 	}
-	if _, err := testClient.CoreV1().PersistentVolumes().Create(context.TODO(), pv, metav1.CreateOptions{}); err != nil {
-		t.Errorf("Failed to create pv : %v", err)
-	}
+	_, err := testClient.CoreV1().PersistentVolumes().Create(context.TODO(), pv, metav1.CreateOptions{})
+	assert.NoErrorf(t, err, "Failed to create pv : %v", err)
 }
 
 // Wait for DeletionTimestamp added to pod
 func waitForPodDeletionTimestampToSet(tCtx context.Context, t *testing.T, testingClient *clientset.Clientset, podName, podNamespace string) {
-	if err := wait.PollUntilContextCancel(tCtx, 100*time.Millisecond, false, func(context.Context) (bool, error) {
+	err := wait.PollUntilContextCancel(tCtx, 100*time.Millisecond, false, func(context.Context) (bool, error) {
 		pod, err := testingClient.CoreV1().Pods(podNamespace).Get(context.TODO(), podName, metav1.GetOptions{})
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		if pod.DeletionTimestamp != nil {
 			return true, nil
 		}
 		return false, nil
-	}); err != nil {
-		t.Fatalf("Failed to get deletionTimestamp of pod: %s, namespace: %s", podName, podNamespace)
-	}
+	})
+	require.NoErrorf(t, err, "Failed to get deletionTimestamp of pod: %s, namespace: %s", podName, podNamespace)
 }
 
 // Wait for VolumeAttach added to node
 func waitForVolumeToBeAttached(ctx context.Context, t *testing.T, testingClient *clientset.Clientset, podName, nodeName string) {
-	if err := wait.PollUntilContextTimeout(ctx, 100*time.Millisecond, 120*time.Second, false, func(context.Context) (bool, error) {
+	err := wait.PollUntilContextTimeout(ctx, 100*time.Millisecond, 120*time.Second, false, func(context.Context) (bool, error) {
 		node, err := testingClient.CoreV1().Nodes().Get(context.TODO(), nodeName, metav1.GetOptions{})
 		if len(node.Status.VolumesAttached) >= 1 {
 			return true, nil
 		}
-		if err != nil {
-			t.Fatalf("Failed to get the node : %v", err)
-		}
+		require.NoErrorf(t, err, "Failed to get the node : %v", err)
 		return false, nil
-	}); err != nil {
-		t.Fatalf("Failed to attach volume to pod: %s for node: %s", podName, nodeName)
-	}
+	})
+	require.NoErrorf(t, err, "Failed to attach volume to pod: %s for node: %s", podName, nodeName)
 }
 
 // Wait for taint added to node
 func waitForNodeToBeTainted(ctx context.Context, t *testing.T, testingClient *clientset.Clientset, taintKey, nodeName string) {
-	if err := wait.PollUntilContextTimeout(ctx, 100*time.Millisecond, 60*time.Second, false, func(context.Context) (bool, error) {
+	err := wait.PollUntilContextTimeout(ctx, 100*time.Millisecond, 60*time.Second, false, func(context.Context) (bool, error) {
 		node, err := testingClient.CoreV1().Nodes().Get(context.TODO(), nodeName, metav1.GetOptions{})
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		for _, taint := range node.Spec.Taints {
 			if taint.Key == taintKey {
 				return true, nil
 			}
 		}
 		return false, nil
-	}); err != nil {
-		t.Fatalf("Failed to add taint: %s to node: %s", taintKey, nodeName)
-	}
+	})
+	require.NoErrorf(t, err, "Failed to add taint: %s to node: %s", taintKey, nodeName)
 }
 
 func waitForMetric(ctx context.Context, t *testing.T, m basemetric.CounterMetric, expectedCount float64, identifier string) {
-	if err := wait.PollUntilContextTimeout(ctx, 100*time.Millisecond, 60*time.Second, false, func(ctx context.Context) (done bool, err error) {
+	err := wait.PollUntilContextTimeout(ctx, 100*time.Millisecond, 60*time.Second, false, func(ctx context.Context) (done bool, err error) {
 		gotCount, err := metricstestutil.GetCounterMetricValue(m)
-		if err != nil {
-			t.Fatal(err, identifier)
-		}
+		require.NoError(t, err, identifier)
 		t.Logf("expected metric count %g but got %g for %s", expectedCount, gotCount, identifier)
 		// As metrics are global, this condition ( >= ) is applied, just to check the minimum expectation.
 		if gotCount >= expectedCount {
 			return true, nil
 		}
 		return false, nil
-	}); err != nil {
-		t.Fatalf("Failed to match the count of metrics to expect: %v", expectedCount)
-	}
+	})
+	require.NoErrorf(t, err, "Failed to match the count of metrics to expect: %v", expectedCount)
 }
