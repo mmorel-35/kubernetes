@@ -71,7 +71,7 @@ func (g *genFakeForGroup) Imports(c *generator.Context) (imports []string) {
 func (g *genFakeForGroup) GenerateType(c *generator.Context, t *types.Type, w io.Writer) error {
 	sw := generator.NewSnippetWriter(w, c, "$", "$")
 
-	m := map[string]interface{}{
+	m := map[string]any{
 		"GroupGoName":         g.groupGoName,
 		"Version":             namer.IC(g.version),
 		"Fake":                c.Universe.Type(types.Name{Package: "k8s.io/client-go/testing", Name: "Fake"}),
@@ -87,7 +87,7 @@ func (g *genFakeForGroup) GenerateType(c *generator.Context, t *types.Type, w io
 		if err != nil {
 			return err
 		}
-		wrapper := map[string]interface{}{
+		wrapper := map[string]any{
 			"type":              t,
 			"GroupGoName":       g.groupGoName,
 			"Version":           namer.IC(g.version),

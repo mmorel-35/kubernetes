@@ -73,7 +73,7 @@ func (f *RealFIFO) Close() {
 
 // KeyOf exposes f's keyFunc, but also detects the key of a Deltas object or
 // DeletedFinalStateUnknown objects.
-func (f *RealFIFO) keyOf(obj interface{}) (string, error) {
+func (f *RealFIFO) keyOf(obj any) (string, error) {
 	if d, ok := obj.(Deltas); ok {
 		if len(d) == 0 {
 			return "", KeyError{obj, ErrZeroLengthDeltasObject}
@@ -105,7 +105,7 @@ func (f *RealFIFO) hasSynced_locked() bool {
 }
 
 // addToItems_locked appends to the delta list.
-func (f *RealFIFO) addToItems_locked(deltaActionType DeltaType, skipTransform bool, obj interface{}) error {
+func (f *RealFIFO) addToItems_locked(deltaActionType DeltaType, skipTransform bool, obj any) error {
 	// we must be able to read the keys in order to determine whether the knownObjcts and the items
 	// in this FIFO overlap
 	_, err := f.keyOf(obj)
@@ -145,7 +145,7 @@ func (f *RealFIFO) addToItems_locked(deltaActionType DeltaType, skipTransform bo
 
 // Add inserts an item, and puts it in the queue. The item is only enqueued
 // if it doesn't already exist in the set.
-func (f *RealFIFO) Add(obj interface{}) error {
+func (f *RealFIFO) Add(obj any) error {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 
@@ -156,7 +156,7 @@ func (f *RealFIFO) Add(obj interface{}) error {
 }
 
 // Update is the same as Add in this implementation.
-func (f *RealFIFO) Update(obj interface{}) error {
+func (f *RealFIFO) Update(obj any) error {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 
@@ -169,7 +169,7 @@ func (f *RealFIFO) Update(obj interface{}) error {
 // Delete removes an item. It doesn't add it to the queue, because
 // this implementation assumes the consumer only cares about the objects,
 // not the order in which they were created/added.
-func (f *RealFIFO) Delete(obj interface{}) error {
+func (f *RealFIFO) Delete(obj any) error {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 
@@ -191,7 +191,7 @@ func (f *RealFIFO) IsClosed() bool {
 // The item is removed from the queue (and the store) before it is processed.
 // process function is called under lock, so it is safe
 // update data structures in it that need to be in sync with the queue.
-func (f *RealFIFO) Pop(process PopProcessFunc) (interface{}, error) {
+func (f *RealFIFO) Pop(process PopProcessFunc) (any, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 
@@ -238,7 +238,7 @@ func (f *RealFIFO) Pop(process PopProcessFunc) (interface{}, error) {
 // 1. finds those items in f.items that are not in newItems and creates synthetic deletes for them
 // 2. finds items in knownObjects that are not in newItems and creates synthetic deletes for them
 // 3. adds the newItems to the queue
-func (f *RealFIFO) Replace(newItems []interface{}, resourceVersion string) error {
+func (f *RealFIFO) Replace(newItems []any, resourceVersion string) error {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 

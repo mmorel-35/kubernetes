@@ -775,14 +775,14 @@ func (o *GetOptions) printGeneric(r *resource.Result) error {
 
 		// take the items and create a new list for display
 		list := &unstructured.UnstructuredList{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"kind":       "List",
 				"apiVersion": "v1",
-				"metadata":   map[string]interface{}{},
+				"metadata":   map[string]any{},
 			},
 		}
 		if listMeta, err := meta.ListAccessor(obj); err == nil {
-			list.Object["metadata"] = map[string]interface{}{
+			list.Object["metadata"] = map[string]any{
 				"resourceVersion": listMeta.GetResourceVersion(),
 			}
 		}

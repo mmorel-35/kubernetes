@@ -71,7 +71,7 @@ func CreateThreeWayJSONMergePatch(original, modified, current []byte, fns ...mer
 		return nil, err
 	}
 
-	var patchMap map[string]interface{}
+	var patchMap map[string]any
 	err = json.Unmarshal(patch, &patchMap)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal patch for precondition check: %s", patch)
@@ -90,8 +90,8 @@ func CreateThreeWayJSONMergePatch(original, modified, current []byte, fns ...mer
 // keepOrDeleteNullInJsonPatch takes a json-encoded byte array and a boolean.
 // It returns a filtered object and its corresponding json-encoded byte array.
 // It is a wrapper of func keepOrDeleteNullInObj
-func keepOrDeleteNullInJsonPatch(patch []byte, keepNull bool) ([]byte, map[string]interface{}, error) {
-	var patchMap map[string]interface{}
+func keepOrDeleteNullInJsonPatch(patch []byte, keepNull bool) ([]byte, map[string]any, error) {
+	var patchMap map[string]any
 	err := json.Unmarshal(patch, &patchMap)
 	if err != nil {
 		return nil, nil, err
@@ -106,8 +106,8 @@ func keepOrDeleteNullInJsonPatch(patch []byte, keepNull bool) ([]byte, map[strin
 
 // keepOrDeleteNullInObj will keep only the null value and delete all the others,
 // if keepNull is true. Otherwise, it will delete all the null value and keep the others.
-func keepOrDeleteNullInObj(m map[string]interface{}, keepNull bool) (map[string]interface{}, error) {
-	filteredMap := make(map[string]interface{})
+func keepOrDeleteNullInObj(m map[string]any, keepNull bool) (map[string]any, error) {
+	filteredMap := make(map[string]any)
 	var err error
 	for key, val := range m {
 		switch {
@@ -115,7 +115,7 @@ func keepOrDeleteNullInObj(m map[string]interface{}, keepNull bool) (map[string]
 			filteredMap[key] = nil
 		case val != nil:
 			switch typedVal := val.(type) {
-			case map[string]interface{}:
+			case map[string]any:
 				// Explicitly-set empty maps are treated as values instead of empty patches
 				if len(typedVal) == 0 {
 					if !keepNull {
@@ -124,7 +124,7 @@ func keepOrDeleteNullInObj(m map[string]interface{}, keepNull bool) (map[string]
 					continue
 				}
 
-				var filteredSubMap map[string]interface{}
+				var filteredSubMap map[string]any
 				filteredSubMap, err = keepOrDeleteNullInObj(typedVal, keepNull)
 				if err != nil {
 					return nil, err
@@ -136,7 +136,7 @@ func keepOrDeleteNullInObj(m map[string]interface{}, keepNull bool) (map[string]
 					filteredMap[key] = filteredSubMap
 				}
 
-			case []interface{}, string, float64, bool, int64, nil:
+			case []any, string, float64, bool, int64, nil:
 				// Lists are always replaced in Json, no need to check each entry in the list.
 				if !keepNull {
 					filteredMap[key] = val
@@ -149,7 +149,7 @@ func keepOrDeleteNullInObj(m map[string]interface{}, keepNull bool) (map[string]
 	return filteredMap, nil
 }
 
-func meetPreconditions(patchObj map[string]interface{}, fns ...mergepatch.PreconditionFunc) (bool, error) {
+func meetPreconditions(patchObj map[string]any, fns ...mergepatch.PreconditionFunc) (bool, error) {
 	// Apply the preconditions to the patch, and return an error if any of them fail.
 	for _, fn := range fns {
 		if !fn(patchObj) {

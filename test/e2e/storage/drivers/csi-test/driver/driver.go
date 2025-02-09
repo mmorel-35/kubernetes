@@ -77,7 +77,7 @@ type CSIDriver struct {
 	logGRPC  LogGRPC
 }
 
-type LogGRPC func(method string, request, reply interface{}, err error)
+type LogGRPC func(method string, request, reply any, err error)
 
 func NewCSIDriver(servers *CSIDriverServers) *CSIDriver {
 	return &CSIDriver{
@@ -190,7 +190,7 @@ func setDefaultCreds(creds *CSICreds) {
 	}
 }
 
-func (c *CSIDriver) callInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func (c *CSIDriver) callInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	err := authInterceptor(c.creds, req)
 	if err != nil {
 		logGRPC(info.FullMethod, req, nil, err)
@@ -204,7 +204,7 @@ func (c *CSIDriver) callInterceptor(ctx context.Context, req interface{}, info *
 	return rsp, err
 }
 
-func authInterceptor(creds *CSICreds, req interface{}) error {
+func authInterceptor(creds *CSICreds, req any) error {
 	if creds != nil {
 		authenticated, authErr := isAuthenticated(req, creds)
 		if !authenticated {
@@ -219,12 +219,12 @@ func authInterceptor(creds *CSICreds, req interface{}) error {
 	return nil
 }
 
-func logGRPC(method string, request, reply interface{}, err error) {
+func logGRPC(method string, request, reply any, err error) {
 	// Log JSON with the request and response for easier parsing
 	logMessage := struct {
 		Method   string
-		Request  interface{}
-		Response interface{}
+		Request  any
+		Response any
 		// Error as string, for backward compatibility.
 		// "" on no error.
 		Error string
@@ -245,7 +245,7 @@ func logGRPC(method string, request, reply interface{}, err error) {
 	klog.V(3).Infof("gRPCCall: %s\n", msg)
 }
 
-func isAuthenticated(req interface{}, creds *CSICreds) (bool, error) {
+func isAuthenticated(req any, creds *CSICreds) (bool, error) {
 	switch r := req.(type) {
 	case *csi.CreateVolumeRequest:
 		return authenticateCreateVolume(r, creds)

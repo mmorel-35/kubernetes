@@ -190,7 +190,7 @@ func TestWatchWebsocketClientClose(t *testing.T) {
 	}
 
 	// Sending normal data should be ignored
-	websocket.JSON.Send(ws, map[string]interface{}{"test": "data"})
+	websocket.JSON.Send(ws, map[string]any{"test": "data"})
 
 	// Send/receive should still work
 	for _, item := range watchTestTable {

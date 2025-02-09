@@ -68,7 +68,7 @@ func doTestStore(t *testing.T, store Store) {
 	}
 
 	// Test Replace.
-	store.Replace([]interface{}{
+	store.Replace([]any{
 		mkObj("foo", "foo"),
 		mkObj("bar", "bar"),
 	}, "0")
@@ -120,11 +120,11 @@ func doTestIndex(t *testing.T, indexer Indexer) {
 	}
 }
 
-func testStoreKeyFunc(obj interface{}) (string, error) {
+func testStoreKeyFunc(obj any) (string, error) {
 	return obj.(testStoreObject).id, nil
 }
 
-func testStoreIndexFunc(obj interface{}) ([]string, error) {
+func testStoreIndexFunc(obj any) ([]string, error) {
 	return []string{obj.(testStoreObject).val}, nil
 }
 
@@ -148,7 +148,7 @@ func TestFIFOCache(t *testing.T) {
 }
 
 func TestUndeltaStore(t *testing.T) {
-	nop := func([]interface{}) {}
+	nop := func([]any) {}
 	doTestStore(t, NewUndeltaStore(nop, testStoreKeyFunc))
 }
 

@@ -922,7 +922,7 @@ func testConflicts(t *testing.T, f managedfieldstest.TestFieldManager, tests []t
 		t.Run(fmt.Sprintf("test %d", i), func(t *testing.T) {
 			f.Reset()
 
-			originalObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+			originalObj := &unstructured.Unstructured{Object: map[string]any{}}
 			if err := yaml.Unmarshal(test.original, &originalObj.Object); err != nil {
 				t.Errorf("error decoding YAML: %v", err)
 			}
@@ -938,7 +938,7 @@ func testConflicts(t *testing.T, f managedfieldstest.TestFieldManager, tests []t
 				t.Errorf("failed to apply object: %v", err)
 			}
 
-			appliedObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+			appliedObj := &unstructured.Unstructured{Object: map[string]any{}}
 			if err := yaml.Unmarshal(test.applied, &appliedObj.Object); err != nil {
 				t.Errorf("error decoding YAML: %v", err)
 			}
@@ -983,7 +983,7 @@ func testConflicts(t *testing.T, f managedfieldstest.TestFieldManager, tests []t
 }
 
 func yamlToJSON(y []byte) (string, error) {
-	obj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	obj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal(y, &obj.Object); err != nil {
 		return "", fmt.Errorf("error decoding YAML: %v", err)
 	}

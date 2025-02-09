@@ -405,7 +405,7 @@ func restoreObjectMeta(original, converted *unstructured.Unstructured) error {
 	if !found {
 		return fmt.Errorf("missing metadata in converted object")
 	}
-	responseMetaData, ok := obj.(map[string]interface{})
+	responseMetaData, ok := obj.(map[string]any)
 	if !ok {
 		return fmt.Errorf("invalid metadata of type %T in converted object", obj)
 	}
@@ -413,13 +413,13 @@ func restoreObjectMeta(original, converted *unstructured.Unstructured) error {
 	if _, ok := original.Object["metadata"]; !ok {
 		// the original will always have metadata. But just to be safe, let's clear in converted
 		// with an empty object instead of nil, to be able to add labels and annotations below.
-		converted.Object["metadata"] = map[string]interface{}{}
+		converted.Object["metadata"] = map[string]any{}
 	} else {
 		converted.Object["metadata"] = runtime.DeepCopyJSONValue(original.Object["metadata"])
 	}
 
 	obj = converted.Object["metadata"]
-	convertedMetaData, ok := obj.(map[string]interface{})
+	convertedMetaData, ok := obj.(map[string]any)
 	if !ok {
 		return fmt.Errorf("invalid metadata of type %T in input object", obj)
 	}
@@ -430,12 +430,12 @@ func restoreObjectMeta(original, converted *unstructured.Unstructured) error {
 			delete(convertedMetaData, fld)
 			continue
 		}
-		responseField, ok := obj.(map[string]interface{})
+		responseField, ok := obj.(map[string]any)
 		if !ok {
 			return fmt.Errorf("invalid metadata.%s of type %T in converted object", fld, obj)
 		}
 
-		originalField, ok := convertedMetaData[fld].(map[string]interface{})
+		originalField, ok := convertedMetaData[fld].(map[string]any)
 		if !ok && convertedMetaData[fld] != nil {
 			return fmt.Errorf("invalid metadata.%s of type %T in original object", fld, convertedMetaData[fld])
 		}
@@ -445,7 +445,7 @@ func restoreObjectMeta(original, converted *unstructured.Unstructured) error {
 			if _, ok := v.(string); !ok {
 				return fmt.Errorf("metadata.%s[%s] must be a string, but is %T in converted object", fld, k, v)
 			}
-			if originalField[k] != interface{}(v) {
+			if originalField[k] != any(v) {
 				somethingChanged = true
 			}
 		}

@@ -57,12 +57,12 @@ func (f FailureError) Is(target error) bool {
 //	}
 var ErrFailure error = FailureError{}
 
-func expect(tCtx TContext, actual interface{}, extra ...interface{}) gomega.Assertion {
+func expect(tCtx TContext, actual any, extra ...any) gomega.Assertion {
 	tCtx.Helper()
 	return gomega.NewWithT(tCtx).Expect(actual, extra...)
 }
 
-func expectNoError(tCtx TContext, err error, explain ...interface{}) {
+func expectNoError(tCtx TContext, err error, explain ...any) {
 	if err == nil {
 		return
 	}
@@ -94,7 +94,7 @@ func expectNoError(tCtx TContext, err error, explain ...interface{}) {
 	tCtx.Fatalf("%s: %v", description, err.Error())
 }
 
-func buildDescription(explain ...interface{}) string {
+func buildDescription(explain ...any) string {
 	switch len(explain) {
 	case 0:
 		return ""

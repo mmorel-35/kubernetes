@@ -34,7 +34,7 @@ func TestTTLExpirationBasic(t *testing.T) {
 		testStoreKeyFunc, deleteChan,
 		&FakeExpirationPolicy{
 			NeverExpire: sets.NewString(),
-			RetrieveKeyFunc: func(obj interface{}) (string, error) {
+			RetrieveKeyFunc: func(obj any) (string, error) {
 				return obj.(*TimestampedEntry).Obj.(testStoreObject).id, nil
 			},
 		},
@@ -67,7 +67,7 @@ func TestReAddExpiredItem(t *testing.T) {
 	deleteChan := make(chan string, 1)
 	exp := &FakeExpirationPolicy{
 		NeverExpire: sets.NewString(),
-		RetrieveKeyFunc: func(obj interface{}) (string, error) {
+		RetrieveKeyFunc: func(obj any) (string, error) {
 			return obj.(*TimestampedEntry).Obj.(testStoreObject).id, nil
 		},
 	}
@@ -130,7 +130,7 @@ func TestTTLList(t *testing.T) {
 		testStoreKeyFunc, deleteChan,
 		&FakeExpirationPolicy{
 			NeverExpire: sets.NewString(testObjs[1].id),
-			RetrieveKeyFunc: func(obj interface{}) (string, error) {
+			RetrieveKeyFunc: func(obj any) (string, error) {
 				return obj.(*TimestampedEntry).Obj.(testStoreObject).id, nil
 			},
 		},

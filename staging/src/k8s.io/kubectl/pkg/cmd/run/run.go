@@ -542,7 +542,7 @@ func verifyImagePullPolicy(cmd *cobra.Command) error {
 	return cmdutil.UsageErrorf(cmd, "invalid image pull policy: %s", pullPolicy)
 }
 
-func (o *RunOptions) generateService(f cmdutil.Factory, cmd *cobra.Command, paramsIn map[string]interface{}) (*RunObject, error) {
+func (o *RunOptions) generateService(f cmdutil.Factory, cmd *cobra.Command, paramsIn map[string]any) (*RunObject, error) {
 	generators := generateversioned.GeneratorFn("expose")
 	generator, found := generators[generateversioned.ServiceV2GeneratorName]
 	if !found {
@@ -550,7 +550,7 @@ func (o *RunOptions) generateService(f cmdutil.Factory, cmd *cobra.Command, para
 	}
 	names := generator.ParamNames()
 
-	params := map[string]interface{}{}
+	params := map[string]any{}
 	for key, value := range paramsIn {
 		_, isString := value.(string)
 		if isString {
@@ -588,7 +588,7 @@ func (o *RunOptions) generateService(f cmdutil.Factory, cmd *cobra.Command, para
 	return runObject, nil
 }
 
-func (o *RunOptions) createGeneratedObject(f cmdutil.Factory, cmd *cobra.Command, generator generate.Generator, names []generate.GeneratorParam, params map[string]interface{}, overrider *cmdutil.Overrider) (*RunObject, error) {
+func (o *RunOptions) createGeneratedObject(f cmdutil.Factory, cmd *cobra.Command, generator generate.Generator, names []generate.GeneratorParam, params map[string]any, overrider *cmdutil.Overrider) (*RunObject, error) {
 	err := generate.ValidateParams(names, params)
 	if err != nil {
 		return nil, err

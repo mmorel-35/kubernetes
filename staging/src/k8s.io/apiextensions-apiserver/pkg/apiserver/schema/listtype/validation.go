@@ -25,7 +25,7 @@ import (
 
 // ValidateListSetsAndMaps validates that arrays with x-kubernetes-list-type "map" and "set" fulfill the uniqueness
 // invariants for the keys (maps) and whole elements (sets).
-func ValidateListSetsAndMaps(fldPath *field.Path, s *schema.Structural, obj map[string]interface{}) field.ErrorList {
+func ValidateListSetsAndMaps(fldPath *field.Path, s *schema.Structural, obj map[string]any) field.ErrorList {
 	if s == nil || obj == nil {
 		return nil
 	}
@@ -48,17 +48,17 @@ func ValidateListSetsAndMaps(fldPath *field.Path, s *schema.Structural, obj map[
 	return errs
 }
 
-func validationListSetAndMaps(fldPath *field.Path, s *schema.Structural, obj interface{}) field.ErrorList {
+func validationListSetAndMaps(fldPath *field.Path, s *schema.Structural, obj any) field.ErrorList {
 	switch obj := obj.(type) {
-	case []interface{}:
+	case []any:
 		return validateListSetsAndMapsArray(fldPath, s, obj)
-	case map[string]interface{}:
+	case map[string]any:
 		return ValidateListSetsAndMaps(fldPath, s, obj)
 	}
 	return nil
 }
 
-func validateListSetsAndMapsArray(fldPath *field.Path, s *schema.Structural, obj []interface{}) field.ErrorList {
+func validateListSetsAndMapsArray(fldPath *field.Path, s *schema.Structural, obj []any) field.ErrorList {
 	var errs field.ErrorList
 
 	if s.XListType != nil {
@@ -92,17 +92,17 @@ func validateListSetsAndMapsArray(fldPath *field.Path, s *schema.Structural, obj
 //
 // As a special case to distinguish undefined key and null values, we allow unspecifiedKeyValue and nullObjectValue
 // which are both handled like scalars with correct comparison by Golang.
-func validateListSet(fldPath *field.Path, obj []interface{}) ([]int, *field.Error) {
+func validateListSet(fldPath *field.Path, obj []any) ([]int, *field.Error) {
 	if len(obj) <= 1 {
 		return nil, nil
 	}
 
-	seenScalars := make(map[interface{}]int, len(obj))
+	seenScalars := make(map[any]int, len(obj))
 	seenCompounds := make(map[string]int, len(obj))
 	var nonUniqueIndices []int
 	for i, x := range obj {
 		switch x.(type) {
-		case map[string]interface{}, []interface{}:
+		case map[string]any, []any:
 			bs, err := json.Marshal(x)
 			if err != nil {
 				return nil, field.Invalid(fldPath.Index(i), x, "internal error")
@@ -131,10 +131,10 @@ func validateListSet(fldPath *field.Path, obj []interface{}) ([]int, *field.Erro
 	return nonUniqueIndices, nil
 }
 
-func validateListMap(fldPath *field.Path, s *schema.Structural, obj []interface{}) field.ErrorList {
+func validateListMap(fldPath *field.Path, s *schema.Structural, obj []any) field.ErrorList {
 	// only allow nil and objects
 	for i, x := range obj {
-		if _, ok := x.(map[string]interface{}); x != nil && !ok {
+		if _, ok := x.(map[string]any); x != nil && !ok {
 			return field.ErrorList{field.Invalid(fldPath.Index(i), x, "must be an object for an array of list-type map")}
 		}
 	}
@@ -148,14 +148,14 @@ func validateListMap(fldPath *field.Path, s *schema.Structural, obj []interface{
 		type unspecifiedKeyValue struct{}
 
 		keyField := s.XListMapKeys[0]
-		keys := make([]interface{}, 0, len(obj))
+		keys := make([]any, 0, len(obj))
 		for _, x := range obj {
 			if x == nil {
 				keys = append(keys, unspecifiedKeyValue{}) // nil object means unspecified key
 				continue
 			}
 
-			x := x.(map[string]interface{})
+			x := x.(map[string]any)
 
 			// undefined key?
 			key, ok := x[keyField]
@@ -176,9 +176,9 @@ func validateListMap(fldPath *field.Path, s *schema.Structural, obj []interface{
 		for _, i := range nonUnique {
 			switch keys[i] {
 			case unspecifiedKeyValue{}:
-				errs = append(errs, field.Duplicate(fldPath.Index(i), map[string]interface{}{}))
+				errs = append(errs, field.Duplicate(fldPath.Index(i), map[string]any{}))
 			default:
-				errs = append(errs, field.Duplicate(fldPath.Index(i), map[string]interface{}{keyField: keys[i]}))
+				errs = append(errs, field.Duplicate(fldPath.Index(i), map[string]any{keyField: keys[i]}))
 			}
 		}
 
@@ -186,15 +186,15 @@ func validateListMap(fldPath *field.Path, s *schema.Structural, obj []interface{
 	}
 
 	// multiple key fields
-	keys := make([]interface{}, 0, len(obj))
+	keys := make([]any, 0, len(obj))
 	for _, x := range obj {
-		key := map[string]interface{}{}
+		key := map[string]any{}
 		if x == nil {
 			keys = append(keys, key)
 			continue
 		}
 
-		x := x.(map[string]interface{})
+		x := x.(map[string]any)
 
 		for _, keyField := range s.XListMapKeys {
 			if k, ok := x[keyField]; ok {

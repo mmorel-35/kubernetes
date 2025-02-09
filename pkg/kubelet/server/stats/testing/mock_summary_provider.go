@@ -77,7 +77,7 @@ type MockSummaryProvider_Get_Call struct {
 // Get is a helper method to define mock.On call
 //   - ctx context.Context
 //   - updateStats bool
-func (_e *MockSummaryProvider_Expecter) Get(ctx interface{}, updateStats interface{}) *MockSummaryProvider_Get_Call {
+func (_e *MockSummaryProvider_Expecter) Get(ctx any, updateStats any) *MockSummaryProvider_Get_Call {
 	return &MockSummaryProvider_Get_Call{Call: _e.mock.On("Get", ctx, updateStats)}
 }
 
@@ -135,7 +135,7 @@ type MockSummaryProvider_GetCPUAndMemoryStats_Call struct {
 
 // GetCPUAndMemoryStats is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockSummaryProvider_Expecter) GetCPUAndMemoryStats(ctx interface{}) *MockSummaryProvider_GetCPUAndMemoryStats_Call {
+func (_e *MockSummaryProvider_Expecter) GetCPUAndMemoryStats(ctx any) *MockSummaryProvider_GetCPUAndMemoryStats_Call {
 	return &MockSummaryProvider_GetCPUAndMemoryStats_Call{Call: _e.mock.On("GetCPUAndMemoryStats", ctx)}
 }
 

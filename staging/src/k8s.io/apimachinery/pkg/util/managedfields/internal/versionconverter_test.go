@@ -90,7 +90,7 @@ func gvkForVersion(v string) schema.GroupVersionKind {
 
 func objForGroupVersion(gv string) runtime.Object {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": gv,
 			"kind":       "Deployment",
 		},
@@ -110,7 +110,7 @@ func (c fakeObjectConvertorForTestSchema) ConvertToVersion(_ runtime.Object, gv 
 	return c[gvk], nil
 }
 
-func (fakeObjectConvertorForTestSchema) Convert(_, _, _ interface{}) error {
+func (fakeObjectConvertorForTestSchema) Convert(_, _, _ any) error {
 	return fmt.Errorf("function not implemented")
 }
 

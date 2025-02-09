@@ -163,10 +163,10 @@ func newOwnerRC(name, namespace string) *v1.ReplicationController {
 
 func newCRDInstance(definition *apiextensionsv1.CustomResourceDefinition, namespace, name string) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       definition.Spec.Names.Kind,
 			"apiVersion": definition.Spec.Group + "/" + definition.Spec.Versions[0].Name,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      name,
 				"namespace": namespace,
 			},

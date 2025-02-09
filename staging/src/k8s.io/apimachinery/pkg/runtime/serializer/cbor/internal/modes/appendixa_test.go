@@ -60,12 +60,12 @@ func TestAppendixA(t *testing.T) {
 		reasonMapSorted         = "map entries are sorted"
 		reasonStringFixedLength = "indefinite-length strings are re-encoded with fixed length"
 		reasonTagIgnored        = "unrecognized tag numbers are ignored"
-		reasonTimeToInterface   = "times decode to interface{} as RFC3339 timestamps for JSON interoperability"
+		reasonTimeToInterface   = "times decode to any as RFC3339 timestamps for JSON interoperability"
 	)
 
 	for _, tc := range []struct {
 		example []byte // example data item
-		decoded interface{}
+		decoded any
 		reject  string   // reason the decoder rejects the example
 		encoded []byte   // re-encoded object (only if different from example encoding)
 		reasons []string // reasons for re-encode difference
@@ -116,7 +116,7 @@ func TestAppendixA(t *testing.T) {
 		},
 		{
 			example: hex("c249010000000000000000"),
-			reject:  "decoding tagged positive bigint value to interface{} can't reproduce this value without losing distinction between float and integer",
+			reject:  "decoding tagged positive bigint value to any can't reproduce this value without losing distinction between float and integer",
 		},
 		{
 			example: hex("3bffffffffffffffff"),
@@ -286,7 +286,7 @@ func TestAppendixA(t *testing.T) {
 			decoded: "01020304",
 			encoded: hex("483031303230333034"), // '01020304'
 			reasons: []string{
-				"decoding a byte string enclosed in an expected later encoding tag into an interface{} value automatically converts to the specified encoding for JSON interoperability",
+				"decoding a byte string enclosed in an expected later encoding tag into an any value automatically converts to the specified encoding for JSON interoperability",
 			},
 		},
 		{
@@ -372,23 +372,23 @@ func TestAppendixA(t *testing.T) {
 		},
 		{
 			example: hex("80"),
-			decoded: []interface{}{},
+			decoded: []any{},
 		},
 		{
 			example: hex("83010203"),
-			decoded: []interface{}{int64(1), int64(2), int64(3)},
+			decoded: []any{int64(1), int64(2), int64(3)},
 		},
 		{
 			example: hex("8301820203820405"),
-			decoded: []interface{}{int64(1), []interface{}{int64(2), int64(3)}, []interface{}{int64(4), int64(5)}},
+			decoded: []any{int64(1), []any{int64(2), int64(3)}, []any{int64(4), int64(5)}},
 		},
 		{
 			example: hex("98190102030405060708090a0b0c0d0e0f101112131415161718181819"),
-			decoded: []interface{}{int64(1), int64(2), int64(3), int64(4), int64(5), int64(6), int64(7), int64(8), int64(9), int64(10), int64(11), int64(12), int64(13), int64(14), int64(15), int64(16), int64(17), int64(18), int64(19), int64(20), int64(21), int64(22), int64(23), int64(24), int64(25)},
+			decoded: []any{int64(1), int64(2), int64(3), int64(4), int64(5), int64(6), int64(7), int64(8), int64(9), int64(10), int64(11), int64(12), int64(13), int64(14), int64(15), int64(16), int64(17), int64(18), int64(19), int64(20), int64(21), int64(22), int64(23), int64(24), int64(25)},
 		},
 		{
 			example: hex("a0"),
-			decoded: map[string]interface{}{},
+			decoded: map[string]any{},
 		},
 		{
 			example: hex("a201020304"),
@@ -396,9 +396,9 @@ func TestAppendixA(t *testing.T) {
 		},
 		{
 			example: hex("a26161016162820203"),
-			decoded: map[string]interface{}{
+			decoded: map[string]any{
 				"a": int64(1),
-				"b": []interface{}{int64(2), int64(3)},
+				"b": []any{int64(2), int64(3)},
 			},
 			encoded: hex("a24161014162820203"),
 			reasons: []string{
@@ -407,9 +407,9 @@ func TestAppendixA(t *testing.T) {
 		},
 		{
 			example: hex("826161a161626163"),
-			decoded: []interface{}{
+			decoded: []any{
 				"a",
-				map[string]interface{}{"b": "c"},
+				map[string]any{"b": "c"},
 			},
 			encoded: hex("824161a141624163"),
 			reasons: []string{
@@ -418,7 +418,7 @@ func TestAppendixA(t *testing.T) {
 		},
 		{
 			example: hex("a56161614161626142616361436164614461656145"),
-			decoded: map[string]interface{}{
+			decoded: map[string]any{
 				"a": "A",
 				"b": "B",
 				"c": "C",
@@ -449,7 +449,7 @@ func TestAppendixA(t *testing.T) {
 		},
 		{
 			example: hex("9fff"),
-			decoded: []interface{}{},
+			decoded: []any{},
 			encoded: hex("80"),
 			reasons: []string{
 				reasonArrayFixedLength,
@@ -457,10 +457,10 @@ func TestAppendixA(t *testing.T) {
 		},
 		{
 			example: hex("9f018202039f0405ffff"),
-			decoded: []interface{}{
+			decoded: []any{
 				int64(1),
-				[]interface{}{int64(2), int64(3)},
-				[]interface{}{int64(4), int64(5)},
+				[]any{int64(2), int64(3)},
+				[]any{int64(4), int64(5)},
 			},
 			encoded: hex("8301820203820405"),
 			reasons: []string{
@@ -469,10 +469,10 @@ func TestAppendixA(t *testing.T) {
 		},
 		{
 			example: hex("9f01820203820405ff"),
-			decoded: []interface{}{
+			decoded: []any{
 				int64(1),
-				[]interface{}{int64(2), int64(3)},
-				[]interface{}{int64(4), int64(5)},
+				[]any{int64(2), int64(3)},
+				[]any{int64(4), int64(5)},
 			},
 			encoded: hex("8301820203820405"),
 			reasons: []string{
@@ -481,10 +481,10 @@ func TestAppendixA(t *testing.T) {
 		},
 		{
 			example: hex("83018202039f0405ff"),
-			decoded: []interface{}{
+			decoded: []any{
 				int64(1),
-				[]interface{}{int64(2), int64(3)},
-				[]interface{}{int64(4), int64(5)},
+				[]any{int64(2), int64(3)},
+				[]any{int64(4), int64(5)},
 			},
 			encoded: hex("8301820203820405"),
 			reasons: []string{
@@ -493,10 +493,10 @@ func TestAppendixA(t *testing.T) {
 		},
 		{
 			example: hex("83019f0203ff820405"),
-			decoded: []interface{}{
+			decoded: []any{
 				int64(1),
-				[]interface{}{int64(2), int64(3)},
-				[]interface{}{int64(4), int64(5)},
+				[]any{int64(2), int64(3)},
+				[]any{int64(4), int64(5)},
 			},
 			encoded: hex("8301820203820405"),
 			reasons: []string{
@@ -505,7 +505,7 @@ func TestAppendixA(t *testing.T) {
 		},
 		{
 			example: hex("9f0102030405060708090a0b0c0d0e0f101112131415161718181819ff"),
-			decoded: []interface{}{
+			decoded: []any{
 				int64(1), int64(2), int64(3), int64(4), int64(5),
 				int64(6), int64(7), int64(8), int64(9), int64(10),
 				int64(11), int64(12), int64(13), int64(14), int64(15),
@@ -519,9 +519,9 @@ func TestAppendixA(t *testing.T) {
 		},
 		{
 			example: hex("bf61610161629f0203ffff"),
-			decoded: map[string]interface{}{
+			decoded: map[string]any{
 				"a": int64(1),
-				"b": []interface{}{int64(2), int64(3)},
+				"b": []any{int64(2), int64(3)},
 			},
 			encoded: hex("a24161014162820203"),
 			reasons: []string{
@@ -532,7 +532,7 @@ func TestAppendixA(t *testing.T) {
 		},
 		{
 			example: hex("826161bf61626163ff"),
-			decoded: []interface{}{"a", map[string]interface{}{"b": "c"}},
+			decoded: []any{"a", map[string]any{"b": "c"}},
 			encoded: hex("824161a141624163"),
 			reasons: []string{
 				reasonByteString,
@@ -541,7 +541,7 @@ func TestAppendixA(t *testing.T) {
 		},
 		{
 			example: hex("bf6346756ef563416d7421ff"),
-			decoded: map[string]interface{}{
+			decoded: map[string]any{
 				"Amt": int64(-2),
 				"Fun": true,
 			},
@@ -554,7 +554,7 @@ func TestAppendixA(t *testing.T) {
 		},
 	} {
 		t.Run(fmt.Sprintf("%x", tc.example), func(t *testing.T) {
-			var decoded interface{}
+			var decoded any
 			err := modes.Decode.Unmarshal(tc.example, &decoded)
 			if err != nil {
 				if tc.reject != "" {

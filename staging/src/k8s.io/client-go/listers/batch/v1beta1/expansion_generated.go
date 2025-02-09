@@ -20,8 +20,8 @@ package v1beta1
 
 // CronJobListerExpansion allows custom methods to be added to
 // CronJobLister.
-type CronJobListerExpansion interface{}
+type CronJobListerExpansion any
 
 // CronJobNamespaceListerExpansion allows custom methods to be added to
 // CronJobNamespaceLister.
-type CronJobNamespaceListerExpansion interface{}
+type CronJobNamespaceListerExpansion any

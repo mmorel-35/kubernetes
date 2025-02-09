@@ -419,9 +419,9 @@ func (dsc *DaemonSetsController) dedupCurHistories(ctx context.Context, ds *apps
 	}
 	for _, pod := range pods {
 		if pod.Labels[apps.DefaultDaemonSetUniqueLabelKey] != keepCur.Labels[apps.DefaultDaemonSetUniqueLabelKey] {
-			patchRaw := map[string]interface{}{
-				"metadata": map[string]interface{}{
-					"labels": map[string]interface{}{
+			patchRaw := map[string]any{
+				"metadata": map[string]any{
+					"labels": map[string]any{
 						apps.DefaultDaemonSetUniqueLabelKey: keepCur.Labels[apps.DefaultDaemonSetUniqueLabelKey],
 					},
 				},
@@ -501,17 +501,17 @@ func getPatch(ds *apps.DaemonSet) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	var raw map[string]interface{}
+	var raw map[string]any
 	err = json.Unmarshal(dsBytes, &raw)
 	if err != nil {
 		return nil, err
 	}
-	objCopy := make(map[string]interface{})
-	specCopy := make(map[string]interface{})
+	objCopy := make(map[string]any)
+	specCopy := make(map[string]any)
 
 	// Create a patch of the DaemonSet that replaces spec.template
-	spec := raw["spec"].(map[string]interface{})
-	template := spec["template"].(map[string]interface{})
+	spec := raw["spec"].(map[string]any)
+	template := spec["template"].(map[string]any)
 	specCopy["template"] = template
 	template["$patch"] = "replace"
 	objCopy["spec"] = specCopy

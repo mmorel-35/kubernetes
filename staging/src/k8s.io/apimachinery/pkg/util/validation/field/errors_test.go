@@ -81,7 +81,7 @@ func TestErrorUsefulMessage(t *testing.T) {
 	type complicated struct {
 		Baz   int
 		Qux   string
-		Inner interface{}
+		Inner any
 		KV    map[string]int
 	}
 	s = Invalid(

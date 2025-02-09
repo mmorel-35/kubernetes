@@ -127,10 +127,10 @@ func NewController(ctx context.Context, options *ControllerOptions) (*Controller
 
 	options.ResourceQuotaInformer.Informer().AddEventHandlerWithResyncPeriod(
 		cache.ResourceEventHandlerFuncs{
-			AddFunc: func(obj interface{}) {
+			AddFunc: func(obj any) {
 				rq.addQuota(logger, obj)
 			},
-			UpdateFunc: func(old, cur interface{}) {
+			UpdateFunc: func(old, cur any) {
 				// We are only interested in observing updates to quota.spec to drive updates to quota.status.
 				// We ignore all updates to quota.Status because they are all driven by this controller.
 				// IMPORTANT:
@@ -149,7 +149,7 @@ func NewController(ctx context.Context, options *ControllerOptions) (*Controller
 			// This will enter the sync loop and no-op, because the controller has been deleted from the store.
 			// Note that deleting a controller immediately after scaling it to 0 will not work. The recommended
 			// way of achieving this is by performing a `stop` operation on the controller.
-			DeleteFunc: func(obj interface{}) {
+			DeleteFunc: func(obj any) {
 				rq.enqueueResourceQuota(logger, obj)
 			},
 		},
@@ -210,7 +210,7 @@ func (rq *Controller) enqueueAll(ctx context.Context) {
 }
 
 // obj could be an *v1.ResourceQuota, or a DeletionFinalStateUnknown marker item.
-func (rq *Controller) enqueueResourceQuota(logger klog.Logger, obj interface{}) {
+func (rq *Controller) enqueueResourceQuota(logger klog.Logger, obj any) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		logger.Error(err, "Couldn't get key", "object", obj)
@@ -219,7 +219,7 @@ func (rq *Controller) enqueueResourceQuota(logger klog.Logger, obj interface{}) 
 	rq.queue.Add(key)
 }
 
-func (rq *Controller) addQuota(logger klog.Logger, obj interface{}) {
+func (rq *Controller) addQuota(logger klog.Logger, obj any) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		logger.Error(err, "Couldn't get key", "object", obj)

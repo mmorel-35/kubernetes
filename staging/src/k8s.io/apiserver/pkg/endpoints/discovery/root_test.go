@@ -52,7 +52,7 @@ func init() {
 	)
 }
 
-func decodeResponse(t *testing.T, resp *http.Response, obj interface{}) error {
+func decodeResponse(t *testing.T, resp *http.Response, obj any) error {
 	defer resp.Body.Close()
 
 	data, err := ioutil.ReadAll(resp.Body)

@@ -146,7 +146,7 @@ func (c *Controller) Run(ctx context.Context, workers int) {
 	<-ctx.Done()
 }
 
-func (c *Controller) addServiceCIDR(obj interface{}) {
+func (c *Controller) addServiceCIDR(obj any) {
 	cidr, ok := obj.(*networkingapiv1.ServiceCIDR)
 	if !ok {
 		return
@@ -157,7 +157,7 @@ func (c *Controller) addServiceCIDR(obj interface{}) {
 	}
 }
 
-func (c *Controller) updateServiceCIDR(oldObj, obj interface{}) {
+func (c *Controller) updateServiceCIDR(oldObj, obj any) {
 	key, err := cache.MetaNamespaceKeyFunc(obj)
 	if err == nil {
 		c.queue.Add(key)
@@ -165,7 +165,7 @@ func (c *Controller) updateServiceCIDR(oldObj, obj interface{}) {
 }
 
 // deleteServiceCIDR
-func (c *Controller) deleteServiceCIDR(obj interface{}) {
+func (c *Controller) deleteServiceCIDR(obj any) {
 	key, err := cache.DeletionHandlingMetaNamespaceKeyFunc(obj)
 	if err == nil {
 		c.queue.Add(key)
@@ -173,7 +173,7 @@ func (c *Controller) deleteServiceCIDR(obj interface{}) {
 }
 
 // addIPAddress may block a ServiceCIDR deletion
-func (c *Controller) addIPAddress(obj interface{}) {
+func (c *Controller) addIPAddress(obj any) {
 	ip, ok := obj.(*networkingapiv1.IPAddress)
 	if !ok {
 		return
@@ -185,7 +185,7 @@ func (c *Controller) addIPAddress(obj interface{}) {
 }
 
 // deleteIPAddress may unblock a ServiceCIDR deletion
-func (c *Controller) deleteIPAddress(obj interface{}) {
+func (c *Controller) deleteIPAddress(obj any) {
 	ip, ok := obj.(*networkingapiv1.IPAddress)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
@@ -418,8 +418,8 @@ func (c *Controller) addServiceCIDRFinalizerIfNeeded(ctx context.Context, cidr *
 		}
 	}
 
-	patch := map[string]interface{}{
-		"metadata": map[string]interface{}{
+	patch := map[string]any{
+		"metadata": map[string]any{
 			"finalizers": []string{ServiceCIDRProtectionFinalizer},
 		},
 	}
@@ -447,8 +447,8 @@ func (c *Controller) removeServiceCIDRFinalizerIfNeeded(ctx context.Context, cid
 	if !found {
 		return nil
 	}
-	patch := map[string]interface{}{
-		"metadata": map[string]interface{}{
+	patch := map[string]any{
+		"metadata": map[string]any{
 			"$deleteFromPrimitiveList/finalizers": []string{ServiceCIDRProtectionFinalizer},
 		},
 	}

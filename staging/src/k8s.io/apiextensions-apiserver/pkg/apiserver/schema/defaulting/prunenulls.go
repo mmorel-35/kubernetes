@@ -18,7 +18,7 @@ package defaulting
 
 import structuralschema "k8s.io/apiextensions-apiserver/pkg/apiserver/schema"
 
-func isNonNullableNonDefaultableNull(x interface{}, s *structuralschema.Structural) bool {
+func isNonNullableNonDefaultableNull(x any, s *structuralschema.Structural) bool {
 	return x == nil && s != nil && s.Generic.Nullable == false && s.Default.Object == nil
 }
 
@@ -41,9 +41,9 @@ func getSchemaForField(field string, s *structuralschema.Structural) *structural
 //
 // Non-nullable nulls that have a default are left alone here and will
 // be defaulted later.
-func PruneNonNullableNullsWithoutDefaults(x interface{}, s *structuralschema.Structural) {
+func PruneNonNullableNullsWithoutDefaults(x any, s *structuralschema.Structural) {
 	switch x := x.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		for k, v := range x {
 			schema := getSchemaForField(k, s)
 			if isNonNullableNonDefaultableNull(v, schema) {
@@ -52,7 +52,7 @@ func PruneNonNullableNullsWithoutDefaults(x interface{}, s *structuralschema.Str
 				PruneNonNullableNullsWithoutDefaults(v, schema)
 			}
 		}
-	case []interface{}:
+	case []any:
 		var schema *structuralschema.Structural
 		if s != nil {
 			schema = s.Items

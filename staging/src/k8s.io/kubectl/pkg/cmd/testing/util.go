@@ -167,7 +167,7 @@ func SubresourceTestData() *corev1.Pod {
 	}
 }
 
-func GenResponseWithJsonEncodedBody(bodyStruct interface{}) (*http.Response, error) {
+func GenResponseWithJsonEncodedBody(bodyStruct any) (*http.Response, error) {
 	jsonBytes, err := json.Marshal(bodyStruct)
 	if err != nil {
 		return nil, err

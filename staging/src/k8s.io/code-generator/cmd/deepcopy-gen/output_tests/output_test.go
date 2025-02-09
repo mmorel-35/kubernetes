@@ -34,7 +34,7 @@ import (
 )
 
 func TestWithValueFuzzer(t *testing.T) {
-	tests := []interface{}{
+	tests := []any{
 		aliases.Ttest{},
 		builtins.Ttest{},
 		interfaces.Ttest{},
@@ -91,7 +91,7 @@ func BenchmarkReflectDeepCopy(b *testing.B) {
 		Ptr:     &fourtytwoPtr,
 	}
 
-	tests := []interface{}{
+	tests := []any{
 		maps.Ttest{
 			Byte:         map[string]byte{"0": 42, "1": 42, "3": 42},
 			Int16:        map[string]int16{"0": 42, "1": 42, "3": 42},

@@ -907,10 +907,10 @@ var _ = SIGDescribe("Garbage collector", func() {
 		// Create a custom owner resource.
 		ownerName := names.SimpleNameGenerator.GenerateName("owner")
 		owner := &unstructured.Unstructured{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"apiVersion": apiVersion,
 				"kind":       definition.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": ownerName,
 				},
 			},
@@ -924,13 +924,13 @@ var _ = SIGDescribe("Garbage collector", func() {
 		// Create a custom dependent resource.
 		dependentName := names.SimpleNameGenerator.GenerateName("dependent")
 		dependent := &unstructured.Unstructured{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"apiVersion": apiVersion,
 				"kind":       definition.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": dependentName,
-					"ownerReferences": []interface{}{
-						map[string]interface{}{
+					"ownerReferences": []any{
+						map[string]any{
 							"uid":        string(persistedOwner.GetUID()),
 							"apiVersion": apiVersion,
 							"kind":       definition.Spec.Names.Kind,
@@ -957,10 +957,10 @@ var _ = SIGDescribe("Garbage collector", func() {
 		// so we have a signal when GC is aware of this custom resource type
 		canaryName := names.SimpleNameGenerator.GenerateName("canary")
 		canary := &unstructured.Unstructured{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"apiVersion": apiVersion,
 				"kind":       definition.Spec.Names.Kind,
-				"metadata":   map[string]interface{}{"name": canaryName}},
+				"metadata":   map[string]any{"name": canaryName}},
 		}
 		_, err = resourceClient.Create(ctx, canary, metav1.CreateOptions{})
 		if err != nil {
@@ -1042,10 +1042,10 @@ var _ = SIGDescribe("Garbage collector", func() {
 		// Create a custom owner resource.
 		ownerName := names.SimpleNameGenerator.GenerateName("owner")
 		owner := &unstructured.Unstructured{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"apiVersion": apiVersion,
 				"kind":       definition.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": ownerName,
 				},
 			},
@@ -1059,10 +1059,10 @@ var _ = SIGDescribe("Garbage collector", func() {
 		// Create a custom dependent resource.
 		dependentName := names.SimpleNameGenerator.GenerateName("dependent")
 		dependent := &unstructured.Unstructured{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"apiVersion": apiVersion,
 				"kind":       definition.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": dependentName,
 					"ownerReferences": []map[string]string{
 						{

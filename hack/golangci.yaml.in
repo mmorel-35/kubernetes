@@ -230,6 +230,7 @@ linters-settings: # please keep this alphabetized
       - name: exported
         arguments:
         - disableStutteringCheck
+      - name: use-any
   staticcheck:
     checks:
       - "all"

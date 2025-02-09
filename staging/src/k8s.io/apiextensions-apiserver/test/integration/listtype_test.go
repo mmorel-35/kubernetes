@@ -178,7 +178,7 @@ func TestListTypes(t *testing.T) {
 	modifiedInstance := validInstance.DeepCopy()
 	for _, valid := range validListTypeFields {
 		x := modifiedInstance.Object[valid]
-		l := x.([]interface{})
+		l := x.([]any)
 		l = append(l, l[0])
 		modifiedInstance.Object[valid] = l
 	}

@@ -20,8 +20,8 @@ package v1beta1
 
 // EventListerExpansion allows custom methods to be added to
 // EventLister.
-type EventListerExpansion interface{}
+type EventListerExpansion any
 
 // EventNamespaceListerExpansion allows custom methods to be added to
 // EventNamespaceLister.
-type EventNamespaceListerExpansion interface{}
+type EventNamespaceListerExpansion any

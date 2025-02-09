@@ -39,11 +39,11 @@ func TestConfigurationChannels(t *testing.T) {
 
 type MergeMock struct {
 	source string
-	update interface{}
+	update any
 	t      *testing.T
 }
 
-func (m MergeMock) Merge(source string, update interface{}) error {
+func (m MergeMock) Merge(source string, update any) error {
 	if m.source != source {
 		m.t.Errorf("Expected %s, Got %s", m.source, source)
 	}
@@ -63,9 +63,9 @@ func TestMergeInvoked(t *testing.T) {
 }
 
 // mergeFunc implements the Merger interface
-type mergeFunc func(source string, update interface{}) error
+type mergeFunc func(source string, update any) error
 
-func (f mergeFunc) Merge(source string, update interface{}) error {
+func (f mergeFunc) Merge(source string, update any) error {
 	return f(source, update)
 }
 
@@ -74,7 +74,7 @@ func TestSimultaneousMerge(t *testing.T) {
 	defer cancel()
 
 	ch := make(chan bool, 2)
-	mux := newMux(mergeFunc(func(source string, update interface{}) error {
+	mux := newMux(mergeFunc(func(source string, update any) error {
 		switch source {
 		case "one":
 			if update.(string) != "test" {

@@ -92,7 +92,7 @@ type Config struct {
 type ShouldResyncFunc func() bool
 
 // ProcessFunc processes a single object.
-type ProcessFunc func(obj interface{}, isInInitialList bool) error
+type ProcessFunc func(obj any, isInInitialList bool) error
 
 // `*controller` implements Controller
 type controller struct {
@@ -233,9 +233,9 @@ func (c *controller) processLoop(ctx context.Context) {
 //     happen if the watch is closed and misses the delete event and we don't
 //     notice the deletion until the subsequent re-list.
 type ResourceEventHandler interface {
-	OnAdd(obj interface{}, isInInitialList bool)
-	OnUpdate(oldObj, newObj interface{})
-	OnDelete(obj interface{})
+	OnAdd(obj any, isInInitialList bool)
+	OnUpdate(oldObj, newObj any)
+	OnDelete(obj any)
 }
 
 // ResourceEventHandlerFuncs is an adaptor to let you easily specify as many or
@@ -246,27 +246,27 @@ type ResourceEventHandler interface {
 // See ResourceEventHandlerDetailedFuncs if your use needs to propagate
 // HasSynced.
 type ResourceEventHandlerFuncs struct {
-	AddFunc    func(obj interface{})
-	UpdateFunc func(oldObj, newObj interface{})
-	DeleteFunc func(obj interface{})
+	AddFunc    func(obj any)
+	UpdateFunc func(oldObj, newObj any)
+	DeleteFunc func(obj any)
 }
 
 // OnAdd calls AddFunc if it's not nil.
-func (r ResourceEventHandlerFuncs) OnAdd(obj interface{}, isInInitialList bool) {
+func (r ResourceEventHandlerFuncs) OnAdd(obj any, isInInitialList bool) {
 	if r.AddFunc != nil {
 		r.AddFunc(obj)
 	}
 }
 
 // OnUpdate calls UpdateFunc if it's not nil.
-func (r ResourceEventHandlerFuncs) OnUpdate(oldObj, newObj interface{}) {
+func (r ResourceEventHandlerFuncs) OnUpdate(oldObj, newObj any) {
 	if r.UpdateFunc != nil {
 		r.UpdateFunc(oldObj, newObj)
 	}
 }
 
 // OnDelete calls DeleteFunc if it's not nil.
-func (r ResourceEventHandlerFuncs) OnDelete(obj interface{}) {
+func (r ResourceEventHandlerFuncs) OnDelete(obj any) {
 	if r.DeleteFunc != nil {
 		r.DeleteFunc(obj)
 	}
@@ -276,27 +276,27 @@ func (r ResourceEventHandlerFuncs) OnDelete(obj interface{}) {
 // except its AddFunc accepts the isInInitialList parameter, for propagating
 // HasSynced.
 type ResourceEventHandlerDetailedFuncs struct {
-	AddFunc    func(obj interface{}, isInInitialList bool)
-	UpdateFunc func(oldObj, newObj interface{})
-	DeleteFunc func(obj interface{})
+	AddFunc    func(obj any, isInInitialList bool)
+	UpdateFunc func(oldObj, newObj any)
+	DeleteFunc func(obj any)
 }
 
 // OnAdd calls AddFunc if it's not nil.
-func (r ResourceEventHandlerDetailedFuncs) OnAdd(obj interface{}, isInInitialList bool) {
+func (r ResourceEventHandlerDetailedFuncs) OnAdd(obj any, isInInitialList bool) {
 	if r.AddFunc != nil {
 		r.AddFunc(obj, isInInitialList)
 	}
 }
 
 // OnUpdate calls UpdateFunc if it's not nil.
-func (r ResourceEventHandlerDetailedFuncs) OnUpdate(oldObj, newObj interface{}) {
+func (r ResourceEventHandlerDetailedFuncs) OnUpdate(oldObj, newObj any) {
 	if r.UpdateFunc != nil {
 		r.UpdateFunc(oldObj, newObj)
 	}
 }
 
 // OnDelete calls DeleteFunc if it's not nil.
-func (r ResourceEventHandlerDetailedFuncs) OnDelete(obj interface{}) {
+func (r ResourceEventHandlerDetailedFuncs) OnDelete(obj any) {
 	if r.DeleteFunc != nil {
 		r.DeleteFunc(obj)
 	}
@@ -308,12 +308,12 @@ func (r ResourceEventHandlerDetailedFuncs) OnDelete(obj interface{}) {
 // object that stops passing the filter after an update is considered a delete.
 // Like the handlers, the filter MUST NOT modify the objects it is given.
 type FilteringResourceEventHandler struct {
-	FilterFunc func(obj interface{}) bool
+	FilterFunc func(obj any) bool
 	Handler    ResourceEventHandler
 }
 
 // OnAdd calls the nested handler only if the filter succeeds
-func (r FilteringResourceEventHandler) OnAdd(obj interface{}, isInInitialList bool) {
+func (r FilteringResourceEventHandler) OnAdd(obj any, isInInitialList bool) {
 	if !r.FilterFunc(obj) {
 		return
 	}
@@ -321,7 +321,7 @@ func (r FilteringResourceEventHandler) OnAdd(obj interface{}, isInInitialList bo
 }
 
 // OnUpdate ensures the proper handler is called depending on whether the filter matches
-func (r FilteringResourceEventHandler) OnUpdate(oldObj, newObj interface{}) {
+func (r FilteringResourceEventHandler) OnUpdate(oldObj, newObj any) {
 	newer := r.FilterFunc(newObj)
 	older := r.FilterFunc(oldObj)
 	switch {
@@ -337,7 +337,7 @@ func (r FilteringResourceEventHandler) OnUpdate(oldObj, newObj interface{}) {
 }
 
 // OnDelete calls the nested handler only if the filter succeeds
-func (r FilteringResourceEventHandler) OnDelete(obj interface{}) {
+func (r FilteringResourceEventHandler) OnDelete(obj any) {
 	if !r.FilterFunc(obj) {
 		return
 	}
@@ -347,7 +347,7 @@ func (r FilteringResourceEventHandler) OnDelete(obj interface{}) {
 // DeletionHandlingMetaNamespaceKeyFunc checks for
 // DeletedFinalStateUnknown objects before calling
 // MetaNamespaceKeyFunc.
-func DeletionHandlingMetaNamespaceKeyFunc(obj interface{}) (string, error) {
+func DeletionHandlingMetaNamespaceKeyFunc(obj any) (string, error) {
 	if d, ok := obj.(DeletedFinalStateUnknown); ok {
 		return d.Key, nil
 	}
@@ -357,7 +357,7 @@ func DeletionHandlingMetaNamespaceKeyFunc(obj interface{}) (string, error) {
 // DeletionHandlingObjectToName checks for
 // DeletedFinalStateUnknown objects before calling
 // ObjectToName.
-func DeletionHandlingObjectToName(obj interface{}) (ObjectName, error) {
+func DeletionHandlingObjectToName(obj any) (ObjectName, error) {
 	if d, ok := obj.(DeletedFinalStateUnknown); ok {
 		return ParseObjectName(d.Key)
 	}
@@ -612,7 +612,7 @@ func newInformer(clientState Store, options InformerOptions) Controller {
 		FullResyncPeriod: options.ResyncPeriod,
 		MinWatchTimeout:  options.MinWatchTimeout,
 
-		Process: func(obj interface{}, isInInitialList bool) error {
+		Process: func(obj any, isInInitialList bool) error {
 			if deltas, ok := obj.(Deltas); ok {
 				return processDeltas(options.Handler, clientState, deltas, isInInitialList)
 			}

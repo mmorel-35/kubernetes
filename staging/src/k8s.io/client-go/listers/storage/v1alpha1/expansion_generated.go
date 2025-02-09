@@ -20,16 +20,16 @@ package v1alpha1
 
 // CSIStorageCapacityListerExpansion allows custom methods to be added to
 // CSIStorageCapacityLister.
-type CSIStorageCapacityListerExpansion interface{}
+type CSIStorageCapacityListerExpansion any
 
 // CSIStorageCapacityNamespaceListerExpansion allows custom methods to be added to
 // CSIStorageCapacityNamespaceLister.
-type CSIStorageCapacityNamespaceListerExpansion interface{}
+type CSIStorageCapacityNamespaceListerExpansion any
 
 // VolumeAttachmentListerExpansion allows custom methods to be added to
 // VolumeAttachmentLister.
-type VolumeAttachmentListerExpansion interface{}
+type VolumeAttachmentListerExpansion any
 
 // VolumeAttributesClassListerExpansion allows custom methods to be added to
 // VolumeAttributesClassLister.
-type VolumeAttributesClassListerExpansion interface{}
+type VolumeAttributesClassListerExpansion any

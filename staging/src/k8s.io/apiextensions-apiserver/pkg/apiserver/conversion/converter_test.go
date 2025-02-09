@@ -44,14 +44,14 @@ func TestConversion(t *testing.T) {
 			ClusterScoped: false,
 			ToVersion:     "example.com/v2",
 			SourceObject: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "example.com/v1",
 					"other":      "data",
 					"kind":       "foo",
 				},
 			},
 			ExpectedObject: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "example.com/v2",
 					"other":      "data",
 					"kind":       "foo",
@@ -65,7 +65,7 @@ func TestConversion(t *testing.T) {
 			ClusterScoped: false,
 			ToVersion:     "example.com/v3",
 			SourceObject: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "example.com/v1",
 					"other":      "data",
 				},
@@ -78,20 +78,20 @@ func TestConversion(t *testing.T) {
 			ClusterScoped: false,
 			ToVersion:     "example.com/v2",
 			SourceObject: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "example.com/v1",
 					"kind":       "fooList",
 				},
 				Items: []unstructured.Unstructured{
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"apiVersion": "example.com/v1",
 							"kind":       "foo",
 							"other":      "data",
 						},
 					},
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"apiVersion": "example.com/v1",
 							"kind":       "foo",
 							"other":      "data2",
@@ -100,20 +100,20 @@ func TestConversion(t *testing.T) {
 				},
 			},
 			ExpectedObject: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "example.com/v2",
 					"kind":       "fooList",
 				},
 				Items: []unstructured.Unstructured{
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"apiVersion": "example.com/v2",
 							"kind":       "foo",
 							"other":      "data",
 						},
 					},
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"apiVersion": "example.com/v2",
 							"kind":       "foo",
 							"other":      "data2",
@@ -129,20 +129,20 @@ func TestConversion(t *testing.T) {
 			ClusterScoped: false,
 			ToVersion:     "example.com/v2",
 			SourceObject: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "example.com/v1",
 					"kind":       "fooList",
 				},
 				Items: []unstructured.Unstructured{
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"apiVersion": "example.com/v1",
 							"kind":       "foo",
 							"other":      "data",
 						},
 					},
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"apiVersion": "example.com/v3",
 							"kind":       "foo",
 							"other":      "data2",

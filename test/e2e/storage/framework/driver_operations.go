@@ -32,10 +32,10 @@ import (
 // For example:
 //   - [Driver: nfs]
 //   - [Driver: rbd], feature.Volumes
-func GetDriverNameWithFeatureTags(driver TestDriver) []interface{} {
+func GetDriverNameWithFeatureTags(driver TestDriver) []any {
 	dInfo := driver.GetDriverInfo()
 
-	return append([]interface{}{fmt.Sprintf("[Driver: %s]", dInfo.Name)}, dInfo.TestTags...)
+	return append([]any{fmt.Sprintf("[Driver: %s]", dInfo.Name)}, dInfo.TestTags...)
 }
 
 // CreateVolume creates volume for test unless dynamicPV or CSI ephemeral inline volume test

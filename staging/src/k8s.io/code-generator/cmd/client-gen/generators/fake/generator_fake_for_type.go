@@ -70,7 +70,7 @@ func (g *genFakeForType) GenerateType(c *generator.Context, t *types.Type, w io.
 	}
 
 	const pkgClientGoTesting = "k8s.io/client-go/testing"
-	m := map[string]interface{}{
+	m := map[string]any{
 		"type":                t,
 		"inputType":           t,
 		"resultType":          t,

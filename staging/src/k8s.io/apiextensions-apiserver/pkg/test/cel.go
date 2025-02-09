@@ -81,7 +81,7 @@ func VersionValidatorsFromFile(t *testing.T, crdFilePath string) map[string]CELV
 		require.NoError(t, err, "failed to convert JSONSchemaProps for version %s: %v", v.Name, err)
 		structuralSchema, err := schema.NewStructural(&internalSchema)
 		require.NoError(t, err, "failed to create StructuralSchema for version %s: %v", v.Name, err)
-		ret[v.Name] = func(obj, old interface{}) field.ErrorList {
+		ret[v.Name] = func(obj, old any) field.ErrorList {
 			errs, _ := cel.NewValidator(structuralSchema, true, celconfig.RuntimeCELCostBudget).Validate(context.TODO(), nil, structuralSchema, obj, old, celconfig.PerCallLimit)
 			return errs
 		}
@@ -101,7 +101,7 @@ func VersionValidatorFromFile(t *testing.T, crdFilePath string, version string) 
 }
 
 // CELValidateFunc tests a sample object against a CEL validator.
-type CELValidateFunc func(obj, old interface{}) field.ErrorList
+type CELValidateFunc func(obj, old any) field.ErrorList
 
 func findCEL(t *testing.T, s *schema.Structural, root bool, pth *field.Path) (map[string]CELValidateFunc, error) {
 	ret := map[string]CELValidateFunc{}
@@ -109,7 +109,7 @@ func findCEL(t *testing.T, s *schema.Structural, root bool, pth *field.Path) (ma
 	if len(s.XValidations) > 0 {
 		s := *s
 		pth := *pth
-		ret[pth.String()] = func(obj, old interface{}) field.ErrorList {
+		ret[pth.String()] = func(obj, old any) field.ErrorList {
 			errs, _ := cel.NewValidator(&s, root, celconfig.RuntimeCELCostBudget).Validate(context.TODO(), &pth, &s, obj, old, celconfig.PerCallLimit)
 			return errs
 		}

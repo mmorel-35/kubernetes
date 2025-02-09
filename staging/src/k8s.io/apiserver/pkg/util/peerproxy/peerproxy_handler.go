@@ -195,7 +195,7 @@ func (h *peerProxyHandler) resolveServingLocation(apiservers *sync.Map) (bool, [
 	var locallyServiceable bool
 	var respErr error
 
-	apiservers.Range(func(key, value interface{}) bool {
+	apiservers.Range(func(key, value any) bool {
 		apiserverKey := key.(string)
 		if apiserverKey == h.serverId {
 			locallyServiceable = true
@@ -270,7 +270,7 @@ func (r *responder) Error(w http.ResponseWriter, req *http.Request, err error) {
 }
 
 // Adds a storageversion object to SVMap
-func (h *peerProxyHandler) addSV(obj interface{}) {
+func (h *peerProxyHandler) addSV(obj any) {
 	sv, ok := obj.(*v1alpha1.StorageVersion)
 	if !ok {
 		klog.Error("Invalid StorageVersion provided to addSV()")
@@ -280,7 +280,7 @@ func (h *peerProxyHandler) addSV(obj interface{}) {
 }
 
 // Updates the SVMap to delete old storageversion and add new storageversion
-func (h *peerProxyHandler) updateSV(oldObj interface{}, newObj interface{}) {
+func (h *peerProxyHandler) updateSV(oldObj any, newObj any) {
 	oldSV, ok := oldObj.(*v1alpha1.StorageVersion)
 	if !ok {
 		klog.Error("Invalid StorageVersion provided to updateSV()")
@@ -297,7 +297,7 @@ func (h *peerProxyHandler) updateSV(oldObj interface{}, newObj interface{}) {
 }
 
 // Deletes a storageversion object from SVMap
-func (h *peerProxyHandler) deleteSV(obj interface{}) {
+func (h *peerProxyHandler) deleteSV(obj any) {
 	sv, ok := obj.(*v1alpha1.StorageVersion)
 	if !ok {
 		klog.Error("Invalid StorageVersion provided to deleteSV()")

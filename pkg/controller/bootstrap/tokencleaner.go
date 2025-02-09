@@ -88,7 +88,7 @@ func NewTokenCleaner(cl clientset.Interface, secrets coreinformers.SecretInforme
 
 	secrets.Informer().AddEventHandlerWithResyncPeriod(
 		cache.FilteringResourceEventHandler{
-			FilterFunc: func(obj interface{}) bool {
+			FilterFunc: func(obj any) bool {
 				switch t := obj.(type) {
 				case *v1.Secret:
 					return t.Type == bootstrapapi.SecretTypeBootstrapToken && t.Namespace == e.tokenSecretNamespace
@@ -99,7 +99,7 @@ func NewTokenCleaner(cl clientset.Interface, secrets coreinformers.SecretInforme
 			},
 			Handler: cache.ResourceEventHandlerFuncs{
 				AddFunc:    e.enqueueSecrets,
-				UpdateFunc: func(oldSecret, newSecret interface{}) { e.enqueueSecrets(newSecret) },
+				UpdateFunc: func(oldSecret, newSecret any) { e.enqueueSecrets(newSecret) },
 			},
 		},
 		options.SecretResync,
@@ -126,7 +126,7 @@ func (tc *TokenCleaner) Run(ctx context.Context) {
 	<-ctx.Done()
 }
 
-func (tc *TokenCleaner) enqueueSecrets(obj interface{}) {
+func (tc *TokenCleaner) enqueueSecrets(obj any) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(err)
@@ -187,7 +187,7 @@ func (tc *TokenCleaner) syncFunc(ctx context.Context, key string) error {
 	return nil
 }
 
-func (tc *TokenCleaner) evalSecret(ctx context.Context, o interface{}) {
+func (tc *TokenCleaner) evalSecret(ctx context.Context, o any) {
 	logger := klog.FromContext(ctx)
 	secret := o.(*v1.Secret)
 	ttl, alreadyExpired := bootstrapsecretutil.GetExpiration(secret, time.Now())

@@ -1238,7 +1238,7 @@ func Test_isSchedulableAfterNodeChange(t *testing.T) {
 	testcases := map[string]struct {
 		args           *config.NodeAffinityArgs
 		pod            *v1.Pod
-		oldObj, newObj interface{}
+		oldObj, newObj any
 		expectedHint   framework.QueueingHint
 		expectedErr    bool
 	}{

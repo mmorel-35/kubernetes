@@ -32,7 +32,7 @@ func TestCelCostStability(t *testing.T) {
 	cases := []struct {
 		name       string
 		schema     *schema.Structural
-		obj        map[string]interface{}
+		obj        map[string]any
 		expectCost map[string]int64
 	}{
 		{name: "integers",
@@ -183,7 +183,7 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "enums",
-			obj: map[string]interface{}{"enumStr": "Pending"},
+			obj: map[string]any{"enumStr": "Pending"},
 			schema: objectTypePtr(map[string]schema.Structural{"enumStr": {
 				Generic: schema.Generic{
 					Type: "string",
@@ -221,7 +221,7 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "lists",
-			obj:    objs([]interface{}{1, 2, 3}, []interface{}{1, 2, 3}),
+			obj:    objs([]any{1, 2, 3}, []any{1, 2, 3}),
 			schema: schemas(listType(&integerType), listType(&integerType)),
 			expectCost: map[string]int64{
 				ValsEqualThemselvesAndDataLiteral("self.val1", "self.val2", "[1, 2, 3]"): 11,
@@ -235,7 +235,7 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "listSets",
-			obj:    objs([]interface{}{"a", "b", "c"}, []interface{}{"a", "c", "b"}, buildLargeArray(1000)),
+			obj:    objs([]any{"a", "b", "c"}, []any{"a", "c", "b"}, buildLargeArray(1000)),
 			schema: schemas(listSetType(&stringType), listSetType(&stringType), listSetType(&integerType)),
 			expectCost: map[string]int64{
 				// equal even though order is different
@@ -255,22 +255,22 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "listMaps",
-			obj: map[string]interface{}{
-				"objs": []interface{}{
-					[]interface{}{
-						map[string]interface{}{"k": "a", "v": "1"},
-						map[string]interface{}{"k": "b", "v": "2"},
+			obj: map[string]any{
+				"objs": []any{
+					[]any{
+						map[string]any{"k": "a", "v": "1"},
+						map[string]any{"k": "b", "v": "2"},
 					},
-					[]interface{}{
-						map[string]interface{}{"k": "b", "v": "2"},
-						map[string]interface{}{"k": "a", "v": "1"},
+					[]any{
+						map[string]any{"k": "b", "v": "2"},
+						map[string]any{"k": "a", "v": "1"},
 					},
-					[]interface{}{
-						map[string]interface{}{"k": "b", "v": "3"},
-						map[string]interface{}{"k": "a", "v": "1"},
+					[]any{
+						map[string]any{"k": "b", "v": "3"},
+						map[string]any{"k": "a", "v": "1"},
 					},
-					[]interface{}{
-						map[string]interface{}{"k": "c", "v": "4"},
+					[]any{
+						map[string]any{"k": "c", "v": "4"},
 					},
 				},
 			},
@@ -293,7 +293,7 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "maps",
-			obj:    objs(map[string]interface{}{"k1": "a", "k2": "b"}, map[string]interface{}{"k2": "b", "k1": "a"}),
+			obj:    objs(map[string]any{"k1": "a", "k2": "b"}, map[string]any{"k2": "b", "k1": "a"}),
 			schema: schemas(mapType(&stringType), mapType(&stringType)),
 			expectCost: map[string]int64{
 				"self.val1 == self.val2":              5, // equal even though order is different
@@ -303,10 +303,10 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "objects",
-			obj: map[string]interface{}{
-				"objs": []interface{}{
-					map[string]interface{}{"f1": "a", "f2": "b"},
-					map[string]interface{}{"f1": "a", "f2": "b"},
+			obj: map[string]any{
+				"objs": []any{
+					map[string]any{"f1": "a", "f2": "b"},
+					map[string]any{"f1": "a", "f2": "b"},
 				},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -320,17 +320,17 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "object access",
-			obj: map[string]interface{}{
-				"a": map[string]interface{}{
+			obj: map[string]any{
+				"a": map[string]any{
 					"b": 1,
 					"d": nil,
 				},
-				"a1": map[string]interface{}{
-					"b1": map[string]interface{}{
+				"a1": map[string]any{
+					"b1": map[string]any{
 						"c1": 4,
 					},
 				},
-				"a3": map[string]interface{}{},
+				"a3": map[string]any{},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
 				"a": objectType(map[string]schema.Structural{
@@ -356,8 +356,8 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "map access",
-			obj: map[string]interface{}{
-				"val": map[string]interface{}{
+			obj: map[string]any{
+				"val": map[string]any{
 					"b": 1,
 					"d": 2,
 				},
@@ -398,11 +398,11 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "listMap access",
-			obj: map[string]interface{}{
-				"listMap": []interface{}{
-					map[string]interface{}{"k": "a1", "v": "b1"},
-					map[string]interface{}{"k": "a2", "v": "b2"},
-					map[string]interface{}{"k": "a3", "v": "b3", "v2": "z"},
+			obj: map[string]any{
+				"listMap": []any{
+					map[string]any{"k": "a1", "v": "b1"},
+					map[string]any{"k": "a2", "v": "b2"},
+					map[string]any{"k": "a3", "v": "b3", "v2": "z"},
 				},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -450,8 +450,8 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "list access",
-			obj: map[string]interface{}{
-				"array": []interface{}{1, 1, 2, 2, 3, 3, 4, 5},
+			obj: map[string]any{
+				"array": []any{1, 1, 2, 2, 3, 3, 4, 5},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
 				"array": listType(&integerType),
@@ -478,8 +478,8 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "listSet access",
-			obj: map[string]interface{}{
-				"set": []interface{}{1, 2, 3, 4, 5},
+			obj: map[string]any{
+				"set": []any{1, 2, 3, 4, 5},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
 				"set": listType(&integerType),
@@ -499,10 +499,10 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "typemeta and objectmeta access specified",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"apiVersion": "v1",
 				"kind":       "Pod",
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name":         "foo",
 					"generateName": "pickItForMe",
 					"namespace":    "xyz",
@@ -524,15 +524,15 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "typemeta and objectmeta access not specified",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"apiVersion": "v1",
 				"kind":       "Pod",
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name":         "foo",
 					"generateName": "pickItForMe",
 					"namespace":    "xyz",
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"field1": "a",
 				},
 			},
@@ -552,16 +552,16 @@ func TestCelCostStability(t *testing.T) {
 
 		// Kubernetes special types
 		{name: "embedded object",
-			obj: map[string]interface{}{
-				"embedded": map[string]interface{}{
+			obj: map[string]any{
+				"embedded": map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Pod",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name":         "foo",
 						"generateName": "pickItForMe",
 						"namespace":    "xyz",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"field1": "a",
 					},
 				},
@@ -584,16 +584,16 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "embedded object with properties",
-			obj: map[string]interface{}{
-				"embedded": map[string]interface{}{
+			obj: map[string]any{
+				"embedded": map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Pod",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name":         "foo",
 						"generateName": "pickItForMe",
 						"namespace":    "xyz",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"field1": "a",
 					},
 				},
@@ -629,16 +629,16 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "embedded object with preserve unknown",
-			obj: map[string]interface{}{
-				"embedded": map[string]interface{}{
+			obj: map[string]any{
+				"embedded": map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Pod",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name":         "foo",
 						"generateName": "pickItForMe",
 						"namespace":    "xyz",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"field1": "a",
 					},
 				},
@@ -665,7 +665,7 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "string in intOrString",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"something": "25%",
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -690,7 +690,7 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "int in intOrString",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"something": int64(1),
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -715,7 +715,7 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "null in intOrString",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"something": nil,
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -726,7 +726,7 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "percent comparison using intOrString",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"min":       "50%",
 				"current":   5,
 				"available": 10,
@@ -744,40 +744,40 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "preserve unknown fields",
-			obj: map[string]interface{}{
-				"withUnknown": map[string]interface{}{
+			obj: map[string]any{
+				"withUnknown": map[string]any{
 					"field1": "a",
 					"field2": "b",
 				},
-				"withUnknownList": []interface{}{
-					map[string]interface{}{
+				"withUnknownList": []any{
+					map[string]any{
 						"field1": "a",
 						"field2": "b",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"field1": "x",
 						"field2": "y",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"field1": "x",
 						"field2": "y",
 					},
-					map[string]interface{}{},
-					map[string]interface{}{},
+					map[string]any{},
+					map[string]any{},
 				},
-				"withUnknownFieldList": []interface{}{
-					map[string]interface{}{
+				"withUnknownFieldList": []any{
+					map[string]any{
 						"fieldOfUnknownType": "a",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"fieldOfUnknownType": 1,
 					},
-					map[string]interface{}{
+					map[string]any{
 						"fieldOfUnknownType": 1,
 					},
 				},
-				"anyvalList":   []interface{}{"a", 2},
-				"anyvalMap":    map[string]interface{}{"k": "1"},
+				"anyvalList":   []any{"a", 2},
+				"anyvalMap":    map[string]any{"k": "1"},
 				"anyvalField1": 1,
 				"anyvalField2": "a",
 			},
@@ -839,31 +839,31 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "known and unknown fields",
-			obj: map[string]interface{}{
-				"withUnknown": map[string]interface{}{
+			obj: map[string]any{
+				"withUnknown": map[string]any{
 					"known":   1,
 					"unknown": "a",
 				},
-				"withUnknownList": []interface{}{
-					map[string]interface{}{
+				"withUnknownList": []any{
+					map[string]any{
 						"known":   1,
 						"unknown": "a",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"known":   1,
 						"unknown": "b",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"known":   1,
 						"unknown": "b",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"known": 1,
 					},
-					map[string]interface{}{
+					map[string]any{
 						"known": 1,
 					},
-					map[string]interface{}{
+					map[string]any{
 						"known": 2,
 					},
 				},
@@ -909,7 +909,7 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "field nullability",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"setPlainStr":          "v1",
 				"setDefaultedStr":      "v2",
 				"setNullableStr":       "v3",
@@ -946,15 +946,15 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "null values in container types",
-			obj: map[string]interface{}{
-				"m": map[string]interface{}{
+			obj: map[string]any{
+				"m": map[string]any{
 					"a": nil,
 					"b": "not-nil",
 				},
-				"l": []interface{}{
+				"l": []any{
 					nil, "not-nil",
 				},
-				"s": []interface{}{
+				"s": []any{
 					nil, "not-nil",
 				},
 			},
@@ -971,20 +971,20 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "object types are not accessible",
-			obj: map[string]interface{}{
-				"nestedInMap": map[string]interface{}{
-					"k1": map[string]interface{}{
+			obj: map[string]any{
+				"nestedInMap": map[string]any{
+					"k1": map[string]any{
 						"inMapField": 1,
 					},
-					"k2": map[string]interface{}{
+					"k2": map[string]any{
 						"inMapField": 2,
 					},
 				},
-				"nestedInList": []interface{}{
-					map[string]interface{}{
+				"nestedInList": []any{
+					map[string]any{
 						"inListField": 1,
 					},
-					map[string]interface{}{
+					map[string]any{
 						"inListField": 2,
 					},
 				},
@@ -1006,23 +1006,23 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "listMaps with unsupported identity characters in property names",
-			obj: map[string]interface{}{
-				"objs": []interface{}{
-					[]interface{}{
-						map[string]interface{}{"k!": "a", "k.": "1"},
-						map[string]interface{}{"k!": "b", "k.": "2"},
+			obj: map[string]any{
+				"objs": []any{
+					[]any{
+						map[string]any{"k!": "a", "k.": "1"},
+						map[string]any{"k!": "b", "k.": "2"},
 					},
-					[]interface{}{
-						map[string]interface{}{"k!": "b", "k.": "2"},
-						map[string]interface{}{"k!": "a", "k.": "1"},
+					[]any{
+						map[string]any{"k!": "b", "k.": "2"},
+						map[string]any{"k!": "a", "k.": "1"},
 					},
-					[]interface{}{
-						map[string]interface{}{"k!": "b", "k.": "2"},
-						map[string]interface{}{"k!": "c", "k.": "1"},
+					[]any{
+						map[string]any{"k!": "b", "k.": "2"},
+						map[string]any{"k!": "c", "k.": "1"},
 					},
-					[]interface{}{
-						map[string]interface{}{"k!": "b", "k.": "2"},
-						map[string]interface{}{"k!": "a", "k.": "3"},
+					[]any{
+						map[string]any{"k!": "b", "k.": "2"},
+						map[string]any{"k!": "a", "k.": "3"},
 					},
 				},
 			},
@@ -1038,50 +1038,50 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "container type composition",
-			obj: map[string]interface{}{
-				"obj": map[string]interface{}{
+			obj: map[string]any{
+				"obj": map[string]any{
 					"field": "a",
 				},
-				"mapOfMap": map[string]interface{}{
-					"x": map[string]interface{}{
+				"mapOfMap": map[string]any{
+					"x": map[string]any{
 						"y": "b",
 					},
 				},
-				"mapOfObj": map[string]interface{}{
-					"k": map[string]interface{}{
+				"mapOfObj": map[string]any{
+					"k": map[string]any{
 						"field2": "c",
 					},
 				},
-				"mapOfListMap": map[string]interface{}{
-					"o": []interface{}{
-						map[string]interface{}{
+				"mapOfListMap": map[string]any{
+					"o": []any{
+						map[string]any{
 							"k": "1",
 							"v": "d",
 						},
 					},
 				},
-				"mapOfList": map[string]interface{}{
-					"l": []interface{}{"e"},
+				"mapOfList": map[string]any{
+					"l": []any{"e"},
 				},
-				"listMapOfObj": []interface{}{
-					map[string]interface{}{
+				"listMapOfObj": []any{
+					map[string]any{
 						"k2": "2",
 						"v2": "f",
 					},
 				},
-				"listOfMap": []interface{}{
-					map[string]interface{}{
+				"listOfMap": []any{
+					map[string]any{
 						"z": "g",
 					},
 				},
-				"listOfObj": []interface{}{
-					map[string]interface{}{
+				"listOfObj": []any{
+					map[string]any{
 						"field3": "h",
 					},
 				},
-				"listOfListMap": []interface{}{
-					[]interface{}{
-						map[string]interface{}{
+				"listOfListMap": []any{
+					[]any{
+						map[string]any{
 							"k3": "3",
 							"v3": "i",
 						},
@@ -1141,14 +1141,14 @@ func TestCelCostStability(t *testing.T) {
 			},
 		},
 		{name: "optionals",
-			obj: map[string]interface{}{
-				"obj": map[string]interface{}{
+			obj: map[string]any{
+				"obj": map[string]any{
 					"field": "a",
 				},
-				"m": map[string]interface{}{
+				"m": map[string]any{
 					"k": "v",
 				},
-				"l": []interface{}{
+				"l": []any{
 					"a",
 				},
 			},
@@ -1230,8 +1230,8 @@ func TestCelCostStability(t *testing.T) {
 	}
 }
 
-func buildLargeArray(size int) []interface{} {
-	lArray := make([]interface{}, size)
+func buildLargeArray(size int) []any {
+	lArray := make([]any, size)
 	for i := 0; i < len(lArray); i++ {
 		lArray[i] = i
 	}

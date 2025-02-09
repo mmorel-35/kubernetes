@@ -153,7 +153,7 @@ type applyPatchOperation struct {
 	description string
 	gvr         schema.GroupVersionResource
 	name        string
-	patch       interface{}
+	patch       any
 }
 
 func (a applyPatchOperation) Do(ctx *ratchetingTestContext) error {
@@ -164,7 +164,7 @@ func (a applyPatchOperation) Do(ctx *ratchetingTestContext) error {
 	}
 
 	patch := &unstructured.Unstructured{}
-	if obj, ok := a.patch.(map[string]interface{}); ok {
+	if obj, ok := a.patch.(map[string]any); ok {
 		patch.Object = runtime.DeepCopyJSON(obj)
 	} else if str, ok := a.patch.(string); ok {
 		str = FixTabsOrDie(str)
@@ -176,7 +176,7 @@ func (a applyPatchOperation) Do(ctx *ratchetingTestContext) error {
 	}
 
 	if ctx.StatusSubresource {
-		patch.Object = map[string]interface{}{"status": patch.Object}
+		patch.Object = map[string]any{"status": patch.Object}
 	}
 
 	patch.SetKind(kind)
@@ -269,7 +269,7 @@ func (u updateMyCRDV1Beta1Schema) Do(ctx *ratchetingTestContext) error {
 			err = applyPatchOperation{
 				gvr:  myCRDV1Beta1,
 				name: "sentinel-resource",
-				patch: map[string]interface{}{
+				patch: map[string]any{
 					sentinelName: fmt.Sprintf("invalid-%d", counter),
 				}}.Do(ctx)
 
@@ -296,14 +296,14 @@ func (u updateMyCRDV1Beta1Schema) Description() string {
 
 type patchMyCRDV1Beta1Schema struct {
 	description string
-	patch       map[string]interface{}
+	patch       map[string]any
 }
 
 func (p patchMyCRDV1Beta1Schema) Do(ctx *ratchetingTestContext) error {
 	patch := p.patch
 	if ctx.StatusSubresource {
-		patch = map[string]interface{}{
-			"properties": map[string]interface{}{
+		patch = map[string]any{
+			"properties": map[string]any{
 				"status": patch,
 			},
 		}
@@ -494,26 +494,26 @@ func TestRatchetingFunctionality(t *testing.T) {
 					"Create an object that complies with the schema",
 					myCRDV1Beta1,
 					myCRDInstanceName,
-					map[string]interface{}{
+					map[string]any{
 						"hasMinimum":           int64(0),
 						"hasMaximum":           int64(1000),
 						"hasMinimumAndMaximum": int64(50),
 					}},
 				patchMyCRDV1Beta1Schema{
 					"Add stricter minimums and maximums that violate the previous object",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"hasMinimum": map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"hasMinimum": map[string]any{
 								"minimum": int64(10),
 							},
-							"hasMaximum": map[string]interface{}{
+							"hasMaximum": map[string]any{
 								"maximum": int64(20),
 							},
-							"hasMinimumAndMaximum": map[string]interface{}{
+							"hasMinimumAndMaximum": map[string]any{
 								"minimum": int64(10),
 								"maximum": int64(20),
 							},
-							"noRestrictions": map[string]interface{}{
+							"noRestrictions": map[string]any{
 								"type": "integer",
 							},
 						},
@@ -522,32 +522,32 @@ func TestRatchetingFunctionality(t *testing.T) {
 					"Add new fields that validates successfully without changing old ones",
 					myCRDV1Beta1,
 					myCRDInstanceName,
-					map[string]interface{}{
+					map[string]any{
 						"noRestrictions": int64(50),
 					}},
 				expectError{
 					applyPatchOperation{
 						"Change a single old field to be invalid",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
 							"hasMinimum": int64(5),
 						}},
 				},
 				expectError{
 					applyPatchOperation{
 						"Change multiple old fields to be invalid",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
 							"hasMinimum": int64(5),
 							"hasMaximum": int64(21),
 						}},
 				},
 				applyPatchOperation{
 					"Change single old field to be valid",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"hasMinimum": int64(11),
 					}},
 				applyPatchOperation{
 					"Change multiple old fields to be valid",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"hasMaximum":           int64(19),
 						"hasMinimumAndMaximum": int64(15),
 					}},
@@ -565,50 +565,50 @@ func TestRatchetingFunctionality(t *testing.T) {
 				}},
 				applyPatchOperation{
 					"Create an instance with a soon-to-be-invalid value",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"enumField": "okValueNowBadValueLater",
 					}},
 				patchMyCRDV1Beta1Schema{
 					"restrict `enumField` to an enum of A, B, or C",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"enumField": map[string]interface{}{
-								"enum": []interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"enumField": map[string]any{
+								"enum": []any{
 									"A", "B", "C",
 								},
 							},
-							"otherField": map[string]interface{}{
+							"otherField": map[string]any{
 								"type": "string",
 							},
 						},
 					}},
 				applyPatchOperation{
 					"An invalid patch with no changes is a noop",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"enumField": "okValueNowBadValueLater",
 					}},
 				applyPatchOperation{
 					"Add a new field, and include old value in our patch",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"enumField":  "okValueNowBadValueLater",
 						"otherField": "anythingGoes",
 					}},
 				expectError{
 					applyPatchOperation{
 						"Set enumField to invalid value D",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
 							"enumField": "D",
 						}},
 				},
 				applyPatchOperation{
 					"Set to a valid value",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"enumField": "A",
 					}},
 				expectError{
 					applyPatchOperation{
 						"After setting a valid value, return to the old, accepted value",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
 							"enumField": "okValueNowBadValueLater",
 						}},
 				},
@@ -626,22 +626,22 @@ func TestRatchetingFunctionality(t *testing.T) {
 				}},
 				applyPatchOperation{
 					"Create an instance",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"nums": map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"nums": map[string]any{
 							"num1": int64(1),
 							"num2": int64(1000000),
 						},
-						"content": map[string]interface{}{
+						"content": map[string]any{
 							"k1": "some content",
 							"k2": "other content",
 						},
 					}},
 				patchMyCRDV1Beta1Schema{
 					"set minimum value for fields with additionalProperties",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"nums": map[string]interface{}{
-								"additionalProperties": map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"nums": map[string]any{
+								"additionalProperties": map[string]any{
 									"minimum": int64(1000),
 								},
 							},
@@ -649,16 +649,16 @@ func TestRatchetingFunctionality(t *testing.T) {
 					}},
 				applyPatchOperation{
 					"updating validating field num2 to another validating value, but rachet invalid field num1",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"nums": map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"nums": map[string]any{
 							"num1": int64(1),
 							"num2": int64(2000),
 						},
 					}},
 				expectError{applyPatchOperation{
 					"update field num1 to different invalid value",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"nums": map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"nums": map[string]any{
 							"num1": int64(2),
 							"num2": int64(2000),
 						},
@@ -687,17 +687,17 @@ func TestRatchetingFunctionality(t *testing.T) {
 				}},
 				applyPatchOperation{
 					"Create instance",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"restricted": map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"restricted": map[string]any{
 							"key1": "hi",
 							"key2": "there",
 						},
 					}},
 				patchMyCRDV1Beta1Schema{
 					"set both minProperties and maxProperties to 1 to violate the previous object",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"restricted": map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"restricted": map[string]any{
 								"minProperties": int64(1),
 								"maxProperties": int64(1),
 							},
@@ -705,32 +705,32 @@ func TestRatchetingFunctionality(t *testing.T) {
 					}},
 				applyPatchOperation{
 					"ratchet violating object 'restricted' around changes to unrelated field",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"restricted": map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"restricted": map[string]any{
 							"key1": "hi",
 							"key2": "there",
 						},
-						"unrestricted": map[string]interface{}{
+						"unrestricted": map[string]any{
 							"key1": "yo",
 						},
 					}},
 				expectError{applyPatchOperation{
 					"make invalid changes to previously ratcheted invalid field",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"restricted": map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"restricted": map[string]any{
 							"key1": "changed",
 							"key2": "there",
 						},
-						"unrestricted": map[string]interface{}{
+						"unrestricted": map[string]any{
 							"key1": "yo",
 						},
 					}}},
 
 				patchMyCRDV1Beta1Schema{
 					"remove maxProeprties, set minProperties to 2",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"restricted": map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"restricted": map[string]any{
 								"minProperties": int64(2),
 								"maxProperties": nil,
 							},
@@ -738,8 +738,8 @@ func TestRatchetingFunctionality(t *testing.T) {
 					}},
 				applyPatchOperation{
 					"a new value",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"restricted": map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"restricted": map[string]any{
 							"key1": "hi",
 							"key2": "there",
 							"key3": "buddy",
@@ -748,8 +748,8 @@ func TestRatchetingFunctionality(t *testing.T) {
 
 				expectError{applyPatchOperation{
 					"violate new validation by removing keys",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"restricted": map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"restricted": map[string]any{
 							"key1": "hi",
 							"key2": nil,
 							"key3": nil,
@@ -757,9 +757,9 @@ func TestRatchetingFunctionality(t *testing.T) {
 					}}},
 				patchMyCRDV1Beta1Schema{
 					"remove minProperties, set maxProperties to 1",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"restricted": map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"restricted": map[string]any{
 								"minProperties": nil,
 								"maxProperties": int64(1),
 							},
@@ -767,13 +767,13 @@ func TestRatchetingFunctionality(t *testing.T) {
 					}},
 				applyPatchOperation{
 					"modify only the other key, ratcheting maxProperties for field `restricted`",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"restricted": map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"restricted": map[string]any{
 							"key1": "hi",
 							"key2": "there",
 							"key3": "buddy",
 						},
-						"unrestricted": map[string]interface{}{
+						"unrestricted": map[string]any{
 							"key1": "value",
 							"key2": "value",
 						},
@@ -781,8 +781,8 @@ func TestRatchetingFunctionality(t *testing.T) {
 				expectError{
 					applyPatchOperation{
 						"modifying one value in the object with maxProperties restriction, but keeping old fields",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-							"restricted": map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
+							"restricted": map[string]any{
 								"key1": "hi",
 								"key2": "theres",
 								"key3": "buddy",
@@ -807,48 +807,48 @@ func TestRatchetingFunctionality(t *testing.T) {
 				}},
 				applyPatchOperation{
 					"Create instance",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"array": []interface{}{"value1", "value2", "value3"},
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"array": []any{"value1", "value2", "value3"},
 					}},
 				patchMyCRDV1Beta1Schema{
 					"change minItems on array to 10, invalidates previous object",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"array": map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"array": map[string]any{
 								"minItems": int64(10),
 							},
 						},
 					}},
 				applyPatchOperation{
 					"keep invalid field `array` unchanged, add new field with ratcheting",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"array": []interface{}{"value1", "value2", "value3"},
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"array": []any{"value1", "value2", "value3"},
 						"field": "value",
 					}},
 				expectError{
 					applyPatchOperation{
 						"modify array element without satisfying property",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-							"array": []interface{}{"value2", "value2", "value3"},
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
+							"array": []any{"value2", "value2", "value3"},
 						}}},
 
 				expectError{
 					applyPatchOperation{
 						"add array element without satisfying proeprty",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-							"array": []interface{}{"value1", "value2", "value3", "value4"},
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
+							"array": []any{"value1", "value2", "value3", "value4"},
 						}}},
 
 				applyPatchOperation{
 					"make array valid",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"array": []interface{}{"value1", "value2", "value3", "4", "5", "6", "7", "8", "9", "10"},
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"array": []any{"value1", "value2", "value3", "4", "5", "6", "7", "8", "9", "10"},
 					}},
 				expectError{
 					applyPatchOperation{
 						"revert to original value",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-							"array": []interface{}{"value1", "value2", "value3"},
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
+							"array": []any{"value1", "value2", "value3"},
 						}}},
 			},
 		},
@@ -869,48 +869,48 @@ func TestRatchetingFunctionality(t *testing.T) {
 				}},
 				applyPatchOperation{
 					"create instance",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"array": []interface{}{"value1", "value2", "value3"},
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"array": []any{"value1", "value2", "value3"},
 					}},
 				patchMyCRDV1Beta1Schema{
 					"change maxItems on array to 1, invalidates previous object",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"array": map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"array": map[string]any{
 								"maxItems": int64(1),
 							},
 						},
 					}},
 				applyPatchOperation{
 					"ratchet old value of array through an update to another field",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"array": []interface{}{"value1", "value2", "value3"},
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"array": []any{"value1", "value2", "value3"},
 						"field": "value",
 					}},
 				expectError{
 					applyPatchOperation{
 						"modify array element without satisfying property",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-							"array": []interface{}{"value2", "value2", "value3"},
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
+							"array": []any{"value2", "value2", "value3"},
 						}}},
 
 				expectError{
 					applyPatchOperation{
 						"remove array element without satisfying proeprty",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-							"array": []interface{}{"value1", "value2"},
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
+							"array": []any{"value1", "value2"},
 						}}},
 
 				applyPatchOperation{
 					"change array to valid value that satisfies maxItems",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"array": []interface{}{"value1"},
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"array": []any{"value1"},
 					}},
 				expectError{
 					applyPatchOperation{
 						"revert to previous invalid ratcheted value",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-							"array": []interface{}{"value1", "value2", "value3"},
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
+							"array": []any{"value1", "value2", "value3"},
 						}}},
 			},
 		},
@@ -927,57 +927,57 @@ func TestRatchetingFunctionality(t *testing.T) {
 				}},
 				applyPatchOperation{
 					"create instance",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"minField": "value",
 						"maxField": "valueThatsVeryLongSee",
 					}},
 				patchMyCRDV1Beta1Schema{
 					"set minField maxLength to 10, and maxField's minLength to 15",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"minField": map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"minField": map[string]any{
 								"minLength": int64(10),
 							},
-							"maxField": map[string]interface{}{
+							"maxField": map[string]any{
 								"maxLength": int64(15),
 							},
 						},
 					}},
 				applyPatchOperation{
 					"add new field `otherField`, ratcheting `minField` and `maxField`",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"minField":   "value",
 						"maxField":   "valueThatsVeryLongSee",
 						"otherField": "otherValue",
 					}},
 				applyPatchOperation{
 					"make minField valid, ratcheting old value for maxField",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"minField":   "valuelength13",
 						"maxField":   "valueThatsVeryLongSee",
 						"otherField": "otherValue",
 					}},
 				applyPatchOperation{
 					"make maxField shorter",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"maxField": "l2",
 					}},
 				expectError{
 					applyPatchOperation{
 						"make maxField too long",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
 							"maxField": "valuewithlength17",
 						}}},
 				expectError{
 					applyPatchOperation{
 						"revert minFIeld to previously ratcheted value",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
 							"minField": "value",
 						}}},
 				expectError{
 					applyPatchOperation{
 						"revert maxField to previously ratcheted value",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
 							"maxField": "valueThatsVeryLongSee",
 						}}},
 			},
@@ -993,36 +993,36 @@ func TestRatchetingFunctionality(t *testing.T) {
 				}},
 				applyPatchOperation{
 					"create instance",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"field": "doesnt abide pattern",
 					}},
 				patchMyCRDV1Beta1Schema{
 					"add pattern validation on `field`",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"field": map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"field": map[string]any{
 								"pattern": "^[1-9]+$",
 							},
-							"otherField": map[string]interface{}{
+							"otherField": map[string]any{
 								"type": "string",
 							},
 						},
 					}},
 				applyPatchOperation{
 					"add unrelated field, ratcheting old invalid field",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"field":      "doesnt abide pattern",
 						"otherField": "added",
 					}},
 				expectError{applyPatchOperation{
 					"change field to invalid value",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"field":      "w123",
 						"otherField": "added",
 					}}},
 				applyPatchOperation{
 					"change field to a valid value",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"field":      "123",
 						"otherField": "added",
 					}},
@@ -1039,69 +1039,69 @@ func TestRatchetingFunctionality(t *testing.T) {
 				}},
 				applyPatchOperation{
 					"create instance",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"field": "doesnt abide any format",
 					}},
 				patchMyCRDV1Beta1Schema{
 					"change `field`'s format to `byte",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"field": map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"field": map[string]any{
 								"format": "byte",
 							},
-							"otherField": map[string]interface{}{
+							"otherField": map[string]any{
 								"type": "string",
 							},
 						},
 					}},
 				applyPatchOperation{
 					"add unrelated otherField, ratchet invalid old field format",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"field":      "doesnt abide any format",
 						"otherField": "value",
 					}},
 				expectError{applyPatchOperation{
 					"change field to an invalid string",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"field": "asd",
 					}}},
 				applyPatchOperation{
 					"change field to a valid byte string",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"field": "dGhpcyBpcyBwYXNzd29yZA==",
 					}},
 				patchMyCRDV1Beta1Schema{
 					"change `field`'s format to date-time",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"field": map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"field": map[string]any{
 								"format": "date-time",
 							},
 						},
 					}},
 				applyPatchOperation{
 					"change otherField, ratchet `field`'s invalid byte format",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"field":      "dGhpcyBpcyBwYXNzd29yZA==",
 						"otherField": "value2",
 					}},
 				applyPatchOperation{
 					"change `field` to a valid value",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"field":      "2018-11-13T20:20:39+00:00",
 						"otherField": "value2",
 					}},
 				expectError{
 					applyPatchOperation{
 						"revert `field` to previously ratcheted value",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
 							"field":      "dGhpcyBpcyBwYXNzd29yZA==",
 							"otherField": "value2",
 						}}},
 				expectError{
 					applyPatchOperation{
 						"revert `field` to its initial value from creation",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
 							"field": "doesnt abide any format",
 						}}},
 			},
@@ -1132,19 +1132,19 @@ func TestRatchetingFunctionality(t *testing.T) {
 				}},
 				applyPatchOperation{
 					"create instance with three soon-to-be-invalid keys",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"field": []interface{}{
-							map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"field": []any{
+							map[string]any{
 								"name":  "nginx",
 								"port":  int64(443),
 								"field": "value",
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name":  "etcd",
 								"port":  int64(2379),
 								"field": "value",
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name":  "kube-apiserver",
 								"port":  int64(6443),
 								"field": "value",
@@ -1153,28 +1153,28 @@ func TestRatchetingFunctionality(t *testing.T) {
 					}},
 				patchMyCRDV1Beta1Schema{
 					"set `field`'s maxItems to 2, which is exceeded by all of previous object's elements",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"field": map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"field": map[string]any{
 								"maxItems": int64(2),
 							},
 						},
 					}},
 				applyPatchOperation{
 					"reorder invalid objects which have too many properties, but do not modify them or change keys",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"field": []interface{}{
-							map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"field": []any{
+							map[string]any{
 								"name":  "kube-apiserver",
 								"port":  int64(6443),
 								"field": "value",
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name":  "nginx",
 								"port":  int64(443),
 								"field": "value",
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name":  "etcd",
 								"port":  int64(2379),
 								"field": "value",
@@ -1184,24 +1184,24 @@ func TestRatchetingFunctionality(t *testing.T) {
 				expectError{
 					applyPatchOperation{
 						"attempt to change one of the fields of the items which exceed maxItems",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-							"field": []interface{}{
-								map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
+							"field": []any{
+								map[string]any{
 									"name":  "kube-apiserver",
 									"port":  int64(6443),
 									"field": "value",
 								},
-								map[string]interface{}{
+								map[string]any{
 									"name":  "nginx",
 									"port":  int64(443),
 									"field": "value",
 								},
-								map[string]interface{}{
+								map[string]any{
 									"name":  "etcd",
 									"port":  int64(2379),
 									"field": "value",
 								},
-								map[string]interface{}{
+								map[string]any{
 									"name":  "dev",
 									"port":  int64(8080),
 									"field": "value",
@@ -1210,13 +1210,13 @@ func TestRatchetingFunctionality(t *testing.T) {
 						}}},
 				patchMyCRDV1Beta1Schema{
 					"Require even numbered port in key, remove maxItems requirement",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"field": map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"field": map[string]any{
 								"maxItems": nil,
-								"items": map[string]interface{}{
-									"properties": map[string]interface{}{
-										"port": map[string]interface{}{
+								"items": map[string]any{
+									"properties": map[string]any{
+										"port": map[string]any{
 											"multipleOf": int64(2),
 										},
 									},
@@ -1227,19 +1227,19 @@ func TestRatchetingFunctionality(t *testing.T) {
 
 				applyPatchOperation{
 					"reorder fields without changing anything",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"field": []interface{}{
-							map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"field": []any{
+							map[string]any{
 								"name":  "nginx",
 								"port":  int64(443),
 								"field": "value",
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name":  "etcd",
 								"port":  int64(2379),
 								"field": "value",
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name":  "kube-apiserver",
 								"port":  int64(6443),
 								"field": "value",
@@ -1249,24 +1249,24 @@ func TestRatchetingFunctionality(t *testing.T) {
 
 				applyPatchOperation{
 					`use "invalid" keys despite changing order and changing sibling fields to the key`,
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"field": []interface{}{
-							map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"field": []any{
+							map[string]any{
 								"name":  "nginx",
 								"port":  int64(443),
 								"field": "value",
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name":  "etcd",
 								"port":  int64(2379),
 								"field": "value",
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name":  "kube-apiserver",
 								"port":  int64(6443),
 								"field": "this is a changed value for an an invalid but grandfathered key",
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name":  "dev",
 								"port":  int64(8080),
 								"field": "value",
@@ -1292,13 +1292,13 @@ func TestRatchetingFunctionality(t *testing.T) {
 				}},
 				applyPatchOperation{
 					"create instance with length 5 values",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"values": []interface{}{
-							map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"values": []any{
+							map[string]any{
 								"name": "1",
 								"key":  "value",
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name": "2",
 								"key":  "value",
 							},
@@ -1306,11 +1306,11 @@ func TestRatchetingFunctionality(t *testing.T) {
 					}},
 				patchMyCRDV1Beta1Schema{
 					"Set minimum length of 6 for values of elements in the items array",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"values": map[string]interface{}{
-								"items": map[string]interface{}{
-									"additionalProperties": map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"values": map[string]any{
+								"items": map[string]any{
+									"additionalProperties": map[string]any{
 										"minLength": int64(6),
 									},
 								},
@@ -1320,13 +1320,13 @@ func TestRatchetingFunctionality(t *testing.T) {
 				expectError{
 					applyPatchOperation{
 						"change value to one that exceeds minLength",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-							"values": []interface{}{
-								map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
+							"values": []any{
+								map[string]any{
 									"name": "1",
 									"key":  "value",
 								},
-								map[string]interface{}{
+								map[string]any{
 									"name": "2",
 									"key":  "bad",
 								},
@@ -1334,13 +1334,13 @@ func TestRatchetingFunctionality(t *testing.T) {
 						}}},
 				applyPatchOperation{
 					"add new fields without touching the map",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"values": []interface{}{
-							map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"values": []any{
+							map[string]any{
 								"name": "1",
 								"key":  "value",
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name": "2",
 								"key":  "value",
 							},
@@ -1350,13 +1350,13 @@ func TestRatchetingFunctionality(t *testing.T) {
 				// (This test shows an array cannpt be correlated by index with its old value)
 				expectError{applyPatchOperation{
 					"add new, valid fields to elements of the array, failing to ratchet unchanged old fields within the array elements by correlating by index due to atomic list",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"values": []interface{}{
-							map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"values": []any{
+							map[string]any{
 								"name": "1",
 								"key":  "value",
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name": "2",
 								"key":  "value",
 								"key2": "valid value",
@@ -1366,14 +1366,14 @@ func TestRatchetingFunctionality(t *testing.T) {
 				expectError{
 					applyPatchOperation{
 						"reorder the array, preventing index correlation",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-							"values": []interface{}{
-								map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
+							"values": []any{
+								map[string]any{
 									"name": "2",
 									"key":  "value",
 									"key2": "valid value",
 								},
-								map[string]interface{}{
+								map[string]any{
 									"name": "1",
 									"key":  "value",
 								},
@@ -1403,14 +1403,14 @@ func TestRatchetingFunctionality(t *testing.T) {
 
 				applyPatchOperation{
 					"create instance passes since oldself is null",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
 						"field": "value",
 					}},
 
 				expectError{
 					applyPatchOperation{
 						"update field fails, since oldself is not null",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
 							"field": "value2",
 						},
 					},
@@ -1419,7 +1419,7 @@ func TestRatchetingFunctionality(t *testing.T) {
 				expectError{
 					applyPatchOperation{
 						"noop update field fails, since oldself is not null and transition rules are not ratcheted",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
 							"field": "value",
 						},
 					},
@@ -1510,17 +1510,17 @@ func TestRatchetingFunctionality(t *testing.T) {
 				}},
 				applyPatchOperation{
 					"create instance with strings that do not start with k8s",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"field": map[string]interface{}{
-							"object1": map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"field": map[string]any{
+							"object1": map[string]any{
 								"stringField": "a string",
 								"intField":    int64(5),
 							},
-							"object2": map[string]interface{}{
+							"object2": map[string]any{
 								"stringField": "another string",
 								"intField":    int64(15),
 							},
-							"object3": map[string]interface{}{
+							"object3": map[string]any{
 								"stringField": "a third string",
 								"intField":    int64(7),
 							},
@@ -1528,14 +1528,14 @@ func TestRatchetingFunctionality(t *testing.T) {
 					}},
 				patchMyCRDV1Beta1Schema{
 					"require that stringField value start with `k8s`",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"field": map[string]interface{}{
-								"additionalProperties": map[string]interface{}{
-									"properties": map[string]interface{}{
-										"stringField": map[string]interface{}{
-											"x-kubernetes-validations": []interface{}{
-												map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"field": map[string]any{
+								"additionalProperties": map[string]any{
+									"properties": map[string]any{
+										"stringField": map[string]any{
+											"x-kubernetes-validations": []any{
+												map[string]any{
 													"rule":    "self.startsWith('k8s')",
 													"message": "strings must have k8s prefix",
 												},
@@ -1548,21 +1548,21 @@ func TestRatchetingFunctionality(t *testing.T) {
 					}},
 				applyPatchOperation{
 					"add a new entry that follows the new rule, ratchet old values",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"field": map[string]interface{}{
-							"object1": map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"field": map[string]any{
+							"object1": map[string]any{
 								"stringField": "a string",
 								"intField":    int64(5),
 							},
-							"object2": map[string]interface{}{
+							"object2": map[string]any{
 								"stringField": "another string",
 								"intField":    int64(15),
 							},
-							"object3": map[string]interface{}{
+							"object3": map[string]any{
 								"stringField": "a third string",
 								"intField":    int64(7),
 							},
-							"object4": map[string]interface{}{
+							"object4": map[string]any{
 								"stringField": "k8s third string",
 								"intField":    int64(7),
 							},
@@ -1570,13 +1570,13 @@ func TestRatchetingFunctionality(t *testing.T) {
 					}},
 				applyPatchOperation{
 					"modify a sibling to an invalid value, ratcheting the unchanged invalid value",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"field": map[string]interface{}{
-							"object1": map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"field": map[string]any{
+							"object1": map[string]any{
 								"stringField": "a string",
 								"intField":    int64(15),
 							},
-							"object2": map[string]interface{}{
+							"object2": map[string]any{
 								"stringField":   "another string",
 								"intField":      int64(10),
 								"otherIntField": int64(20),
@@ -1586,29 +1586,29 @@ func TestRatchetingFunctionality(t *testing.T) {
 				expectError{
 					applyPatchOperation{
 						"change a previously ratcheted field to an invalid value",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-							"field": map[string]interface{}{
-								"object2": map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
+							"field": map[string]any{
+								"object2": map[string]any{
 									"stringField": "a changed string",
 								},
-								"object3": map[string]interface{}{
+								"object3": map[string]any{
 									"stringField": "a changed third string",
 								},
 							},
 						}}},
 				patchMyCRDV1Beta1Schema{
 					"require that stringField values are also odd length",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"field": map[string]interface{}{
-								"additionalProperties": map[string]interface{}{
-									"stringField": map[string]interface{}{
-										"x-kubernetes-validations": []interface{}{
-											map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"field": map[string]any{
+								"additionalProperties": map[string]any{
+									"stringField": map[string]any{
+										"x-kubernetes-validations": []any{
+											map[string]any{
 												"rule":    "self.startsWith('k8s')",
 												"message": "strings must have k8s prefix",
 											},
-											map[string]interface{}{
+											map[string]any{
 												"rule":    "len(self) % 2 == 1",
 												"message": "strings must have odd length",
 											},
@@ -1620,13 +1620,13 @@ func TestRatchetingFunctionality(t *testing.T) {
 					}},
 				applyPatchOperation{
 					"have mixed ratcheting of one or two CEL rules, object4 is ratcheted by one rule, object1 is ratcheting 2 rules",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"field": map[string]interface{}{
-							"object1": map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"field": map[string]any{
+							"object1": map[string]any{
 								"stringField": "a string", // invalid. even number length, no k8s prefix
 								"intField":    int64(1000),
 							},
-							"object4": map[string]interface{}{
+							"object4": map[string]any{
 								"stringField": "k8s third string", // invalid. even number length. ratcheted
 								"intField":    int64(7000),
 							},
@@ -1635,13 +1635,13 @@ func TestRatchetingFunctionality(t *testing.T) {
 				expectError{
 					applyPatchOperation{
 						"swap keys between valuesin the map",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-							"field": map[string]interface{}{
-								"object1": map[string]interface{}{
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
+							"field": map[string]any{
+								"object1": map[string]any{
 									"stringField": "k8s third string",
 									"intField":    int64(1000),
 								},
-								"object4": map[string]interface{}{
+								"object4": map[string]any{
 									"stringField": "a string",
 									"intField":    int64(7000),
 								},
@@ -1649,13 +1649,13 @@ func TestRatchetingFunctionality(t *testing.T) {
 						}}},
 				applyPatchOperation{
 					"fix keys",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"field": map[string]interface{}{
-							"object1": map[string]interface{}{
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"field": map[string]any{
+							"object1": map[string]any{
 								"stringField": "k8s a stringy",
 								"intField":    int64(1000),
 							},
-							"object4": map[string]interface{}{
+							"object4": map[string]any{
 								"stringField": "k8s third stringy",
 								"intField":    int64(7000),
 							},
@@ -1694,17 +1694,17 @@ func TestRatchetingFunctionality(t *testing.T) {
 				}},
 				applyPatchOperation{
 					"reate a list of numbers with duplicates using the old simple schema",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"values": map[string]interface{}{
-							"dups": []interface{}{int64(1), int64(2), int64(2), int64(3), int64(1000), int64(2000)},
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"values": map[string]any{
+							"dups": []any{int64(1), int64(2), int64(2), int64(3), int64(1000), int64(2000)},
 						},
 					}},
 				patchMyCRDV1Beta1Schema{
 					"change list type to set",
-					map[string]interface{}{
-						"properties": map[string]interface{}{
-							"values": map[string]interface{}{
-								"additionalProperties": map[string]interface{}{
+					map[string]any{
+						"properties": map[string]any{
+							"values": map[string]any{
+								"additionalProperties": map[string]any{
 									"x-kubernetes-list-type": "set",
 								},
 							},
@@ -1713,17 +1713,17 @@ func TestRatchetingFunctionality(t *testing.T) {
 				expectError{
 					applyPatchOperation{
 						"change original without removing duplicates",
-						myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-							"values": map[string]interface{}{
-								"dups": []interface{}{int64(1), int64(2), int64(2), int64(3), int64(1000), int64(2000), int64(3)},
+						myCRDV1Beta1, myCRDInstanceName, map[string]any{
+							"values": map[string]any{
+								"dups": []any{int64(1), int64(2), int64(2), int64(3), int64(1000), int64(2000), int64(3)},
 							},
 						}}},
 				expectError{applyPatchOperation{
 					"add another list with duplicates",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"values": map[string]interface{}{
-							"dups":  []interface{}{int64(1), int64(2), int64(2), int64(3), int64(1000), int64(2000)},
-							"dups2": []interface{}{int64(1), int64(2), int64(2), int64(3), int64(1000), int64(2000)},
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"values": map[string]any{
+							"dups":  []any{int64(1), int64(2), int64(2), int64(3), int64(1000), int64(2000)},
+							"dups2": []any{int64(1), int64(2), int64(2), int64(3), int64(1000), int64(2000)},
 						},
 					}}},
 				// Can add a valid sibling field
@@ -1731,10 +1731,10 @@ func TestRatchetingFunctionality(t *testing.T) {
 				// the type of a list
 				applyPatchOperation{
 					"add a valid sibling field",
-					myCRDV1Beta1, myCRDInstanceName, map[string]interface{}{
-						"values": map[string]interface{}{
-							"dups":       []interface{}{int64(1), int64(2), int64(2), int64(3), int64(1000), int64(2000)},
-							"otherField": []interface{}{int64(1), int64(2), int64(3)},
+					myCRDV1Beta1, myCRDInstanceName, map[string]any{
+						"values": map[string]any{
+							"dups":       []any{int64(1), int64(2), int64(2), int64(3), int64(1000), int64(2000)},
+							"otherField": []any{int64(1), int64(2), int64(3)},
 						},
 					}},
 				// Can remove dups to make valid
@@ -1745,10 +1745,10 @@ func TestRatchetingFunctionality(t *testing.T) {
 					"remove dups to make list valid",
 					myCRDV1Beta1,
 					myCRDInstanceName,
-					map[string]interface{}{
-						"values": map[string]interface{}{
-							"dups":       []interface{}{int64(1), int64(3), int64(1000), int64(2000)},
-							"otherField": []interface{}{int64(1), int64(2), int64(3)},
+					map[string]any{
+						"values": map[string]any{
+							"dups":       []any{int64(1), int64(3), int64(1000), int64(2000)},
+							"otherField": []any{int64(1), int64(2), int64(3)},
 						},
 					}},
 			},

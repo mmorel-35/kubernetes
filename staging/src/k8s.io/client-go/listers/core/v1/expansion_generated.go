@@ -20,104 +20,104 @@ package v1
 
 // ComponentStatusListerExpansion allows custom methods to be added to
 // ComponentStatusLister.
-type ComponentStatusListerExpansion interface{}
+type ComponentStatusListerExpansion any
 
 // ConfigMapListerExpansion allows custom methods to be added to
 // ConfigMapLister.
-type ConfigMapListerExpansion interface{}
+type ConfigMapListerExpansion any
 
 // ConfigMapNamespaceListerExpansion allows custom methods to be added to
 // ConfigMapNamespaceLister.
-type ConfigMapNamespaceListerExpansion interface{}
+type ConfigMapNamespaceListerExpansion any
 
 // EndpointsListerExpansion allows custom methods to be added to
 // EndpointsLister.
-type EndpointsListerExpansion interface{}
+type EndpointsListerExpansion any
 
 // EndpointsNamespaceListerExpansion allows custom methods to be added to
 // EndpointsNamespaceLister.
-type EndpointsNamespaceListerExpansion interface{}
+type EndpointsNamespaceListerExpansion any
 
 // EventListerExpansion allows custom methods to be added to
 // EventLister.
-type EventListerExpansion interface{}
+type EventListerExpansion any
 
 // EventNamespaceListerExpansion allows custom methods to be added to
 // EventNamespaceLister.
-type EventNamespaceListerExpansion interface{}
+type EventNamespaceListerExpansion any
 
 // LimitRangeListerExpansion allows custom methods to be added to
 // LimitRangeLister.
-type LimitRangeListerExpansion interface{}
+type LimitRangeListerExpansion any
 
 // LimitRangeNamespaceListerExpansion allows custom methods to be added to
 // LimitRangeNamespaceLister.
-type LimitRangeNamespaceListerExpansion interface{}
+type LimitRangeNamespaceListerExpansion any
 
 // NamespaceListerExpansion allows custom methods to be added to
 // NamespaceLister.
-type NamespaceListerExpansion interface{}
+type NamespaceListerExpansion any
 
 // NodeListerExpansion allows custom methods to be added to
 // NodeLister.
-type NodeListerExpansion interface{}
+type NodeListerExpansion any
 
 // PersistentVolumeListerExpansion allows custom methods to be added to
 // PersistentVolumeLister.
-type PersistentVolumeListerExpansion interface{}
+type PersistentVolumeListerExpansion any
 
 // PersistentVolumeClaimListerExpansion allows custom methods to be added to
 // PersistentVolumeClaimLister.
-type PersistentVolumeClaimListerExpansion interface{}
+type PersistentVolumeClaimListerExpansion any
 
 // PersistentVolumeClaimNamespaceListerExpansion allows custom methods to be added to
 // PersistentVolumeClaimNamespaceLister.
-type PersistentVolumeClaimNamespaceListerExpansion interface{}
+type PersistentVolumeClaimNamespaceListerExpansion any
 
 // PodListerExpansion allows custom methods to be added to
 // PodLister.
-type PodListerExpansion interface{}
+type PodListerExpansion any
 
 // PodNamespaceListerExpansion allows custom methods to be added to
 // PodNamespaceLister.
-type PodNamespaceListerExpansion interface{}
+type PodNamespaceListerExpansion any
 
 // PodTemplateListerExpansion allows custom methods to be added to
 // PodTemplateLister.
-type PodTemplateListerExpansion interface{}
+type PodTemplateListerExpansion any
 
 // PodTemplateNamespaceListerExpansion allows custom methods to be added to
 // PodTemplateNamespaceLister.
-type PodTemplateNamespaceListerExpansion interface{}
+type PodTemplateNamespaceListerExpansion any
 
 // ResourceQuotaListerExpansion allows custom methods to be added to
 // ResourceQuotaLister.
-type ResourceQuotaListerExpansion interface{}
+type ResourceQuotaListerExpansion any
 
 // ResourceQuotaNamespaceListerExpansion allows custom methods to be added to
 // ResourceQuotaNamespaceLister.
-type ResourceQuotaNamespaceListerExpansion interface{}
+type ResourceQuotaNamespaceListerExpansion any
 
 // SecretListerExpansion allows custom methods to be added to
 // SecretLister.
-type SecretListerExpansion interface{}
+type SecretListerExpansion any
 
 // SecretNamespaceListerExpansion allows custom methods to be added to
 // SecretNamespaceLister.
-type SecretNamespaceListerExpansion interface{}
+type SecretNamespaceListerExpansion any
 
 // ServiceListerExpansion allows custom methods to be added to
 // ServiceLister.
-type ServiceListerExpansion interface{}
+type ServiceListerExpansion any
 
 // ServiceNamespaceListerExpansion allows custom methods to be added to
 // ServiceNamespaceLister.
-type ServiceNamespaceListerExpansion interface{}
+type ServiceNamespaceListerExpansion any
 
 // ServiceAccountListerExpansion allows custom methods to be added to
 // ServiceAccountLister.
-type ServiceAccountListerExpansion interface{}
+type ServiceAccountListerExpansion any
 
 // ServiceAccountNamespaceListerExpansion allows custom methods to be added to
 // ServiceAccountNamespaceLister.
-type ServiceAccountNamespaceListerExpansion interface{}
+type ServiceAccountNamespaceListerExpansion any

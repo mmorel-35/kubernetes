@@ -75,7 +75,7 @@ func ServeHTTPWithETag(
 	)
 }
 
-func calculateETag(resources interface{}) (string, error) {
+func calculateETag(resources any) (string, error) {
 	serialized, err := json.Marshal(resources)
 	if err != nil {
 		return "", err

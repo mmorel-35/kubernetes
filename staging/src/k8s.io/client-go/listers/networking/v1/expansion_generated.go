@@ -20,28 +20,28 @@ package v1
 
 // IPAddressListerExpansion allows custom methods to be added to
 // IPAddressLister.
-type IPAddressListerExpansion interface{}
+type IPAddressListerExpansion any
 
 // IngressListerExpansion allows custom methods to be added to
 // IngressLister.
-type IngressListerExpansion interface{}
+type IngressListerExpansion any
 
 // IngressNamespaceListerExpansion allows custom methods to be added to
 // IngressNamespaceLister.
-type IngressNamespaceListerExpansion interface{}
+type IngressNamespaceListerExpansion any
 
 // IngressClassListerExpansion allows custom methods to be added to
 // IngressClassLister.
-type IngressClassListerExpansion interface{}
+type IngressClassListerExpansion any
 
 // NetworkPolicyListerExpansion allows custom methods to be added to
 // NetworkPolicyLister.
-type NetworkPolicyListerExpansion interface{}
+type NetworkPolicyListerExpansion any
 
 // NetworkPolicyNamespaceListerExpansion allows custom methods to be added to
 // NetworkPolicyNamespaceLister.
-type NetworkPolicyNamespaceListerExpansion interface{}
+type NetworkPolicyNamespaceListerExpansion any
 
 // ServiceCIDRListerExpansion allows custom methods to be added to
 // ServiceCIDRLister.
-type ServiceCIDRListerExpansion interface{}
+type ServiceCIDRListerExpansion any

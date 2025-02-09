@@ -63,7 +63,7 @@ func TestMetadataSharedInformerFactory(t *testing.T) {
 			},
 			handler: func(rcvCh chan<- *metav1.PartialObjectMetadata) *cache.ResourceEventHandlerFuncs {
 				return &cache.ResourceEventHandlerFuncs{
-					AddFunc: func(obj interface{}) {
+					AddFunc: func(obj any) {
 						rcvCh <- obj.(*metav1.PartialObjectMetadata)
 					},
 				}
@@ -89,7 +89,7 @@ func TestMetadataSharedInformerFactory(t *testing.T) {
 			},
 			handler: func(rcvCh chan<- *metav1.PartialObjectMetadata) *cache.ResourceEventHandlerFuncs {
 				return &cache.ResourceEventHandlerFuncs{
-					UpdateFunc: func(old, updated interface{}) {
+					UpdateFunc: func(old, updated any) {
 						rcvCh <- updated.(*metav1.PartialObjectMetadata)
 					},
 				}
@@ -111,7 +111,7 @@ func TestMetadataSharedInformerFactory(t *testing.T) {
 			},
 			handler: func(rcvCh chan<- *metav1.PartialObjectMetadata) *cache.ResourceEventHandlerFuncs {
 				return &cache.ResourceEventHandlerFuncs{
-					DeleteFunc: func(obj interface{}) {
+					DeleteFunc: func(obj any) {
 						rcvCh <- obj.(*metav1.PartialObjectMetadata)
 					},
 				}

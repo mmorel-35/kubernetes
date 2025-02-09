@@ -48,12 +48,12 @@ func AddMetaToScheme(scheme *runtime.Scheme) error {
 
 // RegisterConversions adds conversion functions to the given scheme.
 func RegisterConversions(s *runtime.Scheme) error {
-	if err := s.AddGeneratedConversionFunc((*PartialObjectMetadataList)(nil), (*v1.PartialObjectMetadataList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*PartialObjectMetadataList)(nil), (*v1.PartialObjectMetadataList)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convert_v1beta1_PartialObjectMetadataList_To_v1_PartialObjectMetadataList(a.(*PartialObjectMetadataList), b.(*v1.PartialObjectMetadataList), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v1.PartialObjectMetadataList)(nil), (*PartialObjectMetadataList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*v1.PartialObjectMetadataList)(nil), (*PartialObjectMetadataList)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convert_v1_PartialObjectMetadataList_To_v1beta1_PartialObjectMetadataList(a.(*v1.PartialObjectMetadataList), b.(*PartialObjectMetadataList), scope)
 	}); err != nil {
 		return err

@@ -77,33 +77,33 @@ func TestExtractList(t *testing.T) {
 
 	testCases := []struct {
 		in    runtime.Object
-		out   []interface{}
+		out   []any
 		equal bool
 	}{
 		{
 			in:  &List{},
-			out: []interface{}{},
+			out: []any{},
 		},
 		{
 			in:  &ListV1{},
-			out: []interface{}{},
+			out: []any{},
 		},
 		{
 			in:  &List{Items: list1},
-			out: []interface{}{list1[0], list1[1]},
+			out: []any{list1[0], list1[1]},
 		},
 		{
 			in:    list2,
-			out:   []interface{}{&runtime.Unknown{Raw: list2.Items[0].Raw}, &runtime.Unknown{Raw: list2.Items[1].Raw}, list2.Items[2].Object},
+			out:   []any{&runtime.Unknown{Raw: list2.Items[0].Raw}, &runtime.Unknown{Raw: list2.Items[1].Raw}, list2.Items[2].Object},
 			equal: true,
 		},
 		{
 			in:  list3,
-			out: []interface{}{list3.Items[0], list3.Items[1]},
+			out: []any{list3.Items[0], list3.Items[1]},
 		},
 		{
 			in:  list4,
-			out: []interface{}{&list4.Items[0], &list4.Items[1], &list4.Items[2]},
+			out: []any{&list4.Items[0], &list4.Items[1], &list4.Items[2]},
 		},
 	}
 	for i, test := range testCases {
@@ -155,31 +155,31 @@ func TestEachListItem(t *testing.T) {
 
 	testCases := []struct {
 		in  runtime.Object
-		out []interface{}
+		out []any
 	}{
 		{
 			in:  &List{},
-			out: []interface{}{},
+			out: []any{},
 		},
 		{
 			in:  &ListV1{},
-			out: []interface{}{},
+			out: []any{},
 		},
 		{
 			in:  &List{Items: list1},
-			out: []interface{}{list1[0], list1[1]},
+			out: []any{list1[0], list1[1]},
 		},
 		{
 			in:  list2,
-			out: []interface{}{nil, nil, list2.Items[2].Object},
+			out: []any{nil, nil, list2.Items[2].Object},
 		},
 		{
 			in:  list3,
-			out: []interface{}{list3.Items[0], list3.Items[1]},
+			out: []any{list3.Items[0], list3.Items[1]},
 		},
 		{
 			in:  list4,
-			out: []interface{}{&list4.Items[0], &list4.Items[1], &list4.Items[2]},
+			out: []any{&list4.Items[0], &list4.Items[1], &list4.Items[2]},
 		},
 	}
 	for i, test := range testCases {
@@ -291,9 +291,9 @@ func TestSetListToRuntimeObjectArray(t *testing.T) {
 func TestSetListToMatchingType(t *testing.T) {
 	pl := &unstructured.UnstructuredList{}
 	list := []runtime.Object{
-		&unstructured.Unstructured{Object: map[string]interface{}{"foo": 1}},
-		&unstructured.Unstructured{Object: map[string]interface{}{"foo": 2}},
-		&unstructured.Unstructured{Object: map[string]interface{}{"foo": 3}},
+		&unstructured.Unstructured{Object: map[string]any{"foo": 1}},
+		&unstructured.Unstructured{Object: map[string]any{"foo": 2}},
+		&unstructured.Unstructured{Object: map[string]any{"foo": 3}},
 	}
 	err := meta.SetList(pl, list)
 	if err != nil {

@@ -83,14 +83,14 @@ func StorageWithCacher() generic.StorageDecorator {
 	}
 }
 
-func objectTypeToArgs(obj runtime.Object) []interface{} {
+func objectTypeToArgs(obj runtime.Object) []any {
 	// special-case unstructured objects that tell us their apiVersion/kind
 	if u, isUnstructured := obj.(*unstructured.Unstructured); isUnstructured {
 		if apiVersion, kind := u.GetAPIVersion(), u.GetKind(); len(apiVersion) > 0 && len(kind) > 0 {
-			return []interface{}{"apiVersion", apiVersion, "kind", kind}
+			return []any{"apiVersion", apiVersion, "kind", kind}
 		}
 	}
 
 	// otherwise just return the type
-	return []interface{}{"type", fmt.Sprintf("%T", obj)}
+	return []any{"type", fmt.Sprintf("%T", obj)}
 }

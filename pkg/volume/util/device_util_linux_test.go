@@ -199,7 +199,7 @@ func (fi *fakeFileInfo) IsDir() bool {
 	return false
 }
 
-func (fi *fakeFileInfo) Sys() interface{} {
+func (fi *fakeFileInfo) Sys() any {
 	return nil
 }
 

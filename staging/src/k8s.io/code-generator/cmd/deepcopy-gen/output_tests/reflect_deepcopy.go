@@ -22,7 +22,7 @@ import (
 )
 
 // ReflectDeepCopy deep copies the object using reflection.
-func ReflectDeepCopy(in interface{}) interface{} {
+func ReflectDeepCopy(in any) any {
 	return reflectDeepCopy(reflect.ValueOf(in)).Interface()
 }
 

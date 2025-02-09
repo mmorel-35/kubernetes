@@ -110,7 +110,7 @@ func TestJSONPatchAnnotationValue(t *testing.T) {
 				t.Errorf("composed patch annotation value doesn't match, want: %s, got: %s", tc.expected, actual)
 			}
 
-			var p map[string]interface{}
+			var p map[string]any
 			if err := json.Unmarshal([]byte(actual), &p); err != nil {
 				t.Errorf("unexpected error unmarshaling patch annotation: %v", err)
 			}
@@ -120,7 +120,7 @@ func TestJSONPatchAnnotationValue(t *testing.T) {
 			if p["webhook"] != tc.webhook {
 				t.Errorf("unmarshaled webhook doesn't match, want: %s, got: %v", tc.webhook, p["webhook"])
 			}
-			var expectedPatch interface{}
+			var expectedPatch any
 			err = json.Unmarshal(tc.patch, &expectedPatch)
 			if err != nil {
 				t.Errorf("unexpected error unmarshaling patch: %v, %v", tc.patch, err)

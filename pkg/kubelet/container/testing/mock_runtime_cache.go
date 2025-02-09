@@ -67,7 +67,7 @@ type MockRuntimeCache_ForceUpdateIfOlder_Call struct {
 // ForceUpdateIfOlder is a helper method to define mock.On call
 //   - _a0 context.Context
 //   - _a1 time.Time
-func (_e *MockRuntimeCache_Expecter) ForceUpdateIfOlder(_a0 interface{}, _a1 interface{}) *MockRuntimeCache_ForceUpdateIfOlder_Call {
+func (_e *MockRuntimeCache_Expecter) ForceUpdateIfOlder(_a0 any, _a1 any) *MockRuntimeCache_ForceUpdateIfOlder_Call {
 	return &MockRuntimeCache_ForceUpdateIfOlder_Call{Call: _e.mock.On("ForceUpdateIfOlder", _a0, _a1)}
 }
 
@@ -125,7 +125,7 @@ type MockRuntimeCache_GetPods_Call struct {
 
 // GetPods is a helper method to define mock.On call
 //   - _a0 context.Context
-func (_e *MockRuntimeCache_Expecter) GetPods(_a0 interface{}) *MockRuntimeCache_GetPods_Call {
+func (_e *MockRuntimeCache_Expecter) GetPods(_a0 any) *MockRuntimeCache_GetPods_Call {
 	return &MockRuntimeCache_GetPods_Call{Call: _e.mock.On("GetPods", _a0)}
 }
 

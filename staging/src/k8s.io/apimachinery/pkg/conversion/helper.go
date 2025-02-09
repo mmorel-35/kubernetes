@@ -24,7 +24,7 @@ import (
 // EnforcePtr ensures that obj is a pointer of some sort. Returns a reflect.Value
 // of the dereferenced pointer, ensuring that it is settable/addressable.
 // Returns an error if this is not possible.
-func EnforcePtr(obj interface{}) (reflect.Value, error) {
+func EnforcePtr(obj any) (reflect.Value, error) {
 	v := reflect.ValueOf(obj)
 	if v.Kind() != reflect.Pointer {
 		if v.Kind() == reflect.Invalid {

@@ -603,7 +603,7 @@ func NewControllerDescriptors() map[string]*ControllerDescriptor {
 // the shared-informers client and token controller.
 func CreateControllerContext(ctx context.Context, s *config.CompletedConfig, rootClientBuilder, clientBuilder clientbuilder.ControllerClientBuilder) (ControllerContext, error) {
 	// Informer transform to trim ManagedFields for memory efficiency.
-	trim := func(obj interface{}) (interface{}, error) {
+	trim := func(obj any) (any, error) {
 		if accessor, err := meta.Accessor(obj); err == nil {
 			if accessor.GetManagedFields() != nil {
 				accessor.SetManagedFields(nil)

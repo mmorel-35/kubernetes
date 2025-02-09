@@ -2002,7 +2002,7 @@ func benchmarkExpire(b *testing.B, podNum int) {
 }
 
 type testingMode interface {
-	Fatalf(format string, args ...interface{})
+	Fatalf(format string, args ...any)
 }
 
 func makeBasePod(t testingMode, nodeName, objName, cpu, mem, extended string, ports []v1.ContainerPort) *v1.Pod {

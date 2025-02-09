@@ -222,16 +222,16 @@ func New(ctx context.Context, c clientset.Interface, podInformer corev1informers
 	tm.taintEvictionQueue = CreateWorkerQueue(deletePodHandler(c, tm.emitPodDeletionEvent, tm.name))
 
 	_, err := podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			pod := obj.(*v1.Pod)
 			tm.PodUpdated(nil, pod)
 		},
-		UpdateFunc: func(prev, obj interface{}) {
+		UpdateFunc: func(prev, obj any) {
 			prevPod := prev.(*v1.Pod)
 			newPod := obj.(*v1.Pod)
 			tm.PodUpdated(prevPod, newPod)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			pod, isPod := obj.(*v1.Pod)
 			// We can get DeletedFinalStateUnknown instead of *v1.Pod here and we need to handle that correctly.
 			if !isPod {

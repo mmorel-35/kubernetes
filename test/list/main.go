@@ -47,7 +47,7 @@ type Test struct {
 // collect extracts test metadata from a file.
 // If src is nil, it reads filename for the code, otherwise it
 // uses src (which may be a string, byte[], or io.Reader).
-func collect(filename string, src interface{}) []Test {
+func collect(filename string, src any) []Test {
 	// Create the AST by parsing src.
 	fset := token.NewFileSet() // positions are relative to fset
 	f, err := parser.ParseFile(fset, filename, src, parser.ParseComments)

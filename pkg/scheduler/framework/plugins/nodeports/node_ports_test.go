@@ -308,7 +308,7 @@ func Test_isSchedulableAfterPodDeleted(t *testing.T) {
 
 	testcases := map[string]struct {
 		pod          *v1.Pod
-		oldObj       interface{}
+		oldObj       any
 		expectedHint framework.QueueingHint
 		expectedErr  bool
 	}{

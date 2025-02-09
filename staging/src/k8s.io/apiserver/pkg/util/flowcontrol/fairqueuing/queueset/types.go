@@ -59,7 +59,7 @@ type request struct {
 
 	// descr1 and descr2 are not used in any logic but they appear in
 	// log messages
-	descr1, descr2 interface{}
+	descr1, descr2 any
 
 	queueNoteFn fq.QueueNoteFn
 

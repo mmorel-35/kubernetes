@@ -26,7 +26,7 @@ import (
 
 func TestTypes(t *testing.T) {
 	testcases := []struct {
-		value  interface{}
+		value  any
 		expect []string
 	}{{
 		value:  http.Header{},

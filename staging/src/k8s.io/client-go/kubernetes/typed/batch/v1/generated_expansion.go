@@ -18,6 +18,6 @@ limitations under the License.
 
 package v1
 
-type CronJobExpansion interface{}
+type CronJobExpansion any
 
-type JobExpansion interface{}
+type JobExpansion any

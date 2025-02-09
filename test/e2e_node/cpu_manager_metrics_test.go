@@ -310,7 +310,7 @@ func makeGuaranteedCPUExclusiveSleeperPod(name string, cpus int) *v1.Pod {
 	}
 }
 
-func timelessSample(value interface{}) types.GomegaMatcher {
+func timelessSample(value any) types.GomegaMatcher {
 	return gstruct.PointTo(gstruct.MatchAllFields(gstruct.Fields{
 		// We already check Metric when matching the Id
 		"Metric":    gstruct.Ignore(),

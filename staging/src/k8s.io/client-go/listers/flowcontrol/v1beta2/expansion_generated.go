@@ -20,8 +20,8 @@ package v1beta2
 
 // FlowSchemaListerExpansion allows custom methods to be added to
 // FlowSchemaLister.
-type FlowSchemaListerExpansion interface{}
+type FlowSchemaListerExpansion any
 
 // PriorityLevelConfigurationListerExpansion allows custom methods to be added to
 // PriorityLevelConfigurationLister.
-type PriorityLevelConfigurationListerExpansion interface{}
+type PriorityLevelConfigurationListerExpansion any

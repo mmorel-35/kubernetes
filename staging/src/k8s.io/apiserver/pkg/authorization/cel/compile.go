@@ -267,20 +267,20 @@ func buildNonResourceAttributesType(field func(name string, declType *apiserverc
 	))
 }
 
-func convertObjectToUnstructured(obj *authorizationv1.SubjectAccessReviewSpec, includeFieldSelector, includeLabelSelector bool) map[string]interface{} {
+func convertObjectToUnstructured(obj *authorizationv1.SubjectAccessReviewSpec, includeFieldSelector, includeLabelSelector bool) map[string]any {
 	// Construct version containing every SubjectAccessReview user and string attribute field, even omitempty ones, for evaluation by CEL
 	extra := obj.Extra
 	if extra == nil {
 		extra = map[string]authorizationv1.ExtraValue{}
 	}
-	ret := map[string]interface{}{
+	ret := map[string]any{
 		"user":   obj.User,
 		"groups": obj.Groups,
 		"uid":    string(obj.UID),
 		"extra":  extra,
 	}
 	if obj.ResourceAttributes != nil {
-		resourceAttributes := map[string]interface{}{
+		resourceAttributes := map[string]any{
 			"namespace":   obj.ResourceAttributes.Namespace,
 			"verb":        obj.ResourceAttributes.Verb,
 			"group":       obj.ResourceAttributes.Group,
@@ -292,35 +292,35 @@ func convertObjectToUnstructured(obj *authorizationv1.SubjectAccessReviewSpec, i
 
 		if includeFieldSelector && obj.ResourceAttributes.FieldSelector != nil {
 			if len(obj.ResourceAttributes.FieldSelector.Requirements) > 0 {
-				requirements := make([]map[string]interface{}, 0, len(obj.ResourceAttributes.FieldSelector.Requirements))
+				requirements := make([]map[string]any, 0, len(obj.ResourceAttributes.FieldSelector.Requirements))
 				for _, r := range obj.ResourceAttributes.FieldSelector.Requirements {
-					requirements = append(requirements, map[string]interface{}{
+					requirements = append(requirements, map[string]any{
 						"key":      r.Key,
 						"operator": r.Operator,
 						"values":   r.Values,
 					})
 				}
-				resourceAttributes[fieldSelectorVarName] = map[string]interface{}{"requirements": requirements}
+				resourceAttributes[fieldSelectorVarName] = map[string]any{"requirements": requirements}
 			}
 			if len(obj.ResourceAttributes.FieldSelector.RawSelector) > 0 {
-				resourceAttributes[fieldSelectorVarName] = map[string]interface{}{"rawSelector": obj.ResourceAttributes.FieldSelector.RawSelector}
+				resourceAttributes[fieldSelectorVarName] = map[string]any{"rawSelector": obj.ResourceAttributes.FieldSelector.RawSelector}
 			}
 		}
 
 		if includeLabelSelector && obj.ResourceAttributes.LabelSelector != nil {
 			if len(obj.ResourceAttributes.LabelSelector.Requirements) > 0 {
-				requirements := make([]map[string]interface{}, 0, len(obj.ResourceAttributes.LabelSelector.Requirements))
+				requirements := make([]map[string]any, 0, len(obj.ResourceAttributes.LabelSelector.Requirements))
 				for _, r := range obj.ResourceAttributes.LabelSelector.Requirements {
-					requirements = append(requirements, map[string]interface{}{
+					requirements = append(requirements, map[string]any{
 						"key":      r.Key,
 						"operator": r.Operator,
 						"values":   r.Values,
 					})
 				}
-				resourceAttributes[labelSelectorVarName] = map[string]interface{}{"requirements": requirements}
+				resourceAttributes[labelSelectorVarName] = map[string]any{"requirements": requirements}
 			}
 			if len(obj.ResourceAttributes.LabelSelector.RawSelector) > 0 {
-				resourceAttributes[labelSelectorVarName] = map[string]interface{}{"rawSelector": obj.ResourceAttributes.LabelSelector.RawSelector}
+				resourceAttributes[labelSelectorVarName] = map[string]any{"rawSelector": obj.ResourceAttributes.LabelSelector.RawSelector}
 			}
 		}
 

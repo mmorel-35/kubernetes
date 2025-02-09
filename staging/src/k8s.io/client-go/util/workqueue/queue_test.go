@@ -32,13 +32,13 @@ import (
 type traceQueue struct {
 	workqueue.Queue[any]
 
-	touched map[interface{}]struct{}
+	touched map[any]struct{}
 }
 
-func (t *traceQueue) Touch(item interface{}) {
+func (t *traceQueue) Touch(item any) {
 	t.Queue.Touch(item)
 	if t.touched == nil {
-		t.touched = make(map[interface{}]struct{})
+		t.touched = make(map[any]struct{})
 	}
 	t.touched[item] = struct{}{}
 }
@@ -145,7 +145,7 @@ func TestAddWhileProcessing(t *testing.T) {
 				defer consumerWG.Done()
 				// Every worker will re-add every item up to two times.
 				// This tests the dirty-while-processing case.
-				counters := map[interface{}]int{}
+				counters := map[any]int{}
 				for {
 					item, quit := test.queue.Get()
 					if quit {
@@ -445,10 +445,10 @@ func TestGarbageCollection(t *testing.T) {
 
 // mustGarbageCollect asserts than an object was garbage collected by the end of the test.
 // The input must be a pointer to an object.
-func mustGarbageCollect(t *testing.T, i interface{}) {
+func mustGarbageCollect(t *testing.T, i any) {
 	t.Helper()
 	var collected int32 = 0
-	runtime.SetFinalizer(i, func(x interface{}) {
+	runtime.SetFinalizer(i, func(x any) {
 		atomic.StoreInt32(&collected, 1)
 	})
 	t.Cleanup(func() {

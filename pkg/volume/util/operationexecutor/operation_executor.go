@@ -389,7 +389,7 @@ func (volume *VolumeToAttach) String() string {
 }
 
 // MarshalLog combines key fields of the volume for logging in a structured format.
-func (volume *VolumeToAttach) MarshalLog() interface{} {
+func (volume *VolumeToAttach) MarshalLog() any {
 	volumeSpecName := "nil"
 	if volume.VolumeSpec != nil {
 		volumeSpecName = volume.VolumeSpec.Name()
@@ -616,7 +616,7 @@ func (volume *AttachedVolume) String() string {
 }
 
 // MarshalLog combines key fields of the volume for logging in a structured format.
-func (volume *AttachedVolume) MarshalLog() interface{} {
+func (volume *AttachedVolume) MarshalLog() any {
 	volumeSpecName := "nil"
 	if volume.VolumeSpec != nil {
 		volumeSpecName = volume.VolumeSpec.Name()

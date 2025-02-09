@@ -37,7 +37,7 @@ func init() {
 
 // Object makes Gomega's [format.Object] available without having to import that
 // package.
-func Object(object interface{}, indentation uint) string {
+func Object(object any, indentation uint) string {
 	return format.Object(object, indentation)
 }
 
@@ -47,7 +47,7 @@ func Object(object interface{}, indentation uint) string {
 //     have `json` tags
 //   - slices containing such a value
 //   - maps where the key or value are such a value
-func handleYAML(object interface{}) (string, bool) {
+func handleYAML(object any) (string, bool) {
 	value := reflect.ValueOf(object)
 	if !useYAML(value.Type()) {
 		return "", false

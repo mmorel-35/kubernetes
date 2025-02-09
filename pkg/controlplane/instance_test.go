@@ -251,7 +251,7 @@ func TestVersion(t *testing.T) {
 	}
 }
 
-func decodeResponse(resp *http.Response, obj interface{}) error {
+func decodeResponse(resp *http.Response, obj any) error {
 	defer resp.Body.Close()
 
 	data, err := io.ReadAll(resp.Body)

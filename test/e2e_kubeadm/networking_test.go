@@ -58,7 +58,7 @@ var _ = Describe("networking [setup-networking]", func() {
 		// Please note that this test assumes that the user does not alter network configs
 		// using the extraArgs option.
 		if _, ok := cc["networking"]; ok {
-			netCC := cc["networking"].(map[interface{}]interface{})
+			netCC := cc["networking"].(map[any]any)
 			if ps, ok := netCC["podSubnet"]; ok {
 				// If podSubnet is not specified, podSubnet cases will be skipped.
 				// Note that kubeadm does not currently apply defaults for PodSubnet, so we skip.
@@ -86,7 +86,7 @@ var _ = Describe("networking [setup-networking]", func() {
 				}
 				cc := getClusterConfiguration(f.ClientSet)
 				if _, ok := cc["networking"]; ok {
-					netCC := cc["networking"].(map[interface{}]interface{})
+					netCC := cc["networking"].(map[any]any)
 					if ps, ok := netCC["podSubnet"]; ok {
 						// Check that the pod CIDR allocated to the node(s) is within the kubeadm-config podCIDR.
 						nodes, err := f.ClientSet.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
@@ -110,7 +110,7 @@ var _ = Describe("networking [setup-networking]", func() {
 				}
 				cc := getClusterConfiguration(f.ClientSet)
 				if _, ok := cc["networking"]; ok {
-					netCC := cc["networking"].(map[interface{}]interface{})
+					netCC := cc["networking"].(map[any]any)
 					if ss, ok := netCC["serviceSubnet"]; ok {
 						// Get the kubernetes service in the default namespace.
 						// Check that service CIDR allocated is within the serviceSubnet range.
@@ -135,7 +135,7 @@ var _ = Describe("networking [setup-networking]", func() {
 				}
 				cc := getClusterConfiguration(f.ClientSet)
 				if _, ok := cc["networking"]; ok {
-					netCC := cc["networking"].(map[interface{}]interface{})
+					netCC := cc["networking"].(map[any]any)
 					if ps, ok := netCC["podSubnet"]; ok {
 						nodes, err := f.ClientSet.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
 						framework.ExpectNoError(err, "error listing nodes")

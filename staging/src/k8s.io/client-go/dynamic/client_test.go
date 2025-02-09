@@ -55,10 +55,10 @@ func getListJSON(version, kind string, items ...[]byte) []byte {
 
 func getObject(version, kind, name string) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": version,
 			"kind":       kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": name,
 			},
 		},
@@ -98,7 +98,7 @@ func TestList(t *testing.T) {
 				getJSON("vTest", "rTest", "item1"),
 				getJSON("vTest", "rTest", "item2")),
 			want: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "vTest",
 					"kind":       "rTestList",
 				},
@@ -116,7 +116,7 @@ func TestList(t *testing.T) {
 				getJSON("vTest", "rTest", "item1"),
 				getJSON("vTest", "rTest", "item2")),
 			want: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "vTest",
 					"kind":       "rTestList",
 				},
@@ -198,10 +198,10 @@ func TestWatchList(t *testing.T) {
 				},
 			},
 			expectedList: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "vTest",
 					"kind":       "rTests",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name":            "",
 						"resourceVersion": "10",
 					},
@@ -234,10 +234,10 @@ func TestWatchList(t *testing.T) {
 				},
 			},
 			expectedList: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "vTest",
 					"kind":       "rTests",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name":            "",
 						"resourceVersion": "39",
 					},
@@ -271,7 +271,7 @@ func TestWatchList(t *testing.T) {
 				},
 			},
 			expectedList: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "vTest",
 					"kind":       "UnstructuredList",
 				},
@@ -872,10 +872,10 @@ func TestInvalidSegments(t *testing.T) {
 	namespace := "bad/namespace"
 	resource := schema.GroupVersionResource{Group: "gtest", Version: "vtest", Resource: "rtest"}
 	obj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "vtest",
 			"kind":       "vkind",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": name,
 			},
 		},

@@ -86,7 +86,7 @@ func NewPodConfig(mode PodConfigNotificationMode, recorder record.EventRecorder,
 
 // Channel creates or returns a config source channel.  The channel
 // only accepts PodUpdates
-func (c *PodConfig) Channel(ctx context.Context, source string) chan<- interface{} {
+func (c *PodConfig) Channel(ctx context.Context, source string) chan<- any {
 	c.sourcesLock.Lock()
 	defer c.sourcesLock.Unlock()
 	c.sources.Insert(source)
@@ -157,7 +157,7 @@ func newPodStorage(updates chan<- kubetypes.PodUpdate, mode PodConfigNotificatio
 // Merge normalizes a set of incoming changes from different sources into a map of all Pods
 // and ensures that redundant changes are filtered out, and then pushes zero or more minimal
 // updates onto the update channel.  Ensures that updates are delivered in order.
-func (s *podStorage) Merge(source string, change interface{}) error {
+func (s *podStorage) Merge(source string, change any) error {
 	s.updateLock.Lock()
 	defer s.updateLock.Unlock()
 
@@ -216,7 +216,7 @@ func (s *podStorage) Merge(source string, change interface{}) error {
 	return nil
 }
 
-func (s *podStorage) merge(source string, change interface{}) (adds, updates, deletes, removes, reconciles *kubetypes.PodUpdate) {
+func (s *podStorage) merge(source string, change any) (adds, updates, deletes, removes, reconciles *kubetypes.PodUpdate) {
 	s.podLock.Lock()
 	defer s.podLock.Unlock()
 
@@ -477,7 +477,7 @@ func (s *podStorage) sync() {
 	s.updates <- kubetypes.PodUpdate{Pods: s.mergedState().([]*v1.Pod), Op: kubetypes.SET, Source: kubetypes.AllSource}
 }
 
-func (s *podStorage) mergedState() interface{} {
+func (s *podStorage) mergedState() any {
 	s.podLock.RLock()
 	defer s.podLock.RUnlock()
 	pods := make([]*v1.Pod, 0)

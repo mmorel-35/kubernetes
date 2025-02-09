@@ -364,7 +364,7 @@ func requestNodeCertificate(ctx context.Context, client clientset.Interface, pri
 // regenerate every loop and we include usages which are not contained in the
 // CSR. This needs to be kept up to date as we add new fields to the node
 // certificates and with ensureCompatible.
-func digestedName(publicKey interface{}, subject *pkix.Name, usages []certificatesv1.KeyUsage) (string, error) {
+func digestedName(publicKey any, subject *pkix.Name, usages []certificatesv1.KeyUsage) (string, error) {
 	hash := sha512.New512_256()
 
 	// Here we make sure two different inputs can't write the same stream

@@ -36,14 +36,14 @@ type sourceURL struct {
 	url         string
 	header      http.Header
 	nodeName    types.NodeName
-	updates     chan<- interface{}
+	updates     chan<- any
 	data        []byte
 	failureLogs int
 	client      *http.Client
 }
 
 // NewSourceURL specifies the URL where to read the Pod configuration from, then watches it for changes.
-func NewSourceURL(url string, header http.Header, nodeName types.NodeName, period time.Duration, updates chan<- interface{}) {
+func NewSourceURL(url string, header http.Header, nodeName types.NodeName, period time.Duration, updates chan<- any) {
 	config := &sourceURL{
 		url:      url,
 		header:   header,

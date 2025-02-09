@@ -390,7 +390,7 @@ func (ecw *etcdClientKVWrapper) Get(ctx context.Context, key string, opts ...cli
 	return resp, nil
 }
 
-func initStoreData(ctx context.Context, store storage.Interface) ([]interface{}, error) {
+func initStoreData(ctx context.Context, store storage.Interface) ([]any, error) {
 	barFirst := &example.Pod{ObjectMeta: metav1.ObjectMeta{Namespace: "first", Name: "bar"}}
 	barSecond := &example.Pod{ObjectMeta: metav1.ObjectMeta{Namespace: "second", Name: "bar"}}
 
@@ -417,7 +417,7 @@ func initStoreData(ctx context.Context, store storage.Interface) ([]interface{},
 		}
 	}
 
-	var created []interface{}
+	var created []any
 	for _, item := range preset {
 		created = append(created, item.key)
 	}

@@ -359,7 +359,7 @@ func ValidatePositiveQuantityValue(value resource.Quantity, fldPath *field.Path)
 	return allErrs
 }
 
-func ValidateImmutableField(newVal, oldVal interface{}, fldPath *field.Path) field.ErrorList {
+func ValidateImmutableField(newVal, oldVal any, fldPath *field.Path) field.ErrorList {
 	return apimachineryvalidation.ValidateImmutableField(newVal, oldVal, fldPath)
 }
 
@@ -3472,7 +3472,7 @@ func validateEphemeralContainers(ephemeralContainers []core.EphemeralContainer, 
 
 // ValidateFieldAcceptList checks that only allowed fields are set.
 // The value must be a struct (not a pointer to a struct!).
-func validateFieldAllowList(value interface{}, allowedFields map[string]bool, errorText string, fldPath *field.Path) field.ErrorList {
+func validateFieldAllowList(value any, allowedFields map[string]bool, errorText string, fldPath *field.Path) field.ErrorList {
 	var allErrs field.ErrorList
 
 	reflectType, reflectValue := reflect.TypeOf(value), reflect.ValueOf(value)
@@ -6829,7 +6829,7 @@ func ValidateSecret(secret *core.Secret) field.ErrorList {
 		}
 
 		// make sure that the content is well-formed json.
-		if err := json.Unmarshal(dockercfgBytes, &map[string]interface{}{}); err != nil {
+		if err := json.Unmarshal(dockercfgBytes, &map[string]any{}); err != nil {
 			allErrs = append(allErrs, field.Invalid(dataPath.Key(core.DockerConfigKey), "<secret contents redacted>", err.Error()))
 		}
 	case core.SecretTypeDockerConfigJSON:
@@ -6840,7 +6840,7 @@ func ValidateSecret(secret *core.Secret) field.ErrorList {
 		}
 
 		// make sure that the content is well-formed json.
-		if err := json.Unmarshal(dockerConfigJSONBytes, &map[string]interface{}{}); err != nil {
+		if err := json.Unmarshal(dockerConfigJSONBytes, &map[string]any{}); err != nil {
 			allErrs = append(allErrs, field.Invalid(dataPath.Key(core.DockerConfigJSONKey), "<secret contents redacted>", err.Error()))
 		}
 	case core.SecretTypeBasicAuth:

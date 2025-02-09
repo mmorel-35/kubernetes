@@ -108,7 +108,7 @@ func (m *imageManager) imagePullPrecheck(ctx context.Context, objRef *v1.ObjectR
 }
 
 // records an event using ref, event msg.  log to glog using prefix, msg, logFn
-func (m *imageManager) logIt(objRef *v1.ObjectReference, eventtype, event, prefix, msg string, logFn func(args ...interface{})) {
+func (m *imageManager) logIt(objRef *v1.ObjectReference, eventtype, event, prefix, msg string, logFn func(args ...any)) {
 	if objRef != nil {
 		m.recorder.Event(objRef, eventtype, event, msg)
 	} else {

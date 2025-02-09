@@ -33,10 +33,10 @@ import (
 // objects here are formatted into golang source.
 
 // Stringer marks the given value for custom formatting by this package.
-type Stringer struct{ val interface{} }
+type Stringer struct{ val any }
 
 // Fmt marks the given value for custom formatting by this package.
-func Fmt(val interface{}) Stringer {
+func Fmt(val any) Stringer {
 	return Stringer{val}
 }
 
@@ -77,7 +77,7 @@ func (sr Stringer) String() string {
 
 // ToJSON converts using encoding/json and handles errors by
 // formatting them
-func ToJSON(val interface{}) string {
+func ToJSON(val any) string {
 	bs, err := json.Marshal(val)
 	str := string(bs)
 	if err != nil {

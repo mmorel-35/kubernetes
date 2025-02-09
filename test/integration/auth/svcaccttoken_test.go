@@ -1201,13 +1201,13 @@ func checkExpiration(t *testing.T, treq *authenticationv1.TokenRequest, expected
 
 func getSubObject(t *testing.T, b string, parts ...string) string {
 	t.Helper()
-	var obj interface{}
-	obj = make(map[string]interface{})
+	var obj any
+	obj = make(map[string]any)
 	if err := json.Unmarshal([]byte(b), &obj); err != nil {
 		t.Fatalf("err: %v", err)
 	}
 	for _, part := range parts {
-		obj = obj.(map[string]interface{})[part]
+		obj = obj.(map[string]any)[part]
 	}
 	out, err := json.Marshal(obj)
 	if err != nil {

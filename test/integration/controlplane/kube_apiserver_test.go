@@ -186,7 +186,7 @@ func TestOpenAPIDelegationChainPlumbing(t *testing.T) {
 	}
 
 	type openAPISchema struct {
-		Paths map[string]interface{} `json:"paths"`
+		Paths map[string]any `json:"paths"`
 	}
 
 	var doc openAPISchema

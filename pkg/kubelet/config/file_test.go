@@ -39,7 +39,7 @@ func TestExtractFromBadDataFile(t *testing.T) {
 		t.Fatalf("unable to write test file %#v", err)
 	}
 
-	ch := make(chan interface{}, 1)
+	ch := make(chan any, 1)
 	lw := newSourceFile(fileName, "localhost", time.Millisecond, ch)
 	err = lw.listConfig()
 	if err == nil {
@@ -55,7 +55,7 @@ func TestExtractFromEmptyDir(t *testing.T) {
 	}
 	defer removeAll(dirName, t)
 
-	ch := make(chan interface{}, 1)
+	ch := make(chan any, 1)
 	lw := newSourceFile(dirName, "localhost", time.Millisecond, ch)
 	err = lw.listConfig()
 	if err != nil {

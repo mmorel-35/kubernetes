@@ -200,7 +200,7 @@ type testTokenGenerator struct {
 	staticToken string
 }
 
-func (f testTokenGenerator) GenerateToken(ctx context.Context, claims *jwt.Claims, privateClaims interface{}) (string, error) {
+func (f testTokenGenerator) GenerateToken(ctx context.Context, claims *jwt.Claims, privateClaims any) (string, error) {
 	c, err := json.Marshal(claims)
 	if err != nil {
 		return "", err

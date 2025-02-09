@@ -62,7 +62,7 @@ func isCycleStateEqual(a, b *CycleState) (bool, string) {
 	var msg string
 	isEqual := true
 	countA := 0
-	a.storage.Range(func(k, v1 interface{}) bool {
+	a.storage.Range(func(k, v1 any) bool {
 		countA++
 		v2, ok := b.storage.Load(k)
 		if !ok {
@@ -93,7 +93,7 @@ func isCycleStateEqual(a, b *CycleState) (bool, string) {
 	}
 
 	countB := 0
-	b.storage.Range(func(k, _ interface{}) bool {
+	b.storage.Range(func(k, _ any) bool {
 		countB++
 		return true
 	})

@@ -102,7 +102,7 @@ func testPropagateStore(ctx context.Context, t *testing.T, store storage.Interfa
 	return key, setOutput
 }
 
-func expectNoDiff(t *testing.T, msg string, expected, actual interface{}) {
+func expectNoDiff(t *testing.T, msg string, expected, actual any) {
 	t.Helper()
 	if !reflect.DeepEqual(expected, actual) {
 		if diff := cmp.Diff(expected, actual); diff != "" {
@@ -113,7 +113,7 @@ func expectNoDiff(t *testing.T, msg string, expected, actual interface{}) {
 	}
 }
 
-func ExpectContains(t *testing.T, msg string, expectedList []interface{}, got interface{}) {
+func ExpectContains(t *testing.T, msg string, expectedList []any, got any) {
 	t.Helper()
 	for _, expected := range expectedList {
 		if reflect.DeepEqual(expected, got) {
@@ -237,8 +237,8 @@ func TestCheckNoMoreResultsWithIgnoreFunc(t *testing.T, w watch.Interface, ignor
 	}
 }
 
-func toInterfaceSlice[T any](s []T) []interface{} {
-	result := make([]interface{}, len(s))
+func toInterfaceSlice[T any](s []T) []any {
+	result := make([]any, len(s))
 	for i, v := range s {
 		result[i] = v
 	}

@@ -46,7 +46,7 @@ import (
 	"k8s.io/kubernetes/pkg/scheduler/util/assumecache"
 )
 
-func (sched *Scheduler) addNodeToCache(obj interface{}) {
+func (sched *Scheduler) addNodeToCache(obj any) {
 	evt := framework.ClusterEvent{Resource: framework.Node, ActionType: framework.Add}
 	start := time.Now()
 	defer metrics.EventHandlingLatency.WithLabelValues(evt.Label()).Observe(metrics.SinceInSeconds(start))
@@ -62,7 +62,7 @@ func (sched *Scheduler) addNodeToCache(obj interface{}) {
 	sched.SchedulingQueue.MoveAllToActiveOrBackoffQueue(logger, evt, nil, node, preCheckForNode(nodeInfo))
 }
 
-func (sched *Scheduler) updateNodeInCache(oldObj, newObj interface{}) {
+func (sched *Scheduler) updateNodeInCache(oldObj, newObj any) {
 	start := time.Now()
 	logger := sched.logger
 	oldNode, ok := oldObj.(*v1.Node)
@@ -93,7 +93,7 @@ func (sched *Scheduler) updateNodeInCache(oldObj, newObj interface{}) {
 	}
 }
 
-func (sched *Scheduler) deleteNodeFromCache(obj interface{}) {
+func (sched *Scheduler) deleteNodeFromCache(obj any) {
 	evt := framework.ClusterEvent{Resource: framework.Node, ActionType: framework.Delete}
 	start := time.Now()
 	defer metrics.EventHandlingLatency.WithLabelValues(evt.Label()).Observe(metrics.SinceInSeconds(start))
@@ -123,7 +123,7 @@ func (sched *Scheduler) deleteNodeFromCache(obj interface{}) {
 	}
 }
 
-func (sched *Scheduler) addPodToSchedulingQueue(obj interface{}) {
+func (sched *Scheduler) addPodToSchedulingQueue(obj any) {
 	start := time.Now()
 	defer metrics.EventHandlingLatency.WithLabelValues(framework.EventUnscheduledPodAdd.Label()).Observe(metrics.SinceInSeconds(start))
 
@@ -133,7 +133,7 @@ func (sched *Scheduler) addPodToSchedulingQueue(obj interface{}) {
 	sched.SchedulingQueue.Add(logger, pod)
 }
 
-func (sched *Scheduler) updatePodInSchedulingQueue(oldObj, newObj interface{}) {
+func (sched *Scheduler) updatePodInSchedulingQueue(oldObj, newObj any) {
 	start := time.Now()
 	logger := sched.logger
 	oldPod, newPod := oldObj.(*v1.Pod), newObj.(*v1.Pod)
@@ -162,7 +162,7 @@ func (sched *Scheduler) updatePodInSchedulingQueue(oldObj, newObj interface{}) {
 	sched.SchedulingQueue.Update(logger, oldPod, newPod)
 }
 
-func (sched *Scheduler) deletePodFromSchedulingQueue(obj interface{}) {
+func (sched *Scheduler) deletePodFromSchedulingQueue(obj any) {
 	start := time.Now()
 	defer metrics.EventHandlingLatency.WithLabelValues(framework.EventUnscheduledPodDelete.Label()).Observe(metrics.SinceInSeconds(start))
 
@@ -200,7 +200,7 @@ func (sched *Scheduler) deletePodFromSchedulingQueue(obj interface{}) {
 	}
 }
 
-func (sched *Scheduler) addPodToCache(obj interface{}) {
+func (sched *Scheduler) addPodToCache(obj any) {
 	start := time.Now()
 	defer metrics.EventHandlingLatency.WithLabelValues(framework.EventAssignedPodAdd.Label()).Observe(metrics.SinceInSeconds(start))
 
@@ -232,7 +232,7 @@ func (sched *Scheduler) addPodToCache(obj interface{}) {
 	}
 }
 
-func (sched *Scheduler) updatePodInCache(oldObj, newObj interface{}) {
+func (sched *Scheduler) updatePodInCache(oldObj, newObj any) {
 	start := time.Now()
 	defer metrics.EventHandlingLatency.WithLabelValues(framework.EventAssignedPodUpdate.Label()).Observe(metrics.SinceInSeconds(start))
 
@@ -279,7 +279,7 @@ func (sched *Scheduler) updatePodInCache(oldObj, newObj interface{}) {
 	}
 }
 
-func (sched *Scheduler) deletePodFromCache(obj interface{}) {
+func (sched *Scheduler) deletePodFromCache(obj any) {
 	start := time.Now()
 	defer metrics.EventHandlingLatency.WithLabelValues(framework.EventAssignedPodDelete.Label()).Observe(metrics.SinceInSeconds(start))
 
@@ -353,7 +353,7 @@ func addAllEventHandlers(
 	// scheduled pod cache
 	if handlerRegistration, err = informerFactory.Core().V1().Pods().Informer().AddEventHandler(
 		cache.FilteringResourceEventHandler{
-			FilterFunc: func(obj interface{}) bool {
+			FilterFunc: func(obj any) bool {
 				switch t := obj.(type) {
 				case *v1.Pod:
 					return assignedPod(t)
@@ -384,7 +384,7 @@ func addAllEventHandlers(
 	// unscheduled pod queue
 	if handlerRegistration, err = informerFactory.Core().V1().Pods().Informer().AddEventHandler(
 		cache.FilteringResourceEventHandler{
-			FilterFunc: func(obj interface{}) bool {
+			FilterFunc: func(obj any) bool {
 				switch t := obj.(type) {
 				case *v1.Pod:
 					return !assignedPod(t) && responsibleForPod(t, sched.Profiles)
@@ -428,7 +428,7 @@ func addAllEventHandlers(
 		funcs := cache.ResourceEventHandlerFuncs{}
 		if at&framework.Add != 0 {
 			evt := framework.ClusterEvent{Resource: resource, ActionType: framework.Add}
-			funcs.AddFunc = func(obj interface{}) {
+			funcs.AddFunc = func(obj any) {
 				start := time.Now()
 				defer metrics.EventHandlingLatency.WithLabelValues(evt.Label()).Observe(metrics.SinceInSeconds(start))
 				if resource == framework.StorageClass && !utilfeature.DefaultFeatureGate.Enabled(features.SchedulerQueueingHints) {
@@ -453,7 +453,7 @@ func addAllEventHandlers(
 		}
 		if at&framework.Update != 0 {
 			evt := framework.ClusterEvent{Resource: resource, ActionType: framework.Update}
-			funcs.UpdateFunc = func(old, obj interface{}) {
+			funcs.UpdateFunc = func(old, obj any) {
 				start := time.Now()
 				sched.SchedulingQueue.MoveAllToActiveOrBackoffQueue(logger, evt, old, obj, nil)
 				metrics.EventHandlingLatency.WithLabelValues(evt.Label()).Observe(metrics.SinceInSeconds(start))
@@ -461,7 +461,7 @@ func addAllEventHandlers(
 		}
 		if at&framework.Delete != 0 {
 			evt := framework.ClusterEvent{Resource: resource, ActionType: framework.Delete}
-			funcs.DeleteFunc = func(obj interface{}) {
+			funcs.DeleteFunc = func(obj any) {
 				start := time.Now()
 				sched.SchedulingQueue.MoveAllToActiveOrBackoffQueue(logger, evt, obj, nil, nil)
 				metrics.EventHandlingLatency.WithLabelValues(evt.Label()).Observe(metrics.SinceInSeconds(start))

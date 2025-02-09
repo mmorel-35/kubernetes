@@ -64,7 +64,7 @@ func (r *recorder) Count() int {
 	return r.count
 }
 
-func newHandler(responseCh <-chan string, panicCh <-chan interface{}, writeErrCh chan<- error) http.HandlerFunc {
+func newHandler(responseCh <-chan string, panicCh <-chan any, writeErrCh chan<- error) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		select {
 		case resp := <-responseCh:
@@ -84,9 +84,9 @@ func TestTimeout(t *testing.T) {
 	}()
 
 	sendResponse := make(chan string, 1)
-	doPanic := make(chan interface{}, 1)
+	doPanic := make(chan any, 1)
 	writeErrors := make(chan error, 1)
-	gotPanic := make(chan interface{}, 1)
+	gotPanic := make(chan any, 1)
 	timeout := make(chan time.Time, 1)
 	resp := "test response"
 	timeoutErr := apierrors.NewServerTimeout(schema.GroupResource{Group: "foo", Resource: "bar"}, "get", 0)
@@ -104,7 +104,7 @@ func TestTimeout(t *testing.T) {
 	ts := httptest.NewServer(withDeadline(withPanicRecovery(
 		WithTimeout(handler, func(req *http.Request) (*http.Request, bool, func(), *apierrors.StatusError) {
 			return req, false, record.Record, timeoutErr
-		}), func(w http.ResponseWriter, req *http.Request, err interface{}) {
+		}), func(w http.ResponseWriter, req *http.Request, err any) {
 			gotPanic <- err
 			http.Error(w, "This request caused apiserver to panic. Look in the logs for details.", http.StatusInternalServerError)
 		}),

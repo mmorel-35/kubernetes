@@ -78,17 +78,17 @@ func NewCertificateController(
 
 	// Manage the addition/update of certificate requests
 	csrInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			csr := obj.(*certificates.CertificateSigningRequest)
 			logger.V(4).Info("Adding certificate request", "csr", csr.Name)
 			cc.enqueueCertificateRequest(obj)
 		},
-		UpdateFunc: func(old, new interface{}) {
+		UpdateFunc: func(old, new any) {
 			oldCSR := old.(*certificates.CertificateSigningRequest)
 			logger.V(4).Info("Updating certificate request", "old", oldCSR.Name)
 			cc.enqueueCertificateRequest(new)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			csr, ok := obj.(*certificates.CertificateSigningRequest)
 			if !ok {
 				tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
@@ -160,7 +160,7 @@ func (cc *CertificateController) processNextWorkItem(ctx context.Context) bool {
 
 }
 
-func (cc *CertificateController) enqueueCertificateRequest(obj interface{}) {
+func (cc *CertificateController) enqueueCertificateRequest(obj any) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("Couldn't get key for object %+v: %v", obj, err))
@@ -198,7 +198,7 @@ func (cc *CertificateController) syncFunc(ctx context.Context, key string) error
 // it's spammy and usually user error. Instead we will log these errors at a
 // higher log level. We still need to throw these errors to signal that the
 // sync should be retried.
-func IgnorableError(s string, args ...interface{}) ignorableError {
+func IgnorableError(s string, args ...any) ignorableError {
 	return ignorableError(fmt.Sprintf(s, args...))
 }
 

@@ -22,7 +22,7 @@ import (
 )
 
 // isNonNullalbeNull returns true if the item is nil AND it's nullable
-func isNonNullableNull(x interface{}, s *structuralschema.Structural) bool {
+func isNonNullableNull(x any, s *structuralschema.Structural) bool {
 	return x == nil && s != nil && s.Generic.Nullable == false
 }
 
@@ -31,13 +31,13 @@ func isNonNullableNull(x interface{}, s *structuralschema.Structural) bool {
 //
 // PruneNonNullableNullsWithoutDefaults has left the non-nullable nulls
 // that have a default here.
-func Default(x interface{}, s *structuralschema.Structural) {
+func Default(x any, s *structuralschema.Structural) {
 	if s == nil {
 		return
 	}
 
 	switch x := x.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		for k, prop := range s.Properties {
 			if prop.Default.Object == nil {
 				continue
@@ -56,7 +56,7 @@ func Default(x interface{}, s *structuralschema.Structural) {
 				Default(x[k], s.AdditionalProperties.Structural)
 			}
 		}
-	case []interface{}:
+	case []any:
 		for i := range x {
 			if isNonNullableNull(x[i], s.Items) {
 				x[i] = runtime.DeepCopyJSONValue(s.Items.Default.Object)

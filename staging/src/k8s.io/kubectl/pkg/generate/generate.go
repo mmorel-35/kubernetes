@@ -44,7 +44,7 @@ type GeneratorParam struct {
 // new replication controllers and services, among other things.
 type Generator interface {
 	// Generate creates an API object given a set of parameters
-	Generate(params map[string]interface{}) (runtime.Object, error)
+	Generate(params map[string]any) (runtime.Object, error)
 	// ParamNames returns the list of parameters that this generator uses
 	ParamNames() []GeneratorParam
 }
@@ -55,7 +55,7 @@ type StructuredGenerator interface {
 	StructuredGenerate() (runtime.Object, error)
 }
 
-func IsZero(i interface{}) bool {
+func IsZero(i any) bool {
 	if i == nil {
 		return true
 	}
@@ -63,7 +63,7 @@ func IsZero(i interface{}) bool {
 }
 
 // ValidateParams ensures that all required params are present in the params map
-func ValidateParams(paramSpec []GeneratorParam, params map[string]interface{}) error {
+func ValidateParams(paramSpec []GeneratorParam, params map[string]any) error {
 	allErrs := []error{}
 	for ix := range paramSpec {
 		if paramSpec[ix].Required {
@@ -129,8 +129,8 @@ func EnsureFlagsValid(cmd *cobra.Command, generators map[string]Generator, gener
 }
 
 // MakeParams is a utility that creates generator parameters from a command line
-func MakeParams(cmd *cobra.Command, params []GeneratorParam) map[string]interface{} {
-	result := map[string]interface{}{}
+func MakeParams(cmd *cobra.Command, params []GeneratorParam) map[string]any {
+	result := map[string]any{}
 	for ix := range params {
 		f := cmd.Flags().Lookup(params[ix].Name)
 		if f != nil {
@@ -148,7 +148,7 @@ func MakeProtocols(protocols map[string]string) string {
 	return strings.Join(out, ",")
 }
 
-func ParseProtocols(protocols interface{}) (map[string]string, error) {
+func ParseProtocols(protocols any) (map[string]string, error) {
 	protocolsString, isString := protocols.(string)
 	if !isString {
 		return nil, fmt.Errorf("expected string, found %v", protocols)
@@ -175,7 +175,7 @@ func ParseProtocols(protocols interface{}) (map[string]string, error) {
 }
 
 // ParseLabels turns a string representation of a label set into a map[string]string
-func ParseLabels(labelSpec interface{}) (map[string]string, error) {
+func ParseLabels(labelSpec any) (map[string]string, error) {
 	labelString, isString := labelSpec.(string)
 	if !isString {
 		return nil, fmt.Errorf("expected string, found %v", labelSpec)

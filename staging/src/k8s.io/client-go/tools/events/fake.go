@@ -33,7 +33,7 @@ type FakeRecorder struct {
 var _ EventRecorderLogger = &FakeRecorder{}
 
 // Eventf emits an event
-func (f *FakeRecorder) Eventf(regarding runtime.Object, related runtime.Object, eventtype, reason, action, note string, args ...interface{}) {
+func (f *FakeRecorder) Eventf(regarding runtime.Object, related runtime.Object, eventtype, reason, action, note string, args ...any) {
 	if f.Events != nil {
 		f.Events <- fmt.Sprintf(eventtype+" "+reason+" "+note, args...)
 	}

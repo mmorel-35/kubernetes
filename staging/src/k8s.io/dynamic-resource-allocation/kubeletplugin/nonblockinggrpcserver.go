@@ -153,7 +153,7 @@ type mergeCtx struct {
 	valueCtx context.Context
 }
 
-func (m mergeCtx) Value(i interface{}) interface{} {
+func (m mergeCtx) Value(i any) any {
 	if v := m.Context.Value(i); v != nil {
 		return v
 	}
@@ -163,7 +163,7 @@ func (m mergeCtx) Value(i interface{}) interface{} {
 // interceptor is called for each request. It creates a logger with a unique,
 // sequentially increasing request ID and adds that logger to the context. It
 // also logs request and response.
-func (s *grpcServer) interceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+func (s *grpcServer) interceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
 
 	requestID := atomic.AddInt64(&requestID, 1)
 	logger := klog.FromContext(ctx)
@@ -185,7 +185,7 @@ func (s *grpcServer) interceptor(ctx context.Context, req interface{}, info *grp
 	return
 }
 
-func (s *grpcServer) streamInterceptor(server interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+func (s *grpcServer) streamInterceptor(server any, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 	requestID := atomic.AddInt64(&requestID, 1)
 	ctx := stream.Context()
 	logger := klog.FromContext(ctx)
@@ -217,7 +217,7 @@ func (l logStream) Context() context.Context {
 	return l.ctx
 }
 
-func (l logStream) SendMsg(msg interface{}) error {
+func (l logStream) SendMsg(msg any) error {
 	logger := klog.FromContext(l.ctx)
 	logger.V(l.grpcVerbosity).Info("sending stream message", "message", msg)
 	err := l.ServerStream.SendMsg(msg)

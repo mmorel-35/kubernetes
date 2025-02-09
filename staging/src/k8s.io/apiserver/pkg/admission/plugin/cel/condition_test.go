@@ -145,8 +145,8 @@ func TestCondition(t *testing.T) {
 		},
 	}
 	crdParams := &unstructured.Unstructured{
-		Object: map[string]interface{}{
-			"spec": map[string]interface{}{
+		Object: map[string]any{
+			"spec": map[string]any{
 				"testSize": 10,
 			},
 		},

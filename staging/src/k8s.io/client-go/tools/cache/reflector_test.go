@@ -1284,7 +1284,7 @@ func TestGetTypeDescriptionFromObject(t *testing.T) {
 	obj.SetGroupVersionKind(gvk)
 
 	testCases := map[string]struct {
-		inputType               interface{}
+		inputType               any
 		expectedTypeDescription string
 	}{
 		"Nil type": {
@@ -1323,7 +1323,7 @@ func TestGetExpectedGVKFromObject(t *testing.T) {
 	obj.SetGroupVersionKind(gvk)
 
 	testCases := map[string]struct {
-		inputType   interface{}
+		inputType   any
 		expectedGVK *schema.GroupVersionKind
 	}{
 		"Nil type": {},
@@ -1704,7 +1704,7 @@ func (t *TestPagingPodsLW) Watch(options metav1.ListOptions) (watch.Interface, e
 
 func TestReflectorListExtract(t *testing.T) {
 	_, ctx := ktesting.NewTestContext(t)
-	store := NewStore(func(obj interface{}) (string, error) {
+	store := NewStore(func(obj any) (string, error) {
 		pod, ok := obj.(*v1.Pod)
 		if !ok {
 			return "", fmt.Errorf("expect *v1.Pod, but got %T", obj)
@@ -1744,7 +1744,7 @@ func TestReflectorListExtract(t *testing.T) {
 		if err != nil || !exist {
 			t.Fatalf("%s should exist in pod store", firstPodName)
 		}
-		goruntime.SetFinalizer(firstPod, func(obj interface{}) {
+		goruntime.SetFinalizer(firstPod, func(obj any) {
 			t.Logf("%s already be gc\n", obj.(*v1.Pod).GetName())
 			detectedPodAlreadyBeCleared <- struct{}{}
 		})
@@ -1820,7 +1820,7 @@ func TestReflectorReplacesStoreOnUnsafeDelete(t *testing.T) {
 	var replaceInvoked atomic.Int32
 	store := &fakeStore{
 		Store: s,
-		beforeReplace: func(list []interface{}, rv string) {
+		beforeReplace: func(list []any, rv string) {
 			// interested in the Replace call that happens after the Error event
 			if rv == lastExpectedRV {
 				replaceInvoked.Add(1)
@@ -1915,11 +1915,11 @@ func TestReflectorReplacesStoreOnUnsafeDelete(t *testing.T) {
 
 type fakeStore struct {
 	Store
-	beforeReplace func(list []interface{}, s string)
+	beforeReplace func(list []any, s string)
 	afterReplace  func(rv string, err error)
 }
 
-func (f *fakeStore) Replace(list []interface{}, rv string) error {
+func (f *fakeStore) Replace(list []any, rv string) error {
 	f.beforeReplace(list, rv)
 	err := f.Store.Replace(list, rv)
 	f.afterReplace(rv, err)
@@ -2055,7 +2055,7 @@ func BenchmarkEachListItemWithAlloc(b *testing.B) {
 }
 
 func BenchmarkReflectorList(b *testing.B) {
-	store := NewStore(func(obj interface{}) (string, error) {
+	store := NewStore(func(obj any) (string, error) {
 		o, err := meta.Accessor(obj)
 		if err != nil {
 			return "", err
@@ -2067,19 +2067,19 @@ func BenchmarkReflectorList(b *testing.B) {
 	_, _, configMapList := getConfigmapListItems(0, fakeItemsNum)
 	tests := []struct {
 		name   string
-		sample func() interface{}
+		sample func() any
 		list   runtime.Object
 	}{
 		{
 			name: "PodList",
-			sample: func() interface{} {
+			sample: func() any {
 				return v1.Pod{}
 			},
 			list: podList,
 		},
 		{
 			name: "ConfigMapList",
-			sample: func() interface{} {
+			sample: func() any {
 				return v1.ConfigMap{}
 			},
 			list: configMapList,

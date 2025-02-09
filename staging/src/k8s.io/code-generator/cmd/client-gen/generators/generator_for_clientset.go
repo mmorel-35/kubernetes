@@ -71,7 +71,7 @@ func (g *genClientset) GenerateType(c *generator.Context, t *types.Type, w io.Wr
 	sw := generator.NewSnippetWriter(w, c, "$", "$")
 
 	allGroups := clientgentypes.ToGroupVersionInfo(g.groups, g.groupGoNames)
-	m := map[string]interface{}{
+	m := map[string]any{
 		"allGroups":                            allGroups,
 		"fmtErrorf":                            c.Universe.Type(types.Name{Package: "fmt", Name: "Errorf"}),
 		"Config":                               c.Universe.Type(types.Name{Package: "k8s.io/client-go/rest", Name: "Config"}),

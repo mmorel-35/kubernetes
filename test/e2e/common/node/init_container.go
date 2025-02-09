@@ -570,7 +570,7 @@ var _ = SIGDescribe("InitContainer", framework.WithNodeConformance(), func() {
 
 // toDebugJSON converts an object to its JSON representation for debug logging
 // purposes instead of using a struct.
-func toDebugJSON(obj interface{}) string {
+func toDebugJSON(obj any) string {
 	m, err := json.Marshal(obj)
 	if err != nil {
 		return fmt.Sprintf("<error: %v>", err)

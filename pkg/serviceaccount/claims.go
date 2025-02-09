@@ -67,7 +67,7 @@ type ref struct {
 	UID  string `json:"uid,omitempty"`
 }
 
-func Claims(sa core.ServiceAccount, pod *core.Pod, secret *core.Secret, node *core.Node, expirationSeconds, warnafter int64, audience []string) (*jwt.Claims, interface{}, error) {
+func Claims(sa core.ServiceAccount, pod *core.Pod, secret *core.Secret, node *core.Node, expirationSeconds, warnafter int64, audience []string) (*jwt.Claims, any, error) {
 	now := now()
 	sc := &jwt.Claims{
 		Subject:   apiserverserviceaccount.MakeUsername(sa.Namespace, sa.Name),

@@ -66,7 +66,7 @@ type recorderResourceManagerAction struct {
 	Type    string
 	Group   string
 	Version string
-	Value   interface{}
+	Value   any
 }
 
 func (f *fakeResourceManager) Expect() ResourceManager {

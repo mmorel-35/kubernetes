@@ -219,7 +219,7 @@ func (h *priorityAndFairnessHandler) Handle(w http.ResponseWriter, r *http.Reque
 		}
 
 		// Ensure that an item can be put to resultCh asynchronously.
-		resultCh := make(chan interface{}, 1)
+		resultCh := make(chan any, 1)
 
 		// Call Handle in a separate goroutine.
 		// The reason for it is that from APF point of view, the request processing

@@ -55,7 +55,7 @@ var _ = Describe("nodes", func() {
 		var nodeLocalCRISocketEnabled bool
 		cc := getClusterConfiguration(f.ClientSet)
 		if _, ok := cc["featureGates"]; ok {
-			fgCC := cc["featureGates"].(map[interface{}]interface{})
+			fgCC := cc["featureGates"].(map[any]any)
 			if fg, ok := fgCC["NodeLocalCRISocket"]; ok {
 				nodeLocalCRISocketEnabled = fg.(bool)
 			}

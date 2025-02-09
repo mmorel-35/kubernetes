@@ -60,8 +60,8 @@ const (
 
 type event struct {
 	eventType eventType
-	obj       interface{}
-	oldObj    interface{}
+	obj       any
+	oldObj    any
 	gvr       schema.GroupVersionResource
 }
 
@@ -138,13 +138,13 @@ func (m *monitor) Run() {
 type monitors map[schema.GroupVersionResource]*monitor
 
 // UpdateFilter is a function that returns true if the update event should be added to the resourceChanges queue.
-type UpdateFilter func(resource schema.GroupVersionResource, oldObj, newObj interface{}) bool
+type UpdateFilter func(resource schema.GroupVersionResource, oldObj, newObj any) bool
 
 func (qm *QuotaMonitor) controllerFor(ctx context.Context, resource schema.GroupVersionResource) (cache.Controller, error) {
 	logger := klog.FromContext(ctx)
 
 	handlers := cache.ResourceEventHandlerFuncs{
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			if qm.updateFilter != nil && qm.updateFilter(resource, oldObj, newObj) {
 				event := &event{
 					eventType: updateEvent,
@@ -155,7 +155,7 @@ func (qm *QuotaMonitor) controllerFor(ctx context.Context, resource schema.Group
 				qm.resourceChanges.Add(event)
 			}
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			// delta fifo may wrap the object in a cache.DeletedFinalStateUnknown, unwrap it
 			if deletedFinalStateUnknown, ok := obj.(cache.DeletedFinalStateUnknown); ok {
 				obj = deletedFinalStateUnknown.Obj

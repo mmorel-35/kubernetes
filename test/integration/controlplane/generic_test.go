@@ -126,10 +126,10 @@ func TestGenericControlplaneStartUp(t *testing.T) {
 	t.Logf("Create CRD")
 	etcd.CreateTestCRDs(t, apiextensionsclientset.NewForConfigOrDie(server.ClientConfig), false, etcd.GetCustomResourceDefinitionData()...)
 	if _, err := dynamicClient.Resource(schema.GroupVersionResource{Group: "awesome.bears.com", Version: "v1", Resource: "pandas"}).Create(ctx, &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "awesome.bears.com/v1",
 			"kind":       "Panda",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "baobao",
 			},
 		},

@@ -30,8 +30,8 @@ import (
 )
 
 // Funcs returns the fuzzer functions for the kubeadm apis.
-func Funcs(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+func Funcs(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		fuzzBootstrapToken,
 	}
 }

@@ -181,7 +181,7 @@ func TestNondeterministicResponseEncoding(t *testing.T) {
 				if got != &event {
 					t.Fatalf("returned new object %#v (%T) instead of decoding into %T", got, got, &event)
 				}
-				var u map[string]interface{}
+				var u map[string]any
 				if err := direct.Unmarshal(event.Object.Raw, &u); err != nil {
 					t.Fatal(err)
 				}
@@ -206,7 +206,7 @@ func TestNondeterministicResponseEncoding(t *testing.T) {
 			}
 			t.Fatal(err)
 		}
-		var obj1 map[string]interface{}
+		var obj1 map[string]any
 		if err := direct.Unmarshal(raw1, &obj1); err != nil {
 			t.Fatal(err)
 		}
@@ -219,7 +219,7 @@ func TestNondeterministicResponseEncoding(t *testing.T) {
 			}
 			t.Fatal(err)
 		}
-		var obj2 map[string]interface{}
+		var obj2 map[string]any
 		if err := direct.Unmarshal(raw2, &obj2); err != nil {
 			t.Fatal(err)
 		}

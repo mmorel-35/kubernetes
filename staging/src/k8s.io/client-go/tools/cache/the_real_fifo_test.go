@@ -35,10 +35,10 @@ func (f *RealFIFO) getItems() []Delta {
 
 const closedFIFOName = "FIFO WAS CLOSED"
 
-func popN(queue Queue, count int) []interface{} {
-	result := []interface{}{}
+func popN(queue Queue, count int) []any {
+	result := []any{}
 	for i := 0; i < count; i++ {
-		queue.Pop(func(obj interface{}, isInInitialList bool) error {
+		queue.Pop(func(obj any, isInInitialList bool) error {
 			result = append(result, obj)
 			return nil
 		})
@@ -117,7 +117,7 @@ func TestRealFIFO_replaceWithDeleteDeltaIn(t *testing.T) {
 	)
 
 	f.Delete(oldObj)
-	f.Replace([]interface{}{newObj}, "")
+	f.Replace([]any{newObj}, "")
 
 	actualDeltas := f.getItems()
 	expectedDeltas := []Delta{
@@ -141,7 +141,7 @@ func TestRealFIFOW_ReplaceMakesDeletionsForObjectsOnlyInQueue(t *testing.T) {
 			name: "Added object should be deleted on Replace",
 			operations: func(f *RealFIFO) {
 				f.Add(obj)
-				f.Replace([]interface{}{}, "0")
+				f.Replace([]any{}, "0")
 			},
 			expectedDeltas: Deltas{
 				{Added, obj},
@@ -154,8 +154,8 @@ func TestRealFIFOW_ReplaceMakesDeletionsForObjectsOnlyInQueue(t *testing.T) {
 		//	operations: func(f *RealFIFO) {
 		//		f.emitDeltaTypeReplaced = true
 		//		f.Add(obj)
-		//		f.Replace([]interface{}{obj}, "0")
-		//		f.Replace([]interface{}{}, "0")
+		//		f.Replace([]any{obj}, "0")
+		//		f.Replace([]any{}, "0")
 		//	},
 		//	expectedDeltas: Deltas{
 		//		{Added, obj},
@@ -168,7 +168,7 @@ func TestRealFIFOW_ReplaceMakesDeletionsForObjectsOnlyInQueue(t *testing.T) {
 			operations: func(f *RealFIFO) {
 				f.Add(obj)
 				f.Delete(obj)
-				f.Replace([]interface{}{}, "0")
+				f.Replace([]any{}, "0")
 			},
 			expectedDeltas: Deltas{
 				{Added, obj},
@@ -179,9 +179,9 @@ func TestRealFIFOW_ReplaceMakesDeletionsForObjectsOnlyInQueue(t *testing.T) {
 			name: "Synced objects should have a single delete",
 			operations: func(f *RealFIFO) {
 				f.Add(obj)
-				f.Replace([]interface{}{obj}, "0")
-				f.Replace([]interface{}{obj}, "0")
-				f.Replace([]interface{}{}, "0")
+				f.Replace([]any{obj}, "0")
+				f.Replace([]any{obj}, "0")
+				f.Replace([]any{}, "0")
 			},
 			expectedDeltas: Deltas{
 				{Added, obj},
@@ -194,8 +194,8 @@ func TestRealFIFOW_ReplaceMakesDeletionsForObjectsOnlyInQueue(t *testing.T) {
 			name: "Added objects should have a single delete on multiple Replaces",
 			operations: func(f *RealFIFO) {
 				f.Add(obj)
-				f.Replace([]interface{}{}, "0")
-				f.Replace([]interface{}{}, "1")
+				f.Replace([]any{}, "0")
+				f.Replace([]any{}, "1")
 			},
 			expectedDeltas: Deltas{
 				{Added, obj},
@@ -208,7 +208,7 @@ func TestRealFIFOW_ReplaceMakesDeletionsForObjectsOnlyInQueue(t *testing.T) {
 				f.Add(obj)
 				f.Delete(obj)
 				f.Add(objV2)
-				f.Replace([]interface{}{}, "0")
+				f.Replace([]any{}, "0")
 			},
 			expectedDeltas: Deltas{
 				{Added, obj},
@@ -245,7 +245,7 @@ func TestRealFIFOW_ReplaceMakesDeletionsForObjectsOnlyInQueue(t *testing.T) {
 	}
 }
 
-func collapseDeltas(ins []interface{}) Deltas {
+func collapseDeltas(ins []any) Deltas {
 	ret := Deltas{}
 	for _, curr := range ins {
 		for _, delta := range curr.(Deltas) {
@@ -331,7 +331,7 @@ func TestRealFIFO_transformer(t *testing.T) {
 	mk := func(name string, rv int) testFifoObject {
 		return mkFifoObj(name, &rvAndXfrm{rv, 0})
 	}
-	xfrm := TransformFunc(func(obj interface{}) (interface{}, error) {
+	xfrm := TransformFunc(func(obj any) (any, error) {
 		switch v := obj.(type) {
 		case testFifoObject:
 			v.val.(*rvAndXfrm).xfrm++
@@ -350,7 +350,7 @@ func TestRealFIFO_transformer(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	mustTransform := func(obj interface{}) interface{} {
+	mustTransform := func(obj any) any {
 		ret, err := xfrm(obj)
 		must(err)
 		return ret
@@ -365,9 +365,9 @@ func TestRealFIFO_transformer(t *testing.T) {
 	must(f.Add(mk("bar", 11)))
 	must(f.Update(mk("foo", 12)))
 	must(f.Delete(mk("foo", 15)))
-	must(f.Replace([]interface{}{}, ""))
+	must(f.Replace([]any{}, ""))
 	must(f.Add(mk("bar", 16)))
-	must(f.Replace([]interface{}{}, ""))
+	must(f.Replace([]any{}, ""))
 
 	// ATTENTION: difference with delta_fifo_test, without compression, we keep all the items, including bar being deleted multiple times.
 	//            DeltaFIFO starts by checking keys, we start by checking types and keys
@@ -404,7 +404,7 @@ func TestRealFIFO_transformer(t *testing.T) {
 	}
 
 	for i := 0; i < len(expected1); i++ {
-		obj, err := f.Pop(func(o interface{}, isInInitialList bool) error { return nil })
+		obj, err := f.Pop(func(o any, isInInitialList bool) error { return nil })
 		if err != nil {
 			t.Fatalf("got nothing on try %v?", i)
 		}
@@ -474,7 +474,7 @@ func TestRealFIFO_addReplace(t *testing.T) {
 		nil,
 	)
 	f.Add(mkFifoObj("foo", 10))
-	f.Replace([]interface{}{mkFifoObj("foo", 15)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 15)}, "0")
 	got := make(chan testFifoObject, 3)
 	done := make(chan struct{})
 	go func() {
@@ -581,7 +581,7 @@ func TestRealFIFO_ReplaceMakesDeletions(t *testing.T) {
 		nil,
 	)
 	f.Delete(mkFifoObj("baz", 10))
-	f.Replace([]interface{}{mkFifoObj("foo", 5)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 5)}, "0")
 
 	expectedList := []Deltas{
 		{{Deleted, mkFifoObj("baz", 10)}},
@@ -608,7 +608,7 @@ func TestRealFIFO_ReplaceMakesDeletions(t *testing.T) {
 		nil,
 	)
 	f.Add(mkFifoObj("baz", 10))
-	f.Replace([]interface{}{mkFifoObj("foo", 5)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 5)}, "0")
 
 	// ATTENTION: difference with delta_fifo_test, every event is its own Deltas with one item
 	expectedList = []Deltas{
@@ -638,7 +638,7 @@ func TestRealFIFO_ReplaceMakesDeletions(t *testing.T) {
 	)
 	f.Delete(mkFifoObj("bar", 6))
 	f.Add(mkFifoObj("bar", 100))
-	f.Replace([]interface{}{mkFifoObj("foo", 5)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 5)}, "0")
 
 	// ATTENTION: difference with delta_fifo_test, every event is its own Deltas with one item
 	expectedList = []Deltas{
@@ -667,8 +667,8 @@ func TestRealFIFO_ReplaceMakesDeletions(t *testing.T) {
 		}),
 		nil,
 	)
-	f.Replace([]interface{}{mkFifoObj("bar", 100), mkFifoObj("foo", 5)}, "0")
-	f.Replace([]interface{}{mkFifoObj("foo", 5)}, "0")
+	f.Replace([]any{mkFifoObj("bar", 100), mkFifoObj("foo", 5)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 5)}, "0")
 
 	// ATTENTION: difference with delta_fifo_test, every event is its own Deltas with one item
 	// ATTENTION: difference with delta_fifo_test, deltaFifo associated by key, but realFIFO orders across all keys, so this ordering changed
@@ -698,7 +698,7 @@ func TestRealFIFO_ReplaceMakesDeletions(t *testing.T) {
 		nil,
 	)
 	f.Add(mkFifoObj("baz", 10))
-	f.Replace([]interface{}{mkFifoObj("foo", 5)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 5)}, "0")
 
 	expectedList = []Deltas{
 		{{Added, mkFifoObj("baz", 10)}},
@@ -726,7 +726,7 @@ func TestRealFIFO_ReplaceMakesDeletionsReplaced(t *testing.T) {
 	)
 
 	f.Delete(mkFifoObj("baz", 10))
-	f.Replace([]interface{}{mkFifoObj("foo", 6)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 6)}, "0")
 
 	expectedList := []Deltas{
 		{{Deleted, mkFifoObj("baz", 10)}},
@@ -779,7 +779,7 @@ func TestRealFIFO_HasSyncedCorrectOnDeletion(t *testing.T) {
 		}),
 		nil,
 	)
-	f.Replace([]interface{}{mkFifoObj("foo", 5)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 5)}, "0")
 
 	expectedList := []Deltas{
 		// ATTENTION: difference with delta_fifo_test, logically the deletes of known items should happen BEFORE newItems are added, so this delete happens early now
@@ -849,7 +849,7 @@ func TestRealFIFO_KeyOf(t *testing.T) {
 	f := RealFIFO{keyFunc: testFifoObjectKeyFunc}
 
 	table := []struct {
-		obj interface{}
+		obj any
 		key string
 	}{
 		{obj: testFifoObject{name: "A"}, key: "A"},
@@ -887,26 +887,26 @@ func TestRealFIFO_HasSynced(t *testing.T) {
 		},
 		{
 			actions: []func(f *RealFIFO){
-				func(f *RealFIFO) { f.Replace([]interface{}{}, "0") },
+				func(f *RealFIFO) { f.Replace([]any{}, "0") },
 			},
 			expectedSynced: true,
 		},
 		{
 			actions: []func(f *RealFIFO){
-				func(f *RealFIFO) { f.Replace([]interface{}{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
+				func(f *RealFIFO) { f.Replace([]any{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
 			},
 			expectedSynced: false,
 		},
 		{
 			actions: []func(f *RealFIFO){
-				func(f *RealFIFO) { f.Replace([]interface{}{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
+				func(f *RealFIFO) { f.Replace([]any{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
 				func(f *RealFIFO) { Pop(f) },
 			},
 			expectedSynced: false,
 		},
 		{
 			actions: []func(f *RealFIFO){
-				func(f *RealFIFO) { f.Replace([]interface{}{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
+				func(f *RealFIFO) { f.Replace([]any{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
 				func(f *RealFIFO) { Pop(f) },
 				func(f *RealFIFO) { Pop(f) },
 			},
@@ -916,7 +916,7 @@ func TestRealFIFO_HasSynced(t *testing.T) {
 			// This test case won't happen in practice since a Reflector, the only producer for delta_fifo today, always passes a complete snapshot consistent in time;
 			// there cannot be duplicate keys in the list or apiserver is broken.
 			actions: []func(f *RealFIFO){
-				func(f *RealFIFO) { f.Replace([]interface{}{mkFifoObj("a", 1), mkFifoObj("a", 2)}, "0") },
+				func(f *RealFIFO) { f.Replace([]any{mkFifoObj("a", 1), mkFifoObj("a", 2)}, "0") },
 				func(f *RealFIFO) { Pop(f) },
 				// ATTENTION: difference with delta_fifo_test, every event is delivered, so a is listed twice and must be popped twice to remove both
 				func(f *RealFIFO) { Pop(f) },
@@ -956,7 +956,7 @@ func TestRealFIFO_PopShouldUnblockWhenClosed(t *testing.T) {
 	const jobs = 10
 	for i := 0; i < jobs; i++ {
 		go func() {
-			f.Pop(func(obj interface{}, isInInitialList bool) error {
+			f.Pop(func(obj any, isInInitialList bool) error {
 				return nil
 			})
 			c <- struct{}{}

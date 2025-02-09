@@ -37,7 +37,7 @@ type Indexer interface {
 	// Index returns the stored objects whose set of indexed values
 	// intersects the set of indexed values of the given object, for
 	// the named index
-	Index(indexName string, obj interface{}) ([]interface{}, error)
+	Index(indexName string, obj any) ([]any, error)
 	// IndexKeys returns the storage keys of the stored objects whose
 	// set of indexed values for the named index includes the given
 	// indexed value
@@ -46,7 +46,7 @@ type Indexer interface {
 	ListIndexFuncValues(indexName string) []string
 	// ByIndex returns the stored objects whose set of indexed values
 	// for the named index includes the given indexed value
-	ByIndex(indexName, indexedValue string) ([]interface{}, error)
+	ByIndex(indexName, indexedValue string) ([]any, error)
 	// GetIndexers return the indexers
 	GetIndexers() Indexers
 
@@ -55,13 +55,13 @@ type Indexer interface {
 }
 
 // IndexFunc knows how to compute the set of indexed values for an object.
-type IndexFunc func(obj interface{}) ([]string, error)
+type IndexFunc func(obj any) ([]string, error)
 
 // IndexFuncToKeyFuncAdapter adapts an indexFunc to a keyFunc.  This is only useful if your index function returns
 // unique values for every object.  This conversion can create errors when more than one key is found.  You
 // should prefer to make proper key and index functions.
 func IndexFuncToKeyFuncAdapter(indexFunc IndexFunc) KeyFunc {
-	return func(obj interface{}) (string, error) {
+	return func(obj any) (string, error) {
 		indexKeys, err := indexFunc(obj)
 		if err != nil {
 			return "", err
@@ -82,7 +82,7 @@ const (
 )
 
 // MetaNamespaceIndexFunc is a default index function that indexes based on an object's namespace
-func MetaNamespaceIndexFunc(obj interface{}) ([]string, error) {
+func MetaNamespaceIndexFunc(obj any) ([]string, error) {
 	meta, err := meta.Accessor(obj)
 	if err != nil {
 		return []string{""}, fmt.Errorf("object has no meta: %v", err)

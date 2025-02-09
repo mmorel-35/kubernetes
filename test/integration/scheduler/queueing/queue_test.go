@@ -344,10 +344,10 @@ func TestCustomResourceEnqueue(t *testing.T) {
 	crdGVR := schema.GroupVersionResource{Group: fooCRD.Spec.Group, Version: fooCRD.Spec.Versions[0].Name, Resource: "foos"}
 	crClient := dynamicClient.Resource(crdGVR).Namespace(ns)
 	if _, err := crClient.Create(ctx, &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "example.com/v1",
 			"kind":       "Foo",
-			"metadata":   map[string]interface{}{"name": "foo1"},
+			"metadata":   map[string]any{"name": "foo1"},
 		},
 	}, metav1.CreateOptions{}); err != nil {
 		t.Fatalf("Unable to create cr: %v", err)
@@ -461,7 +461,7 @@ func TestRequeueByPermitRejection(t *testing.T) {
 		fakePermitPluginName: func(ctx context.Context, o runtime.Object, fh framework.Handle) (framework.Plugin, error) {
 			fakePermit = &fakePermitPlugin{
 				frameworkHandler: fh,
-				schedulingHint: func(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+				schedulingHint: func(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 					queueingHintCalledCounter++
 					return framework.Queue, nil
 				},

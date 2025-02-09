@@ -90,10 +90,10 @@ func TestHandlerScope(t *testing.T) {
 
 			name := "bar"
 			cr := &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind":       crd.Spec.Names.Kind,
 					"apiVersion": gvr.GroupVersion().String(),
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name": name,
 					},
 				},

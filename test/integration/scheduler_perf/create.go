@@ -147,7 +147,7 @@ func (c *createAny) create(tCtx ktesting.TContext, env map[string]any) {
 	}
 }
 
-func getSpecFromTextTemplateFile(path string, env map[string]any, spec interface{}) error {
+func getSpecFromTextTemplateFile(path string, env map[string]any, spec any) error {
 	content, err := os.ReadFile(path)
 	if err != nil {
 		return err

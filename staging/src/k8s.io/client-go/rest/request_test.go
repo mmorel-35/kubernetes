@@ -2003,10 +2003,10 @@ func TestBody(t *testing.T) {
 	defer os.Remove(f.Name())
 
 	var nilObject *metav1.DeleteOptions
-	typedObject := interface{}(nilObject)
+	typedObject := any(nilObject)
 	c := testRESTClient(t, nil)
 	tests := []struct {
-		input    interface{}
+		input    any
 		expected string
 		headers  map[string]string
 	}{

@@ -50,7 +50,7 @@ type analyzer struct {
 	fset      *token.FileSet // positions are relative to fset
 	ctx       build.Context
 	failed    bool
-	donePaths map[string]interface{}
+	donePaths map[string]any
 }
 
 func newAnalyzer() *analyzer {
@@ -60,7 +60,7 @@ func newAnalyzer() *analyzer {
 	a := &analyzer{
 		fset:      token.NewFileSet(),
 		ctx:       ctx,
-		donePaths: make(map[string]interface{}),
+		donePaths: make(map[string]any),
 	}
 
 	return a

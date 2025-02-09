@@ -75,10 +75,10 @@ type GRPCCall struct {
 	FullMethod string
 
 	// Request contains the parameters of the call.
-	Request interface{}
+	Request any
 
 	// Response contains the reply of the plugin. It is nil for calls that are in progress.
-	Response interface{}
+	Response any
 
 	// Err contains the error return value of the plugin. It is nil for calls that are in progress or succeeded.
 	Err error
@@ -521,7 +521,7 @@ func (ex *ExamplePlugin) GetPreparedResources() []ClaimID {
 	return prepared
 }
 
-func (ex *ExamplePlugin) recordGRPCCall(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+func (ex *ExamplePlugin) recordGRPCCall(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
 	call := GRPCCall{
 		FullMethod: info.FullMethod,
 		Request:    req,
@@ -541,7 +541,7 @@ func (ex *ExamplePlugin) recordGRPCCall(ctx context.Context, req interface{}, in
 	return call.Response, call.Err
 }
 
-func (ex *ExamplePlugin) recordGRPCStream(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+func (ex *ExamplePlugin) recordGRPCStream(srv any, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 	call := GRPCCall{
 		FullMethod: info.FullMethod,
 	}

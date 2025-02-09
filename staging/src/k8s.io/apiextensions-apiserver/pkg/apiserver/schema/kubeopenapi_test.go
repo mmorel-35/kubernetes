@@ -42,13 +42,13 @@ func TestStructuralKubeOpenAPIRoundtrip(t *testing.T) {
 			case 0:
 				s.Object = float64(42.2)
 			case 1:
-				s.Object = map[string]interface{}{"foo": "bar"}
+				s.Object = map[string]any{"foo": "bar"}
 			case 2:
 				s.Object = ""
 			case 3:
-				s.Object = []interface{}{}
+				s.Object = []any{}
 			case 4:
-				s.Object = map[string]interface{}{}
+				s.Object = map[string]any{}
 			case 5:
 				s.Object = nil
 			case 6:

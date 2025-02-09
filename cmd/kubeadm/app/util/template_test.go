@@ -32,7 +32,7 @@ func TestParseTemplate(t *testing.T) {
 	var tmplTests = []struct {
 		name        string
 		template    string
-		data        interface{}
+		data        any
 		output      string
 		errExpected bool
 	}{

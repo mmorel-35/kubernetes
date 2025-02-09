@@ -39,7 +39,7 @@ func init() {
 // MutationDetector is able to monitor objects for mutation within a limited window of time
 type MutationDetector interface {
 	// AddObject adds the given object to the set being monitored for a while from now
-	AddObject(obj interface{})
+	AddObject(obj any)
 
 	// Run starts the monitoring and does not return until the monitoring is stopped.
 	Run(stopCh <-chan struct{})
@@ -59,7 +59,7 @@ type dummyMutationDetector struct{}
 
 func (dummyMutationDetector) Run(stopCh <-chan struct{}) {
 }
-func (dummyMutationDetector) AddObject(obj interface{}) {
+func (dummyMutationDetector) AddObject(obj any) {
 }
 
 // defaultCacheMutationDetector gives a way to detect if a cached object has been mutated
@@ -91,8 +91,8 @@ type defaultCacheMutationDetector struct {
 
 // cacheObj holds the actual object and a copy
 type cacheObj struct {
-	cached interface{}
-	copied interface{}
+	cached any
+	copied any
 }
 
 func (d *defaultCacheMutationDetector) Run(stopCh <-chan struct{}) {
@@ -118,7 +118,7 @@ func (d *defaultCacheMutationDetector) Run(stopCh <-chan struct{}) {
 
 // AddObject makes a deep copy of the object for later comparison.  It only works on runtime.Object
 // but that covers the vast majority of our cached objects
-func (d *defaultCacheMutationDetector) AddObject(obj interface{}) {
+func (d *defaultCacheMutationDetector) AddObject(obj any) {
 	if _, ok := obj.(DeletedFinalStateUnknown); ok {
 		return
 	}

@@ -105,7 +105,7 @@ func (nc *nodeLifecycleController) syncLeaseStore(lease *coordv1.Lease) error {
 	if lease == nil {
 		return nil
 	}
-	newElems := make([]interface{}, 0, 1)
+	newElems := make([]any, 0, 1)
 	newElems = append(newElems, lease)
 	return nc.leaseInformer.Informer().GetStore().Replace(newElems, "newRV")
 }
@@ -115,7 +115,7 @@ func (nc *nodeLifecycleController) syncNodeStore(fakeNodeHandler *testutil.FakeN
 	if err != nil {
 		return err
 	}
-	newElems := make([]interface{}, 0, len(nodes.Items))
+	newElems := make([]any, 0, len(nodes.Items))
 	for i := range nodes.Items {
 		newElems = append(newElems, &nodes.Items[i])
 	}
@@ -126,7 +126,7 @@ func (nc *nodeLifecycleController) syncPodStore(pod *v1.Pod) error {
 	if pod == nil {
 		return nil
 	}
-	newElems := make([]interface{}, 0, 1)
+	newElems := make([]any, 0, 1)
 	newElems = append(newElems, pod)
 	return nc.podInformer.Informer().GetStore().Replace(newElems, "newRV")
 }

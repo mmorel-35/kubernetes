@@ -93,7 +93,7 @@ func (g *genClientForType) GenerateType(c *generator.Context, t *types.Type, w i
 	}
 	type extendedInterfaceMethod struct {
 		template string
-		args     map[string]interface{}
+		args     map[string]any
 	}
 	_, typeGVString := util.ParsePathGroupVersion(g.inputPackage)
 	extendedMethods := []extendedInterfaceMethod{}
@@ -131,7 +131,7 @@ func (g *genClientForType) GenerateType(c *generator.Context, t *types.Type, w i
 		}
 		extendedMethod := extendedInterfaceMethod{
 			template: updatedVerbtemplate,
-			args: map[string]interface{}{
+			args: map[string]any{
 				"type":          t,
 				"inputType":     &inputType,
 				"resultType":    &resultType,
@@ -150,7 +150,7 @@ func (g *genClientForType) GenerateType(c *generator.Context, t *types.Type, w i
 		}
 		extendedMethods = append(extendedMethods, extendedMethod)
 	}
-	m := map[string]interface{}{
+	m := map[string]any{
 		"type":                             t,
 		"inputType":                        t,
 		"resultType":                       t,

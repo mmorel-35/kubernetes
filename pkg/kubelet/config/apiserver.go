@@ -34,7 +34,7 @@ import (
 const WaitForAPIServerSyncPeriod = 1 * time.Second
 
 // NewSourceApiserver creates a config source that watches and pulls from the apiserver.
-func NewSourceApiserver(c clientset.Interface, nodeName types.NodeName, nodeHasSynced func() bool, updates chan<- interface{}) {
+func NewSourceApiserver(c clientset.Interface, nodeName types.NodeName, nodeHasSynced func() bool, updates chan<- any) {
 	lw := cache.NewListWatchFromClient(c.CoreV1().RESTClient(), "pods", metav1.NamespaceAll, fields.OneTermEqualSelector("spec.nodeName", string(nodeName)))
 
 	// The Reflector responsible for watching pods at the apiserver should be run only after
@@ -55,8 +55,8 @@ func NewSourceApiserver(c clientset.Interface, nodeName types.NodeName, nodeHasS
 }
 
 // newSourceApiserverFromLW holds creates a config source that watches and pulls from the apiserver.
-func newSourceApiserverFromLW(lw cache.ListerWatcher, updates chan<- interface{}) {
-	send := func(objs []interface{}) {
+func newSourceApiserverFromLW(lw cache.ListerWatcher, updates chan<- any) {
+	send := func(objs []any) {
 		var pods []*v1.Pod
 		for _, o := range objs {
 			pods = append(pods, o.(*v1.Pod))

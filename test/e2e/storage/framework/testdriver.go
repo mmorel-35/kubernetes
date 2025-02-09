@@ -236,7 +236,7 @@ type DriverInfo struct {
 	// plugin if it exists and is empty if this DriverInfo represents a CSI
 	// Driver
 	InTreePluginName string
-	TestTags         []interface{} // tags for the driver (e.g. framework.WithSlow())
+	TestTags         []any // tags for the driver (e.g. framework.WithSlow())
 
 	// Maximum single file size supported by this driver
 	MaxFileSize int64

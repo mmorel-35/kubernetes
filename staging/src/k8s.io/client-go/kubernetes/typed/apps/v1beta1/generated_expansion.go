@@ -18,8 +18,8 @@ limitations under the License.
 
 package v1beta1
 
-type ControllerRevisionExpansion interface{}
+type ControllerRevisionExpansion any
 
-type DeploymentExpansion interface{}
+type DeploymentExpansion any
 
-type StatefulSetExpansion interface{}
+type StatefulSetExpansion any

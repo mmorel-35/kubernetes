@@ -35,7 +35,7 @@ import (
 )
 
 func toUnstructuredOrDie(data []byte) *unstructured.Unstructured {
-	unstrBody := map[string]interface{}{}
+	unstrBody := map[string]any{}
 	err := json.Unmarshal(data, &unstrBody)
 	if err != nil {
 		panic(err)
@@ -346,32 +346,32 @@ func TestSortingPrinter(t *testing.T) {
 		{
 			name: "some-missing-fields",
 			obj: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind":       "List",
 					"apiVersion": "v1",
 				},
 				Items: []unstructured.Unstructured{
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"kind":       "ReplicationController",
 							"apiVersion": "v1",
-							"status": map[string]interface{}{
+							"status": map[string]any{
 								"availableReplicas": 2,
 							},
 						},
 					},
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"kind":       "ReplicationController",
 							"apiVersion": "v1",
-							"status":     map[string]interface{}{},
+							"status":     map[string]any{},
 						},
 					},
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"kind":       "ReplicationController",
 							"apiVersion": "v1",
-							"status": map[string]interface{}{
+							"status": map[string]any{
 								"availableReplicas": 1,
 							},
 						},
@@ -379,32 +379,32 @@ func TestSortingPrinter(t *testing.T) {
 				},
 			},
 			sort: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind":       "List",
 					"apiVersion": "v1",
 				},
 				Items: []unstructured.Unstructured{
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"kind":       "ReplicationController",
 							"apiVersion": "v1",
-							"status":     map[string]interface{}{},
+							"status":     map[string]any{},
 						},
 					},
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"kind":       "ReplicationController",
 							"apiVersion": "v1",
-							"status": map[string]interface{}{
+							"status": map[string]any{
 								"availableReplicas": 1,
 							},
 						},
 					},
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"kind":       "ReplicationController",
 							"apiVersion": "v1",
-							"status": map[string]interface{}{
+							"status": map[string]any{
 								"availableReplicas": 2,
 							},
 						},
@@ -416,25 +416,25 @@ func TestSortingPrinter(t *testing.T) {
 		{
 			name: "all-missing-fields",
 			obj: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind":       "List",
 					"apiVersion": "v1",
 				},
 				Items: []unstructured.Unstructured{
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"kind":       "ReplicationController",
 							"apiVersion": "v1",
-							"status": map[string]interface{}{
+							"status": map[string]any{
 								"replicas": 0,
 							},
 						},
 					},
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"kind":       "ReplicationController",
 							"apiVersion": "v1",
-							"status": map[string]interface{}{
+							"status": map[string]any{
 								"replicas": 0,
 							},
 						},
@@ -581,7 +581,7 @@ func TestSortingPrinter(t *testing.T) {
 		{
 			name: "pod-unstructured-resources-cpu-random-order-with-missing-fields",
 			obj: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind":       "List",
 					"apiVersion": "v1",
 				},
@@ -593,7 +593,7 @@ func TestSortingPrinter(t *testing.T) {
 				},
 			},
 			sort: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind":       "List",
 					"apiVersion": "v1",
 				},
@@ -609,7 +609,7 @@ func TestSortingPrinter(t *testing.T) {
 		{
 			name: "pod-unstructured-resources-memory-random-order-with-missing-fields",
 			obj: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind":       "List",
 					"apiVersion": "v1",
 				},
@@ -624,7 +624,7 @@ func TestSortingPrinter(t *testing.T) {
 				},
 			},
 			sort: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind":       "List",
 					"apiVersion": "v1",
 				},

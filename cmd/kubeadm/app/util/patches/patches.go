@@ -45,7 +45,7 @@ type PatchTarget struct {
 
 	// StrategicMergePatchObject is only used for strategic merge patches.
 	// It represents the underlying object type that is patched - e.g. "v1.Pod"
-	StrategicMergePatchObject interface{}
+	StrategicMergePatchObject any
 
 	// Data must contain the bytes that will be patched.
 	Data []byte

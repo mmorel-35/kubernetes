@@ -20,24 +20,24 @@ package v1beta1
 
 // DeploymentListerExpansion allows custom methods to be added to
 // DeploymentLister.
-type DeploymentListerExpansion interface{}
+type DeploymentListerExpansion any
 
 // DeploymentNamespaceListerExpansion allows custom methods to be added to
 // DeploymentNamespaceLister.
-type DeploymentNamespaceListerExpansion interface{}
+type DeploymentNamespaceListerExpansion any
 
 // IngressListerExpansion allows custom methods to be added to
 // IngressLister.
-type IngressListerExpansion interface{}
+type IngressListerExpansion any
 
 // IngressNamespaceListerExpansion allows custom methods to be added to
 // IngressNamespaceLister.
-type IngressNamespaceListerExpansion interface{}
+type IngressNamespaceListerExpansion any
 
 // NetworkPolicyListerExpansion allows custom methods to be added to
 // NetworkPolicyLister.
-type NetworkPolicyListerExpansion interface{}
+type NetworkPolicyListerExpansion any
 
 // NetworkPolicyNamespaceListerExpansion allows custom methods to be added to
 // NetworkPolicyNamespaceLister.
-type NetworkPolicyNamespaceListerExpansion interface{}
+type NetworkPolicyNamespaceListerExpansion any

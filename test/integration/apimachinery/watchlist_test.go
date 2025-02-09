@@ -136,7 +136,7 @@ type wrappedStore struct {
 	ctxCancel context.CancelFunc
 }
 
-func (s *wrappedStore) Replace(items []interface{}, rv string) error {
+func (s *wrappedStore) Replace(items []any, rv string) error {
 	s.ctxCancel()
 	return s.Store.Replace(items, rv)
 }

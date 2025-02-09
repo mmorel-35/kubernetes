@@ -44,7 +44,7 @@ func TestCompileManifests(t *testing.T) {
 	var tests = []struct {
 		name     string
 		manifest string
-		data     interface{}
+		data     any
 	}{
 		{
 			name:     "KubeProxyConfigMap19",
@@ -182,7 +182,7 @@ func TestDaemonSetsHaveSystemNodeCriticalPriorityClassName(t *testing.T) {
 	testCases := []struct {
 		name     string
 		manifest string
-		data     interface{}
+		data     any
 	}{
 		{
 			name:     "KubeProxyDaemonSet19",

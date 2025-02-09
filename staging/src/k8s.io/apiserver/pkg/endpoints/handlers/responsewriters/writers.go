@@ -139,7 +139,7 @@ func SerializeObject(mediaType string, encoder runtime.Encoder, hw http.Response
 }
 
 var gzipPool = &sync.Pool{
-	New: func() interface{} {
+	New: func() any {
 		gw, err := gzip.NewWriterLevel(nil, defaultGzipContentEncodingLevel)
 		if err != nil {
 			panic(err)
@@ -337,7 +337,7 @@ func ErrorNegotiated(err error, s runtime.NegotiatedSerializer, gv schema.GroupV
 }
 
 // WriteRawJSON writes a non-API object in JSON.
-func WriteRawJSON(statusCode int, object interface{}, w http.ResponseWriter) {
+func WriteRawJSON(statusCode int, object any, w http.ResponseWriter) {
 	output, err := json.MarshalIndent(object, "", "  ")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -72,16 +72,16 @@ func NewStorageVersionGC(ctx context.Context, clientset kubernetes.Interface, le
 	}
 	logger := klog.FromContext(ctx)
 	leaseInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			c.onDeleteLease(logger, obj)
 		},
 	})
 	// use the default resync period from the informer
 	storageVersionInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			c.onAddStorageVersion(logger, obj)
 		},
-		UpdateFunc: func(old, newObj interface{}) {
+		UpdateFunc: func(old, newObj any) {
 			c.onUpdateStorageVersion(logger, old, newObj)
 		},
 	})
@@ -228,12 +228,12 @@ func (c *Controller) syncStorageVersion(ctx context.Context, name string) error 
 	return c.updateOrDeleteStorageVersion(ctx, sv, serverStorageVersions)
 }
 
-func (c *Controller) onAddStorageVersion(logger klog.Logger, obj interface{}) {
+func (c *Controller) onAddStorageVersion(logger klog.Logger, obj any) {
 	castObj := obj.(*apiserverinternalv1alpha1.StorageVersion)
 	c.enqueueStorageVersion(logger, castObj)
 }
 
-func (c *Controller) onUpdateStorageVersion(logger klog.Logger, oldObj, newObj interface{}) {
+func (c *Controller) onUpdateStorageVersion(logger klog.Logger, oldObj, newObj any) {
 	castNewObj := newObj.(*apiserverinternalv1alpha1.StorageVersion)
 	c.enqueueStorageVersion(logger, castNewObj)
 }
@@ -252,7 +252,7 @@ func (c *Controller) enqueueStorageVersion(logger klog.Logger, obj *apiserverint
 	}
 }
 
-func (c *Controller) onDeleteLease(logger klog.Logger, obj interface{}) {
+func (c *Controller) onDeleteLease(logger klog.Logger, obj any) {
 	castObj, ok := obj.(*coordinationv1.Lease)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)

@@ -568,8 +568,8 @@ func TestSampleAPIServer(ctx context.Context, f *framework.Framework, aggrclient
 	ginkgo.By("Adding a label to the APIService")
 	apiServiceClient := aggrclient.ApiregistrationV1().APIServices()
 	apiServiceLabel := map[string]string{"e2e-apiservice": "patched"}
-	apiServicePatch, err := json.Marshal(map[string]interface{}{
-		"metadata": map[string]interface{}{
+	apiServicePatch, err := json.Marshal(map[string]any{
+		"metadata": map[string]any{
 			"labels": apiServiceLabel,
 		},
 	})
@@ -686,8 +686,8 @@ func TestSampleAPIServer(ctx context.Context, f *framework.Framework, aggrclient
 	framework.ExpectNoError(err, "Failed to process statusContent: %v | err: %v ", string(statusContent), err)
 
 	ginkgo.By("Patch APIService Status")
-	patch := map[string]interface{}{
-		"status": map[string]interface{}{
+	patch := map[string]any{
+		"status": map[string]any{
 			"conditions": append(wardle.Status.Conditions, apiregistrationv1.APIServiceCondition{
 				Type:    "StatusPatched",
 				Status:  "True",
@@ -758,7 +758,7 @@ func pollTimed(ctx context.Context, interval, timeout time.Duration, condition w
 	return wait.PollUntilContextTimeout(ctx, interval, timeout, false, condition)
 }
 
-func validateErrorWithDebugInfo(ctx context.Context, f *framework.Framework, err error, pods *v1.PodList, msg string, fields ...interface{}) {
+func validateErrorWithDebugInfo(ctx context.Context, f *framework.Framework, err error, pods *v1.PodList, msg string, fields ...any) {
 	if err != nil {
 		namespace := f.Namespace.Name
 		msg := fmt.Sprintf(msg, fields...)

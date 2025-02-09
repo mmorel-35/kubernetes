@@ -83,10 +83,10 @@ func NewResourceVersionController(
 	}
 
 	_, _ = svmInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			rvController.addSVM(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			rvController.updateSVM(logger, oldObj, newObj)
 		},
 	})
@@ -94,13 +94,13 @@ func NewResourceVersionController(
 	return rvController
 }
 
-func (rv *ResourceVersionController) addSVM(logger klog.Logger, obj interface{}) {
+func (rv *ResourceVersionController) addSVM(logger klog.Logger, obj any) {
 	svm := obj.(*svmv1alpha1.StorageVersionMigration)
 	logger.V(4).Info("Adding", "svm", klog.KObj(svm))
 	rv.enqueue(svm)
 }
 
-func (rv *ResourceVersionController) updateSVM(logger klog.Logger, oldObj, newObj interface{}) {
+func (rv *ResourceVersionController) updateSVM(logger klog.Logger, oldObj, newObj any) {
 	oldSVM := oldObj.(*svmv1alpha1.StorageVersionMigration)
 	newSVM := newObj.(*svmv1alpha1.StorageVersionMigration)
 	logger.V(4).Info("Updating", "svm", klog.KObj(oldSVM))

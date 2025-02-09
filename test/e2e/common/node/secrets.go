@@ -197,8 +197,8 @@ var _ = SIGDescribe("Secrets", func() {
 		ginkgo.By("patching the secret")
 		// patch the secret in the test namespace
 		secretPatchNewData := base64.StdEncoding.EncodeToString([]byte("value1"))
-		secretPatch, err := json.Marshal(map[string]interface{}{
-			"metadata": map[string]interface{}{
+		secretPatch, err := json.Marshal(map[string]any{
+			"metadata": map[string]any{
 				"labels": map[string]string{"testsecret": "true"},
 			},
 			"data": map[string][]byte{"key": []byte(secretPatchNewData)},

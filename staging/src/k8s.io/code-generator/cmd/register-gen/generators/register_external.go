@@ -60,7 +60,7 @@ func (g *registerExternalGenerator) Finalize(context *generator.Context, w io.Wr
 	sort.Strings(typesToGenerateOnlyNames)
 
 	sw := generator.NewSnippetWriter(w, context, "$", "$")
-	m := map[string]interface{}{
+	m := map[string]any{
 		"groupName":         g.gv.Group,
 		"version":           g.gv.Version,
 		"types":             typesToGenerateOnlyNames,

@@ -112,7 +112,7 @@ type MockMemoryProvider_GetMemory_Call struct {
 // GetMemory is a helper method to define mock.On call
 //   - podUID string
 //   - containerName string
-func (_e *MockMemoryProvider_Expecter) GetMemory(podUID interface{}, containerName interface{}) *MockMemoryProvider_GetMemory_Call {
+func (_e *MockMemoryProvider_Expecter) GetMemory(podUID any, containerName any) *MockMemoryProvider_GetMemory_Call {
 	return &MockMemoryProvider_GetMemory_Call{Call: _e.mock.On("GetMemory", podUID, containerName)}
 }
 

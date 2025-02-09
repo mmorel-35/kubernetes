@@ -222,7 +222,7 @@ func RegisterExampleServer(s *grpc.Server, srv ExampleServer) {
 	s.RegisterService(&_Example_serviceDesc, srv)
 }
 
-func _Example_GetExampleInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Example_GetExampleInfo_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ExampleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -234,7 +234,7 @@ func _Example_GetExampleInfo_Handler(srv interface{}, ctx context.Context, dec f
 		Server:     srv,
 		FullMethod: "/v1beta2.Example/GetExampleInfo",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ExampleServer).GetExampleInfo(ctx, req.(*ExampleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
@@ -388,7 +388,7 @@ func (this *ExampleResponse) String() string {
 	}, "")
 	return s
 }
-func valueToStringApi(v interface{}) string {
+func valueToStringApi(v any) string {
 	rv := reflect.ValueOf(v)
 	if rv.IsNil() {
 		return "nil"

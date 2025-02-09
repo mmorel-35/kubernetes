@@ -42,10 +42,10 @@ import (
 
 func getArbitraryResource(s schema.GroupVersionResource, name, namespace string) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       s.Resource,
 			"apiVersion": s.Version,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":            name,
 				"namespace":       namespace,
 				"generateName":    "test_generateName",

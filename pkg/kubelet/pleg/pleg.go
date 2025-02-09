@@ -60,7 +60,7 @@ type PodLifecycleEvent struct {
 	// The accompanied data which varies based on the event type.
 	//   - ContainerStarted/ContainerStopped: the container name (string).
 	//   - All other event types: unused.
-	Data interface{}
+	Data any
 }
 
 // PodLifecycleEventGenerator contains functions for generating pod life cycle events.

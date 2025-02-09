@@ -134,14 +134,14 @@ func TestPDBWithScaleSubresource(t *testing.T) {
 	maxUnavailable := int32(2)
 
 	resource := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       crdDefinition.Spec.Names.Kind,
 			"apiVersion": crdDefinition.Spec.Group + "/" + crdDefinition.Spec.Versions[0].Name,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      "resource",
 				"namespace": nsName,
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"replicas": replicas,
 			},
 		},

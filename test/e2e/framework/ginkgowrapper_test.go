@@ -25,7 +25,7 @@ import (
 
 func TestTagsEqual(t *testing.T) {
 	testcases := []struct {
-		a, b        interface{}
+		a, b        any
 		expectEqual bool
 	}{
 		{1, 2, false},

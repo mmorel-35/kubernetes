@@ -29,7 +29,7 @@ import (
 
 // Validate validates embedded ObjectMeta and TypeMeta.
 // It also validate those at the root if isResourceRoot is true.
-func Validate(pth *field.Path, obj interface{}, s *structuralschema.Structural, isResourceRoot bool) field.ErrorList {
+func Validate(pth *field.Path, obj any, s *structuralschema.Structural, isResourceRoot bool) field.ErrorList {
 	if isResourceRoot {
 		if s == nil {
 			s = &structuralschema.Structural{}
@@ -43,7 +43,7 @@ func Validate(pth *field.Path, obj interface{}, s *structuralschema.Structural, 
 	return validate(pth, obj, s)
 }
 
-func validate(pth *field.Path, x interface{}, s *structuralschema.Structural) field.ErrorList {
+func validate(pth *field.Path, x any, s *structuralschema.Structural) field.ErrorList {
 	if s == nil {
 		return nil
 	}
@@ -51,7 +51,7 @@ func validate(pth *field.Path, x interface{}, s *structuralschema.Structural) fi
 	var allErrs field.ErrorList
 
 	switch x := x.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		if s.XEmbeddedResource {
 			allErrs = append(allErrs, validateEmbeddedResource(pth, x, s)...)
 		}
@@ -64,7 +64,7 @@ func validate(pth *field.Path, x interface{}, s *structuralschema.Structural) fi
 				allErrs = append(allErrs, validate(pth.Key(k), v, s.AdditionalProperties.Structural)...)
 			}
 		}
-	case []interface{}:
+	case []any:
 		for i, v := range x {
 			allErrs = append(allErrs, validate(pth.Index(i), v, s.Items)...)
 		}
@@ -75,7 +75,7 @@ func validate(pth *field.Path, x interface{}, s *structuralschema.Structural) fi
 	return allErrs
 }
 
-func validateEmbeddedResource(pth *field.Path, x map[string]interface{}, s *structuralschema.Structural) field.ErrorList {
+func validateEmbeddedResource(pth *field.Path, x map[string]any, s *structuralschema.Structural) field.ErrorList {
 	var allErrs field.ErrorList
 
 	// require apiVersion and kind, but not metadata

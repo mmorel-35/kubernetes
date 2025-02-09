@@ -24,8 +24,8 @@ import (
 )
 
 // Funcs returns the fuzzer functions for the apps api group.
-var Funcs = func(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+var Funcs = func(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(s *wardle.FlunderSpec, c fuzz.Continue) {
 			c.FuzzNoCustom(s) // fuzz self without calling this function again
 

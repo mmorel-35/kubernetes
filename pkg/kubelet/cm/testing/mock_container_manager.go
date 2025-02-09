@@ -278,7 +278,7 @@ type MockContainerManager_GetCPUs_Call struct {
 // GetCPUs is a helper method to define mock.On call
 //   - podUID string
 //   - containerName string
-func (_e *MockContainerManager_Expecter) GetCPUs(podUID interface{}, containerName interface{}) *MockContainerManager_GetCPUs_Call {
+func (_e *MockContainerManager_Expecter) GetCPUs(podUID any, containerName any) *MockContainerManager_GetCPUs_Call {
 	return &MockContainerManager_GetCPUs_Call{Call: _e.mock.On("GetCPUs", podUID, containerName)}
 }
 
@@ -326,7 +326,7 @@ type MockContainerManager_GetCapacity_Call struct {
 
 // GetCapacity is a helper method to define mock.On call
 //   - localStorageCapacityIsolation bool
-func (_e *MockContainerManager_Expecter) GetCapacity(localStorageCapacityIsolation interface{}) *MockContainerManager_GetCapacity_Call {
+func (_e *MockContainerManager_Expecter) GetCapacity(localStorageCapacityIsolation any) *MockContainerManager_GetCapacity_Call {
 	return &MockContainerManager_GetCapacity_Call{Call: _e.mock.On("GetCapacity", localStorageCapacityIsolation)}
 }
 
@@ -443,7 +443,7 @@ type MockContainerManager_GetDevices_Call struct {
 // GetDevices is a helper method to define mock.On call
 //   - podUID string
 //   - containerName string
-func (_e *MockContainerManager_Expecter) GetDevices(podUID interface{}, containerName interface{}) *MockContainerManager_GetDevices_Call {
+func (_e *MockContainerManager_Expecter) GetDevices(podUID any, containerName any) *MockContainerManager_GetDevices_Call {
 	return &MockContainerManager_GetDevices_Call{Call: _e.mock.On("GetDevices", podUID, containerName)}
 }
 
@@ -492,7 +492,7 @@ type MockContainerManager_GetDynamicResources_Call struct {
 // GetDynamicResources is a helper method to define mock.On call
 //   - pod *corev1.Pod
 //   - _a1 *corev1.Container
-func (_e *MockContainerManager_Expecter) GetDynamicResources(pod interface{}, _a1 interface{}) *MockContainerManager_GetDynamicResources_Call {
+func (_e *MockContainerManager_Expecter) GetDynamicResources(pod any, _a1 any) *MockContainerManager_GetDynamicResources_Call {
 	return &MockContainerManager_GetDynamicResources_Call{Call: _e.mock.On("GetDynamicResources", pod, _a1)}
 }
 
@@ -588,7 +588,7 @@ type MockContainerManager_GetMemory_Call struct {
 // GetMemory is a helper method to define mock.On call
 //   - podUID string
 //   - containerName string
-func (_e *MockContainerManager_Expecter) GetMemory(podUID interface{}, containerName interface{}) *MockContainerManager_GetMemory_Call {
+func (_e *MockContainerManager_Expecter) GetMemory(podUID any, containerName any) *MockContainerManager_GetMemory_Call {
 	return &MockContainerManager_GetMemory_Call{Call: _e.mock.On("GetMemory", podUID, containerName)}
 }
 
@@ -971,7 +971,7 @@ type MockContainerManager_GetResources_Call struct {
 //   - ctx context.Context
 //   - pod *corev1.Pod
 //   - _a2 *corev1.Container
-func (_e *MockContainerManager_Expecter) GetResources(ctx interface{}, pod interface{}, _a2 interface{}) *MockContainerManager_GetResources_Call {
+func (_e *MockContainerManager_Expecter) GetResources(ctx any, pod any, _a2 any) *MockContainerManager_GetResources_Call {
 	return &MockContainerManager_GetResources_Call{Call: _e.mock.On("GetResources", ctx, pod, _a2)}
 }
 
@@ -1111,7 +1111,7 @@ type MockContainerManager_PodMightNeedToUnprepareResources_Call struct {
 
 // PodMightNeedToUnprepareResources is a helper method to define mock.On call
 //   - UID types.UID
-func (_e *MockContainerManager_Expecter) PodMightNeedToUnprepareResources(UID interface{}) *MockContainerManager_PodMightNeedToUnprepareResources_Call {
+func (_e *MockContainerManager_Expecter) PodMightNeedToUnprepareResources(UID any) *MockContainerManager_PodMightNeedToUnprepareResources_Call {
 	return &MockContainerManager_PodMightNeedToUnprepareResources_Call{Call: _e.mock.On("PodMightNeedToUnprepareResources", UID)}
 }
 
@@ -1158,7 +1158,7 @@ type MockContainerManager_PrepareDynamicResources_Call struct {
 // PrepareDynamicResources is a helper method to define mock.On call
 //   - _a0 context.Context
 //   - _a1 *corev1.Pod
-func (_e *MockContainerManager_Expecter) PrepareDynamicResources(_a0 interface{}, _a1 interface{}) *MockContainerManager_PrepareDynamicResources_Call {
+func (_e *MockContainerManager_Expecter) PrepareDynamicResources(_a0 any, _a1 any) *MockContainerManager_PrepareDynamicResources_Call {
 	return &MockContainerManager_PrepareDynamicResources_Call{Call: _e.mock.On("PrepareDynamicResources", _a0, _a1)}
 }
 
@@ -1256,7 +1256,7 @@ type MockContainerManager_Start_Call struct {
 //   - _a5 status.PodStatusProvider
 //   - _a6 cri.RuntimeService
 //   - _a7 bool
-func (_e *MockContainerManager_Expecter) Start(_a0 interface{}, _a1 interface{}, _a2 interface{}, _a3 interface{}, _a4 interface{}, _a5 interface{}, _a6 interface{}, _a7 interface{}) *MockContainerManager_Start_Call {
+func (_e *MockContainerManager_Expecter) Start(_a0 any, _a1 any, _a2 any, _a3 any, _a4 any, _a5 any, _a6 any, _a7 any) *MockContainerManager_Start_Call {
 	return &MockContainerManager_Start_Call{Call: _e.mock.On("Start", _a0, _a1, _a2, _a3, _a4, _a5, _a6, _a7)}
 }
 
@@ -1395,7 +1395,7 @@ type MockContainerManager_UnprepareDynamicResources_Call struct {
 // UnprepareDynamicResources is a helper method to define mock.On call
 //   - _a0 context.Context
 //   - _a1 *corev1.Pod
-func (_e *MockContainerManager_Expecter) UnprepareDynamicResources(_a0 interface{}, _a1 interface{}) *MockContainerManager_UnprepareDynamicResources_Call {
+func (_e *MockContainerManager_Expecter) UnprepareDynamicResources(_a0 any, _a1 any) *MockContainerManager_UnprepareDynamicResources_Call {
 	return &MockContainerManager_UnprepareDynamicResources_Call{Call: _e.mock.On("UnprepareDynamicResources", _a0, _a1)}
 }
 
@@ -1461,7 +1461,7 @@ type MockContainerManager_UpdateAllocatedResourcesStatus_Call struct {
 // UpdateAllocatedResourcesStatus is a helper method to define mock.On call
 //   - pod *corev1.Pod
 //   - _a1 *corev1.PodStatus
-func (_e *MockContainerManager_Expecter) UpdateAllocatedResourcesStatus(pod interface{}, _a1 interface{}) *MockContainerManager_UpdateAllocatedResourcesStatus_Call {
+func (_e *MockContainerManager_Expecter) UpdateAllocatedResourcesStatus(pod any, _a1 any) *MockContainerManager_UpdateAllocatedResourcesStatus_Call {
 	return &MockContainerManager_UpdateAllocatedResourcesStatus_Call{Call: _e.mock.On("UpdateAllocatedResourcesStatus", pod, _a1)}
 }
 
@@ -1508,7 +1508,7 @@ type MockContainerManager_UpdatePluginResources_Call struct {
 // UpdatePluginResources is a helper method to define mock.On call
 //   - _a0 *framework.NodeInfo
 //   - _a1 *lifecycle.PodAdmitAttributes
-func (_e *MockContainerManager_Expecter) UpdatePluginResources(_a0 interface{}, _a1 interface{}) *MockContainerManager_UpdatePluginResources_Call {
+func (_e *MockContainerManager_Expecter) UpdatePluginResources(_a0 any, _a1 any) *MockContainerManager_UpdatePluginResources_Call {
 	return &MockContainerManager_UpdatePluginResources_Call{Call: _e.mock.On("UpdatePluginResources", _a0, _a1)}
 }
 

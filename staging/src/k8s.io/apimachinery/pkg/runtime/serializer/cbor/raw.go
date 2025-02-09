@@ -64,7 +64,7 @@ var rawTypeTranscodeFuncs = map[reflect.Type]func(reflect.Value) error{
 	},
 }
 
-func transcodeRawTypes(v interface{}) error {
+func transcodeRawTypes(v any) error {
 	if v == nil {
 		return nil
 	}

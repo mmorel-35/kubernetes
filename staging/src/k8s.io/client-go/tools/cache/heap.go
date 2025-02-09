@@ -29,16 +29,16 @@ const (
 )
 
 // LessFunc is used to compare two objects in the heap.
-type LessFunc func(interface{}, interface{}) bool
+type LessFunc func(any, any) bool
 
 type heapItem struct {
-	obj   interface{} // The object which is stored in the heap.
-	index int         // The index of the object's key in the Heap.queue.
+	obj   any // The object which is stored in the heap.
+	index int // The index of the object's key in the Heap.queue.
 }
 
 type itemKeyValue struct {
 	key string
-	obj interface{}
+	obj any
 }
 
 // heapData is an internal struct that implements the standard heap interface
@@ -94,7 +94,7 @@ func (h *heapData) Swap(i, j int) {
 }
 
 // Push is supposed to be called by heap.Push only.
-func (h *heapData) Push(kv interface{}) {
+func (h *heapData) Push(kv any) {
 	keyValue := kv.(*itemKeyValue)
 	n := len(h.queue)
 	h.items[keyValue.key] = &heapItem{keyValue.obj, n}
@@ -102,7 +102,7 @@ func (h *heapData) Push(kv interface{}) {
 }
 
 // Pop is supposed to be called by heap.Pop only.
-func (h *heapData) Pop() interface{} {
+func (h *heapData) Pop() any {
 	key := h.queue[len(h.queue)-1]
 	h.queue = h.queue[0 : len(h.queue)-1]
 	item, ok := h.items[key]
@@ -140,7 +140,7 @@ func (h *Heap) Close() {
 
 // Add inserts an item, and puts it in the queue. The item is updated if it
 // already exists.
-func (h *Heap) Add(obj interface{}) error {
+func (h *Heap) Add(obj any) error {
 	key, err := h.data.keyFunc(obj)
 	if err != nil {
 		return KeyError{obj, err}
@@ -163,7 +163,7 @@ func (h *Heap) Add(obj interface{}) error {
 // BulkAdd adds all the items in the list to the queue and then signals the condition
 // variable. It is useful when the caller would like to add all of the items
 // to the queue before consumer starts processing them.
-func (h *Heap) BulkAdd(list []interface{}) error {
+func (h *Heap) BulkAdd(list []any) error {
 	h.lock.Lock()
 	defer h.lock.Unlock()
 	if h.closed {
@@ -191,7 +191,7 @@ func (h *Heap) BulkAdd(list []interface{}) error {
 // This is useful in a single producer/consumer scenario so that the consumer can
 // safely retry items without contending with the producer and potentially enqueueing
 // stale items.
-func (h *Heap) AddIfNotPresent(obj interface{}) error {
+func (h *Heap) AddIfNotPresent(obj any) error {
 	id, err := h.data.keyFunc(obj)
 	if err != nil {
 		return KeyError{obj, err}
@@ -208,7 +208,7 @@ func (h *Heap) AddIfNotPresent(obj interface{}) error {
 
 // addIfNotPresentLocked assumes the lock is already held and adds the provided
 // item to the queue if it does not already exist.
-func (h *Heap) addIfNotPresentLocked(key string, obj interface{}) {
+func (h *Heap) addIfNotPresentLocked(key string, obj any) {
 	if _, exists := h.data.items[key]; exists {
 		return
 	}
@@ -217,12 +217,12 @@ func (h *Heap) addIfNotPresentLocked(key string, obj interface{}) {
 
 // Update is the same as Add in this implementation. When the item does not
 // exist, it is added.
-func (h *Heap) Update(obj interface{}) error {
+func (h *Heap) Update(obj any) error {
 	return h.Add(obj)
 }
 
 // Delete removes an item.
-func (h *Heap) Delete(obj interface{}) error {
+func (h *Heap) Delete(obj any) error {
 	key, err := h.data.keyFunc(obj)
 	if err != nil {
 		return KeyError{obj, err}
@@ -238,7 +238,7 @@ func (h *Heap) Delete(obj interface{}) error {
 
 // Pop waits until an item is ready. If multiple items are
 // ready, they are returned in the order given by Heap.data.lessFunc.
-func (h *Heap) Pop() (interface{}, error) {
+func (h *Heap) Pop() (any, error) {
 	h.lock.Lock()
 	defer h.lock.Unlock()
 	for len(h.data.queue) == 0 {
@@ -259,10 +259,10 @@ func (h *Heap) Pop() (interface{}, error) {
 }
 
 // List returns a list of all the items.
-func (h *Heap) List() []interface{} {
+func (h *Heap) List() []any {
 	h.lock.RLock()
 	defer h.lock.RUnlock()
-	list := make([]interface{}, 0, len(h.data.items))
+	list := make([]any, 0, len(h.data.items))
 	for _, item := range h.data.items {
 		list = append(list, item.obj)
 	}
@@ -281,7 +281,7 @@ func (h *Heap) ListKeys() []string {
 }
 
 // Get returns the requested item, or sets exists=false.
-func (h *Heap) Get(obj interface{}) (interface{}, bool, error) {
+func (h *Heap) Get(obj any) (any, bool, error) {
 	key, err := h.data.keyFunc(obj)
 	if err != nil {
 		return nil, false, KeyError{obj, err}
@@ -290,7 +290,7 @@ func (h *Heap) Get(obj interface{}) (interface{}, bool, error) {
 }
 
 // GetByKey returns the requested item, or sets exists=false.
-func (h *Heap) GetByKey(key string) (interface{}, bool, error) {
+func (h *Heap) GetByKey(key string) (any, bool, error) {
 	h.lock.RLock()
 	defer h.lock.RUnlock()
 	item, exists := h.data.items[key]

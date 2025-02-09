@@ -193,7 +193,7 @@ type JosePrivateKey interface {
 func TokenHandlerBehaviorReturningPredefinedJWT[K JosePrivateKey](
 	t *testing.T,
 	privateKey K,
-	claims map[string]interface{}, accessToken, refreshToken string,
+	claims map[string]any, accessToken, refreshToken string,
 ) func() (handlers.Token, error) {
 	t.Helper()
 

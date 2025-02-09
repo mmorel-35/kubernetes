@@ -67,7 +67,7 @@ func InitCustomSnapshottableTestSuite(patterns []storageframework.TestPattern) s
 			SupportedSizeRange: e2evolume.SizeRange{
 				Min: "1Mi",
 			},
-			TestTags: []interface{}{feature.VolumeSnapshotDataSource},
+			TestTags: []any{feature.VolumeSnapshotDataSource},
 		},
 	}
 }
@@ -429,13 +429,13 @@ func checkSnapshot(ctx context.Context, dc dynamic.Interface, sr *storageframewo
 	framework.ExpectNoError(err)
 
 	// Get the bound snapshotContent
-	snapshotStatus := vs.Object["status"].(map[string]interface{})
+	snapshotStatus := vs.Object["status"].(map[string]any)
 	snapshotContentName := snapshotStatus["boundVolumeSnapshotContentName"].(string)
 	vscontent, err := dc.Resource(storageutils.SnapshotContentGVR).Get(ctx, snapshotContentName, metav1.GetOptions{})
 	framework.ExpectNoError(err)
 
-	snapshotContentSpec := vscontent.Object["spec"].(map[string]interface{})
-	volumeSnapshotRef := snapshotContentSpec["volumeSnapshotRef"].(map[string]interface{})
+	snapshotContentSpec := vscontent.Object["spec"].(map[string]any)
+	volumeSnapshotRef := snapshotContentSpec["volumeSnapshotRef"].(map[string]any)
 
 	// Check SnapshotContent properties
 	ginkgo.By("checking the SnapshotContent")

@@ -142,19 +142,19 @@ func NewRepairIPAddress(interval time.Duration,
 	}
 
 	_, _ = serviceInformer.Informer().AddEventHandlerWithResyncPeriod(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			key, err := cache.MetaNamespaceKeyFunc(obj)
 			if err == nil {
 				r.svcQueue.Add(key)
 			}
 		},
-		UpdateFunc: func(old interface{}, new interface{}) {
+		UpdateFunc: func(old any, new any) {
 			key, err := cache.MetaNamespaceKeyFunc(new)
 			if err == nil {
 				r.svcQueue.Add(key)
 			}
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			// IndexerInformer uses a delta queue, therefore for deletes we have to use this
 			// key function.
 			key, err := cache.DeletionHandlingMetaNamespaceKeyFunc(obj)
@@ -165,19 +165,19 @@ func NewRepairIPAddress(interval time.Duration,
 	}, interval)
 
 	ipAddressInformer.Informer().AddEventHandlerWithResyncPeriod(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			key, err := cache.MetaNamespaceKeyFunc(obj)
 			if err == nil {
 				r.ipQueue.Add(key)
 			}
 		},
-		UpdateFunc: func(old interface{}, new interface{}) {
+		UpdateFunc: func(old any, new any) {
 			key, err := cache.MetaNamespaceKeyFunc(new)
 			if err == nil {
 				r.ipQueue.Add(key)
 			}
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			// IndexerInformer uses a delta queue, therefore for deletes we have to use this
 			// key function.
 			key, err := cache.DeletionHandlingMetaNamespaceKeyFunc(obj)

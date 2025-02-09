@@ -112,7 +112,7 @@ func InteractivelyConfirmAction(action, question string, r io.Reader) error {
 }
 
 // ValueFromFlagsOrConfig checks if the "name" flag has been set. If yes, it returns the value of the flag, otherwise it returns the value from config.
-func ValueFromFlagsOrConfig(flagSet *pflag.FlagSet, name string, cfgValue interface{}, flagValue interface{}) interface{} {
+func ValueFromFlagsOrConfig(flagSet *pflag.FlagSet, name string, cfgValue any, flagValue any) any {
 	if flagSet.Changed(name) {
 		return flagValue
 	}

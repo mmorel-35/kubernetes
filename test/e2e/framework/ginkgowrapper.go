@@ -127,12 +127,12 @@ func AnnotatedLocationWithOffset(annotation string, offset int) types.CodeLocati
 // SIGDescribe returns a wrapper function for ginkgo.Describe which injects
 // the SIG name as annotation. The parameter should be lowercase with
 // no spaces and no sig- or SIG- prefix.
-func SIGDescribe(sig string) func(...interface{}) bool {
+func SIGDescribe(sig string) func(...any) bool {
 	if !sigRE.MatchString(sig) || strings.HasPrefix(sig, "sig-") {
 		RecordBug(NewBug(fmt.Sprintf("SIG label must be lowercase, no spaces and no sig- prefix, got instead: %q", sig), 1))
 	}
-	return func(args ...interface{}) bool {
-		args = append([]interface{}{WithLabel("sig-" + sig)}, args...)
+	return func(args ...any) bool {
+		args = append([]any{WithLabel("sig-" + sig)}, args...)
 		return registerInSuite(ginkgo.Describe, args)
 	}
 }
@@ -140,7 +140,7 @@ func SIGDescribe(sig string) func(...interface{}) bool {
 var sigRE = regexp.MustCompile(`^[a-z]+(-[a-z]+)*$`)
 
 // ConformanceIt is wrapper function for ginkgo It.  Adds "[Conformance]" tag and makes static analysis easier.
-func ConformanceIt(args ...interface{}) bool {
+func ConformanceIt(args ...any) bool {
 	args = append(args, ginkgo.Offset(1), WithConformance())
 	return It(args...)
 }
@@ -151,12 +151,12 @@ func ConformanceIt(args ...interface{}) bool {
 //
 // Text and arguments may be mixed. The final text is a concatenation
 // of the text arguments and special tags from the With functions.
-func It(args ...interface{}) bool {
+func It(args ...any) bool {
 	return registerInSuite(ginkgo.It, args)
 }
 
 // It is a shorthand for the corresponding package function.
-func (f *Framework) It(args ...interface{}) bool {
+func (f *Framework) It(args ...any) bool {
 	return registerInSuite(ginkgo.It, args)
 }
 
@@ -166,12 +166,12 @@ func (f *Framework) It(args ...interface{}) bool {
 //
 // Text and arguments may be mixed. The final text is a concatenation
 // of the text arguments and special tags from the With functions.
-func Describe(args ...interface{}) bool {
+func Describe(args ...any) bool {
 	return registerInSuite(ginkgo.Describe, args)
 }
 
 // Describe is a shorthand for the corresponding package function.
-func (f *Framework) Describe(args ...interface{}) bool {
+func (f *Framework) Describe(args ...any) bool {
 	return registerInSuite(ginkgo.Describe, args)
 }
 
@@ -181,19 +181,19 @@ func (f *Framework) Describe(args ...interface{}) bool {
 //
 // Text and arguments may be mixed. The final text is a concatenation
 // of the text arguments and special tags from the With functions.
-func Context(args ...interface{}) bool {
+func Context(args ...any) bool {
 	return registerInSuite(ginkgo.Context, args)
 }
 
 // Context is a shorthand for the corresponding package function.
-func (f *Framework) Context(args ...interface{}) bool {
+func (f *Framework) Context(args ...any) bool {
 	return registerInSuite(ginkgo.Context, args)
 }
 
 // registerInSuite is the common implementation of all wrapper functions. It
 // expects to be called through one intermediate wrapper.
-func registerInSuite(ginkgoCall func(string, ...interface{}) bool, args []interface{}) bool {
-	var ginkgoArgs []interface{}
+func registerInSuite(ginkgoCall func(string, ...any) bool, args []any) bool {
+	var ginkgoArgs []any
 	var offset ginkgo.Offset
 	var texts []string
 
@@ -333,16 +333,16 @@ func recordTextBug(location types.CodeLocation, message string) {
 // argument to [framework.It], [framework.Describe], [framework.Context].
 //
 // The feature must be listed in ValidFeatures.
-func WithFeature(name Feature) interface{} {
+func WithFeature(name Feature) any {
 	return withFeature(name)
 }
 
 // WithFeature is a shorthand for the corresponding package function.
-func (f *Framework) WithFeature(name Feature) interface{} {
+func (f *Framework) WithFeature(name Feature) any {
 	return withFeature(name)
 }
 
-func withFeature(name Feature) interface{} {
+func withFeature(name Feature) any {
 	if !ValidFeatures.items.Has(name) {
 		RecordBug(NewBug(fmt.Sprintf("WithFeature: unknown feature %q", name), 2))
 	}
@@ -367,16 +367,16 @@ func withFeature(name Feature) interface{} {
 // API groups enabled, then annotating it with just WithFeatureGate is
 // sufficient. Otherwise, WithFeature has to be used to define the additional
 // requirements.
-func WithFeatureGate(featureGate featuregate.Feature) interface{} {
+func WithFeatureGate(featureGate featuregate.Feature) any {
 	return withFeatureGate(featureGate)
 }
 
 // WithFeatureGate is a shorthand for the corresponding package function.
-func (f *Framework) WithFeatureGate(featureGate featuregate.Feature) interface{} {
+func (f *Framework) WithFeatureGate(featureGate featuregate.Feature) any {
 	return withFeatureGate(featureGate)
 }
 
-func withFeatureGate(featureGate featuregate.Feature) interface{} {
+func withFeatureGate(featureGate featuregate.Feature) any {
 	spec, ok := utilfeature.DefaultMutableFeatureGate.GetAll()[featureGate]
 	if !ok {
 		RecordBug(NewBug(fmt.Sprintf("WithFeatureGate: the feature gate %q is unknown", featureGate), 2))
@@ -399,16 +399,16 @@ func withFeatureGate(featureGate featuregate.Feature) interface{} {
 // argument to [framework.It], [framework.Describe], [framework.Context].
 //
 // The environment must be listed in ValidEnvironments.
-func WithEnvironment(name Environment) interface{} {
+func WithEnvironment(name Environment) any {
 	return withEnvironment(name)
 }
 
 // WithEnvironment is a shorthand for the corresponding package function.
-func (f *Framework) WithEnvironment(name Environment) interface{} {
+func (f *Framework) WithEnvironment(name Environment) any {
 	return withEnvironment(name)
 }
 
-func withEnvironment(name Environment) interface{} {
+func withEnvironment(name Environment) any {
 	if !ValidEnvironments.items.Has(name) {
 		RecordBug(NewBug(fmt.Sprintf("WithEnvironment: unknown environment %q", name), 2))
 	}
@@ -419,16 +419,16 @@ func withEnvironment(name Environment) interface{} {
 // all conformant Kubernetes clusters. The return value must be passed as
 // additional argument to [framework.It], [framework.Describe],
 // [framework.Context].
-func WithConformance() interface{} {
+func WithConformance() any {
 	return withConformance()
 }
 
 // WithConformance is a shorthand for the corresponding package function.
-func (f *Framework) WithConformance() interface{} {
+func (f *Framework) WithConformance() any {
 	return withConformance()
 }
 
-func withConformance() interface{} {
+func withConformance() any {
 	return newLabel("Conformance")
 }
 
@@ -436,16 +436,16 @@ func withConformance() interface{} {
 // functionality that does not depend on runtime or Kubernetes distro specific
 // behavior. The return value must be passed as additional argument to
 // [framework.It], [framework.Describe], [framework.Context].
-func WithNodeConformance() interface{} {
+func WithNodeConformance() any {
 	return withNodeConformance()
 }
 
 // WithNodeConformance is a shorthand for the corresponding package function.
-func (f *Framework) WithNodeConformance() interface{} {
+func (f *Framework) WithNodeConformance() any {
 	return withNodeConformance()
 }
 
-func withNodeConformance() interface{} {
+func withNodeConformance() any {
 	return newLabel("NodeConformance")
 }
 
@@ -453,16 +453,16 @@ func withNodeConformance() interface{} {
 // affects the functionality of the Kubernetes cluster. The return value must
 // be passed as additional argument to [framework.It], [framework.Describe],
 // [framework.Context].
-func WithDisruptive() interface{} {
+func WithDisruptive() any {
 	return withDisruptive()
 }
 
 // WithDisruptive is a shorthand for the corresponding package function.
-func (f *Framework) WithDisruptive() interface{} {
+func (f *Framework) WithDisruptive() any {
 	return withDisruptive()
 }
 
-func withDisruptive() interface{} {
+func withDisruptive() any {
 	return newLabel("Disruptive")
 }
 
@@ -473,63 +473,63 @@ func withDisruptive() interface{} {
 // Starting with ginkgo v2, serial and parallel tests can be executed in the
 // same invocation. Ginkgo itself will ensure that the serial tests run
 // sequentially.
-func WithSerial() interface{} {
+func WithSerial() any {
 	return withSerial()
 }
 
 // WithSerial is a shorthand for the corresponding package function.
-func (f *Framework) WithSerial() interface{} {
+func (f *Framework) WithSerial() any {
 	return withSerial()
 }
 
-func withSerial() interface{} {
+func withSerial() any {
 	return newLabel("Serial")
 }
 
 // WithSlow specifies that a certain test or group of tests must not run in
 // parallel with other tests. The return value must be passed as additional
 // argument to [framework.It], [framework.Describe], [framework.Context].
-func WithSlow() interface{} {
+func WithSlow() any {
 	return withSlow()
 }
 
 // WithSlow is a shorthand for the corresponding package function.
-func (f *Framework) WithSlow() interface{} {
+func (f *Framework) WithSlow() any {
 	return WithSlow()
 }
 
-func withSlow() interface{} {
+func withSlow() any {
 	return newLabel("Slow")
 }
 
 // WithLabel is a wrapper around [ginkgo.Label]. Besides adding an arbitrary
 // label to a test, it also injects the label in square brackets into the test
 // name.
-func WithLabel(label string) interface{} {
+func WithLabel(label string) any {
 	return withLabel(label)
 }
 
 // WithLabel is a shorthand for the corresponding package function.
-func (f *Framework) WithLabel(label string) interface{} {
+func (f *Framework) WithLabel(label string) any {
 	return withLabel(label)
 }
 
-func withLabel(label string) interface{} {
+func withLabel(label string) any {
 	return newLabel(label)
 }
 
 // WithFlaky specifies that a certain test or group of tests are failing randomly.
 // These tests are usually filtered out and ran separately from other tests.
-func WithFlaky() interface{} {
+func WithFlaky() any {
 	return withFlaky()
 }
 
 // WithFlaky is a shorthand for the corresponding package function.
-func (f *Framework) WithFlaky() interface{} {
+func (f *Framework) WithFlaky() any {
 	return withFlaky()
 }
 
-func withFlaky() interface{} {
+func withFlaky() any {
 	return newLabel("Flaky")
 }
 
@@ -556,7 +556,7 @@ func newLabel(parts ...string) label {
 // It's safe to compare e.g. the result of WithSlow() against the result
 // of WithSerial(), the result will be false. False is also returned
 // when a parameter is some completely different value.
-func TagsEqual(a, b interface{}) bool {
+func TagsEqual(a, b any) bool {
 	al, ok := a.(label)
 	if !ok {
 		return false

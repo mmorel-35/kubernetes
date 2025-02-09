@@ -304,7 +304,7 @@ func (p *provisioningTestSuite) DefineTests(driver storageframework.TestDriver, 
 			"test/e2e/testing-manifests/storage-csi/any-volume-datasource/volume-data-source-validator/setup-data-source-validator.yaml",
 		}
 		err = storageutils.CreateFromManifests(ctx, f, valNamespace,
-			func(item interface{}) error { return nil },
+			func(item any) error { return nil },
 			valManifests...)
 
 		framework.ExpectNoError(err)
@@ -323,7 +323,7 @@ func (p *provisioningTestSuite) DefineTests(driver storageframework.TestDriver, 
 			"test/e2e/testing-manifests/storage-csi/any-volume-datasource/hello-populator-deploy.yaml",
 		}
 		err = storageutils.CreateFromManifests(ctx, f, popNamespace,
-			func(item interface{}) error {
+			func(item any) error {
 				switch item := item.(type) {
 				case *appsv1.Deployment:
 					for i, container := range item.Spec.Template.Spec.Containers {
@@ -368,13 +368,13 @@ func (p *provisioningTestSuite) DefineTests(driver storageframework.TestDriver, 
 		ginkgo.By("Creating VolumePopulator CR datasource")
 		volumePopulatorGVR := schema.GroupVersionResource{Group: "populator.storage.k8s.io", Version: "v1beta1", Resource: "volumepopulators"}
 		helloPopulatorCR := &unstructured.Unstructured{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"kind":       "VolumePopulator",
 				"apiVersion": "populator.storage.k8s.io/v1beta1",
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": fmt.Sprintf("%s-%s", "hello-populator", f.Namespace.Name),
 				},
-				"sourceKind": map[string]interface{}{
+				"sourceKind": map[string]any{
 					"group": "hello.example.com",
 					"kind":  "Hello",
 				},
@@ -399,14 +399,14 @@ func (p *provisioningTestSuite) DefineTests(driver storageframework.TestDriver, 
 		expectedContent := fmt.Sprintf("Hello from namespace %s", f.Namespace.Name)
 		helloGVR := schema.GroupVersionResource{Group: "hello.example.com", Version: "v1alpha1", Resource: "hellos"}
 		helloCR := &unstructured.Unstructured{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"kind":       "Hello",
 				"apiVersion": "hello.example.com/v1alpha1",
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name":      helloCRName,
 					"namespace": f.Namespace.Name,
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"fileName":     fileName,
 					"fileContents": expectedContent,
 				},

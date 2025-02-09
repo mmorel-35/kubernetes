@@ -51,7 +51,7 @@ import (
 // utilities for loading JOSE keys.
 
 func loadRSAKey(t *testing.T, filepath string, alg jose.SignatureAlgorithm) *jose.JSONWebKey {
-	return loadKey(t, filepath, alg, func(b []byte) (interface{}, error) {
+	return loadKey(t, filepath, alg, func(b []byte) (any, error) {
 		key, err := x509.ParsePKCS1PrivateKey(b)
 		if err != nil {
 			return nil, err
@@ -61,13 +61,13 @@ func loadRSAKey(t *testing.T, filepath string, alg jose.SignatureAlgorithm) *jos
 }
 
 func loadRSAPrivKey(t *testing.T, filepath string, alg jose.SignatureAlgorithm) *jose.JSONWebKey {
-	return loadKey(t, filepath, alg, func(b []byte) (interface{}, error) {
+	return loadKey(t, filepath, alg, func(b []byte) (any, error) {
 		return x509.ParsePKCS1PrivateKey(b)
 	})
 }
 
 func loadECDSAKey(t *testing.T, filepath string, alg jose.SignatureAlgorithm) *jose.JSONWebKey {
-	return loadKey(t, filepath, alg, func(b []byte) (interface{}, error) {
+	return loadKey(t, filepath, alg, func(b []byte) (any, error) {
 		key, err := x509.ParseECPrivateKey(b)
 		if err != nil {
 			return nil, err
@@ -77,12 +77,12 @@ func loadECDSAKey(t *testing.T, filepath string, alg jose.SignatureAlgorithm) *j
 }
 
 func loadECDSAPrivKey(t *testing.T, filepath string, alg jose.SignatureAlgorithm) *jose.JSONWebKey {
-	return loadKey(t, filepath, alg, func(b []byte) (interface{}, error) {
+	return loadKey(t, filepath, alg, func(b []byte) (any, error) {
 		return x509.ParseECPrivateKey(b)
 	})
 }
 
-func loadKey(t *testing.T, filepath string, alg jose.SignatureAlgorithm, unmarshal func([]byte) (interface{}, error)) *jose.JSONWebKey {
+func loadKey(t *testing.T, filepath string, alg jose.SignatureAlgorithm, unmarshal func([]byte) (any, error)) *jose.JSONWebKey {
 	data, err := os.ReadFile(filepath)
 	if err != nil {
 		t.Fatalf("load file: %v", err)
@@ -152,7 +152,7 @@ type claimsTest struct {
 }
 
 // Replace formats the contents of v into the provided template.
-func replace(tmpl string, v interface{}) string {
+func replace(tmpl string, v any) string {
 	t := template.Must(template.New("test").Parse(tmpl))
 	buf := bytes.NewBuffer(nil)
 	t.Execute(buf, &v)
@@ -3547,14 +3547,14 @@ func TestUnmarshalClaim(t *testing.T) {
 	tests := []struct {
 		name    string
 		claims  string
-		do      func(claims) (interface{}, error)
-		want    interface{}
+		do      func(claims) (any, error)
+		want    any
 		wantErr bool
 	}{
 		{
 			name:   "string claim",
 			claims: `{"aud":"foo"}`,
-			do: func(c claims) (interface{}, error) {
+			do: func(c claims) (any, error) {
 				var s string
 				err := c.unmarshalClaim("aud", &s)
 				return s, err
@@ -3564,7 +3564,7 @@ func TestUnmarshalClaim(t *testing.T) {
 		{
 			name:   "mismatched types",
 			claims: `{"aud":"foo"}`,
-			do: func(c claims) (interface{}, error) {
+			do: func(c claims) (any, error) {
 				var n int
 				err := c.unmarshalClaim("aud", &n)
 				return n, err
@@ -3575,7 +3575,7 @@ func TestUnmarshalClaim(t *testing.T) {
 		{
 			name:   "bool claim",
 			claims: `{"email":"foo@coreos.com","email_verified":true}`,
-			do: func(c claims) (interface{}, error) {
+			do: func(c claims) (any, error) {
 				var verified bool
 				err := c.unmarshalClaim("email_verified", &verified)
 				return verified, err
@@ -3585,7 +3585,7 @@ func TestUnmarshalClaim(t *testing.T) {
 		{
 			name:   "strings claim",
 			claims: `{"groups":["a","b","c"]}`,
-			do: func(c claims) (interface{}, error) {
+			do: func(c claims) (any, error) {
 				var groups []string
 				err := c.unmarshalClaim("groups", &groups)
 				return groups, err

@@ -84,7 +84,7 @@ func getJoinCommand(kubeConfigFile, token, key string, controlPlane, skipTokenPr
 		publicKeyPins = append(publicKeyPins, pubkeypin.Hash(caCert))
 	}
 
-	ctx := map[string]interface{}{
+	ctx := map[string]any{
 		"Token":                token,
 		"CAPubKeyPins":         publicKeyPins,
 		"ControlPlaneHostPort": strings.Replace(clusterConfig.Server, "https://", "", -1),

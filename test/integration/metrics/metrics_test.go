@@ -160,7 +160,7 @@ func TestAPIServerMetricsLabels(t *testing.T) {
 		}
 	}
 
-	callOrDie := func(_ interface{}, err error) {
+	callOrDie := func(_ any, err error) {
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
@@ -361,7 +361,7 @@ func TestAPIServerMetricsLabelsWithAllowList(t *testing.T) {
 }
 
 func TestAPIServerMetricsPods(t *testing.T) {
-	callOrDie := func(_ interface{}, err error) {
+	callOrDie := func(_ any, err error) {
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
@@ -478,7 +478,7 @@ func TestAPIServerMetricsPods(t *testing.T) {
 }
 
 func TestAPIServerMetricsNamespaces(t *testing.T) {
-	callOrDie := func(_ interface{}, err error) {
+	callOrDie := func(_ any, err error) {
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}

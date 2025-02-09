@@ -930,7 +930,7 @@ func checkNodePublishVolume(ctx context.Context, getCalls func(ctx context.Conte
 // through NodeStageVolume and NodePublishVolume calls.
 func createFSGroupRequestPreHook(nodeStageFsGroup, nodePublishFsGroup *string) *drivers.Hooks {
 	return &drivers.Hooks{
-		Pre: func(ctx context.Context, fullMethod string, request interface{}) (reply interface{}, err error) {
+		Pre: func(ctx context.Context, fullMethod string, request any) (reply any, err error) {
 			nodeStageRequest, ok := request.(*csipbv1.NodeStageVolumeRequest)
 			if ok {
 				mountVolume := nodeStageRequest.GetVolumeCapability().GetMount()
@@ -955,8 +955,8 @@ func createPreHook(method string, callback func(counter int64) error) *drivers.H
 	var counter int64
 
 	return &drivers.Hooks{
-		Pre: func() func(ctx context.Context, fullMethod string, request interface{}) (reply interface{}, err error) {
-			return func(ctx context.Context, fullMethod string, request interface{}) (reply interface{}, err error) {
+		Pre: func() func(ctx context.Context, fullMethod string, request any) (reply any, err error) {
+			return func(ctx context.Context, fullMethod string, request any) (reply any, err error) {
 				if strings.Contains(fullMethod, method) {
 					counter := atomic.AddInt64(&counter, 1)
 					return nil, callback(counter)
@@ -1030,7 +1030,7 @@ func compareCSICalls(ctx context.Context, trackedCalls []string, expectedCallSeq
 // through NodeStageVolume and NodePublishVolume calls.
 func createSELinuxMountPreHook(nodeStageMountOpts, nodePublishMountOpts *[]string, stageCalls, unstageCalls, publishCalls, unpublishCalls *atomic.Int32) *drivers.Hooks {
 	return &drivers.Hooks{
-		Pre: func(ctx context.Context, fullMethod string, request interface{}) (reply interface{}, err error) {
+		Pre: func(ctx context.Context, fullMethod string, request any) (reply any, err error) {
 			switch req := request.(type) {
 			case *csipbv1.NodeStageVolumeRequest:
 				stageCalls.Add(1)

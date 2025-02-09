@@ -140,10 +140,10 @@ func NewOutputFlags(textPrintFlags TextPrintFlags) *PrintFlags {
 // Printer is a common printing interface in Kubeadm
 type Printer interface {
 	PrintObj(obj runtime.Object, writer io.Writer) error
-	Fprintf(writer io.Writer, format string, args ...interface{}) (n int, err error)
-	Fprintln(writer io.Writer, args ...interface{}) (n int, err error)
-	Printf(format string, args ...interface{}) (n int, err error)
-	Println(args ...interface{}) (n int, err error)
+	Fprintf(writer io.Writer, format string, args ...any) (n int, err error)
+	Fprintln(writer io.Writer, args ...any) (n int, err error)
+	Printf(format string, args ...any) (n int, err error)
+	Println(args ...any) (n int, err error)
 }
 
 // TextPrinter implements Printer interface for generic text output
@@ -157,22 +157,22 @@ func (tp *TextPrinter) PrintObj(obj runtime.Object, writer io.Writer) error {
 }
 
 // Fprintf is a wrapper around fmt.Fprintf
-func (tp *TextPrinter) Fprintf(writer io.Writer, format string, args ...interface{}) (n int, err error) {
+func (tp *TextPrinter) Fprintf(writer io.Writer, format string, args ...any) (n int, err error) {
 	return fmt.Fprintf(writer, format, args...)
 }
 
 // Fprintln is a wrapper around fmt.Fprintln
-func (tp *TextPrinter) Fprintln(writer io.Writer, args ...interface{}) (n int, err error) {
+func (tp *TextPrinter) Fprintln(writer io.Writer, args ...any) (n int, err error) {
 	return fmt.Fprintln(writer, args...)
 }
 
 // Printf is a wrapper around fmt.Printf
-func (tp *TextPrinter) Printf(format string, args ...interface{}) (n int, err error) {
+func (tp *TextPrinter) Printf(format string, args ...any) (n int, err error) {
 	return fmt.Printf(format, args...)
 }
 
 // Println is a wrapper around fmt.Printf
-func (tp *TextPrinter) Println(args ...interface{}) (n int, err error) {
+func (tp *TextPrinter) Println(args ...any) (n int, err error) {
 	return fmt.Println(args...)
 }
 
@@ -197,27 +197,27 @@ func (rpw *ResourcePrinterWrapper) PrintObj(obj runtime.Object, writer io.Writer
 // Fprintf is an empty method to satisfy Printer interface
 // and silent info printing for structured output
 // This method is usually redefined for the text output
-func (rpw *ResourcePrinterWrapper) Fprintf(writer io.Writer, format string, args ...interface{}) (n int, err error) {
+func (rpw *ResourcePrinterWrapper) Fprintf(writer io.Writer, format string, args ...any) (n int, err error) {
 	return 0, nil
 }
 
 // Fprintln is an empty method to satisfy the Printer interface
 // and silent info printing for structured output
 // This method is usually redefined for the text output
-func (rpw *ResourcePrinterWrapper) Fprintln(writer io.Writer, args ...interface{}) (n int, err error) {
+func (rpw *ResourcePrinterWrapper) Fprintln(writer io.Writer, args ...any) (n int, err error) {
 	return 0, nil
 }
 
 // Printf is an empty method to satisfy Printer interface
 // and silent info printing for structured output
 // This method is usually redefined for the text output
-func (rpw *ResourcePrinterWrapper) Printf(format string, args ...interface{}) (n int, err error) {
+func (rpw *ResourcePrinterWrapper) Printf(format string, args ...any) (n int, err error) {
 	return 0, nil
 }
 
 // Println is an empty method to satisfy Printer interface
 // and silent info printing for structured output
 // This method is usually redefined for the text output
-func (rpw *ResourcePrinterWrapper) Println(args ...interface{}) (n int, err error) {
+func (rpw *ResourcePrinterWrapper) Println(args ...any) (n int, err error) {
 	return 0, nil
 }

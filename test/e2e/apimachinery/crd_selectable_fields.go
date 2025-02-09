@@ -212,10 +212,10 @@ var _ = SIGDescribe("CustomResourceFieldSelectors [Privileged:ClusterAdmin]", fu
 				name := names.SimpleNameGenerator.GenerateName("selectable-field-cr")
 				crNames[i] = name
 
-				obj := map[string]interface{}{
+				obj := map[string]any{
 					"apiVersion": v2gvr.Group + "/" + v2gvr.Version,
 					"kind":       crd.Spec.Names.Kind,
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name":      name,
 						"namespace": f.Namespace.Name,
 					},

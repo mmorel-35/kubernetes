@@ -30,13 +30,13 @@ func TestGenerateService(t *testing.T) {
 	tests := []struct {
 		name      string
 		generator generate.Generator
-		params    map[string]interface{}
+		params    map[string]any
 		expected  v1.Service
 	}{
 		{
 			name:      "test1",
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"name":           "test",
 				"port":           "80",
@@ -65,7 +65,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test2",
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"name":           "test",
 				"port":           "80",
@@ -94,7 +94,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test3",
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"labels":         "key1=value1,key2=value2",
 				"name":           "test",
@@ -128,7 +128,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test4",
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"name":           "test",
 				"port":           "80",
@@ -159,7 +159,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test5",
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"name":           "test",
 				"port":           "80",
@@ -192,7 +192,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test6",
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"name":           "test",
 				"port":           "80",
@@ -223,7 +223,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test7",
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":                      "foo=bar,baz=blah",
 				"name":                          "test",
 				"port":                          "80",
@@ -255,7 +255,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test8",
 			generator: ServiceGeneratorV1{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"name":           "test",
 				"port":           "80",
@@ -285,7 +285,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test9",
 			generator: ServiceGeneratorV1{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":         "foo=bar,baz=blah",
 				"name":             "test",
 				"port":             "80",
@@ -317,7 +317,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test10",
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"name":           "test",
 				"port":           "80",
@@ -348,7 +348,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test11",
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"name":           "test",
 				"port":           "80",
@@ -379,7 +379,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test12",
 			generator: ServiceGeneratorV1{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar",
 				"name":           "test",
 				"ports":          "80,443",
@@ -414,7 +414,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test13",
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":    "foo=bar",
 				"name":        "test",
 				"ports":       "80,443",
@@ -449,7 +449,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test14",
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector": "foo=bar",
 				"name":     "test",
 				"ports":    "80,443",
@@ -483,7 +483,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test15",
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":  "foo=bar",
 				"name":      "test",
 				"ports":     "80,8080",
@@ -517,7 +517,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test16",
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":  "foo=bar",
 				"name":      "test",
 				"ports":     "80,8080,8081",
@@ -557,7 +557,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test17",
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"name":           "test",
 				"protocol":       "TCP",
@@ -581,7 +581,7 @@ func TestGenerateService(t *testing.T) {
 		{
 			name:      "test18",
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":   "foo=bar",
 				"name":       "test",
 				"cluster-ip": "None",
@@ -601,7 +601,7 @@ func TestGenerateService(t *testing.T) {
 		},
 		{
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"name":           "test",
 				"port":           "80",
@@ -629,7 +629,7 @@ func TestGenerateService(t *testing.T) {
 		},
 		{
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"labels":         "key1=value1,key2=value2",
 				"name":           "test",
@@ -662,7 +662,7 @@ func TestGenerateService(t *testing.T) {
 		},
 		{
 			generator: ServiceGeneratorV1{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"name":           "test",
 				"port":           "80",
@@ -691,7 +691,7 @@ func TestGenerateService(t *testing.T) {
 		},
 		{
 			generator: ServiceGeneratorV1{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":         "foo=bar,baz=blah",
 				"name":             "test",
 				"port":             "80",
@@ -722,7 +722,7 @@ func TestGenerateService(t *testing.T) {
 		},
 		{
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"name":           "test",
 				"port":           "80",
@@ -752,7 +752,7 @@ func TestGenerateService(t *testing.T) {
 		},
 		{
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"name":           "test",
 				"port":           "80",
@@ -782,7 +782,7 @@ func TestGenerateService(t *testing.T) {
 		},
 		{
 			generator: ServiceGeneratorV1{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar",
 				"name":           "test",
 				"ports":          "80,443",
@@ -816,7 +816,7 @@ func TestGenerateService(t *testing.T) {
 		},
 		{
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector": "foo=bar",
 				"name":     "test",
 				"ports":    "80,443",
@@ -849,7 +849,7 @@ func TestGenerateService(t *testing.T) {
 		},
 		{
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":  "foo=bar",
 				"name":      "test",
 				"ports":     "80,8080",
@@ -882,7 +882,7 @@ func TestGenerateService(t *testing.T) {
 		},
 		{
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":  "foo=bar",
 				"name":      "test",
 				"ports":     "80,8080,8081,8082",
@@ -927,7 +927,7 @@ func TestGenerateService(t *testing.T) {
 		},
 		{
 			generator: ServiceGeneratorV2{},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"selector":       "foo=bar,baz=blah",
 				"name":           "test",
 				"protocol":       "SCTP",

@@ -362,7 +362,7 @@ func RegisterRegistrationServer(s *grpc.Server, srv RegistrationServer) {
 	s.RegisterService(&_Registration_serviceDesc, srv)
 }
 
-func _Registration_GetInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Registration_GetInfo_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(InfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -374,13 +374,13 @@ func _Registration_GetInfo_Handler(srv interface{}, ctx context.Context, dec fun
 		Server:     srv,
 		FullMethod: "/pluginregistration.Registration/GetInfo",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RegistrationServer).GetInfo(ctx, req.(*InfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Registration_NotifyRegistrationStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Registration_NotifyRegistrationStatus_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(RegistrationStatus)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -392,7 +392,7 @@ func _Registration_NotifyRegistrationStatus_Handler(srv interface{}, ctx context
 		Server:     srv,
 		FullMethod: "/pluginregistration.Registration/NotifyRegistrationStatus",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RegistrationServer).NotifyRegistrationStatus(ctx, req.(*RegistrationStatus))
 	}
 	return interceptor(ctx, in, info, handler)
@@ -674,7 +674,7 @@ func (this *InfoRequest) String() string {
 	}, "")
 	return s
 }
-func valueToStringApi(v interface{}) string {
+func valueToStringApi(v any) string {
 	rv := reflect.ValueOf(v)
 	if rv.IsNil() {
 		return "nil"

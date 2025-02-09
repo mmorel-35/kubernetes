@@ -213,7 +213,7 @@ func TestCordon(t *testing.T) {
 			ioStreams, _, _, _ := genericiooptions.NewTestIOStreams()
 			cmd := test.cmd(tf, ioStreams)
 
-			var recovered interface{}
+			var recovered any
 			sawFatal := false
 			func() {
 				defer func() {
@@ -864,7 +864,7 @@ func TestDrain(t *testing.T) {
 				ioStreams, _, outBuf, errBuf := genericiooptions.NewTestIOStreams()
 				cmd := NewCmdDrain(tf, ioStreams)
 
-				var recovered interface{}
+				var recovered any
 				sawFatal := false
 				fatalMsg := ""
 				func() {

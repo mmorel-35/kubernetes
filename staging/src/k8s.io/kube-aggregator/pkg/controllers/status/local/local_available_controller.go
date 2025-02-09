@@ -196,19 +196,19 @@ func (c *AvailableConditionController) processNextWorkItem() bool {
 	return true
 }
 
-func (c *AvailableConditionController) addAPIService(obj interface{}) {
+func (c *AvailableConditionController) addAPIService(obj any) {
 	castObj := obj.(*apiregistrationv1.APIService)
 	klog.V(4).Infof("Adding %s", castObj.Name)
 	c.queue.Add(castObj.Name)
 }
 
-func (c *AvailableConditionController) updateAPIService(oldObj, _ interface{}) {
+func (c *AvailableConditionController) updateAPIService(oldObj, _ any) {
 	oldCastObj := oldObj.(*apiregistrationv1.APIService)
 	klog.V(4).Infof("Updating %s", oldCastObj.Name)
 	c.queue.Add(oldCastObj.Name)
 }
 
-func (c *AvailableConditionController) deleteAPIService(obj interface{}) {
+func (c *AvailableConditionController) deleteAPIService(obj any) {
 	castObj, ok := obj.(*apiregistrationv1.APIService)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)

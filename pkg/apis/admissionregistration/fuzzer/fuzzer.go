@@ -25,8 +25,8 @@ import (
 )
 
 // Funcs returns the fuzzer functions for the admissionregistration api group.
-var Funcs = func(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+var Funcs = func(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(obj *admissionregistration.Rule, c fuzz.Continue) {
 			c.FuzzNoCustom(obj) // fuzz self without calling this function again
 			if obj.Scope == nil {

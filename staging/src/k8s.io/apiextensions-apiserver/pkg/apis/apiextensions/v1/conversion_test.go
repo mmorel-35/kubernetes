@@ -772,8 +772,8 @@ func TestJSONRoundTrip(t *testing.T) {
 
 func TestMemoryEqual(t *testing.T) {
 	testcases := []struct {
-		a interface{}
-		b interface{}
+		a any
+		b any
 	}{
 		{apiextensions.JSONSchemaProps{}.XValidations, JSONSchemaProps{}.XValidations},
 	}

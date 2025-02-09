@@ -36,7 +36,7 @@ type countingPromise struct {
 	activeCounter counter.GoRoutineCounter // counter of active goroutines
 	waitingCount  int                      // number of goroutines idle due to this being unset
 	isSet         bool
-	value         interface{}
+	value         any
 }
 
 var _ promiseifc.WriteOnce = &countingPromise{}
@@ -54,7 +54,7 @@ var _ promiseifc.WriteOnce = &countingPromise{}
 // goroutine counter before that.
 // The WriteOnce's Get method must be called without the lock held.
 // The WriteOnce's Set method must be called with the lock held.
-func NewCountingWriteOnce(activeCounter counter.GoRoutineCounter, lock sync.Locker, initial interface{}, doneCh <-chan struct{}, doneVal interface{}) promiseifc.WriteOnce {
+func NewCountingWriteOnce(activeCounter counter.GoRoutineCounter, lock sync.Locker, initial any, doneCh <-chan struct{}, doneVal any) promiseifc.WriteOnce {
 	p := &countingPromise{
 		lock:          lock,
 		cond:          *sync.NewCond(lock),
@@ -79,7 +79,7 @@ func NewCountingWriteOnce(activeCounter counter.GoRoutineCounter, lock sync.Lock
 	return p
 }
 
-func (p *countingPromise) Get() interface{} {
+func (p *countingPromise) Get() any {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 	if !p.isSet {
@@ -90,7 +90,7 @@ func (p *countingPromise) Get() interface{} {
 	return p.value
 }
 
-func (p *countingPromise) Set(value interface{}) bool {
+func (p *countingPromise) Set(value any) bool {
 	if p.isSet {
 		return false
 	}

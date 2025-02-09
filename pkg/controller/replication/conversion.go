@@ -125,7 +125,7 @@ type conversionEventHandler struct {
 	handler cache.ResourceEventHandler
 }
 
-func (h conversionEventHandler) OnAdd(obj interface{}, isInInitialList bool) {
+func (h conversionEventHandler) OnAdd(obj any, isInInitialList bool) {
 	rs, err := convertRCtoRS(obj.(*v1.ReplicationController), nil)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("dropping RC OnAdd event: can't convert object %#v to RS: %v", obj, err))
@@ -134,7 +134,7 @@ func (h conversionEventHandler) OnAdd(obj interface{}, isInInitialList bool) {
 	h.handler.OnAdd(rs, isInInitialList)
 }
 
-func (h conversionEventHandler) OnUpdate(oldObj, newObj interface{}) {
+func (h conversionEventHandler) OnUpdate(oldObj, newObj any) {
 	oldRS, err := convertRCtoRS(oldObj.(*v1.ReplicationController), nil)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("dropping RC OnUpdate event: can't convert old object %#v to RS: %v", oldObj, err))
@@ -148,7 +148,7 @@ func (h conversionEventHandler) OnUpdate(oldObj, newObj interface{}) {
 	h.handler.OnUpdate(oldRS, newRS)
 }
 
-func (h conversionEventHandler) OnDelete(obj interface{}) {
+func (h conversionEventHandler) OnDelete(obj any) {
 	rc, ok := obj.(*v1.ReplicationController)
 	if !ok {
 		// Convert the Obj inside DeletedFinalStateUnknown.

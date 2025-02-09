@@ -50,7 +50,7 @@ func NewDryRunnableTestStorage(t *testing.T) (DryRunnableStorage, func()) {
 }
 
 func UnstructuredOrDie(j string) *unstructured.Unstructured {
-	m := map[string]interface{}{}
+	m := map[string]any{}
 	err := json.Unmarshal([]byte(j), &m)
 	if err != nil {
 		panic(fmt.Errorf("Failed to unmarshal into Unstructured: %v", err))

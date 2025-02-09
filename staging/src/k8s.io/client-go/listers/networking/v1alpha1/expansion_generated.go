@@ -20,8 +20,8 @@ package v1alpha1
 
 // IPAddressListerExpansion allows custom methods to be added to
 // IPAddressLister.
-type IPAddressListerExpansion interface{}
+type IPAddressListerExpansion any
 
 // ServiceCIDRListerExpansion allows custom methods to be added to
 // ServiceCIDRLister.
-type ServiceCIDRListerExpansion interface{}
+type ServiceCIDRListerExpansion any

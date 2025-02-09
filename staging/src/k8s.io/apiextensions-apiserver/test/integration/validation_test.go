@@ -196,10 +196,10 @@ func newNoxuValidationCRDs() []*apiextensionsv1.CustomResourceDefinition {
 
 func newNoxuValidationInstance(namespace, name string) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "mygroup.example.com/v1beta1",
 			"kind":       "WishIHadChosenNoxu",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace": namespace,
 				"name":      name,
 			},
@@ -268,44 +268,44 @@ func TestCustomResourceItemsValidation(t *testing.T) {
 		Version:  crd.Spec.Versions[0].Name,
 		Resource: crd.Spec.Names.Plural,
 	}
-	u := unstructured.Unstructured{Object: map[string]interface{}{
+	u := unstructured.Unstructured{Object: map[string]any{
 		"apiVersion": gvr.GroupVersion().String(),
 		"kind":       crd.Spec.Names.Kind,
-		"metadata": map[string]interface{}{
+		"metadata": map[string]any{
 			"name": "foo",
 		},
-		"items-no-type": map[string]interface{}{
-			"items": []interface{}{
-				map[string]interface{}{},
+		"items-no-type": map[string]any{
+			"items": []any{
+				map[string]any{},
 			},
 		},
-		"items-items-no-type": map[string]interface{}{
-			"items": []interface{}{
-				[]interface{}{map[string]interface{}{}},
+		"items-items-no-type": map[string]any{
+			"items": []any{
+				[]any{map[string]any{}},
 			},
 		},
-		"items-properties-items-no-type": map[string]interface{}{
-			"items": []interface{}{
-				map[string]interface{}{
-					"items": []interface{}{
-						map[string]interface{}{},
+		"items-properties-items-no-type": map[string]any{
+			"items": []any{
+				map[string]any{
+					"items": []any{
+						map[string]any{},
 					},
 				},
 			},
 		},
-		"type-array-no-items": map[string]interface{}{
+		"type-array-no-items": map[string]any{
 			"type": "array",
 		},
-		"items-and-type": map[string]interface{}{
-			"items": []interface{}{map[string]interface{}{}},
+		"items-and-type": map[string]any{
+			"items": []any{map[string]any{}},
 			"type":  "array",
 		},
-		"issue-84880": map[string]interface{}{
-			"volumes": []interface{}{
-				map[string]interface{}{
-					"downwardAPI": map[string]interface{}{
-						"items": []interface{}{
-							map[string]interface{}{
+		"issue-84880": map[string]any{
+			"volumes": []any{
+				map[string]any{
+					"downwardAPI": map[string]any{
+						"items": []any{
+							map[string]any{
 								"path": "annotations",
 							},
 						},
@@ -446,10 +446,10 @@ func TestCustomResourceUpdateValidation(t *testing.T) {
 			}
 
 			// invalidate the instance
-			gottenNoxuInstance.Object = map[string]interface{}{
+			gottenNoxuInstance.Object = map[string]any{
 				"apiVersion": "mygroup.example.com/v1beta1",
 				"kind":       "WishIHadChosenNoxu",
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"namespace": "not-the-default",
 					"name":      "foo",
 				},
@@ -579,10 +579,10 @@ spec:
 	}
 
 	crObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "tests.example.com/v1",
 			"kind":       "Zero",
-			"metadata":   map[string]interface{}{"name": "myzero"},
+			"metadata":   map[string]any{"name": "myzero"},
 
 			"string":       "",
 			"string_null":  nil,
@@ -592,9 +592,9 @@ spec:
 			"number_null":  nil,
 			"integer":      0,
 			"integer_null": nil,
-			"array":        []interface{}{},
+			"array":        []any{},
 			"array_null":   nil,
-			"object":       map[string]interface{}{},
+			"object":       map[string]any{},
 			"object_null":  nil,
 		},
 	}
@@ -605,7 +605,7 @@ spec:
 	}
 
 	expectedCR := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "tests.example.com/v1",
 			"kind":       "Zero",
 			"metadata":   createdCR.Object["metadata"],
@@ -618,17 +618,17 @@ spec:
 			"number_null":  nil,
 			"integer":      int64(0),
 			"integer_null": nil,
-			"array":        []interface{}{},
+			"array":        []any{},
 			"array_null":   nil,
-			"object":       map[string]interface{}{},
+			"object":       map[string]any{},
 			"object_null":  nil,
 
 			"string_default":  "",
 			"boolean_default": false,
 			"number_default":  int64(0),
 			"integer_default": int64(0),
-			"array_default":   []interface{}{},
-			"object_default":  map[string]interface{}{},
+			"array_default":   []any{},
+			"object_default":  map[string]any{},
 		},
 	}
 
@@ -689,10 +689,10 @@ func TestCustomResourceValidationErrors(t *testing.T) {
 				name: "absent alpha and beta",
 				instanceFn: func() *unstructured.Unstructured {
 					instance := newNoxuValidationInstance(ns, "foo")
-					instance.Object = map[string]interface{}{
+					instance.Object = map[string]any{
 						"apiVersion": "mygroup.example.com/v1beta1",
 						"kind":       "WishIHadChosenNoxu",
-						"metadata": map[string]interface{}{
+						"metadata": map[string]any{
 							"namespace": "not-the-default",
 							"name":      "foo",
 						},

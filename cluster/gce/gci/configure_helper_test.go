@@ -105,7 +105,7 @@ func (c *ManifestTestCase) mustCreateManifestDstDir() {
 	}
 }
 
-func (c *ManifestTestCase) mustInvokeFunc(env interface{}, scriptNames []string, targetTemplate string, templates ...string) {
+func (c *ManifestTestCase) mustInvokeFunc(env any, scriptNames []string, targetTemplate string, templates ...string) {
 	envScriptPath := c.mustCreateEnv(env, targetTemplate, templates...)
 	args := fmt.Sprintf("source %q ;", envScriptPath)
 	for _, script := range scriptNames {
@@ -122,7 +122,7 @@ func (c *ManifestTestCase) mustInvokeFunc(env interface{}, scriptNames []string,
 	c.t.Logf("%s", string(bs))
 }
 
-func (c *ManifestTestCase) mustCreateEnv(env interface{}, target string, templates ...string) string {
+func (c *ManifestTestCase) mustCreateEnv(env any, target string, templates ...string) string {
 	f, err := os.Create(filepath.Join(c.kubeHome, envScriptFileName))
 	if err != nil {
 		c.t.Fatalf("Failed to create envScript: %v", err)

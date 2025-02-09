@@ -394,7 +394,7 @@ func checkMirrorPodRunningWithUID(ctx context.Context, cl clientset.Interface, n
 	return nil
 }
 
-func sampleLabelID(element interface{}) string {
+func sampleLabelID(element any) string {
 	el := element.(*model.Sample)
 	return el.Metric.String()
 }

@@ -856,10 +856,10 @@ func (svm *svmTest) createCR(ctx context.Context, t testingT, crName, version st
 	}
 
 	crdUnstructured := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": crdResource.GroupVersion().String(),
 			"kind":       crdName,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      crName,
 				"namespace": defaultNamespace,
 			},

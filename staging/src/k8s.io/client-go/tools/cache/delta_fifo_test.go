@@ -28,15 +28,15 @@ import (
 // from the most recent Delta.
 // You should treat the items returned inside the deltas as immutable.
 // This function was moved here because it is not consistent with normal list semantics, but is used in unit testing.
-func (f *DeltaFIFO) List() []interface{} {
+func (f *DeltaFIFO) List() []any {
 	f.lock.RLock()
 	defer f.lock.RUnlock()
 	return f.listLocked()
 }
 
 // This function was moved here because it is not consistent with normal list semantics, but is used in unit testing.
-func (f *DeltaFIFO) listLocked() []interface{} {
-	list := make([]interface{}, 0, len(f.items))
+func (f *DeltaFIFO) listLocked() []any {
+	list := make([]any, 0, len(f.items))
 	for _, item := range f.items {
 		list = append(list, item.Newest().Object)
 	}
@@ -60,7 +60,7 @@ func (f *DeltaFIFO) ListKeys() []string {
 // or sets exists=false.
 // You should treat the items returned inside the deltas as immutable.
 // This function was moved here because it is not consistent with normal list semantics, but is used in unit testing.
-func (f *DeltaFIFO) Get(obj interface{}) (item interface{}, exists bool, err error) {
+func (f *DeltaFIFO) Get(obj any) (item any, exists bool, err error) {
 	key, err := f.KeyOf(obj)
 	if err != nil {
 		return nil, false, KeyError{obj, err}
@@ -72,7 +72,7 @@ func (f *DeltaFIFO) Get(obj interface{}) (item interface{}, exists bool, err err
 // setting exists=false if that list is empty.
 // You should treat the items returned inside the deltas as immutable.
 // This function was moved here because it is not consistent with normal list semantics, but is used in unit testing.
-func (f *DeltaFIFO) GetByKey(key string) (item interface{}, exists bool, err error) {
+func (f *DeltaFIFO) GetByKey(key string) (item any, exists bool, err error) {
 	f.lock.RLock()
 	defer f.lock.RUnlock()
 	d, exists := f.items[key]
@@ -106,7 +106,7 @@ func (kl literalListerGetter) ListKeys() []string {
 }
 
 // GetByKey returns the key if it exists in the list returned by kl.
-func (kl literalListerGetter) GetByKey(key string) (interface{}, bool, error) {
+func (kl literalListerGetter) GetByKey(key string) (any, bool, error) {
 	for _, v := range kl() {
 		if v.name == key {
 			return v, true, nil
@@ -168,7 +168,7 @@ func TestDeltaFIFO_replaceWithDeleteDeltaIn(t *testing.T) {
 	})
 
 	f.Delete(oldObj)
-	f.Replace([]interface{}{newObj}, "")
+	f.Replace([]any{newObj}, "")
 
 	actualDeltas := Pop(f)
 	expectedDeltas := Deltas{
@@ -192,7 +192,7 @@ func TestDeltaFIFOW_ReplaceMakesDeletionsForObjectsOnlyInQueue(t *testing.T) {
 			name: "Added object should be deleted on Replace",
 			operations: func(f *DeltaFIFO) {
 				f.Add(obj)
-				f.Replace([]interface{}{}, "0")
+				f.Replace([]any{}, "0")
 			},
 			expectedDeltas: Deltas{
 				{Added, obj},
@@ -204,8 +204,8 @@ func TestDeltaFIFOW_ReplaceMakesDeletionsForObjectsOnlyInQueue(t *testing.T) {
 			operations: func(f *DeltaFIFO) {
 				f.emitDeltaTypeReplaced = true
 				f.Add(obj)
-				f.Replace([]interface{}{obj}, "0")
-				f.Replace([]interface{}{}, "0")
+				f.Replace([]any{obj}, "0")
+				f.Replace([]any{}, "0")
 			},
 			expectedDeltas: Deltas{
 				{Added, obj},
@@ -218,7 +218,7 @@ func TestDeltaFIFOW_ReplaceMakesDeletionsForObjectsOnlyInQueue(t *testing.T) {
 			operations: func(f *DeltaFIFO) {
 				f.Add(obj)
 				f.Delete(obj)
-				f.Replace([]interface{}{}, "0")
+				f.Replace([]any{}, "0")
 			},
 			expectedDeltas: Deltas{
 				{Added, obj},
@@ -229,9 +229,9 @@ func TestDeltaFIFOW_ReplaceMakesDeletionsForObjectsOnlyInQueue(t *testing.T) {
 			name: "Synced objects should have a single delete",
 			operations: func(f *DeltaFIFO) {
 				f.Add(obj)
-				f.Replace([]interface{}{obj}, "0")
-				f.Replace([]interface{}{obj}, "0")
-				f.Replace([]interface{}{}, "0")
+				f.Replace([]any{obj}, "0")
+				f.Replace([]any{obj}, "0")
+				f.Replace([]any{}, "0")
 			},
 			expectedDeltas: Deltas{
 				{Added, obj},
@@ -244,8 +244,8 @@ func TestDeltaFIFOW_ReplaceMakesDeletionsForObjectsOnlyInQueue(t *testing.T) {
 			name: "Added objects should have a single delete on multiple Replaces",
 			operations: func(f *DeltaFIFO) {
 				f.Add(obj)
-				f.Replace([]interface{}{}, "0")
-				f.Replace([]interface{}{}, "1")
+				f.Replace([]any{}, "0")
+				f.Replace([]any{}, "1")
 			},
 			expectedDeltas: Deltas{
 				{Added, obj},
@@ -258,7 +258,7 @@ func TestDeltaFIFOW_ReplaceMakesDeletionsForObjectsOnlyInQueue(t *testing.T) {
 				f.Add(obj)
 				f.Delete(obj)
 				f.Add(objV2)
-				f.Replace([]interface{}{}, "0")
+				f.Replace([]any{}, "0")
 			},
 			expectedDeltas: Deltas{
 				{Added, obj},
@@ -310,7 +310,7 @@ func TestDeltaFIFO_addUpdate(t *testing.T) {
 	f.Update(mkFifoObj("foo", 12))
 	f.Delete(mkFifoObj("foo", 15))
 
-	if e, a := []interface{}{mkFifoObj("foo", 15)}, f.List(); !reflect.DeepEqual(e, a) {
+	if e, a := []any{mkFifoObj("foo", 15)}, f.List(); !reflect.DeepEqual(e, a) {
 		t.Errorf("Expected %+v, got %+v", e, a)
 	}
 	if e, a := []string{"foo"}, f.ListKeys(); !reflect.DeepEqual(e, a) {
@@ -351,7 +351,7 @@ func TestDeltaFIFO_transformer(t *testing.T) {
 	mk := func(name string, rv int) testFifoObject {
 		return mkFifoObj(name, &rvAndXfrm{rv, 0})
 	}
-	xfrm := TransformFunc(func(obj interface{}) (interface{}, error) {
+	xfrm := TransformFunc(func(obj any) (any, error) {
 		switch v := obj.(type) {
 		case testFifoObject:
 			v.val.(*rvAndXfrm).xfrm++
@@ -379,9 +379,9 @@ func TestDeltaFIFO_transformer(t *testing.T) {
 	must(f.Add(mk("bar", 11)))
 	must(f.Update(mk("foo", 12)))
 	must(f.Delete(mk("foo", 15)))
-	must(f.Replace([]interface{}{}, ""))
+	must(f.Replace([]any{}, ""))
 	must(f.Add(mk("bar", 16)))
-	must(f.Replace([]interface{}{}, ""))
+	must(f.Replace([]any{}, ""))
 
 	// Should be empty
 	if e, a := []string{"foo", "bar"}, f.ListKeys(); !reflect.DeepEqual(e, a) {
@@ -389,7 +389,7 @@ func TestDeltaFIFO_transformer(t *testing.T) {
 	}
 
 	for i := 0; i < 2; i++ {
-		obj, err := f.Pop(func(o interface{}, isInInitialList bool) error { return nil })
+		obj, err := f.Pop(func(o any, isInInitialList bool) error { return nil })
 		if err != nil {
 			t.Fatalf("got nothing on try %v?", i)
 		}
@@ -472,7 +472,7 @@ func TestDeltaFIFO_enqueueingWithLister(t *testing.T) {
 func TestDeltaFIFO_addReplace(t *testing.T) {
 	f := NewDeltaFIFOWithOptions(DeltaFIFOOptions{KeyFunction: testFifoObjectKeyFunc})
 	f.Add(mkFifoObj("foo", 10))
-	f.Replace([]interface{}{mkFifoObj("foo", 15)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 15)}, "0")
 	got := make(chan testFifoObject, 2)
 	go func() {
 		for {
@@ -563,7 +563,7 @@ func TestDeltaFIFO_ReplaceMakesDeletions(t *testing.T) {
 		}),
 	})
 	f.Delete(mkFifoObj("baz", 10))
-	f.Replace([]interface{}{mkFifoObj("foo", 5)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 5)}, "0")
 
 	expectedList := []Deltas{
 		{{Deleted, mkFifoObj("baz", 10)}},
@@ -588,7 +588,7 @@ func TestDeltaFIFO_ReplaceMakesDeletions(t *testing.T) {
 		}),
 	})
 	f.Add(mkFifoObj("baz", 10))
-	f.Replace([]interface{}{mkFifoObj("foo", 5)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 5)}, "0")
 
 	expectedList = []Deltas{
 		{{Added, mkFifoObj("baz", 10)},
@@ -615,7 +615,7 @@ func TestDeltaFIFO_ReplaceMakesDeletions(t *testing.T) {
 	})
 	f.Delete(mkFifoObj("bar", 6))
 	f.Add(mkFifoObj("bar", 100))
-	f.Replace([]interface{}{mkFifoObj("foo", 5)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 5)}, "0")
 
 	expectedList = []Deltas{
 		{
@@ -643,8 +643,8 @@ func TestDeltaFIFO_ReplaceMakesDeletions(t *testing.T) {
 			return []testFifoObject{mkFifoObj("foo", 5), mkFifoObj("bar", 6), mkFifoObj("baz", 7)}
 		}),
 	})
-	f.Replace([]interface{}{mkFifoObj("bar", 100), mkFifoObj("foo", 5)}, "0")
-	f.Replace([]interface{}{mkFifoObj("foo", 5)}, "0")
+	f.Replace([]any{mkFifoObj("bar", 100), mkFifoObj("foo", 5)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 5)}, "0")
 
 	expectedList = []Deltas{
 		{
@@ -670,7 +670,7 @@ func TestDeltaFIFO_ReplaceMakesDeletions(t *testing.T) {
 	// Now try starting without an explicit KeyListerGetter
 	f = NewDeltaFIFOWithOptions(DeltaFIFOOptions{KeyFunction: testFifoObjectKeyFunc})
 	f.Add(mkFifoObj("baz", 10))
-	f.Replace([]interface{}{mkFifoObj("foo", 5)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 5)}, "0")
 
 	expectedList = []Deltas{
 		{{Added, mkFifoObj("baz", 10)},
@@ -698,7 +698,7 @@ func TestDeltaFIFO_ReplaceMakesDeletionsReplaced(t *testing.T) {
 	})
 
 	f.Delete(mkFifoObj("baz", 10))
-	f.Replace([]interface{}{mkFifoObj("foo", 6)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 6)}, "0")
 
 	expectedList := []Deltas{
 		{{Deleted, mkFifoObj("baz", 10)}},
@@ -726,7 +726,7 @@ func TestDeltaFIFO_ReplaceDeltaType(t *testing.T) {
 		}),
 		EmitDeltaTypeReplaced: true,
 	})
-	f.Replace([]interface{}{mkFifoObj("foo", 5)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 5)}, "0")
 
 	expectedList := []Deltas{
 		{{Replaced, mkFifoObj("foo", 5)}},
@@ -764,9 +764,9 @@ func TestDeltaFIFO_UpdateResyncRace(t *testing.T) {
 
 // pop2 captures both parameters, unlike Pop().
 func pop2[T any](queue Queue) (T, bool) {
-	var result interface{}
+	var result any
 	var isList bool
-	queue.Pop(func(obj interface{}, isInInitialList bool) error {
+	queue.Pop(func(obj any, isInInitialList bool) error {
 		result = obj
 		isList = isInInitialList
 		return nil
@@ -781,7 +781,7 @@ func TestDeltaFIFO_HasSyncedCorrectOnDeletion(t *testing.T) {
 			return []testFifoObject{mkFifoObj("foo", 5), mkFifoObj("bar", 6), mkFifoObj("baz", 7)}
 		}),
 	})
-	f.Replace([]interface{}{mkFifoObj("foo", 5)}, "0")
+	f.Replace([]any{mkFifoObj("foo", 5)}, "0")
 
 	expectedList := []Deltas{
 		{{Sync, mkFifoObj("foo", 5)}},
@@ -840,7 +840,7 @@ func TestDeltaFIFO_KeyOf(t *testing.T) {
 	f := DeltaFIFO{keyFunc: testFifoObjectKeyFunc}
 
 	table := []struct {
-		obj interface{}
+		obj any
 		key string
 	}{
 		{obj: testFifoObject{name: "A"}, key: "A"},
@@ -878,26 +878,26 @@ func TestDeltaFIFO_HasSynced(t *testing.T) {
 		},
 		{
 			actions: []func(f *DeltaFIFO){
-				func(f *DeltaFIFO) { f.Replace([]interface{}{}, "0") },
+				func(f *DeltaFIFO) { f.Replace([]any{}, "0") },
 			},
 			expectedSynced: true,
 		},
 		{
 			actions: []func(f *DeltaFIFO){
-				func(f *DeltaFIFO) { f.Replace([]interface{}{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
+				func(f *DeltaFIFO) { f.Replace([]any{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
 			},
 			expectedSynced: false,
 		},
 		{
 			actions: []func(f *DeltaFIFO){
-				func(f *DeltaFIFO) { f.Replace([]interface{}{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
+				func(f *DeltaFIFO) { f.Replace([]any{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
 				func(f *DeltaFIFO) { Pop(f) },
 			},
 			expectedSynced: false,
 		},
 		{
 			actions: []func(f *DeltaFIFO){
-				func(f *DeltaFIFO) { f.Replace([]interface{}{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
+				func(f *DeltaFIFO) { f.Replace([]any{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
 				func(f *DeltaFIFO) { Pop(f) },
 				func(f *DeltaFIFO) { Pop(f) },
 			},
@@ -907,7 +907,7 @@ func TestDeltaFIFO_HasSynced(t *testing.T) {
 			// This test case won't happen in practice since a Reflector, the only producer for delta_fifo today, always passes a complete snapshot consistent in time;
 			// there cannot be duplicate keys in the list or apiserver is broken.
 			actions: []func(f *DeltaFIFO){
-				func(f *DeltaFIFO) { f.Replace([]interface{}{mkFifoObj("a", 1), mkFifoObj("a", 2)}, "0") },
+				func(f *DeltaFIFO) { f.Replace([]any{mkFifoObj("a", 1), mkFifoObj("a", 2)}, "0") },
 				func(f *DeltaFIFO) { Pop(f) },
 			},
 			expectedSynced: true,
@@ -940,7 +940,7 @@ func TestDeltaFIFO_PopShouldUnblockWhenClosed(t *testing.T) {
 	const jobs = 10
 	for i := 0; i < jobs; i++ {
 		go func() {
-			f.Pop(func(obj interface{}, isInInitialList bool) error {
+			f.Pop(func(obj any, isInInitialList bool) error {
 				return nil
 			})
 			c <- struct{}{}

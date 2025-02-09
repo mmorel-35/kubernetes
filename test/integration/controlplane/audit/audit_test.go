@@ -614,14 +614,14 @@ func admitFunc(review *v1beta1.AdmissionReview) error {
 		return fmt.Errorf("invalid admission review kind: %#v", review.GetObjectKind().GroupVersionKind())
 	}
 	if len(review.Request.Object.Raw) > 0 {
-		u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+		u := &unstructured.Unstructured{Object: map[string]any{}}
 		if err := json.Unmarshal(review.Request.Object.Raw, u); err != nil {
 			return fmt.Errorf("failed to deserialize object: %s with error: %v", string(review.Request.Object.Raw), err)
 		}
 		review.Request.Object.Object = u
 	}
 	if len(review.Request.OldObject.Raw) > 0 {
-		u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+		u := &unstructured.Unstructured{Object: map[string]any{}}
 		if err := json.Unmarshal(review.Request.OldObject.Raw, u); err != nil {
 			return fmt.Errorf("failed to deserialize object: %s with error: %v", string(review.Request.OldObject.Raw), err)
 		}

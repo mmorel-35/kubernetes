@@ -253,16 +253,16 @@ var _ = SIGDescribe("Deployment", func() {
 		framework.ExpectNoError(err, "failed to see replicas of %v in namespace %v scale to requested amount of %v", testDeployment.Name, testNamespaceName, testDeploymentDefaultReplicas)
 
 		ginkgo.By("patching the Deployment")
-		deploymentPatch, err := json.Marshal(map[string]interface{}{
-			"metadata": map[string]interface{}{
+		deploymentPatch, err := json.Marshal(map[string]any{
+			"metadata": map[string]any{
 				"labels": map[string]string{"test-deployment": "patched"},
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"replicas": testDeploymentMinimumReplicas,
-				"template": map[string]interface{}{
-					"spec": map[string]interface{}{
+				"template": map[string]any{
+					"spec": map[string]any{
 						"terminationGracePeriodSeconds": &two,
-						"containers": [1]map[string]interface{}{{
+						"containers": [1]map[string]any{{
 							"name":  testDeploymentName,
 							"image": testDeploymentPatchImage,
 						}},
@@ -395,8 +395,8 @@ var _ = SIGDescribe("Deployment", func() {
 		framework.ExpectNoError(err, "failed to see replicas of %v in namespace %v scale to requested amount of %v", testDeployment.Name, testNamespaceName, testDeploymentDefaultReplicas)
 
 		ginkgo.By("patching the DeploymentStatus")
-		deploymentStatusPatch, err := json.Marshal(map[string]interface{}{
-			"status": map[string]interface{}{
+		deploymentStatusPatch, err := json.Marshal(map[string]any{
+			"status": map[string]any{
 				"readyReplicas":     testDeploymentNoReplicas,
 				"availableReplicas": testDeploymentAvailableReplicas,
 			},

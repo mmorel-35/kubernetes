@@ -451,7 +451,7 @@ func (c *AvailableConditionController) processNextWorkItem() bool {
 	return true
 }
 
-func (c *AvailableConditionController) addAPIService(obj interface{}) {
+func (c *AvailableConditionController) addAPIService(obj any) {
 	castObj := obj.(*apiregistrationv1.APIService)
 	klog.V(4).Infof("Adding %s", castObj.Name)
 	if castObj.Spec.Service != nil {
@@ -460,7 +460,7 @@ func (c *AvailableConditionController) addAPIService(obj interface{}) {
 	c.queue.Add(castObj.Name)
 }
 
-func (c *AvailableConditionController) updateAPIService(oldObj, newObj interface{}) {
+func (c *AvailableConditionController) updateAPIService(oldObj, newObj any) {
 	castObj := newObj.(*apiregistrationv1.APIService)
 	oldCastObj := oldObj.(*apiregistrationv1.APIService)
 	klog.V(4).Infof("Updating %s", oldCastObj.Name)
@@ -470,7 +470,7 @@ func (c *AvailableConditionController) updateAPIService(oldObj, newObj interface
 	c.queue.Add(oldCastObj.Name)
 }
 
-func (c *AvailableConditionController) deleteAPIService(obj interface{}) {
+func (c *AvailableConditionController) deleteAPIService(obj any) {
 	castObj, ok := obj.(*apiregistrationv1.APIService)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
@@ -525,19 +525,19 @@ func (c *AvailableConditionController) rebuildAPIServiceCache() {
 
 // TODO, think of a way to avoid checking on every service manipulation
 
-func (c *AvailableConditionController) addService(obj interface{}) {
+func (c *AvailableConditionController) addService(obj any) {
 	for _, apiService := range c.getAPIServicesFor(obj.(*v1.Service)) {
 		c.queue.Add(apiService)
 	}
 }
 
-func (c *AvailableConditionController) updateService(obj, _ interface{}) {
+func (c *AvailableConditionController) updateService(obj, _ any) {
 	for _, apiService := range c.getAPIServicesFor(obj.(*v1.Service)) {
 		c.queue.Add(apiService)
 	}
 }
 
-func (c *AvailableConditionController) deleteService(obj interface{}) {
+func (c *AvailableConditionController) deleteService(obj any) {
 	castObj, ok := obj.(*v1.Service)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
@@ -556,19 +556,19 @@ func (c *AvailableConditionController) deleteService(obj interface{}) {
 	}
 }
 
-func (c *AvailableConditionController) addEndpoints(obj interface{}) {
+func (c *AvailableConditionController) addEndpoints(obj any) {
 	for _, apiService := range c.getAPIServicesFor(obj.(*v1.Endpoints)) {
 		c.queue.Add(apiService)
 	}
 }
 
-func (c *AvailableConditionController) updateEndpoints(obj, _ interface{}) {
+func (c *AvailableConditionController) updateEndpoints(obj, _ any) {
 	for _, apiService := range c.getAPIServicesFor(obj.(*v1.Endpoints)) {
 		c.queue.Add(apiService)
 	}
 }
 
-func (c *AvailableConditionController) deleteEndpoints(obj interface{}) {
+func (c *AvailableConditionController) deleteEndpoints(obj any) {
 	castObj, ok := obj.(*v1.Endpoints)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)

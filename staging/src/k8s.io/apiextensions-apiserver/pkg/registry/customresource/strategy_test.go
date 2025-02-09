@@ -31,14 +31,14 @@ import (
 	featuregatetesting "k8s.io/component-base/featuregate/testing"
 )
 
-func generation1() map[string]interface{} {
-	return map[string]interface{}{
+func generation1() map[string]any {
+	return map[string]any{
 		"generation": int64(1),
 	}
 }
 
-func generation2() map[string]interface{} {
-	return map[string]interface{}{
+func generation2() map[string]any {
+	return map[string]any{
 		"generation": int64(2),
 	}
 }
@@ -56,21 +56,21 @@ func TestStrategyPrepareForUpdate(t *testing.T) {
 			name:          "/status is enabled, spec changes increment generation",
 			statusEnabled: true,
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"metadata": generation1(),
 					"spec":     "old",
 					"status":   "old",
 				},
 			},
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"metadata": generation1(),
 					"spec":     "new",
 					"status":   "old",
 				},
 			},
 			expected: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"metadata": generation2(),
 					"spec":     "new",
 					"status":   "old",
@@ -81,21 +81,21 @@ func TestStrategyPrepareForUpdate(t *testing.T) {
 			name:          "/status is enabled, status changes do not increment generation, status changes removed",
 			statusEnabled: true,
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"metadata": generation1(),
 					"spec":     "old",
 					"status":   "old",
 				},
 			},
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"metadata": generation1(),
 					"spec":     "old",
 					"status":   "new",
 				},
 			},
 			expected: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"metadata": generation1(),
 					"spec":     "old",
 					"status":   "old",
@@ -106,8 +106,8 @@ func TestStrategyPrepareForUpdate(t *testing.T) {
 			name:          "/status is enabled, metadata changes do not increment generation",
 			statusEnabled: true,
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"metadata": map[string]interface{}{
+				Object: map[string]any{
+					"metadata": map[string]any{
 						"generation": int64(1),
 						"other":      "old",
 					},
@@ -116,8 +116,8 @@ func TestStrategyPrepareForUpdate(t *testing.T) {
 				},
 			},
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"metadata": map[string]interface{}{
+				Object: map[string]any{
+					"metadata": map[string]any{
 						"generation": int64(1),
 						"other":      "new",
 					},
@@ -126,8 +126,8 @@ func TestStrategyPrepareForUpdate(t *testing.T) {
 				},
 			},
 			expected: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"metadata": map[string]interface{}{
+				Object: map[string]any{
+					"metadata": map[string]any{
 						"generation": int64(1),
 						"other":      "new",
 					},
@@ -140,21 +140,21 @@ func TestStrategyPrepareForUpdate(t *testing.T) {
 			name:          "/status is disabled, spec changes increment generation",
 			statusEnabled: false,
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"metadata": generation1(),
 					"spec":     "old",
 					"status":   "old",
 				},
 			},
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"metadata": generation1(),
 					"spec":     "new",
 					"status":   "old",
 				},
 			},
 			expected: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"metadata": generation2(),
 					"spec":     "new",
 					"status":   "old",
@@ -165,21 +165,21 @@ func TestStrategyPrepareForUpdate(t *testing.T) {
 			name:          "/status is disabled, status changes increment generation",
 			statusEnabled: false,
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"metadata": generation1(),
 					"spec":     "old",
 					"status":   "old",
 				},
 			},
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"metadata": generation1(),
 					"spec":     "old",
 					"status":   "new",
 				},
 			},
 			expected: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"metadata": generation2(),
 					"spec":     "old",
 					"status":   "new",
@@ -190,7 +190,7 @@ func TestStrategyPrepareForUpdate(t *testing.T) {
 			name:          "/status is disabled, other top-level field changes increment generation",
 			statusEnabled: false,
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"metadata": generation1(),
 					"spec":     "old",
 					"image":    "old",
@@ -198,7 +198,7 @@ func TestStrategyPrepareForUpdate(t *testing.T) {
 				},
 			},
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"metadata": generation1(),
 					"spec":     "old",
 					"image":    "new",
@@ -206,7 +206,7 @@ func TestStrategyPrepareForUpdate(t *testing.T) {
 				},
 			},
 			expected: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"metadata": generation2(),
 					"spec":     "old",
 					"image":    "new",
@@ -218,8 +218,8 @@ func TestStrategyPrepareForUpdate(t *testing.T) {
 			name:          "/status is disabled, metadata changes do not increment generation",
 			statusEnabled: false,
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"metadata": map[string]interface{}{
+				Object: map[string]any{
+					"metadata": map[string]any{
 						"generation": int64(1),
 						"other":      "old",
 					},
@@ -228,8 +228,8 @@ func TestStrategyPrepareForUpdate(t *testing.T) {
 				},
 			},
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"metadata": map[string]interface{}{
+				Object: map[string]any{
+					"metadata": map[string]any{
 						"generation": int64(1),
 						"other":      "new",
 					},
@@ -238,8 +238,8 @@ func TestStrategyPrepareForUpdate(t *testing.T) {
 				},
 			},
 			expected: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"metadata": map[string]interface{}{
+				Object: map[string]any{
+					"metadata": map[string]any{
 						"generation": int64(1),
 						"other":      "new",
 					},
@@ -275,13 +275,13 @@ func TestSelectableFields(t *testing.T) {
 				{JSONPath: ".spec.foo"},
 			},
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"metadata": map[string]interface{}{
+				Object: map[string]any{
+					"metadata": map[string]any{
 						"name":       "example",
 						"generation": int64(1),
 						"other":      "new",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"foo": "x",
 					},
 				},
@@ -294,13 +294,13 @@ func TestSelectableFields(t *testing.T) {
 				{JSONPath: ".spec.foo"},
 			},
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"metadata": map[string]interface{}{
+				Object: map[string]any{
+					"metadata": map[string]any{
 						"name":       "example",
 						"generation": int64(1),
 						"other":      "new",
 					},
-					"spec": map[string]interface{}{},
+					"spec": map[string]any{},
 				},
 			},
 			expectFields: map[string]string{"spec.foo": "", "metadata.name": "example"},

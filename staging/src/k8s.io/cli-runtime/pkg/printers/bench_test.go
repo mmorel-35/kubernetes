@@ -30,7 +30,7 @@ import (
 
 func newBenchmarkList() *unstructured.UnstructuredList {
 	list := &unstructured.UnstructuredList{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "v1",
 			"kind":       "PodList",
 		},
@@ -38,13 +38,13 @@ func newBenchmarkList() *unstructured.UnstructuredList {
 	}
 	for i := 0; i < 1000; i++ {
 		list.Items = append(list.Items, unstructured.Unstructured{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"apiVersion": "v1",
 				"kind":       "Pod",
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name":      fmt.Sprintf("pod%d", i),
 					"namespace": "ns",
-					"labels": map[string]interface{}{
+					"labels": map[string]any{
 						"first-label":  "12",
 						"second-label": "label-value",
 					},
@@ -69,7 +69,7 @@ func newBenchmarkTable() *metav1.Table {
 	for _, pod := range newBenchmarkList().Items {
 		raw, _ := json.Marshal(pod)
 		table.Rows = append(table.Rows, metav1.TableRow{
-			Cells: []interface{}{pod.GetName(), "1/1", "Ready", int64(0), "20h"},
+			Cells: []any{pod.GetName(), "1/1", "Ready", int64(0), "20h"},
 			Object: runtime.RawExtension{
 				Raw:    raw,
 				Object: &pod,

@@ -117,6 +117,6 @@ func (t *AppArmorUpgradeTest) verifyNodesAppArmorEnabled(ctx context.Context, f 
 	}
 }
 
-func conditionType(condition interface{}) string {
+func conditionType(condition any) string {
 	return string(condition.(v1.NodeCondition).Type)
 }

@@ -128,7 +128,7 @@ func ValidateNoNewFinalizers(newFinalizers []string, oldFinalizers []string, fld
 }
 
 // ValidateImmutableField validates the new value and the old value are deeply equal.
-func ValidateImmutableField(newVal, oldVal interface{}, fldPath *field.Path) field.ErrorList {
+func ValidateImmutableField(newVal, oldVal any, fldPath *field.Path) field.ErrorList {
 	allErrs := field.ErrorList{}
 	if !apiequality.Semantic.DeepEqual(oldVal, newVal) {
 		allErrs = append(allErrs, field.Invalid(fldPath, newVal, FieldImmutableErrorMsg))

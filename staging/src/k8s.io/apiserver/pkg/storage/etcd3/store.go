@@ -597,7 +597,7 @@ func getNewItemFunc(listObj runtime.Object, v reflect.Value) func() runtime.Obje
 	if unstructuredList, isUnstructured := listObj.(*unstructured.UnstructuredList); isUnstructured {
 		if apiVersion := unstructuredList.GetAPIVersion(); len(apiVersion) > 0 {
 			return func() runtime.Object {
-				return &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": apiVersion}}
+				return &unstructured.Unstructured{Object: map[string]any{"apiVersion": apiVersion}}
 			}
 		}
 	}
@@ -1088,6 +1088,6 @@ func recordDecodeError(resource string, key string) {
 }
 
 // getTypeName returns type name of an object for reporting purposes.
-func getTypeName(obj interface{}) string {
+func getTypeName(obj any) string {
 	return reflect.TypeOf(obj).String()
 }

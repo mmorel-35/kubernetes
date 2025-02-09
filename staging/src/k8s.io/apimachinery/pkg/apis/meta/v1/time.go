@@ -181,7 +181,7 @@ func (t Time) MarshalCBOR() ([]byte, error) {
 }
 
 // ToUnstructured implements the value.UnstructuredConverter interface.
-func (t Time) ToUnstructured() interface{} {
+func (t Time) ToUnstructured() any {
 	if t.IsZero() {
 		return nil
 	}

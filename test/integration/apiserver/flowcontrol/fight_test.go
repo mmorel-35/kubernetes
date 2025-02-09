@@ -97,11 +97,11 @@ func (ft *fightTest) createMainInformer() {
 	informerFactory := informers.NewSharedInformerFactory(myClientset, 0)
 	inf := informerFactory.Flowcontrol().V1().FlowSchemas().Informer()
 	inf.AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			fs := obj.(*flowcontrol.FlowSchema)
 			ft.countWrite(fs)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			fs := newObj.(*flowcontrol.FlowSchema)
 			ft.countWrite(fs)
 		},

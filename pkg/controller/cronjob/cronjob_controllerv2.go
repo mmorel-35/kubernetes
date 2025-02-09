@@ -114,13 +114,13 @@ func NewControllerV2(ctx context.Context, jobInformer batchv1informers.JobInform
 	})
 
 	cronJobsInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			jm.enqueueController(obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			jm.updateCronJob(logger, oldObj, newObj)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			jm.enqueueController(obj)
 		},
 	})
@@ -271,7 +271,7 @@ func (jm *ControllerV2) getJobsToBeReconciled(cronJob *batchv1.CronJob) ([]*batc
 }
 
 // When a job is created, enqueue the controller that manages it and update it's expectations.
-func (jm *ControllerV2) addJob(obj interface{}) {
+func (jm *ControllerV2) addJob(obj any) {
 	job := obj.(*batchv1.Job)
 	if job.DeletionTimestamp != nil {
 		// on a restart of the controller, it's possible a new job shows up in a state that
@@ -295,7 +295,7 @@ func (jm *ControllerV2) addJob(obj interface{}) {
 // is updated and wake them up. If the anything of the Job have changed, we need to
 // awaken both the old and new CronJob. old and cur must be *batchv1.Job
 // types.
-func (jm *ControllerV2) updateJob(old, cur interface{}) {
+func (jm *ControllerV2) updateJob(old, cur any) {
 	curJob := cur.(*batchv1.Job)
 	oldJob := old.(*batchv1.Job)
 	if curJob.ResourceVersion == oldJob.ResourceVersion {
@@ -325,7 +325,7 @@ func (jm *ControllerV2) updateJob(old, cur interface{}) {
 	}
 }
 
-func (jm *ControllerV2) deleteJob(obj interface{}) {
+func (jm *ControllerV2) deleteJob(obj any) {
 	job, ok := obj.(*batchv1.Job)
 
 	// When a delete is dropped, the relist will notice a job in the store not
@@ -356,7 +356,7 @@ func (jm *ControllerV2) deleteJob(obj interface{}) {
 	jm.enqueueController(cronJob)
 }
 
-func (jm *ControllerV2) enqueueController(obj interface{}) {
+func (jm *ControllerV2) enqueueController(obj any) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("couldn't get key for object %+v: %v", obj, err))
@@ -366,7 +366,7 @@ func (jm *ControllerV2) enqueueController(obj interface{}) {
 	jm.queue.Add(key)
 }
 
-func (jm *ControllerV2) enqueueControllerAfter(obj interface{}, t time.Duration) {
+func (jm *ControllerV2) enqueueControllerAfter(obj any, t time.Duration) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("couldn't get key for object %+v: %v", obj, err))
@@ -378,7 +378,7 @@ func (jm *ControllerV2) enqueueControllerAfter(obj interface{}, t time.Duration)
 
 // updateCronJob re-queues the CronJob for next scheduled time if there is a
 // change in spec.schedule otherwise it re-queues it now
-func (jm *ControllerV2) updateCronJob(logger klog.Logger, old interface{}, curr interface{}) {
+func (jm *ControllerV2) updateCronJob(logger klog.Logger, old any, curr any) {
 	oldCJ, okOld := old.(*batchv1.CronJob)
 	newCJ, okNew := curr.(*batchv1.CronJob)
 

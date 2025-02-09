@@ -139,12 +139,12 @@ func (eCtx *errorContext) CleanupCtx(cb func(TContext)) {
 	cleanupCtx(eCtx, cb)
 }
 
-func (eCtx *errorContext) Expect(actual interface{}, extra ...interface{}) gomega.Assertion {
+func (eCtx *errorContext) Expect(actual any, extra ...any) gomega.Assertion {
 	eCtx.Helper()
 	return expect(eCtx, actual, extra...)
 }
 
-func (eCtx *errorContext) ExpectNoError(err error, explain ...interface{}) {
+func (eCtx *errorContext) ExpectNoError(err error, explain ...any) {
 	eCtx.Helper()
 	expectNoError(eCtx, err, explain...)
 }

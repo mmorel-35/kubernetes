@@ -181,7 +181,7 @@ func (s *State) appendErr(err error) {
 // Logf writes to the log message list. s must not be locked.
 // s's Log member will drop an old message if it would otherwise
 // become longer than 500 messages.
-func (s *State) Logf(format string, args ...interface{}) {
+func (s *State) Logf(format string, args ...any) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	s.Log = append(s.Log, fmt.Sprintf(format, args...))

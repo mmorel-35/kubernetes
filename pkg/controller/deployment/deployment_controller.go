@@ -118,30 +118,30 @@ func NewDeploymentController(ctx context.Context, dInformer appsinformers.Deploy
 	}
 
 	dInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			dc.addDeployment(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			dc.updateDeployment(logger, oldObj, newObj)
 		},
 		// This will enter the sync loop and no-op, because the deployment has been deleted from the store.
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			dc.deleteDeployment(logger, obj)
 		},
 	})
 	rsInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			dc.addReplicaSet(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			dc.updateReplicaSet(logger, oldObj, newObj)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			dc.deleteReplicaSet(logger, obj)
 		},
 	})
 	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			dc.deletePod(logger, obj)
 		},
 	})
@@ -184,20 +184,20 @@ func (dc *DeploymentController) Run(ctx context.Context, workers int) {
 	<-ctx.Done()
 }
 
-func (dc *DeploymentController) addDeployment(logger klog.Logger, obj interface{}) {
+func (dc *DeploymentController) addDeployment(logger klog.Logger, obj any) {
 	d := obj.(*apps.Deployment)
 	logger.V(4).Info("Adding deployment", "deployment", klog.KObj(d))
 	dc.enqueueDeployment(d)
 }
 
-func (dc *DeploymentController) updateDeployment(logger klog.Logger, old, cur interface{}) {
+func (dc *DeploymentController) updateDeployment(logger klog.Logger, old, cur any) {
 	oldD := old.(*apps.Deployment)
 	curD := cur.(*apps.Deployment)
 	logger.V(4).Info("Updating deployment", "deployment", klog.KObj(oldD))
 	dc.enqueueDeployment(curD)
 }
 
-func (dc *DeploymentController) deleteDeployment(logger klog.Logger, obj interface{}) {
+func (dc *DeploymentController) deleteDeployment(logger klog.Logger, obj any) {
 	d, ok := obj.(*apps.Deployment)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
@@ -216,7 +216,7 @@ func (dc *DeploymentController) deleteDeployment(logger klog.Logger, obj interfa
 }
 
 // addReplicaSet enqueues the deployment that manages a ReplicaSet when the ReplicaSet is created.
-func (dc *DeploymentController) addReplicaSet(logger klog.Logger, obj interface{}) {
+func (dc *DeploymentController) addReplicaSet(logger klog.Logger, obj any) {
 	rs := obj.(*apps.ReplicaSet)
 
 	if rs.DeletionTimestamp != nil {
@@ -272,7 +272,7 @@ func (dc *DeploymentController) getDeploymentsForReplicaSet(logger klog.Logger, 
 // is updated and wake them up. If the anything of the ReplicaSets have changed, we need to
 // awaken both the old and new deployments. old and cur must be *apps.ReplicaSet
 // types.
-func (dc *DeploymentController) updateReplicaSet(logger klog.Logger, old, cur interface{}) {
+func (dc *DeploymentController) updateReplicaSet(logger klog.Logger, old, cur any) {
 	curRS := cur.(*apps.ReplicaSet)
 	oldRS := old.(*apps.ReplicaSet)
 	if curRS.ResourceVersion == oldRS.ResourceVersion {
@@ -319,7 +319,7 @@ func (dc *DeploymentController) updateReplicaSet(logger klog.Logger, old, cur in
 // deleteReplicaSet enqueues the deployment that manages a ReplicaSet when
 // the ReplicaSet is deleted. obj could be an *apps.ReplicaSet, or
 // a DeletionFinalStateUnknown marker item.
-func (dc *DeploymentController) deleteReplicaSet(logger klog.Logger, obj interface{}) {
+func (dc *DeploymentController) deleteReplicaSet(logger klog.Logger, obj any) {
 	rs, ok := obj.(*apps.ReplicaSet)
 
 	// When a delete is dropped, the relist will notice a pod in the store not
@@ -353,7 +353,7 @@ func (dc *DeploymentController) deleteReplicaSet(logger klog.Logger, obj interfa
 }
 
 // deletePod will enqueue a Recreate Deployment once all of its pods have stopped running.
-func (dc *DeploymentController) deletePod(logger klog.Logger, obj interface{}) {
+func (dc *DeploymentController) deletePod(logger klog.Logger, obj any) {
 	pod, ok := obj.(*v1.Pod)
 
 	// When a delete is dropped, the relist will notice a pod in the store not

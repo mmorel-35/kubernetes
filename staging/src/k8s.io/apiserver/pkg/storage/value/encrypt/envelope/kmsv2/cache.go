@@ -52,7 +52,7 @@ func newSimpleCache(clock clock.Clock, ttl time.Duration, providerName string) *
 		cache: cache,
 		ttl:   ttl,
 		hashPool: &sync.Pool{
-			New: func() interface{} {
+			New: func() any {
 				return sha256.New()
 			},
 		},

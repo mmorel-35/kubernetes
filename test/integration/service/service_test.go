@@ -699,16 +699,16 @@ func Test_ServiceClusterIPSelector(t *testing.T) {
 	serviceHasSynced := serviceInformer.HasSynced
 	if _, err = serviceInformer.AddEventHandler(
 		cache.ResourceEventHandlerFuncs{
-			AddFunc: func(obj interface{}) {
+			AddFunc: func(obj any) {
 				svc := obj.(*corev1.Service)
 				t.Logf("Added Service %#v", svc)
 			},
-			UpdateFunc: func(oldObj, newObj interface{}) {
+			UpdateFunc: func(oldObj, newObj any) {
 				oldSvc := oldObj.(*corev1.Service)
 				newSvc := newObj.(*corev1.Service)
 				t.Logf("Updated Service %#v to %#v", oldSvc, newSvc)
 			},
-			DeleteFunc: func(obj interface{}) {
+			DeleteFunc: func(obj any) {
 				svc := obj.(*corev1.Service)
 				t.Logf("Deleted Service %#v", svc)
 			},

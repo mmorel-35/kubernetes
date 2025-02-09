@@ -51,7 +51,7 @@ var (
 	backendPort string
 	replicaOf   string
 	replicas    []string
-	store       map[string]interface{}
+	store       map[string]any
 )
 
 const (
@@ -63,7 +63,7 @@ func init() {
 	CmdGuestbook.Flags().StringVar(&httpPort, "http-port", "80", "HTTP Listen Port")
 	CmdGuestbook.Flags().StringVar(&backendPort, "backend-port", "6379", "Backend's HTTP Listen Port")
 	CmdGuestbook.Flags().StringVar(&replicaOf, "replicaof", "", "The host's name to register to")
-	store = make(map[string]interface{})
+	store = make(map[string]any)
 }
 
 func main(cmd *cobra.Command, args []string) {
@@ -103,14 +103,14 @@ func registerNode(registerTo, port string) {
 			continue
 		}
 
-		responseJSON := make(map[string]interface{})
+		responseJSON := make(map[string]any)
 		err = json.Unmarshal([]byte(response), &responseJSON)
 		if err != nil {
 			log.Fatalf("Error while unmarshaling primary's response: %v", err)
 		}
 
 		var ok bool
-		store, ok = responseJSON["data"].(map[string]interface{})
+		store, ok = responseJSON["data"].(map[string]any)
 		if !ok {
 			log.Fatalf("Could not cast responseJSON: %s", responseJSON["data"])
 		}
@@ -142,7 +142,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("GET /register?host=%s", ip)
 
 	// send all the store to the replica as well.
-	output := make(map[string]interface{})
+	output := make(map[string]any)
 	output["data"] = store
 	bytes, err := json.Marshal(output)
 	if err != nil {
@@ -167,7 +167,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("GET /get?key=%s", key)
 
-	output := make(map[string]interface{})
+	output := make(map[string]any)
 	if key == "" {
 		output["data"] = store
 	} else {

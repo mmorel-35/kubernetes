@@ -34,7 +34,7 @@ var DefaultNameFunc = func(t reflect.Type) string { return t.Name() }
 // or pointers if necessary. It should return an error if the object cannot be converted
 // or if some data is invalid. If you do not wish a and b to share fields or nested
 // objects, you must copy a before calling this function.
-type ConversionFunc func(a, b interface{}, scope Scope) error
+type ConversionFunc func(a, b any, scope Scope) error
 
 // Converter knows how to convert one type to another.
 type Converter struct {
@@ -57,7 +57,7 @@ func NewConverter(NameFunc) *Converter {
 	}
 	c.RegisterUntypedConversionFunc(
 		(*[]byte)(nil), (*[]byte)(nil),
-		func(a, b interface{}, s Scope) error {
+		func(a, b any, s Scope) error {
 			return Convert_Slice_byte_To_Slice_byte(a.(*[]byte), b.(*[]byte), s)
 		},
 	)
@@ -94,7 +94,7 @@ func Convert_Slice_byte_To_Slice_byte(in *[]byte, out *[]byte, s Scope) error {
 type Scope interface {
 	// Call Convert to convert sub-objects. Note that if you call it with your own exact
 	// parameters, you'll run out of stack space before anything useful happens.
-	Convert(src, dest interface{}) error
+	Convert(src, dest any) error
 
 	// Meta returns any information originally passed to Convert.
 	Meta() *Meta
@@ -113,7 +113,7 @@ type ConversionFuncs struct {
 // AddUntyped adds the provided conversion function to the lookup table for the types that are
 // supplied as a and b. a and b must be pointers or an error is returned. This method overwrites
 // previously defined functions.
-func (c ConversionFuncs) AddUntyped(a, b interface{}, fn ConversionFunc) error {
+func (c ConversionFuncs) AddUntyped(a, b any, fn ConversionFunc) error {
 	tA, tB := reflect.TypeOf(a), reflect.TypeOf(b)
 	if tA.Kind() != reflect.Pointer {
 		return fmt.Errorf("the type %T must be a pointer to register as an untyped conversion", a)
@@ -141,7 +141,7 @@ func (c ConversionFuncs) Merge(other ConversionFuncs) ConversionFuncs {
 // Meta is supplied by Scheme, when it calls Convert.
 type Meta struct {
 	// Context is an optional field that callers may use to pass info to conversion functions.
-	Context interface{}
+	Context any
 }
 
 // scope contains information about an ongoing conversion.
@@ -151,7 +151,7 @@ type scope struct {
 }
 
 // Convert continues a conversion.
-func (s *scope) Convert(src, dest interface{}) error {
+func (s *scope) Convert(src, dest any) error {
 	return s.converter.Convert(src, dest, s.meta)
 }
 
@@ -163,20 +163,20 @@ func (s *scope) Meta() *Meta {
 // RegisterUntypedConversionFunc registers a function that converts between a and b by passing objects of those
 // types to the provided function. The function *must* accept objects of a and b - this machinery will not enforce
 // any other guarantee.
-func (c *Converter) RegisterUntypedConversionFunc(a, b interface{}, fn ConversionFunc) error {
+func (c *Converter) RegisterUntypedConversionFunc(a, b any, fn ConversionFunc) error {
 	return c.conversionFuncs.AddUntyped(a, b, fn)
 }
 
 // RegisterGeneratedUntypedConversionFunc registers a function that converts between a and b by passing objects of those
 // types to the provided function. The function *must* accept objects of a and b - this machinery will not enforce
 // any other guarantee.
-func (c *Converter) RegisterGeneratedUntypedConversionFunc(a, b interface{}, fn ConversionFunc) error {
+func (c *Converter) RegisterGeneratedUntypedConversionFunc(a, b any, fn ConversionFunc) error {
 	return c.generatedConversionFuncs.AddUntyped(a, b, fn)
 }
 
 // RegisterIgnoredConversion registers a "no-op" for conversion, where any requested
 // conversion between from and to is ignored.
-func (c *Converter) RegisterIgnoredConversion(from, to interface{}) error {
+func (c *Converter) RegisterIgnoredConversion(from, to any) error {
 	typeFrom := reflect.TypeOf(from)
 	typeTo := reflect.TypeOf(to)
 	if typeFrom.Kind() != reflect.Pointer {
@@ -195,7 +195,7 @@ func (c *Converter) RegisterIgnoredConversion(from, to interface{}) error {
 // 'meta' is given to allow you to pass information to conversion functions,
 // it is not used by Convert() other than storing it in the scope.
 // Not safe for objects with cyclic references!
-func (c *Converter) Convert(src, dest interface{}, meta *Meta) error {
+func (c *Converter) Convert(src, dest any, meta *Meta) error {
 	pair := typePair{reflect.TypeOf(src), reflect.TypeOf(dest)}
 	scope := &scope{
 		converter: c,

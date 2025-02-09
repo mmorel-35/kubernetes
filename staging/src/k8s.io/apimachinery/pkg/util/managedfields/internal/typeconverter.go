@@ -102,7 +102,7 @@ func (deducedTypeConverter) TypedToObject(value *typed.TypedValue) (runtime.Obje
 func valueToObject(val value.Value) (runtime.Object, error) {
 	vu := val.Unstructured()
 	switch o := vu.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		return &unstructured.Unstructured{Object: o}, nil
 	default:
 		return nil, fmt.Errorf("failed to convert value to unstructured for type %T", vu)
@@ -131,7 +131,7 @@ func indexModels(
 }
 
 // Get and parse GroupVersionKind from the extension. Returns empty if it doesn't have one.
-func parseGroupVersionKind(extensions map[string]interface{}) []schema.GroupVersionKind {
+func parseGroupVersionKind(extensions map[string]any) []schema.GroupVersionKind {
 	gvkListResult := []schema.GroupVersionKind{}
 
 	// Get the extensions
@@ -141,7 +141,7 @@ func parseGroupVersionKind(extensions map[string]interface{}) []schema.GroupVers
 	}
 
 	// gvk extension must be a list of at least 1 element.
-	gvkList, ok := gvkExtension.([]interface{})
+	gvkList, ok := gvkExtension.([]any)
 	if !ok {
 		return []schema.GroupVersionKind{}
 	}
@@ -151,7 +151,7 @@ func parseGroupVersionKind(extensions map[string]interface{}) []schema.GroupVers
 
 		// gvk extension list must be a map with group, version, and
 		// kind fields
-		if gvkMap, ok := gvk.(map[interface{}]interface{}); ok {
+		if gvkMap, ok := gvk.(map[any]any); ok {
 			group, ok = gvkMap["group"].(string)
 			if !ok {
 				continue
@@ -165,7 +165,7 @@ func parseGroupVersionKind(extensions map[string]interface{}) []schema.GroupVers
 				continue
 			}
 
-		} else if gvkMap, ok := gvk.(map[string]interface{}); ok {
+		} else if gvkMap, ok := gvk.(map[string]any); ok {
 			group, ok = gvkMap["group"].(string)
 			if !ok {
 				continue

@@ -1450,7 +1450,7 @@ func (t *Tester) testListTableConversion(obj runtime.Object, assignFn AssignFunc
 			// do not add to this test without discussion - may break clients
 			switch cell.(type) {
 			case float64, int64, int32, int, string, bool:
-			case []interface{}:
+			case []any:
 			case nil:
 			default:
 				t.Errorf("row %d, cell %d has an unrecognized type, only JSON serialization safe types are allowed: %T ", i, j, cell)

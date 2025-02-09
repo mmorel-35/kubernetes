@@ -102,7 +102,7 @@ func (g *genClientset) GenerateType(c *generator.Context, t *types.Type, w io.Wr
 	sw.Do(checkImpl, nil)
 
 	for _, group := range allGroups {
-		m := map[string]interface{}{
+		m := map[string]any{
 			"group":        group.Group,
 			"version":      group.Version,
 			"PackageAlias": group.PackageAlias,

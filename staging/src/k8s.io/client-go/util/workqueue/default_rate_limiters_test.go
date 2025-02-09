@@ -215,7 +215,7 @@ type StepRateLimiter struct {
 	maxDelay  time.Duration
 }
 
-func (r *StepRateLimiter) When(item interface{}) time.Duration {
+func (r *StepRateLimiter) When(item any) time.Duration {
 	r.count += 1
 	if r.count <= r.threshold {
 		return r.baseDelay
@@ -223,9 +223,9 @@ func (r *StepRateLimiter) When(item interface{}) time.Duration {
 	return r.maxDelay
 }
 
-func (r *StepRateLimiter) NumRequeues(item interface{}) int {
+func (r *StepRateLimiter) NumRequeues(item any) int {
 	return 0
 }
 
-func (r *StepRateLimiter) Forget(item interface{}) {
+func (r *StepRateLimiter) Forget(item any) {
 }

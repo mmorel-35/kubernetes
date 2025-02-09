@@ -1286,7 +1286,7 @@ func TestEventsToRegister(t *testing.T) {
 func Test_isSchedulableAfterPodChange(t *testing.T) {
 	testcases := map[string]struct {
 		pod                             *v1.Pod
-		oldObj, newObj                  interface{}
+		oldObj, newObj                  any
 		enableInPlacePodVerticalScaling bool
 		expectedHint                    framework.QueueingHint
 		expectedErr                     bool
@@ -1378,7 +1378,7 @@ func Test_isSchedulableAfterPodChange(t *testing.T) {
 func Test_isSchedulableAfterNodeChange(t *testing.T) {
 	testcases := map[string]struct {
 		pod            *v1.Pod
-		oldObj, newObj interface{}
+		oldObj, newObj any
 		expectedHint   framework.QueueingHint
 		expectedErr    bool
 	}{

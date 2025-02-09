@@ -18,12 +18,12 @@ limitations under the License.
 
 package v1
 
-type ControllerRevisionExpansion interface{}
+type ControllerRevisionExpansion any
 
-type DaemonSetExpansion interface{}
+type DaemonSetExpansion any
 
-type DeploymentExpansion interface{}
+type DeploymentExpansion any
 
-type ReplicaSetExpansion interface{}
+type ReplicaSetExpansion any
 
-type StatefulSetExpansion interface{}
+type StatefulSetExpansion any

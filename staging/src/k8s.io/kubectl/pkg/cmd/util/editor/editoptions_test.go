@@ -75,32 +75,32 @@ func TestManagedFieldsExtractAndRestore(t *testing.T) {
 		},
 		"multiple objects, empty managedFields": {
 			object: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind":       "List",
 					"apiVersion": "v1",
-					"metadata":   map[string]interface{}{},
+					"metadata":   map[string]any{},
 				},
 				Items: []unstructured.Unstructured{
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"apiVersion": "v1",
 							"kind":       "Pod",
-							"metadata": map[string]interface{}{
+							"metadata": map[string]any{
 								"uid": "12345",
 							},
-							"spec":   map[string]interface{}{},
-							"status": map[string]interface{}{},
+							"spec":   map[string]any{},
+							"status": map[string]any{},
 						},
 					},
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"apiVersion": "v1",
 							"kind":       "Pod",
-							"metadata": map[string]interface{}{
+							"metadata": map[string]any{
 								"uid": "98765",
 							},
-							"spec":   map[string]interface{}{},
-							"status": map[string]interface{}{},
+							"spec":   map[string]any{},
+							"status": map[string]any{},
 						},
 					},
 				},
@@ -131,44 +131,44 @@ func TestManagedFieldsExtractAndRestore(t *testing.T) {
 		},
 		"multiple objects, all managedFields": {
 			object: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind":       "List",
 					"apiVersion": "v1",
-					"metadata":   map[string]interface{}{},
+					"metadata":   map[string]any{},
 				},
 				Items: []unstructured.Unstructured{
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"apiVersion": "v1",
 							"kind":       "Pod",
-							"metadata": map[string]interface{}{
+							"metadata": map[string]any{
 								"uid": "12345",
-								"managedFields": []interface{}{
-									map[string]interface{}{
+								"managedFields": []any{
+									map[string]any{
 										"manager":   "test",
 										"operation": "Apply",
 									},
 								},
 							},
-							"spec":   map[string]interface{}{},
-							"status": map[string]interface{}{},
+							"spec":   map[string]any{},
+							"status": map[string]any{},
 						},
 					},
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"apiVersion": "v1",
 							"kind":       "Pod",
-							"metadata": map[string]interface{}{
+							"metadata": map[string]any{
 								"uid": "98765",
-								"managedFields": []interface{}{
-									map[string]interface{}{
+								"managedFields": []any{
+									map[string]any{
 										"manager":   "test",
 										"operation": "Update",
 									},
 								},
 							},
-							"spec":   map[string]interface{}{},
-							"status": map[string]interface{}{},
+							"spec":   map[string]any{},
+							"status": map[string]any{},
 						},
 					},
 				},
@@ -190,38 +190,38 @@ func TestManagedFieldsExtractAndRestore(t *testing.T) {
 		},
 		"multiple objects, some managedFields": {
 			object: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind":       "List",
 					"apiVersion": "v1",
-					"metadata":   map[string]interface{}{},
+					"metadata":   map[string]any{},
 				},
 				Items: []unstructured.Unstructured{
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"apiVersion": "v1",
 							"kind":       "Pod",
-							"metadata": map[string]interface{}{
+							"metadata": map[string]any{
 								"uid": "12345",
-								"managedFields": []interface{}{
-									map[string]interface{}{
+								"managedFields": []any{
+									map[string]any{
 										"manager":   "test",
 										"operation": "Apply",
 									},
 								},
 							},
-							"spec":   map[string]interface{}{},
-							"status": map[string]interface{}{},
+							"spec":   map[string]any{},
+							"status": map[string]any{},
 						},
 					},
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"apiVersion": "v1",
 							"kind":       "Pod",
-							"metadata": map[string]interface{}{
+							"metadata": map[string]any{
 								"uid": "98765",
 							},
-							"spec":   map[string]interface{}{},
-							"status": map[string]interface{}{},
+							"spec":   map[string]any{},
+							"status": map[string]any{},
 						},
 					},
 				},
@@ -329,15 +329,15 @@ func TestEditOptions_visitToPatch(t *testing.T) {
 						Namespace: "ns",
 						Name:      "before",
 						Object: &unstructured.Unstructured{
-							Object: map[string]interface{}{
+							Object: map[string]any{
 								"apiVersion": "v1",
 								"kind":       "Thingy",
-								"metadata": map[string]interface{}{
+								"metadata": map[string]any{
 									"uid":       "12345",
 									"namespace": "ns",
 									"name":      "before",
 								},
-								"spec": map[string]interface{}{},
+								"spec": map[string]any{},
 							},
 						},
 						Mapping: unregMapping,
@@ -349,15 +349,15 @@ func TestEditOptions_visitToPatch(t *testing.T) {
 							Namespace: "ns",
 							Name:      "after",
 							Object: &unstructured.Unstructured{
-								Object: map[string]interface{}{
+								Object: map[string]any{
 									"apiVersion": "v1",
 									"kind":       "Thingy",
-									"metadata": map[string]interface{}{
+									"metadata": map[string]any{
 										"uid":       "12345",
 										"namespace": "ns",
 										"name":      "after",
 									},
-									"spec": map[string]interface{}{},
+									"spec": map[string]any{},
 								},
 							},
 							Mapping: unregMapping,
@@ -376,15 +376,15 @@ func TestEditOptions_visitToPatch(t *testing.T) {
 						Namespace: "ns",
 						Name:      "myname",
 						Object: &unstructured.Unstructured{
-							Object: map[string]interface{}{
+							Object: map[string]any{
 								"apiVersion": "v1",
 								"kind":       "Thingy",
-								"metadata": map[string]interface{}{
+								"metadata": map[string]any{
 									"uid":       "12345",
 									"namespace": "ns",
 									"name":      "myname",
 								},
-								"spec": map[string]interface{}{},
+								"spec": map[string]any{},
 							},
 						},
 						Mapping: unregMapping,
@@ -396,15 +396,15 @@ func TestEditOptions_visitToPatch(t *testing.T) {
 							Namespace: "ns",
 							Name:      "myname",
 							Object: &unstructured.Unstructured{
-								Object: map[string]interface{}{
+								Object: map[string]any{
 									"apiVersion": "v1",
 									"kind":       "OtherThingy",
-									"metadata": map[string]interface{}{
+									"metadata": map[string]any{
 										"uid":       "12345",
 										"namespace": "ns",
 										"name":      "myname",
 									},
-									"spec": map[string]interface{}{},
+									"spec": map[string]any{},
 								},
 							},
 							Mapping: unregMapping,
@@ -423,15 +423,15 @@ func TestEditOptions_visitToPatch(t *testing.T) {
 						Namespace: "ns",
 						Name:      "myname",
 						Object: &unstructured.Unstructured{
-							Object: map[string]interface{}{
+							Object: map[string]any{
 								"apiVersion": "v1",
 								"kind":       "Thingy",
-								"metadata": map[string]interface{}{
+								"metadata": map[string]any{
 									"uid":       "12345",
 									"namespace": "ns",
 									"name":      "myname",
 								},
-								"spec": map[string]interface{}{},
+								"spec": map[string]any{},
 							},
 						},
 						Mapping: unregMapping,
@@ -443,15 +443,15 @@ func TestEditOptions_visitToPatch(t *testing.T) {
 							Namespace: "ns",
 							Name:      "myname",
 							Object: &unstructured.Unstructured{
-								Object: map[string]interface{}{
+								Object: map[string]any{
 									"apiVersion": "v1alpha1",
 									"kind":       "Thingy",
-									"metadata": map[string]interface{}{
+									"metadata": map[string]any{
 										"uid":       "12345",
 										"namespace": "ns",
 										"name":      "myname",
 									},
-									"spec": map[string]interface{}{},
+									"spec": map[string]any{},
 								},
 							},
 							Mapping: unregMapping,

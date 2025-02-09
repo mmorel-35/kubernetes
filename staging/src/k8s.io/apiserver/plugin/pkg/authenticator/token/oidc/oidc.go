@@ -1018,7 +1018,7 @@ func (s *stringOrArray) UnmarshalJSON(b []byte) error {
 
 type claims map[string]json.RawMessage
 
-func (c claims) unmarshalClaim(name string, v interface{}) error {
+func (c claims) unmarshalClaim(name string, v any) error {
 	val, ok := c[name]
 	if !ok {
 		return fmt.Errorf("claim not present")
@@ -1049,8 +1049,8 @@ func convertCELValueToStringList(val ref.Val) ([]string, error) {
 	case celgo.ListType(nil).TypeName():
 		var result []string
 		switch val.Value().(type) {
-		case []interface{}:
-			for _, v := range val.Value().([]interface{}) {
+		case []any:
+			for _, v := range val.Value().([]any) {
 				out, ok := v.(string)
 				if !ok {
 					return nil, fmt.Errorf("expression must return a string or a list of strings")
@@ -1113,7 +1113,7 @@ func checkValidationRulesEvaluation(results []authenticationcel.EvaluationResult
 	return nil
 }
 
-func convertObjectToUnstructured(obj interface{}) (*unstructured.Unstructured, error) {
+func convertObjectToUnstructured(obj any) (*unstructured.Unstructured, error) {
 	if obj == nil || reflect.ValueOf(obj).IsNil() {
 		return &unstructured.Unstructured{Object: nil}, nil
 	}

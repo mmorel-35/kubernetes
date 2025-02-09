@@ -39,7 +39,7 @@ func (n NamespacedName) String() string {
 }
 
 // MarshalLog emits a struct containing required key/value pair
-func (n NamespacedName) MarshalLog() interface{} {
+func (n NamespacedName) MarshalLog() any {
 	return struct {
 		Name      string `json:"name"`
 		Namespace string `json:"namespace,omitempty"`

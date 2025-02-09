@@ -230,12 +230,12 @@ func MustBaseEnvSet(ver *version.Version, strictCost bool) *EnvSet {
 		panic(fmt.Sprintf("version must contain an major and minor component, but got: %s", ver.String()))
 	}
 	key := strconv.FormatUint(uint64(ver.Major()), 10) + "." + strconv.FormatUint(uint64(ver.Minor()), 10)
-	var entry interface{}
+	var entry any
 	if strictCost {
 		if entry, ok := baseEnvs.Load(key); ok {
 			return entry.(*EnvSet)
 		}
-		entry, _, _ = baseEnvsSingleflight.Do(key, func() (interface{}, error) {
+		entry, _, _ = baseEnvsSingleflight.Do(key, func() (any, error) {
 			entry := mustNewEnvSet(ver, baseOpts)
 			if cacheBaseEnvs {
 				baseEnvs.Store(key, entry)
@@ -246,7 +246,7 @@ func MustBaseEnvSet(ver *version.Version, strictCost bool) *EnvSet {
 		if entry, ok := baseEnvsWithOption.Load(key); ok {
 			return entry.(*EnvSet)
 		}
-		entry, _, _ = baseEnvsWithOptionSingleflight.Do(key, func() (interface{}, error) {
+		entry, _, _ = baseEnvsWithOptionSingleflight.Do(key, func() (any, error) {
 			entry := mustNewEnvSet(ver, baseOptsWithoutStrictCost)
 			if cacheBaseEnvs {
 				baseEnvsWithOption.Store(key, entry)

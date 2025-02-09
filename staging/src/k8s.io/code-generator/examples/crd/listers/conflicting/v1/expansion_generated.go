@@ -20,8 +20,8 @@ package v1
 
 // TestTypeListerExpansion allows custom methods to be added to
 // TestTypeLister.
-type TestTypeListerExpansion interface{}
+type TestTypeListerExpansion any
 
 // TestTypeNamespaceListerExpansion allows custom methods to be added to
 // TestTypeNamespaceLister.
-type TestTypeNamespaceListerExpansion interface{}
+type TestTypeNamespaceListerExpansion any

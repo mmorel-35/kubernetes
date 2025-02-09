@@ -133,7 +133,7 @@ type configController struct {
 	// the reference is dangling
 	foundToDangling func(bool) bool
 
-	// configQueue holds `(interface{})(0)` when the configuration
+	// configQueue holds `(any)(0)` when the configuration
 	// objects need to be reprocessed.
 	configQueue workqueue.TypedRateLimitingInterface[int]
 
@@ -306,12 +306,12 @@ func newTestableController(config TestableConfig) *configController {
 	cfgCtlr.fsLister = fsi.Lister()
 	cfgCtlr.fsInformerSynced = fsi.Informer().HasSynced
 	pli.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			pl := obj.(*flowcontrol.PriorityLevelConfiguration)
 			klog.V(7).Infof("Triggered API priority and fairness config reloading in %s due to creation of PLC %s", cfgCtlr.name, pl.Name)
 			cfgCtlr.configQueue.Add(0)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			newPL := newObj.(*flowcontrol.PriorityLevelConfiguration)
 			oldPL := oldObj.(*flowcontrol.PriorityLevelConfiguration)
 			if !apiequality.Semantic.DeepEqual(oldPL.Spec, newPL.Spec) {
@@ -321,19 +321,19 @@ func newTestableController(config TestableConfig) *configController {
 				klog.V(7).Infof("No trigger API priority and fairness config reloading in %s due to spec non-change of PLC %s", cfgCtlr.name, newPL.Name)
 			}
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			name, _ := cache.DeletionHandlingMetaNamespaceKeyFunc(obj)
 			klog.V(7).Infof("Triggered API priority and fairness config reloading in %s due to deletion of PLC %s", cfgCtlr.name, name)
 			cfgCtlr.configQueue.Add(0)
 
 		}})
 	fsi.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			fs := obj.(*flowcontrol.FlowSchema)
 			klog.V(7).Infof("Triggered API priority and fairness config reloading in %s due to creation of FS %s", cfgCtlr.name, fs.Name)
 			cfgCtlr.configQueue.Add(0)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			newFS := newObj.(*flowcontrol.FlowSchema)
 			oldFS := oldObj.(*flowcontrol.FlowSchema)
 			// Changes to either Spec or Status are relevant.  The
@@ -359,7 +359,7 @@ func newTestableController(config TestableConfig) *configController {
 				klog.V(7).Infof("No trigger of API priority and fairness config reloading in %s due to spec and status non-change of FS %s", cfgCtlr.name, newFS.Name)
 			}
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			name, _ := cache.DeletionHandlingMetaNamespaceKeyFunc(obj)
 			klog.V(7).Infof("Triggered API priority and fairness config reloading in %s due to deletion of FS %s", cfgCtlr.name, name)
 			cfgCtlr.configQueue.Add(0)

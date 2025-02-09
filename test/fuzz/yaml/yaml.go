@@ -85,7 +85,7 @@ func FuzzMicroTimeStrict(b []byte) int {
 // FuzzSigYaml is a fuzz target for "sigs.k8s.io/yaml" unmarshaling.
 func FuzzSigYaml(b []byte) int {
 	t := struct{}{}
-	m := map[string]interface{}{}
+	m := map[string]any{}
 	var out int
 	if err := sigyaml.Unmarshal(b, &m); err == nil {
 		out = 1
@@ -129,7 +129,7 @@ func FuzzTimeStrict(b []byte) int {
 // FuzzYamlV2 is a fuzz target for "sigs.k8s.io/yaml/goyaml.v2" unmarshaling.
 func FuzzYamlV2(b []byte) int {
 	t := struct{}{}
-	m := map[string]interface{}{}
+	m := map[string]any{}
 	var out int
 	if err := yaml.Unmarshal(b, &m); err == nil {
 		out = 1

@@ -11560,7 +11560,7 @@ func RegisterRuntimeServiceServer(s *grpc.Server, srv RuntimeServiceServer) {
 	s.RegisterService(&_RuntimeService_serviceDesc, srv)
 }
 
-func _RuntimeService_Version_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_Version_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(VersionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11572,13 +11572,13 @@ func _RuntimeService_Version_Handler(srv interface{}, ctx context.Context, dec f
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/Version",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).Version(ctx, req.(*VersionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_RunPodSandbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_RunPodSandbox_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(RunPodSandboxRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11590,13 +11590,13 @@ func _RuntimeService_RunPodSandbox_Handler(srv interface{}, ctx context.Context,
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/RunPodSandbox",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).RunPodSandbox(ctx, req.(*RunPodSandboxRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_StopPodSandbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_StopPodSandbox_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(StopPodSandboxRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11608,13 +11608,13 @@ func _RuntimeService_StopPodSandbox_Handler(srv interface{}, ctx context.Context
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/StopPodSandbox",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).StopPodSandbox(ctx, req.(*StopPodSandboxRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_RemovePodSandbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_RemovePodSandbox_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(RemovePodSandboxRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11626,13 +11626,13 @@ func _RuntimeService_RemovePodSandbox_Handler(srv interface{}, ctx context.Conte
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/RemovePodSandbox",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).RemovePodSandbox(ctx, req.(*RemovePodSandboxRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_PodSandboxStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_PodSandboxStatus_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(PodSandboxStatusRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11644,13 +11644,13 @@ func _RuntimeService_PodSandboxStatus_Handler(srv interface{}, ctx context.Conte
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/PodSandboxStatus",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).PodSandboxStatus(ctx, req.(*PodSandboxStatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_ListPodSandbox_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_ListPodSandbox_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListPodSandboxRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11662,13 +11662,13 @@ func _RuntimeService_ListPodSandbox_Handler(srv interface{}, ctx context.Context
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/ListPodSandbox",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).ListPodSandbox(ctx, req.(*ListPodSandboxRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_CreateContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_CreateContainer_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(CreateContainerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11680,13 +11680,13 @@ func _RuntimeService_CreateContainer_Handler(srv interface{}, ctx context.Contex
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/CreateContainer",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).CreateContainer(ctx, req.(*CreateContainerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_StartContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_StartContainer_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(StartContainerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11698,13 +11698,13 @@ func _RuntimeService_StartContainer_Handler(srv interface{}, ctx context.Context
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/StartContainer",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).StartContainer(ctx, req.(*StartContainerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_StopContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_StopContainer_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(StopContainerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11716,13 +11716,13 @@ func _RuntimeService_StopContainer_Handler(srv interface{}, ctx context.Context,
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/StopContainer",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).StopContainer(ctx, req.(*StopContainerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_RemoveContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_RemoveContainer_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(RemoveContainerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11734,13 +11734,13 @@ func _RuntimeService_RemoveContainer_Handler(srv interface{}, ctx context.Contex
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/RemoveContainer",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).RemoveContainer(ctx, req.(*RemoveContainerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_ListContainers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_ListContainers_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListContainersRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11752,13 +11752,13 @@ func _RuntimeService_ListContainers_Handler(srv interface{}, ctx context.Context
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/ListContainers",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).ListContainers(ctx, req.(*ListContainersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_ContainerStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_ContainerStatus_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ContainerStatusRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11770,13 +11770,13 @@ func _RuntimeService_ContainerStatus_Handler(srv interface{}, ctx context.Contex
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/ContainerStatus",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).ContainerStatus(ctx, req.(*ContainerStatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_UpdateContainerResources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_UpdateContainerResources_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateContainerResourcesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11788,13 +11788,13 @@ func _RuntimeService_UpdateContainerResources_Handler(srv interface{}, ctx conte
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/UpdateContainerResources",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).UpdateContainerResources(ctx, req.(*UpdateContainerResourcesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_ReopenContainerLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_ReopenContainerLog_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ReopenContainerLogRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11806,13 +11806,13 @@ func _RuntimeService_ReopenContainerLog_Handler(srv interface{}, ctx context.Con
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/ReopenContainerLog",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).ReopenContainerLog(ctx, req.(*ReopenContainerLogRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_ExecSync_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_ExecSync_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ExecSyncRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11824,13 +11824,13 @@ func _RuntimeService_ExecSync_Handler(srv interface{}, ctx context.Context, dec 
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/ExecSync",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).ExecSync(ctx, req.(*ExecSyncRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_Exec_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_Exec_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ExecRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11842,13 +11842,13 @@ func _RuntimeService_Exec_Handler(srv interface{}, ctx context.Context, dec func
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/Exec",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).Exec(ctx, req.(*ExecRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_Attach_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_Attach_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(AttachRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11860,13 +11860,13 @@ func _RuntimeService_Attach_Handler(srv interface{}, ctx context.Context, dec fu
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/Attach",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).Attach(ctx, req.(*AttachRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_PortForward_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_PortForward_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(PortForwardRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11878,13 +11878,13 @@ func _RuntimeService_PortForward_Handler(srv interface{}, ctx context.Context, d
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/PortForward",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).PortForward(ctx, req.(*PortForwardRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_ContainerStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_ContainerStats_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ContainerStatsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11896,13 +11896,13 @@ func _RuntimeService_ContainerStats_Handler(srv interface{}, ctx context.Context
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/ContainerStats",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).ContainerStats(ctx, req.(*ContainerStatsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_ListContainerStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_ListContainerStats_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListContainerStatsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11914,13 +11914,13 @@ func _RuntimeService_ListContainerStats_Handler(srv interface{}, ctx context.Con
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/ListContainerStats",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).ListContainerStats(ctx, req.(*ListContainerStatsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_PodSandboxStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_PodSandboxStats_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(PodSandboxStatsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11932,13 +11932,13 @@ func _RuntimeService_PodSandboxStats_Handler(srv interface{}, ctx context.Contex
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/PodSandboxStats",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).PodSandboxStats(ctx, req.(*PodSandboxStatsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_ListPodSandboxStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_ListPodSandboxStats_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListPodSandboxStatsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11950,13 +11950,13 @@ func _RuntimeService_ListPodSandboxStats_Handler(srv interface{}, ctx context.Co
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/ListPodSandboxStats",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).ListPodSandboxStats(ctx, req.(*ListPodSandboxStatsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_UpdateRuntimeConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_UpdateRuntimeConfig_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(UpdateRuntimeConfigRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11968,13 +11968,13 @@ func _RuntimeService_UpdateRuntimeConfig_Handler(srv interface{}, ctx context.Co
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/UpdateRuntimeConfig",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).UpdateRuntimeConfig(ctx, req.(*UpdateRuntimeConfigRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_Status_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_Status_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(StatusRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -11986,13 +11986,13 @@ func _RuntimeService_Status_Handler(srv interface{}, ctx context.Context, dec fu
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/Status",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).Status(ctx, req.(*StatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_CheckpointContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_CheckpointContainer_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(CheckpointContainerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -12004,13 +12004,13 @@ func _RuntimeService_CheckpointContainer_Handler(srv interface{}, ctx context.Co
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/CheckpointContainer",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).CheckpointContainer(ctx, req.(*CheckpointContainerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_GetContainerEvents_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _RuntimeService_GetContainerEvents_Handler(srv any, stream grpc.ServerStream) error {
 	m := new(GetEventsRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
@@ -12031,7 +12031,7 @@ func (x *runtimeServiceGetContainerEventsServer) Send(m *ContainerEventResponse)
 	return x.ServerStream.SendMsg(m)
 }
 
-func _RuntimeService_ListMetricDescriptors_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_ListMetricDescriptors_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListMetricDescriptorsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -12043,13 +12043,13 @@ func _RuntimeService_ListMetricDescriptors_Handler(srv interface{}, ctx context.
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/ListMetricDescriptors",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).ListMetricDescriptors(ctx, req.(*ListMetricDescriptorsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_ListPodSandboxMetrics_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_ListPodSandboxMetrics_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListPodSandboxMetricsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -12061,13 +12061,13 @@ func _RuntimeService_ListPodSandboxMetrics_Handler(srv interface{}, ctx context.
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/ListPodSandboxMetrics",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).ListPodSandboxMetrics(ctx, req.(*ListPodSandboxMetricsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RuntimeService_RuntimeConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _RuntimeService_RuntimeConfig_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(RuntimeConfigRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -12079,7 +12079,7 @@ func _RuntimeService_RuntimeConfig_Handler(srv interface{}, ctx context.Context,
 		Server:     srv,
 		FullMethod: "/runtime.v1.RuntimeService/RuntimeConfig",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RuntimeServiceServer).RuntimeConfig(ctx, req.(*RuntimeConfigRequest))
 	}
 	return interceptor(ctx, in, info, handler)
@@ -12327,7 +12327,7 @@ func RegisterImageServiceServer(s *grpc.Server, srv ImageServiceServer) {
 	s.RegisterService(&_ImageService_serviceDesc, srv)
 }
 
-func _ImageService_ListImages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ImageService_ListImages_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListImagesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -12339,13 +12339,13 @@ func _ImageService_ListImages_Handler(srv interface{}, ctx context.Context, dec 
 		Server:     srv,
 		FullMethod: "/runtime.v1.ImageService/ListImages",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ImageServiceServer).ListImages(ctx, req.(*ListImagesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ImageService_ImageStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ImageService_ImageStatus_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ImageStatusRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -12357,13 +12357,13 @@ func _ImageService_ImageStatus_Handler(srv interface{}, ctx context.Context, dec
 		Server:     srv,
 		FullMethod: "/runtime.v1.ImageService/ImageStatus",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ImageServiceServer).ImageStatus(ctx, req.(*ImageStatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ImageService_PullImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ImageService_PullImage_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(PullImageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -12375,13 +12375,13 @@ func _ImageService_PullImage_Handler(srv interface{}, ctx context.Context, dec f
 		Server:     srv,
 		FullMethod: "/runtime.v1.ImageService/PullImage",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ImageServiceServer).PullImage(ctx, req.(*PullImageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ImageService_RemoveImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ImageService_RemoveImage_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(RemoveImageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -12393,13 +12393,13 @@ func _ImageService_RemoveImage_Handler(srv interface{}, ctx context.Context, dec
 		Server:     srv,
 		FullMethod: "/runtime.v1.ImageService/RemoveImage",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ImageServiceServer).RemoveImage(ctx, req.(*RemoveImageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ImageService_ImageFsInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ImageService_ImageFsInfo_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ImageFsInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -12411,7 +12411,7 @@ func _ImageService_ImageFsInfo_Handler(srv interface{}, ctx context.Context, dec
 		Server:     srv,
 		FullMethod: "/runtime.v1.ImageService/ImageFsInfo",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ImageServiceServer).ImageFsInfo(ctx, req.(*ImageFsInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
@@ -25777,7 +25777,7 @@ func (this *LinuxRuntimeConfiguration) String() string {
 	}, "")
 	return s
 }
-func valueToStringApi(v interface{}) string {
+func valueToStringApi(v any) string {
 	rv := reflect.ValueOf(v)
 	if rv.IsNil() {
 		return "nil"

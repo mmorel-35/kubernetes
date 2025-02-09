@@ -752,7 +752,7 @@ func (c *Cacher) listItems(ctx context.Context, listRV uint64, key string, pred 
 			return listResp{}, "", err
 		}
 		if exists {
-			return listResp{Items: []interface{}{obj}, ResourceVersion: readResourceVersion}, "", nil
+			return listResp{Items: []any{obj}, ResourceVersion: readResourceVersion}, "", nil
 		}
 		return listResp{ResourceVersion: readResourceVersion}, "", nil
 	}
@@ -760,7 +760,7 @@ func (c *Cacher) listItems(ctx context.Context, listRV uint64, key string, pred 
 }
 
 type listResp struct {
-	Items           []interface{}
+	Items           []any
 	ResourceVersion uint64
 }
 

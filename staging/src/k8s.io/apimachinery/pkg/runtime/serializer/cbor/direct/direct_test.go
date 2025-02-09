@@ -60,7 +60,7 @@ func (CustomTextUnmarshaler) UnmarshalText([]byte) error {
 
 func TestRejectsCustom(t *testing.T) {
 	for _, tc := range []struct {
-		value interface{}
+		value any
 		iface reflect.Type
 	}{
 		{value: CustomJSONMarshaler{}, iface: reflect.TypeFor[json.Marshaler]()},

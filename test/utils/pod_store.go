@@ -31,7 +31,7 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
-// Convenient wrapper around cache.Store that returns list of v1.Pod instead of interface{}.
+// Convenient wrapper around cache.Store that returns list of v1.Pod instead of any.
 type PodStore struct {
 	cache.Store
 	stopCh    chan struct{}

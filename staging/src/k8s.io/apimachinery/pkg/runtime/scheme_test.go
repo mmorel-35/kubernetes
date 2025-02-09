@@ -52,12 +52,12 @@ func (c *testConversions) externalToInternalSimple(in *runtimetesting.ExternalSi
 }
 
 func (c *testConversions) registerConversions(s *runtime.Scheme) error {
-	if err := s.AddConversionFunc((*runtimetesting.InternalSimple)(nil), (*runtimetesting.ExternalSimple)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*runtimetesting.InternalSimple)(nil), (*runtimetesting.ExternalSimple)(nil), func(a, b any, scope conversion.Scope) error {
 		return c.internalToExternalSimple(a.(*runtimetesting.InternalSimple), b.(*runtimetesting.ExternalSimple), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*runtimetesting.ExternalSimple)(nil), (*runtimetesting.InternalSimple)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*runtimetesting.ExternalSimple)(nil), (*runtimetesting.InternalSimple)(nil), func(a, b any, scope conversion.Scope) error {
 		return c.externalToInternalSimple(a.(*runtimetesting.ExternalSimple), b.(*runtimetesting.InternalSimple), scope)
 	}); err != nil {
 		return err
@@ -189,8 +189,8 @@ func TestScheme(t *testing.T) {
 		}
 	})
 	t.Run("Convert unstructured to unstructured", func(t *testing.T) {
-		uIn := &runtimetesting.Unstructured{Object: map[string]interface{}{
-			"test": []interface{}{"other", "test"},
+		uIn := &runtimetesting.Unstructured{Object: map[string]any{
+			"test": []any{"other", "test"},
 		}}
 		uOut := &runtimetesting.Unstructured{}
 		if err := scheme.Convert(uIn, uOut, nil); err != nil {
@@ -202,7 +202,7 @@ func TestScheme(t *testing.T) {
 	})
 	t.Run("Convert unstructured to structured", func(t *testing.T) {
 		unstructuredObj := &runtimetesting.Unstructured{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"testString": "bla",
 			},
 		}
@@ -226,7 +226,7 @@ func TestScheme(t *testing.T) {
 		}
 	})
 	t.Run("Verify that unstructured types must have V and K set", func(t *testing.T) {
-		emptyObj := &runtimetesting.Unstructured{Object: make(map[string]interface{})}
+		emptyObj := &runtimetesting.Unstructured{Object: make(map[string]any)}
 		if _, _, err := scheme.ObjectKinds(emptyObj); !runtime.IsMissingKind(err) {
 			t.Errorf("unexpected error: %v", err)
 		}
@@ -649,7 +649,7 @@ func TestConvertToVersion(t *testing.T) {
 		// converts from unstructured to internal
 		{
 			scheme: GetTestScheme(),
-			in: &runtimetesting.Unstructured{Object: map[string]interface{}{
+			in: &runtimetesting.Unstructured{Object: map[string]any{
 				"apiVersion": "custom/v1",
 				"kind":       "TestType3",
 				"A":          "test",
@@ -660,7 +660,7 @@ func TestConvertToVersion(t *testing.T) {
 		// converts from unstructured to external
 		{
 			scheme: GetTestScheme(),
-			in: &runtimetesting.Unstructured{Object: map[string]interface{}{
+			in: &runtimetesting.Unstructured{Object: map[string]any{
 				"apiVersion": "custom/v1",
 				"kind":       "TestType3",
 				"A":          "test",
@@ -895,7 +895,7 @@ func TestConvert(t *testing.T) {
 			scheme: GetTestScheme(),
 			in:     &runtimetesting.TestType1{A: "test"},
 			into:   &runtimetesting.Unstructured{},
-			out: &runtimetesting.Unstructured{Object: map[string]interface{}{
+			out: &runtimetesting.Unstructured{Object: map[string]any{
 				"myVersionKey": "custom/v1",
 				"myKindKey":    "TestType3",
 				"A":            "test",
@@ -989,7 +989,7 @@ func TestMetaValuesUnregisteredConvert(t *testing.T) {
 		internalToExternalCalls++
 		return nil
 	}
-	if err := s.AddConversionFunc((*InternalSimple)(nil), (*ExternalSimple)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*InternalSimple)(nil), (*ExternalSimple)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertSimple(a.(*InternalSimple), b.(*ExternalSimple), scope)
 	}); err != nil {
 		t.Fatalf("unexpected error: %v", err)

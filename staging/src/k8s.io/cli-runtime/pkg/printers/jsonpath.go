@@ -36,7 +36,7 @@ import (
 // index returns the result of indexing its first argument by the following
 // arguments.  Thus "index x 1 2 3" is, in Go syntax, x[1][2][3]. Each
 // indexed item must be a map, slice, or array.
-func exists(item interface{}, indices ...interface{}) bool {
+func exists(item any, indices ...any) bool {
 	v := reflect.ValueOf(item)
 	for _, i := range indices {
 		index := reflect.ValueOf(i)
@@ -123,7 +123,7 @@ func (j *JSONPathPrinter) PrintObj(obj runtime.Object, w io.Writer) error {
 		return errors.New(InternalObjectPrinterErr)
 	}
 
-	var queryObj interface{} = obj
+	var queryObj any = obj
 	if unstructured, ok := obj.(runtime.Unstructured); ok {
 		queryObj = unstructured.UnstructuredContent()
 	} else {
@@ -131,7 +131,7 @@ func (j *JSONPathPrinter) PrintObj(obj runtime.Object, w io.Writer) error {
 		if err != nil {
 			return err
 		}
-		queryObj = map[string]interface{}{}
+		queryObj = map[string]any{}
 		if err := json.Unmarshal(data, &queryObj); err != nil {
 			return err
 		}

@@ -31,7 +31,7 @@ import (
 func TestClientAuthenticationClusterTypesAreSynced(t *testing.T) {
 	t.Parallel()
 
-	for _, cluster := range []interface{}{
+	for _, cluster := range []any{
 		clientauthenticationv1beta1.Cluster{},
 		clientauthenticationv1.Cluster{},
 	} {
@@ -49,7 +49,7 @@ func TestClientAuthenticationClusterTypesAreSynced(t *testing.T) {
 // We want clientauthentication*.Cluster types to offer the same knobs as clientcmdv1.Cluster to
 // allow someone to connect to the kubernetes API. This test should fail if a new field is added to
 // one of the structs without updating the other.
-func testClientAuthenticationClusterTypesAreSynced(t *testing.T, cluster interface{}) {
+func testClientAuthenticationClusterTypesAreSynced(t *testing.T, cluster any) {
 	execType := reflect.TypeOf(cluster)
 	clientcmdType := reflect.TypeOf(clientcmdv1.Cluster{})
 

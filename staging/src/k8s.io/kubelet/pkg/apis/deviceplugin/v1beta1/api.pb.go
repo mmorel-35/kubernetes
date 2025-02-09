@@ -1281,7 +1281,7 @@ func RegisterRegistrationServer(s *grpc.Server, srv RegistrationServer) {
 	s.RegisterService(&_Registration_serviceDesc, srv)
 }
 
-func _Registration_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Registration_Register_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(RegisterRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1293,7 +1293,7 @@ func _Registration_Register_Handler(srv interface{}, ctx context.Context, dec fu
 		Server:     srv,
 		FullMethod: "/v1beta1.Registration/Register",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(RegistrationServer).Register(ctx, req.(*RegisterRequest))
 	}
 	return interceptor(ctx, in, info, handler)
@@ -1464,7 +1464,7 @@ func RegisterDevicePluginServer(s *grpc.Server, srv DevicePluginServer) {
 	s.RegisterService(&_DevicePlugin_serviceDesc, srv)
 }
 
-func _DevicePlugin_GetDevicePluginOptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DevicePlugin_GetDevicePluginOptions_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1476,13 +1476,13 @@ func _DevicePlugin_GetDevicePluginOptions_Handler(srv interface{}, ctx context.C
 		Server:     srv,
 		FullMethod: "/v1beta1.DevicePlugin/GetDevicePluginOptions",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(DevicePluginServer).GetDevicePluginOptions(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DevicePlugin_ListAndWatch_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _DevicePlugin_ListAndWatch_Handler(srv any, stream grpc.ServerStream) error {
 	m := new(Empty)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
@@ -1503,7 +1503,7 @@ func (x *devicePluginListAndWatchServer) Send(m *ListAndWatchResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _DevicePlugin_GetPreferredAllocation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DevicePlugin_GetPreferredAllocation_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(PreferredAllocationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1515,13 +1515,13 @@ func _DevicePlugin_GetPreferredAllocation_Handler(srv interface{}, ctx context.C
 		Server:     srv,
 		FullMethod: "/v1beta1.DevicePlugin/GetPreferredAllocation",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(DevicePluginServer).GetPreferredAllocation(ctx, req.(*PreferredAllocationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DevicePlugin_Allocate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DevicePlugin_Allocate_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(AllocateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1533,13 +1533,13 @@ func _DevicePlugin_Allocate_Handler(srv interface{}, ctx context.Context, dec fu
 		Server:     srv,
 		FullMethod: "/v1beta1.DevicePlugin/Allocate",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(DevicePluginServer).Allocate(ctx, req.(*AllocateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DevicePlugin_PreStartContainer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DevicePlugin_PreStartContainer_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(PreStartContainerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -1551,7 +1551,7 @@ func _DevicePlugin_PreStartContainer_Handler(srv interface{}, ctx context.Contex
 		Server:     srv,
 		FullMethod: "/v1beta1.DevicePlugin/PreStartContainer",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(DevicePluginServer).PreStartContainer(ctx, req.(*PreStartContainerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
@@ -3041,7 +3041,7 @@ func (this *DeviceSpec) String() string {
 	}, "")
 	return s
 }
-func valueToStringApi(v interface{}) string {
+func valueToStringApi(v any) string {
 	rv := reflect.ValueOf(v)
 	if rv.IsNil() {
 		return "nil"

@@ -23,12 +23,12 @@ type WriteOnce interface {
 	// Get reads the current value of this variable.  If this
 	// variable is not set yet then this call blocks until this
 	// variable gets a value.
-	Get() interface{}
+	Get() any
 
 	// Set normally writes a value into this variable, unblocks every
 	// goroutine waiting for this variable to have a value, and
 	// returns true.  In the unhappy case that this variable is
 	// already set, this method returns false without modifying the
 	// variable's value.
-	Set(interface{}) bool
+	Set(any) bool
 }

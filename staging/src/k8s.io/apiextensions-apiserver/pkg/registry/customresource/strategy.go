@@ -186,8 +186,8 @@ func (a customResourceStrategy) PrepareForUpdate(ctx context.Context, obj, old r
 	}
 }
 
-func copyNonMetadata(original map[string]interface{}) map[string]interface{} {
-	ret := make(map[string]interface{})
+func copyNonMetadata(original map[string]any) map[string]any {
+	ret := make(map[string]any)
 	for key, val := range original {
 		if key == "metadata" {
 			continue

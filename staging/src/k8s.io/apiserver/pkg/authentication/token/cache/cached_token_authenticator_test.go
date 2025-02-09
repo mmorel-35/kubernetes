@@ -155,7 +155,7 @@ func BenchmarkKeyFunc(b *testing.B) {
 		b.Fatal(err) // rand should never fail
 	}
 	hashPool := &sync.Pool{
-		New: func() interface{} {
+		New: func() any {
 			return hmac.New(sha256.New, randomCacheKey)
 		},
 	}
@@ -629,7 +629,7 @@ func TestKeyFunc(t *testing.T) {
 	t.Parallel()
 
 	hashPool := &sync.Pool{
-		New: func() interface{} {
+		New: func() any {
 			return hmac.New(sha256.New, []byte("098c9e46-b7f4-4358-bb3c-35cb7495b836")) // deterministic HMAC for testing
 		},
 	}

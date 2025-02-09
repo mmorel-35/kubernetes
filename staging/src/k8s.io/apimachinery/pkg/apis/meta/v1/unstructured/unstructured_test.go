@@ -46,7 +46,7 @@ func TestNilUnstructuredContent(t *testing.T) {
 	var u unstructured.Unstructured
 	uCopy := u.DeepCopy()
 	content := u.UnstructuredContent()
-	expContent := make(map[string]interface{})
+	expContent := make(map[string]any)
 	assert.EqualValues(t, expContent, content)
 	assert.Equal(t, uCopy, &u)
 }
@@ -64,7 +64,7 @@ func TestUnstructuredMetadataRoundTrip(t *testing.T) {
 
 	N := 1000
 	for i := 0; i < N; i++ {
-		u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+		u := &unstructured.Unstructured{Object: map[string]any{}}
 		uCopy := u.DeepCopy()
 		metadata := &metav1.ObjectMeta{}
 		fuzzer.Fuzz(metadata)
@@ -92,7 +92,7 @@ func TestUnstructuredMetadataOmitempty(t *testing.T) {
 	fuzzer := fuzzer.FuzzerFor(metafuzzer.Funcs, rand.NewSource(seed), codecs)
 
 	// fuzz to make sure we don't miss any function calls below
-	u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	u := &unstructured.Unstructured{Object: map[string]any{}}
 	metadata := &metav1.ObjectMeta{}
 	fuzzer.Fuzz(metadata)
 	if err := setObjectMeta(u, metadata); err != nil {
@@ -121,7 +121,7 @@ func TestUnstructuredMetadataOmitempty(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	emptyMetadata := make(map[string]interface{})
+	emptyMetadata := make(map[string]any)
 
 	if !reflect.DeepEqual(gotMetadata, emptyMetadata) {
 		t.Errorf("expected %v, got %v", emptyMetadata, gotMetadata)
@@ -283,10 +283,10 @@ const (
 	maxUnstructuredFanOut = 5
 )
 
-func unstructuredFuzzerFuncs(codecs serializer.CodecFactory) []interface{} {
-	return []interface{}{
+func unstructuredFuzzerFuncs(codecs serializer.CodecFactory) []any {
+	return []any{
 		func(u *unstructured.Unstructured, c fuzz.Continue) {
-			obj := make(map[string]interface{})
+			obj := make(map[string]any)
 			obj["apiVersion"] = generateValidAPIVersionString(c)
 			obj["kind"] = generateNonEmptyString(c)
 			for j := c.Intn(maxUnstructuredFanOut); j >= 0; j-- {
@@ -295,7 +295,7 @@ func unstructuredFuzzerFuncs(codecs serializer.CodecFactory) []interface{} {
 			u.Object = obj
 		},
 		func(ul *unstructured.UnstructuredList, c fuzz.Continue) {
-			obj := make(map[string]interface{})
+			obj := make(map[string]any)
 			obj["apiVersion"] = generateValidAPIVersionString(c)
 			obj["kind"] = generateNonEmptyString(c)
 			for j := c.Intn(maxUnstructuredFanOut); j >= 0; j-- {
@@ -342,11 +342,11 @@ func generateValidAPIVersionString(c fuzz.Continue) string {
 // 1. numbers (float64, int64)
 // 2. string (utf-8 encodings)
 // 3. boolean
-// 4. array ([]interface{})
-// 5. object (map[string]interface{})
+// 4. array ([]any)
+// 5. object (map[string]any)
 // 6. null
-// Decoding into unstructured can only produce a nil interface{} value or the
-// concrete types map[string]interface{}, []interface{}, int64, float64, string, and bool
+// Decoding into unstructured can only produce a nil any value or the
+// concrete types map[string]any, []any, int64, float64, string, and bool
 // If a value of other types is put into an unstructured, it will roundtrip
 // to one of the above list of supported types. For example, if Time type is used,
 // it will be encoded into a RFC 3339 format string such as "2001-02-03T12:34:56Z"
@@ -355,7 +355,7 @@ func generateValidAPIVersionString(c fuzz.Continue) string {
 // All external-versioned builtin types are exercised through RoundtripToUnstructured
 // in apitesting package. Types like metav1.Time are implicitly being exercised
 // because they appear as fields in those types.
-func generateRandomTypeValue(depth int, c fuzz.Continue) interface{} {
+func generateRandomTypeValue(depth int, c fuzz.Continue) any {
 	t := c.Rand.Intn(120)
 	// If the max depth for unstructured is reached, only add non-recursive types
 	// which is 20+ in range
@@ -365,13 +365,13 @@ func generateRandomTypeValue(depth int, c fuzz.Continue) interface{} {
 
 	switch {
 	case t < 10:
-		item := make([]interface{}, c.Intn(maxUnstructuredFanOut))
+		item := make([]any, c.Intn(maxUnstructuredFanOut))
 		for k := range item {
 			item[k] = generateRandomTypeValue(depth-1, c)
 		}
 		return item
 	case t < 20:
-		item := map[string]interface{}{}
+		item := map[string]any{}
 		for j := c.Intn(maxUnstructuredFanOut); j >= 0; j-- {
 			item[c.RandString()] = generateRandomTypeValue(depth-1, c)
 		}
@@ -417,9 +417,9 @@ func numberEqual(a int64, b float64) bool {
 	return false
 }
 
-func anyEqual(t *testing.T, a, b interface{}) bool {
+func anyEqual(t *testing.T, a, b any) bool {
 	switch b.(type) {
-	case nil, bool, string, int64, float64, []interface{}, map[string]interface{}:
+	case nil, bool, string, int64, float64, []any, map[string]any:
 	default:
 		t.Fatalf("unexpected value %v of type %T", b, b)
 	}
@@ -437,8 +437,8 @@ func anyEqual(t *testing.T, a, b interface{}) bool {
 			return numberEqual(bc, ac)
 		}
 		return ac == b
-	case []interface{}:
-		bc, ok := b.([]interface{})
+	case []any:
+		bc, ok := b.([]any)
 		if !ok {
 			return false
 		}
@@ -451,8 +451,8 @@ func anyEqual(t *testing.T, a, b interface{}) bool {
 			}
 		}
 		return true
-	case map[string]interface{}:
-		bc, ok := b.(map[string]interface{})
+	case map[string]any:
+		bc, ok := b.(map[string]any)
 		if !ok {
 			return false
 		}

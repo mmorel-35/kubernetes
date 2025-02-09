@@ -33,8 +33,8 @@ func TestNilOrEmptyConversion(t *testing.T) {
 	assert.NoError(t, RegisterConversions(scheme))
 
 	testCases := []struct {
-		obj1 interface{}
-		obj2 interface{}
+		obj1 any
+		obj2 any
 	}{
 		{
 			obj1: &autoscaling.ExternalMetricSource{},

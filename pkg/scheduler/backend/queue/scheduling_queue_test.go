@@ -96,10 +96,10 @@ var (
 		cmpopts.IgnoreFields(nominator{}, "podLister", "nLock"),
 	}
 
-	queueHintReturnQueue = func(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+	queueHintReturnQueue = func(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 		return framework.Queue, nil
 	}
-	queueHintReturnSkip = func(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+	queueHintReturnSkip = func(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 		return framework.QueueSkip, nil
 	}
 )
@@ -209,7 +209,7 @@ func Test_InFlightPods(t *testing.T) {
 		initialPods                  []*v1.Pod
 		actions                      []action
 		wantInFlightPods             []*v1.Pod
-		wantInFlightEvents           []interface{}
+		wantInFlightEvents           []any
 		wantActiveQPodNames          []string
 		wantBackoffQPodNames         []string
 		wantUnschedPodPoolPodNames   []string
@@ -251,7 +251,7 @@ func Test_InFlightPods(t *testing.T) {
 				{eventHappens: &pvUpdate},
 			},
 			wantInFlightPods:   []*v1.Pod{pod1},
-			wantInFlightEvents: []interface{}{pod1, pvAdd},
+			wantInFlightEvents: []any{pod1, pvAdd},
 			queueingHintMap: QueueingHintMapPerProfile{
 				"": {
 					pvAdd: {
@@ -279,7 +279,7 @@ func Test_InFlightPods(t *testing.T) {
 			},
 			wantBackoffQPodNames: []string{"targetpod"},
 			wantInFlightPods:     []*v1.Pod{pod2}, // only pod2 is registered because pod is already enqueued back.
-			wantInFlightEvents:   []interface{}{pod2, nodeAdd},
+			wantInFlightEvents:   []any{pod2, nodeAdd},
 			queueingHintMap: QueueingHintMapPerProfile{
 				"": {
 					pvAdd: {
@@ -369,7 +369,7 @@ func Test_InFlightPods(t *testing.T) {
 			},
 			wantBackoffQPodNames: []string{"targetpod2"},
 			wantInFlightPods:     []*v1.Pod{pod1, pod3},
-			wantInFlightEvents:   []interface{}{pod1, pvAdd, nodeAdd, pod3, framework.EventAssignedPodAdd},
+			wantInFlightEvents:   []any{pod1, pvAdd, nodeAdd, pod3, framework.EventAssignedPodAdd},
 			queueingHintMap: QueueingHintMapPerProfile{
 				"": {
 					pvAdd: {
@@ -806,7 +806,7 @@ func Test_InFlightPods(t *testing.T) {
 				t.Errorf("Unexpected diff in inFlightPods (-want, +got):\n%s", diff)
 			}
 
-			var wantInFlightEvents []interface{}
+			var wantInFlightEvents []any
 			for _, value := range test.wantInFlightEvents {
 				if event, ok := value.(framework.ClusterEvent); ok {
 					value = &clusterEvent{event: event}
@@ -1678,7 +1678,7 @@ func TestPriorityQueue_MoveAllToActiveOrBackoffQueueWithQueueingHint(t *testing.
 		{
 			name:    "QueueHintFunction is not called when Pod is gated by SchedulingGates plugin",
 			podInfo: setQueuedPodInfoGated(&framework.QueuedPodInfo{PodInfo: mustNewPodInfo(p), UnschedulablePlugins: sets.New(names.SchedulingGates, "foo")}),
-			hint: func(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+			hint: func(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 				return framework.Queue, fmt.Errorf("QueueingHintFn should not be called as pod is gated")
 			},
 			expectedQ: unschedulablePods,
@@ -3840,15 +3840,15 @@ func mustNewPodInfo(pod *v1.Pod) *framework.PodInfo {
 func Test_isPodWorthRequeuing(t *testing.T) {
 	metrics.Register()
 	count := 0
-	queueHintReturnQueue := func(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+	queueHintReturnQueue := func(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 		count++
 		return framework.Queue, nil
 	}
-	queueHintReturnSkip := func(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+	queueHintReturnSkip := func(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 		count++
 		return framework.QueueSkip, nil
 	}
-	queueHintReturnErr := func(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+	queueHintReturnErr := func(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 		count++
 		return framework.QueueSkip, fmt.Errorf("unexpected error")
 	}
@@ -3857,8 +3857,8 @@ func Test_isPodWorthRequeuing(t *testing.T) {
 		name                   string
 		podInfo                *framework.QueuedPodInfo
 		event                  framework.ClusterEvent
-		oldObj                 interface{}
-		newObj                 interface{}
+		oldObj                 any
+		newObj                 any
 		expected               queueingStrategy
 		expectedExecutionCount int // expected total execution count of queueing hint function
 		queueingHintMap        QueueingHintMapPerProfile

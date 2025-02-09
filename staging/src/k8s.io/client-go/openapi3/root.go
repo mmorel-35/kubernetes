@@ -51,7 +51,7 @@ type Root interface {
 	// GroupVersion as unstructured bytes. Returns an error for
 	// problems retrieving or parsing the root or GroupVersion
 	// OpenAPI V3 document.
-	GVSpecAsMap(gv schema.GroupVersion) (map[string]interface{}, error)
+	GVSpecAsMap(gv schema.GroupVersion) (map[string]any, error)
 }
 
 // root implements the Root interface, and encapsulates the
@@ -103,13 +103,13 @@ func (r *root) GVSpec(gv schema.GroupVersion) (*spec3.OpenAPI, error) {
 	return &parsedV3Schema, err
 }
 
-func (r *root) GVSpecAsMap(gv schema.GroupVersion) (map[string]interface{}, error) {
+func (r *root) GVSpecAsMap(gv schema.GroupVersion) (map[string]any, error) {
 	gvOpenAPIBytes, err := r.retrieveGVBytes(gv)
 	if err != nil {
 		return nil, err
 	}
 	// GroupVersion bytes into unstructured map[string] -> empty interface.
-	var gvMap map[string]interface{}
+	var gvMap map[string]any
 	err = json.Unmarshal(gvOpenAPIBytes, &gvMap)
 	return gvMap, err
 }

@@ -395,7 +395,7 @@ func (h *HTTPExtender) IsFilter() bool {
 }
 
 // Helper function to send messages to the extender
-func (h *HTTPExtender) send(action string, args interface{}, result interface{}) error {
+func (h *HTTPExtender) send(action string, args any, result any) error {
 	out, err := json.Marshal(args)
 	if err != nil {
 		return err

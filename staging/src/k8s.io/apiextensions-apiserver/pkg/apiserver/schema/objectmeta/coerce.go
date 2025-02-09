@@ -28,7 +28,7 @@ import (
 )
 
 // GetObjectMeta calls GetObjectMetaWithOptions without returning unknown field paths.
-func GetObjectMeta(obj map[string]interface{}, dropMalformedFields bool) (*metav1.ObjectMeta, bool, error) {
+func GetObjectMeta(obj map[string]any, dropMalformedFields bool) (*metav1.ObjectMeta, bool, error) {
 	meta, found, _, err := GetObjectMetaWithOptions(obj, ObjectMetaOptions{
 		DropMalformedFields: dropMalformedFields,
 	})
@@ -57,7 +57,7 @@ type ObjectMetaOptions struct {
 // throwing away fields which lead to errors.
 // If opts.ReturnedUnknownFields is true, it will UnmarshalStrict instead, returning the paths of any unknown fields
 // it encounters (i.e. paths returned as strict errs from UnmarshalStrict)
-func GetObjectMetaWithOptions(obj map[string]interface{}, opts ObjectMetaOptions) (*metav1.ObjectMeta, bool, []string, error) {
+func GetObjectMetaWithOptions(obj map[string]any, opts ObjectMetaOptions) (*metav1.ObjectMeta, bool, []string, error) {
 	metadata, found := obj["metadata"]
 	if !found {
 		return nil, false, nil, nil
@@ -97,7 +97,7 @@ func GetObjectMetaWithOptions(obj map[string]interface{}, opts ObjectMetaOptions
 		return nil, true, nil, unmarshalErr
 	}
 
-	metadataMap, ok := metadata.(map[string]interface{})
+	metadataMap, ok := metadata.(map[string]any)
 	if !ok {
 		return nil, false, nil, fmt.Errorf("invalid metadata: expected object, got %T", metadata)
 	}
@@ -110,7 +110,7 @@ func GetObjectMetaWithOptions(obj map[string]interface{}, opts ObjectMetaOptions
 	var unknownFields []string
 	for k, v := range metadataMap {
 		// serialize a single field
-		if singleFieldBytes, err := utiljson.Marshal(map[string]interface{}{k: v}); err == nil {
+		if singleFieldBytes, err := utiljson.Marshal(map[string]any{k: v}); err == nil {
 			// do a test unmarshal
 			if utiljson.Unmarshal(singleFieldBytes, testObjectMeta) == nil {
 				// if that succeeds, unmarshal for real
@@ -135,7 +135,7 @@ func GetObjectMetaWithOptions(obj map[string]interface{}, opts ObjectMetaOptions
 }
 
 // SetObjectMeta writes back ObjectMeta into a JSON data structure.
-func SetObjectMeta(obj map[string]interface{}, objectMeta *metav1.ObjectMeta) error {
+func SetObjectMeta(obj map[string]any, objectMeta *metav1.ObjectMeta) error {
 	if objectMeta == nil {
 		unstructured.RemoveNestedField(obj, "metadata")
 		return nil

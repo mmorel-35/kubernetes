@@ -110,7 +110,7 @@ spec:
 }
 
 func testObjectToTyped(t *testing.T, tc TypeConverter, y string) {
-	obj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	obj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(y), &obj.Object); err != nil {
 		t.Fatalf("Failed to parse yaml object: %v", err)
 	}
@@ -154,7 +154,7 @@ spec:
       - name: nginx
         image: nginx:1.15.4
 `
-	obj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	obj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(y), &obj.Object); err != nil {
 		b.Fatalf("Failed to parse yaml object: %v", err)
 	}
@@ -179,7 +179,7 @@ func TestIndexModels(t *testing.T) {
 		"def0": {
 			VendorExtensible: spec.VendorExtensible{
 				Extensions: spec.Extensions{
-					"x-kubernetes-group-version-kind": []interface{}{},
+					"x-kubernetes-group-version-kind": []any{},
 				},
 			},
 		},
@@ -197,8 +197,8 @@ func TestIndexModels(t *testing.T) {
 		"def1": {
 			VendorExtensible: spec.VendorExtensible{
 				Extensions: spec.Extensions{
-					"x-kubernetes-group-version-kind": []interface{}{
-						map[string]interface{}{
+					"x-kubernetes-group-version-kind": []any{
+						map[string]any{
 							"group":   "mygroup",
 							"version": "v1",
 							"kind":    "MyKind",
@@ -211,13 +211,13 @@ func TestIndexModels(t *testing.T) {
 		"def2": {
 			VendorExtensible: spec.VendorExtensible{
 				Extensions: spec.Extensions{
-					"x-kubernetes-group-version-kind": []interface{}{
-						map[string]interface{}{
+					"x-kubernetes-group-version-kind": []any{
+						map[string]any{
 							"group":   "mygroup",
 							"version": "v1",
 							"kind":    "MyOtherKind",
 						},
-						map[string]interface{}{
+						map[string]any{
 							"group":   "mygroup",
 							"version": "v2",
 							"kind":    "MyOtherKind",
@@ -227,18 +227,18 @@ func TestIndexModels(t *testing.T) {
 			},
 		},
 		// Show that we can mix and match GVKs from other definitions, and
-		// that both map[interface{}]interface{} and map[string]interface{}
+		// that both map[any]any and map[string]any
 		// are allowed
 		"def3": {
 			VendorExtensible: spec.VendorExtensible{
 				Extensions: spec.Extensions{
-					"x-kubernetes-group-version-kind": []interface{}{
-						map[string]interface{}{
+					"x-kubernetes-group-version-kind": []any{
+						map[string]any{
 							"group":   "mygroup",
 							"version": "v3",
 							"kind":    "MyKind",
 						},
-						map[interface{}]interface{}{
+						map[any]any{
 							"group":   "mygroup",
 							"version": "v3",
 							"kind":    "MyOtherKind",

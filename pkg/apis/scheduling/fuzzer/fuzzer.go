@@ -24,8 +24,8 @@ import (
 )
 
 // Funcs returns the fuzzer functions for the scheduling api group.
-var Funcs = func(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+var Funcs = func(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(s *scheduling.PriorityClass, c fuzz.Continue) {
 			c.FuzzNoCustom(s)
 			if s.PreemptionPolicy == nil {

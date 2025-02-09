@@ -118,7 +118,7 @@ func (c *Publisher) Run(ctx context.Context, workers int) {
 	<-ctx.Done()
 }
 
-func (c *Publisher) configMapDeleted(obj interface{}) {
+func (c *Publisher) configMapDeleted(obj any) {
 	cm, err := convertToCM(obj)
 	if err != nil {
 		utilruntime.HandleError(err)
@@ -130,7 +130,7 @@ func (c *Publisher) configMapDeleted(obj interface{}) {
 	c.queue.Add(cm.Namespace)
 }
 
-func (c *Publisher) configMapUpdated(_, newObj interface{}) {
+func (c *Publisher) configMapUpdated(_, newObj any) {
 	cm, err := convertToCM(newObj)
 	if err != nil {
 		utilruntime.HandleError(err)
@@ -142,12 +142,12 @@ func (c *Publisher) configMapUpdated(_, newObj interface{}) {
 	c.queue.Add(cm.Namespace)
 }
 
-func (c *Publisher) namespaceAdded(obj interface{}) {
+func (c *Publisher) namespaceAdded(obj any) {
 	namespace := obj.(*v1.Namespace)
 	c.queue.Add(namespace.Name)
 }
 
-func (c *Publisher) namespaceUpdated(oldObj interface{}, newObj interface{}) {
+func (c *Publisher) namespaceUpdated(oldObj any, newObj any) {
 	newNamespace := newObj.(*v1.Namespace)
 	if newNamespace.Status.Phase != v1.NamespaceActive {
 		return
@@ -228,7 +228,7 @@ func (c *Publisher) syncNamespace(ctx context.Context, ns string) (err error) {
 	return err
 }
 
-func convertToCM(obj interface{}) (*v1.ConfigMap, error) {
+func convertToCM(obj any) (*v1.ConfigMap, error) {
 	cm, ok := obj.(*v1.ConfigMap)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)

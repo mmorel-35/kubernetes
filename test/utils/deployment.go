@@ -33,7 +33,7 @@ import (
 	labelsutil "k8s.io/kubernetes/pkg/util/labels"
 )
 
-type LogfFn func(format string, args ...interface{})
+type LogfFn func(format string, args ...any)
 
 func LogReplicaSetsOfDeployment(deployment *apps.Deployment, allOldRSs []*apps.ReplicaSet, newRS *apps.ReplicaSet, logf LogfFn) {
 	if newRS != nil {

@@ -87,7 +87,7 @@ type QueueSet interface {
 	// was idle at the moment of the return.  Otherwise idle==false
 	// and the client must call the Finish method of the Request
 	// exactly once.
-	StartRequest(ctx context.Context, width *request.WorkEstimate, hashValue uint64, flowDistinguisher, fsName string, descr1, descr2 interface{}, queueNoteFn QueueNoteFn) (req Request, idle bool)
+	StartRequest(ctx context.Context, width *request.WorkEstimate, hashValue uint64, flowDistinguisher, fsName string, descr1, descr2 any, queueNoteFn QueueNoteFn) (req Request, idle bool)
 
 	// Dump saves and returns the instant internal state of the queue-set.
 	// Note that dumping process will stop the queue-set from proceeding

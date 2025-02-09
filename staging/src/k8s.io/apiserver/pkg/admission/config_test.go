@@ -352,7 +352,7 @@ func TestEmbeddedConfiguration(t *testing.T) {
 }
 
 func equalJSON(a, b string) bool {
-	var x, y interface{}
+	var x, y any
 	if err := json.Unmarshal([]byte(a), &x); err != nil {
 		return false
 	}

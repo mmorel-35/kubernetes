@@ -240,7 +240,7 @@ func InitISCSIDriver() storageframework.TestDriver {
 		driverInfo: storageframework.DriverInfo{
 			Name:             "iscsi",
 			InTreePluginName: "kubernetes.io/iscsi",
-			TestTags:         []interface{}{feature.Volumes},
+			TestTags:         []any{feature.Volumes},
 			MaxFileSize:      storageframework.FileSizeMedium,
 			SupportedFsType: sets.NewString(
 				"", // Default fsType
@@ -1251,7 +1251,7 @@ func InitLocalDriverWithVolumeType(volumeType utils.LocalVolumeType) func() stor
 	}
 	return func() storageframework.TestDriver {
 		// custom tag to distinguish from tests of other volume types
-		testTags := []interface{}{fmt.Sprintf("[LocalVolumeType: %s]", volumeType)}
+		testTags := []any{fmt.Sprintf("[LocalVolumeType: %s]", volumeType)}
 		// For GCE Local SSD volumes, we must run serially
 		if volumeType == utils.LocalVolumeGCELocalSSD {
 			testTags = append(testTags, framework.WithSerial())

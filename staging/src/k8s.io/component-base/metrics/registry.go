@@ -265,7 +265,7 @@ func (kr *kubeRegistry) RawMustRegister(cs ...prometheus.Collector) {
 
 // addResettable will automatically add our metric to our reset
 // list if it satisfies the interface
-func (kr *kubeRegistry) addResettable(i interface{}) {
+func (kr *kubeRegistry) addResettable(i any) {
 	kr.resetLock.Lock()
 	defer kr.resetLock.Unlock()
 	if resettable, ok := i.(resettable); ok {

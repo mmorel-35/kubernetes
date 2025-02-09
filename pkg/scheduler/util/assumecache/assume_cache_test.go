@@ -44,21 +44,21 @@ func (i *testInformer) AddEventHandler(handler cache.ResourceEventHandler) (cach
 	return nil, nil
 }
 
-func (i *testInformer) add(obj interface{}) {
+func (i *testInformer) add(obj any) {
 	if i.handler == nil {
 		return
 	}
 	i.handler.OnAdd(obj, false)
 }
 
-func (i *testInformer) update(obj interface{}) {
+func (i *testInformer) update(obj any) {
 	if i.handler == nil {
 		return
 	}
 	i.handler.OnUpdate(nil, obj)
 }
 
-func (i *testInformer) delete(obj interface{}) {
+func (i *testInformer) delete(obj any) {
 	if i.handler == nil {
 		return
 	}
@@ -84,7 +84,7 @@ func newTestWithIndexer(t *testing.T, indexName string, indexFunc cache.IndexFun
 	return tCtx, cache, informer
 }
 
-func verify(tCtx ktesting.TContext, cache *AssumeCache, key string, expectedObject, expectedAPIObject interface{}) {
+func verify(tCtx ktesting.TContext, cache *AssumeCache, key string, expectedObject, expectedAPIObject any) {
 	tCtx.Helper()
 	actualObject, err := cache.Get(key)
 	if err != nil {
@@ -102,9 +102,9 @@ func verify(tCtx ktesting.TContext, cache *AssumeCache, key string, expectedObje
 	}
 }
 
-func verifyList(tCtx ktesting.TContext, assumeCache *AssumeCache, expectedObjs []interface{}, indexObj interface{}) {
+func verifyList(tCtx ktesting.TContext, assumeCache *AssumeCache, expectedObjs []any, indexObj any) {
 	actualObjs := assumeCache.List(indexObj)
-	diff := cmp.Diff(expectedObjs, actualObjs, cmpopts.SortSlices(func(x, y interface{}) bool {
+	diff := cmp.Diff(expectedObjs, actualObjs, cmpopts.SortSlices(func(x, y any) bool {
 		xKey, err := cache.MetaNamespaceKeyFunc(x)
 		if err != nil {
 			tCtx.Fatalf("unexpected error determining key for %v: %v", x, err)
@@ -129,11 +129,11 @@ type mockEventHandler struct {
 
 type event struct {
 	What        string
-	OldObj, Obj interface{}
+	OldObj, Obj any
 	InitialList bool
 }
 
-func (m *mockEventHandler) OnAdd(obj interface{}, initialList bool) {
+func (m *mockEventHandler) OnAdd(obj any, initialList bool) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -152,7 +152,7 @@ func (m *mockEventHandler) OnAdd(obj interface{}, initialList bool) {
 	}
 }
 
-func (m *mockEventHandler) OnUpdate(oldObj, obj interface{}) {
+func (m *mockEventHandler) OnUpdate(oldObj, obj any) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -163,7 +163,7 @@ func (m *mockEventHandler) OnUpdate(oldObj, obj interface{}) {
 	})
 }
 
-func (m *mockEventHandler) OnDelete(obj interface{}) {
+func (m *mockEventHandler) OnDelete(obj any) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -184,7 +184,7 @@ func (m *mockEventHandler) verifyAndFlush(tCtx ktesting.TContext, expectedEvents
 	m.events = nil
 }
 
-func (m *mockEventHandler) sortEvents(cmp func(objI, objJ interface{}) bool) {
+func (m *mockEventHandler) sortEvents(cmp func(objI, objJ any) bool) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -196,7 +196,7 @@ func (m *mockEventHandler) sortEvents(cmp func(objI, objJ interface{}) bool) {
 func TestAssume(t *testing.T) {
 	scenarios := map[string]struct {
 		oldObj    metav1.Object
-		newObj    interface{}
+		newObj    any
 		expectErr error
 	}{
 		"success-same-version": {
@@ -402,7 +402,7 @@ func TestEventHandlers(t *testing.T) {
 	}
 	for i := range handlers {
 		cache.AddEventHandler(&handlers[i])
-		handlers[i].sortEvents(func(objI, objJ interface{}) bool {
+		handlers[i].sortEvents(func(objI, objJ any) bool {
 			return objI.(*metav1.ObjectMeta).Name <
 				objJ.(*metav1.ObjectMeta).Name
 		})
@@ -476,7 +476,7 @@ func TestEventHandlerConcurrency(t *testing.T) {
 	wg.Wait()
 
 	for i := range handlers {
-		handlers[i].sortEvents(func(objI, objJ interface{}) bool {
+		handlers[i].sortEvents(func(objI, objJ any) bool {
 			return objI.(*metav1.ObjectMeta).Name <
 				objJ.(*metav1.ObjectMeta).Name
 		})
@@ -488,7 +488,7 @@ func TestListNoIndexer(t *testing.T) {
 	tCtx, cache, informer := newTest(t)
 
 	// Add a bunch of objects.
-	var objs []interface{}
+	var objs []any
 	for i := 0; i < 10; i++ {
 		obj := makeObj(fmt.Sprintf("test-pvc%v", i), "1", "")
 		objs = append(objs, obj)
@@ -516,7 +516,7 @@ func TestListNoIndexer(t *testing.T) {
 }
 
 func TestListWithIndexer(t *testing.T) {
-	namespaceIndexer := func(obj interface{}) ([]string, error) {
+	namespaceIndexer := func(obj any) ([]string, error) {
 		objAccessor, err := meta.Accessor(obj)
 		if err != nil {
 			return nil, err
@@ -527,7 +527,7 @@ func TestListWithIndexer(t *testing.T) {
 
 	// Add a bunch of objects.
 	ns := "ns1"
-	var objs []interface{}
+	var objs []any
 	for i := 0; i < 10; i++ {
 		obj := makeObj(fmt.Sprintf("test-pvc%v", i), "1", ns)
 		objs = append(objs, obj)

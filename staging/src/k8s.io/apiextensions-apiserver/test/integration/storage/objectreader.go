@@ -78,7 +78,7 @@ func (s *EtcdObjectReader) GetStoredCustomResource(ns, name string) (*unstructur
 		return nil, fmt.Errorf("no storage object found for %s, %s in etcd for key %s", ns, name, key)
 	}
 	raw := resp.Kvs[0].Value
-	u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	u := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := json.Unmarshal(raw, u); err != nil {
 		return nil, fmt.Errorf("error deserializing object %s: %v", string(raw), err)
 	}

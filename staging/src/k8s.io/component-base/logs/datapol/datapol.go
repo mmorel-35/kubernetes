@@ -27,7 +27,7 @@ import (
 
 // Verify returns a list of the datatypes contained in the argument that can be
 // considered sensitive w.r.t. to logging
-func Verify(value interface{}) []string {
+func Verify(value any) []string {
 	defer func() {
 		if r := recover(); r != nil {
 			//TODO maybe export a metric

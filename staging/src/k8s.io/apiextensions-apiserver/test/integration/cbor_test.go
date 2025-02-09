@@ -83,10 +83,10 @@ func TestCBORStorageEnablement(t *testing.T) {
 		if _, err := dynamicClient.Resource(schema.GroupVersionResource{Group: "mygroup.example.com", Version: "v1beta1", Resource: "bars"}).Create(
 			context.TODO(),
 			&unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "mygroup.example.com/v1beta1",
 					"kind":       "Bar",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name": "test-storage-json",
 					},
 				}},
@@ -102,7 +102,7 @@ func TestCBORStorageEnablement(t *testing.T) {
 		if n := len(response.Kvs); n != 1 {
 			t.Fatalf("expected 1 kv, got %d", n)
 		}
-		if err := json.Unmarshal(response.Kvs[0].Value, new(interface{})); err != nil {
+		if err := json.Unmarshal(response.Kvs[0].Value, new(any)); err != nil {
 			t.Fatalf("failed to decode stored custom resource as json: %v", err)
 		}
 	}()
@@ -119,10 +119,10 @@ func TestCBORStorageEnablement(t *testing.T) {
 		if _, err := dynamicClient.Resource(schema.GroupVersionResource{Group: "mygroup.example.com", Version: "v1beta1", Resource: "bars"}).Create(
 			context.TODO(),
 			&unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "mygroup.example.com/v1beta1",
 					"kind":       "Bar",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name": "test-storage-cbor",
 					},
 				}},
@@ -145,7 +145,7 @@ func TestCBORStorageEnablement(t *testing.T) {
 			// it.
 			t.Fatalf(`stored custom resource lacks required "self-described CBOR" tag (prefix 0x%x)`, response.Kvs[0].Value[:3])
 		}
-		if err := cbor.Unmarshal(response.Kvs[0].Value, new(interface{})); err != nil {
+		if err := cbor.Unmarshal(response.Kvs[0].Value, new(any)); err != nil {
 			t.Fatalf("failed to decode stored custom resource as cbor: %v", err)
 		}
 
@@ -234,16 +234,16 @@ func TestCBORServingEnablement(t *testing.T) {
 			cr, err := dynamicClient.Resource(schema.GroupVersionResource{Group: "mygroup.example.com", Version: "v1beta1", Resource: "foos"}).Create(
 				context.TODO(),
 				&unstructured.Unstructured{
-					Object: map[string]interface{}{
+					Object: map[string]any{
 						"apiVersion": "mygroup.example.com/v1beta1",
 						"kind":       "Foo",
-						"metadata": map[string]interface{}{
+						"metadata": map[string]any{
 							"name": fmt.Sprintf("test-cbor-%s", tc.name),
 						},
-						"spec": map[string]interface{}{
+						"spec": map[string]any{
 							"replicas": int64(0),
 						},
-						"status": map[string]interface{}{
+						"status": map[string]any{
 							"replicas": int64(0),
 						},
 					}},
@@ -279,16 +279,16 @@ func TestCBORServingEnablement(t *testing.T) {
 				}
 			}
 
-			createBody, err := cbor.Marshal(map[string]interface{}{
+			createBody, err := cbor.Marshal(map[string]any{
 				"apiVersion": "mygroup.example.com/v1beta1",
 				"kind":       "Foo",
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": fmt.Sprintf("test-cbor-%s-2", tc.name),
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"replicas": int64(0),
 				},
-				"status": map[string]interface{}{
+				"status": map[string]any{
 					"replicas": int64(0),
 				},
 			})
@@ -309,16 +309,16 @@ func TestCBORServingEnablement(t *testing.T) {
 				t.Errorf("unexpected error on write: %v", err)
 			}
 
-			scaleBody, err := cbor.Marshal(map[string]interface{}{
+			scaleBody, err := cbor.Marshal(map[string]any{
 				"apiVersion": "autoscaling/v1",
 				"kind":       "Scale",
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": cr.GetName(),
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"replicas": int64(0),
 				},
-				"status": map[string]interface{}{
+				"status": map[string]any{
 					"replicas": int64(0),
 				},
 			})

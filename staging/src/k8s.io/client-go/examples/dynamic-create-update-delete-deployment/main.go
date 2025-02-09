@@ -64,32 +64,32 @@ func main() {
 	deploymentRes := schema.GroupVersionResource{Group: "apps", Version: "v1", Resource: "deployments"}
 
 	deployment := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "apps/v1",
 			"kind":       "Deployment",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "demo-deployment",
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"replicas": 2,
-				"selector": map[string]interface{}{
-					"matchLabels": map[string]interface{}{
+				"selector": map[string]any{
+					"matchLabels": map[string]any{
 						"app": "demo",
 					},
 				},
-				"template": map[string]interface{}{
-					"metadata": map[string]interface{}{
-						"labels": map[string]interface{}{
+				"template": map[string]any{
+					"metadata": map[string]any{
+						"labels": map[string]any{
 							"app": "demo",
 						},
 					},
 
-					"spec": map[string]interface{}{
-						"containers": []map[string]interface{}{
+					"spec": map[string]any{
+						"containers": []map[string]any{
 							{
 								"name":  "web",
 								"image": "nginx:1.12",
-								"ports": []map[string]interface{}{
+								"ports": []map[string]any{
 									{
 										"name":          "http",
 										"protocol":      "TCP",
@@ -148,7 +148,7 @@ func main() {
 		}
 
 		// update container[0] image
-		if err := unstructured.SetNestedField(containers[0].(map[string]interface{}), "nginx:1.13", "image"); err != nil {
+		if err := unstructured.SetNestedField(containers[0].(map[string]any), "nginx:1.13", "image"); err != nil {
 			panic(err)
 		}
 		if err := unstructured.SetNestedField(result.Object, containers, "spec", "template", "spec", "containers"); err != nil {

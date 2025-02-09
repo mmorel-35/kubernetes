@@ -80,30 +80,30 @@ type UnsafeCyclicTypeB struct {
 
 func TestCheckUnsupportedMarshalers(t *testing.T) {
 	t.Run("accepted", func(t *testing.T) {
-		for _, v := range []interface{}{
+		for _, v := range []any{
 			// Unstructured types.
 			nil,
 			false,
 			0,
 			0.0,
 			"",
-			[]interface{}{nil, false, 0, 0.0, "", []interface{}{}, map[string]interface{}{}},
-			map[string]interface{}{
-				"nil":                      nil,
-				"false":                    false,
-				"0":                        0,
-				"0.0":                      0.0,
-				`""`:                       "",
-				"[]interface{}{}":          []interface{}{},
-				"map[string]interface{}{}": map[string]interface{}{},
+			[]any{nil, false, 0, 0.0, "", []any{}, map[string]any{}},
+			map[string]any{
+				"nil":              nil,
+				"false":            false,
+				"0":                0,
+				"0.0":              0.0,
+				`""`:               "",
+				"[]any{}":          []any{},
+				"map[string]any{}": map[string]any{},
 			},
 			// Zero-length array is statically OK, even though its element type is
 			// json.Marshaler.
 			[0]json.Marshaler{},
 			[3]bool{},
 			// Has to be dynamically checked.
-			[1]interface{}{},
-			map[int]interface{}{0: nil},
+			[1]any{},
+			map[int]any{0: nil},
 			Struct[string]{},
 			StructCBORMarshalerValue[json.Marshaler]{},
 			&StructCBORMarshalerValue[json.Marshaler]{},
@@ -111,7 +111,7 @@ func TestCheckUnsupportedMarshalers(t *testing.T) {
 			new(string),
 			map[cbor.Marshaler]cbor.Marshaler{},
 			make([]string, 10),
-			[]Struct[interface{}]{{Field: true}},
+			[]Struct[any]{{Field: true}},
 			&Struct[StructCBORUnmarshalerPointer[json.Unmarshaler]]{},
 			// Checked dynamically because the dynamic type of an interface, even
 			// encoding.TextMarshaler or json.Marshaler, might also implement
@@ -139,18 +139,18 @@ func TestCheckUnsupportedMarshalers(t *testing.T) {
 	})
 
 	t.Run("rejected", func(t *testing.T) {
-		for _, v := range []interface{}{
+		for _, v := range []any{
 			Struct[json.Marshaler]{},
 			StructCBORMarshalerValue[json.Unmarshaler]{},
-			Struct[interface{}]{Field: [1]json.Unmarshaler{}},
+			Struct[any]{Field: [1]json.Unmarshaler{}},
 			// cbor.Marshaler implemented with pointer receiver on non-pointer type.
 			StructCBORMarshalerPointer[json.Marshaler]{},
 			[1]json.Marshaler{},
-			[1]interface{}{[1]json.Marshaler{}},
-			map[int]interface{}{0: [1]json.Marshaler{}},
-			[]interface{}{[1]json.Marshaler{}},
-			map[string]interface{}{"": [1]json.Marshaler{}},
-			[]Struct[interface{}]{{Field: [1]json.Marshaler{}}},
+			[1]any{[1]json.Marshaler{}},
+			map[int]any{0: [1]json.Marshaler{}},
+			[]any{[1]json.Marshaler{}},
+			map[string]any{"": [1]json.Marshaler{}},
+			[]Struct[any]{{Field: [1]json.Marshaler{}}},
 			map[encoding.TextMarshaler]struct{}{[1]encoding.TextMarshaler{}[0]: {}},
 			map[string]json.Marshaler{"": [1]json.Marshaler{}[0]},
 			&Struct[StructCBORMarshalerPointer[json.Marshaler]]{},

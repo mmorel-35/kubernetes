@@ -42,7 +42,7 @@ const (
 	TestSource = "test"
 )
 
-func expectEmptyChannel(t *testing.T, ch <-chan interface{}) {
+func expectEmptyChannel(t *testing.T, ch <-chan any) {
 	select {
 	case update := <-ch:
 		t.Errorf("Expected no update in channel, Got %v", update)
@@ -93,7 +93,7 @@ func CreatePodUpdate(op kubetypes.PodOperation, source string, pods ...*v1.Pod) 
 	return kubetypes.PodUpdate{Pods: pods, Op: op, Source: source}
 }
 
-func createPodConfigTester(ctx context.Context, mode PodConfigNotificationMode) (chan<- interface{}, <-chan kubetypes.PodUpdate, *PodConfig) {
+func createPodConfigTester(ctx context.Context, mode PodConfigNotificationMode) (chan<- any, <-chan kubetypes.PodUpdate, *PodConfig) {
 	eventBroadcaster := record.NewBroadcaster(record.WithContext(ctx))
 	config := NewPodConfig(mode, eventBroadcaster.NewRecorder(scheme.Scheme, v1.EventSource{Component: "kubelet"}), &mockPodStartupSLIObserver{})
 	channel := config.Channel(ctx, TestSource)

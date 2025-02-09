@@ -260,7 +260,7 @@ func GetSparseCertTestCases(t *testing.T) []CertTestCase {
 }
 
 // PKIFiles are a list of files that should be created for a test case
-type PKIFiles map[string]interface{}
+type PKIFiles map[string]any
 
 // WritePKIFiles writes the given files out to the given directory
 func WritePKIFiles(t *testing.T, dir string, files PKIFiles) {

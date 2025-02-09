@@ -105,10 +105,10 @@ type EventRecorder interface {
 	Event(object runtime.Object, eventtype, reason, message string)
 
 	// Eventf is just like Event, but with Sprintf for the message field.
-	Eventf(object runtime.Object, eventtype, reason, messageFmt string, args ...interface{})
+	Eventf(object runtime.Object, eventtype, reason, messageFmt string, args ...any)
 
 	// AnnotatedEventf is just like eventf, but with annotations attached
-	AnnotatedEventf(object runtime.Object, annotations map[string]string, eventtype, reason, messageFmt string, args ...interface{})
+	AnnotatedEventf(object runtime.Object, annotations map[string]string, eventtype, reason, messageFmt string, args ...any)
 }
 
 // EventRecorderLogger extends EventRecorder such that a logger can
@@ -139,7 +139,7 @@ type EventBroadcaster interface {
 
 	// StartLogging starts sending events received from this EventBroadcaster to the given logging
 	// function. The return value can be ignored or used to stop recording, if desired.
-	StartLogging(logf func(format string, args ...interface{})) watch.Interface
+	StartLogging(logf func(format string, args ...any)) watch.Interface
 
 	// StartStructuredLogging starts sending events received from this EventBroadcaster to the structured
 	// logging function. The return value can be ignored or used to stop recording, if desired.
@@ -172,7 +172,7 @@ func NewEventRecorderAdapter(recorder EventRecorderLogger) *EventRecorderAdapter
 }
 
 // Eventf is a wrapper around v1 Eventf
-func (a *EventRecorderAdapter) Eventf(regarding, _ runtime.Object, eventtype, reason, action, note string, args ...interface{}) {
+func (a *EventRecorderAdapter) Eventf(regarding, _ runtime.Object, eventtype, reason, action, note string, args ...any) {
 	a.recorder.Eventf(regarding, eventtype, reason, note, args...)
 }
 
@@ -371,7 +371,7 @@ func recordEvent(ctx context.Context, sink EventSink, event *v1.Event, patch []b
 
 // StartLogging starts sending events received from this EventBroadcaster to the given logging function.
 // The return value can be ignored or used to stop recording, if desired.
-func (e *eventBroadcasterImpl) StartLogging(logf func(format string, args ...interface{})) watch.Interface {
+func (e *eventBroadcasterImpl) StartLogging(logf func(format string, args ...any)) watch.Interface {
 	return e.StartEventWatcher(
 		func(e *v1.Event) {
 			logf("Event(%#v): type: '%v' reason: '%v' %v", e.InvolvedObject, e.Type, e.Reason, e.Message)
@@ -473,11 +473,11 @@ func (recorder *recorderImpl) Event(object runtime.Object, eventtype, reason, me
 	recorder.generateEvent(klog.Background(), object, nil, eventtype, reason, message)
 }
 
-func (recorder *recorderImpl) Eventf(object runtime.Object, eventtype, reason, messageFmt string, args ...interface{}) {
+func (recorder *recorderImpl) Eventf(object runtime.Object, eventtype, reason, messageFmt string, args ...any) {
 	recorder.Event(object, eventtype, reason, fmt.Sprintf(messageFmt, args...))
 }
 
-func (recorder *recorderImpl) AnnotatedEventf(object runtime.Object, annotations map[string]string, eventtype, reason, messageFmt string, args ...interface{}) {
+func (recorder *recorderImpl) AnnotatedEventf(object runtime.Object, annotations map[string]string, eventtype, reason, messageFmt string, args ...any) {
 	recorder.generateEvent(klog.Background(), object, annotations, eventtype, reason, fmt.Sprintf(messageFmt, args...))
 }
 
@@ -514,11 +514,11 @@ func (recorder recorderImplLogger) Event(object runtime.Object, eventtype, reaso
 	recorder.recorderImpl.generateEvent(recorder.logger, object, nil, eventtype, reason, message)
 }
 
-func (recorder recorderImplLogger) Eventf(object runtime.Object, eventtype, reason, messageFmt string, args ...interface{}) {
+func (recorder recorderImplLogger) Eventf(object runtime.Object, eventtype, reason, messageFmt string, args ...any) {
 	recorder.Event(object, eventtype, reason, fmt.Sprintf(messageFmt, args...))
 }
 
-func (recorder recorderImplLogger) AnnotatedEventf(object runtime.Object, annotations map[string]string, eventtype, reason, messageFmt string, args ...interface{}) {
+func (recorder recorderImplLogger) AnnotatedEventf(object runtime.Object, annotations map[string]string, eventtype, reason, messageFmt string, args ...any) {
 	recorder.generateEvent(recorder.logger, object, annotations, eventtype, reason, fmt.Sprintf(messageFmt, args...))
 }
 

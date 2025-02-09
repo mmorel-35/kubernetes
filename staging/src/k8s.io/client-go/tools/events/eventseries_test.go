@@ -114,7 +114,7 @@ func TestEventSeriesf(t *testing.T) {
 		regarding    k8sruntime.Object
 		related      k8sruntime.Object
 		actual       *eventsv1.Event
-		elements     []interface{}
+		elements     []any
 		expect       *eventsv1.Event
 		expectUpdate bool
 	}{
@@ -122,7 +122,7 @@ func TestEventSeriesf(t *testing.T) {
 			regarding:    regarding,
 			related:      related,
 			actual:       isomorphicEvent,
-			elements:     []interface{}{1},
+			elements:     []any{1},
 			expect:       expectedEvent,
 			expectUpdate: true,
 		},
@@ -130,7 +130,7 @@ func TestEventSeriesf(t *testing.T) {
 			regarding:    regarding,
 			related:      related,
 			actual:       nonIsomorphicEvent,
-			elements:     []interface{}{1},
+			elements:     []any{1},
 			expect:       nonIsomorphicEvent,
 			expectUpdate: false,
 		},
@@ -170,7 +170,7 @@ func TestEventSeriesf(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	recorder.Eventf(regarding, related, isomorphicEvent.Type, isomorphicEvent.Reason, isomorphicEvent.Action, isomorphicEvent.Note, []interface{}{1})
+	recorder.Eventf(regarding, related, isomorphicEvent.Type, isomorphicEvent.Reason, isomorphicEvent.Action, isomorphicEvent.Note, []any{1})
 	// read from the chan as this was needed only to populate the cache
 	<-createEvent
 	for index, item := range table {

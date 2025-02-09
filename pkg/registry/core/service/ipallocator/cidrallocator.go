@@ -132,7 +132,7 @@ func newMetaAllocator(client networkingv1client.NetworkingV1Interface,
 
 	_, _ = serviceCIDRInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: c.enqueueServiceCIDR,
-		UpdateFunc: func(old, new interface{}) {
+		UpdateFunc: func(old, new any) {
 			c.enqueueServiceCIDR(new)
 		},
 		// Process the deletion directly in the handler to be able to use the object fields
@@ -144,14 +144,14 @@ func newMetaAllocator(client networkingv1client.NetworkingV1Interface,
 	return c
 }
 
-func (c *MetaAllocator) enqueueServiceCIDR(obj interface{}) {
+func (c *MetaAllocator) enqueueServiceCIDR(obj any) {
 	key, err := cache.MetaNamespaceKeyFunc(obj)
 	if err == nil {
 		c.queue.Add(key)
 	}
 }
 
-func (c *MetaAllocator) deleteServiceCIDR(obj interface{}) {
+func (c *MetaAllocator) deleteServiceCIDR(obj any) {
 	serviceCIDR, ok := obj.(*networkingv1.ServiceCIDR)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)

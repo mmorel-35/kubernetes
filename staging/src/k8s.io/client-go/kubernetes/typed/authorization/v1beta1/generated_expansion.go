@@ -18,10 +18,10 @@ limitations under the License.
 
 package v1beta1
 
-type LocalSubjectAccessReviewExpansion interface{}
+type LocalSubjectAccessReviewExpansion any
 
-type SelfSubjectAccessReviewExpansion interface{}
+type SelfSubjectAccessReviewExpansion any
 
-type SelfSubjectRulesReviewExpansion interface{}
+type SelfSubjectRulesReviewExpansion any
 
-type SubjectAccessReviewExpansion interface{}
+type SubjectAccessReviewExpansion any

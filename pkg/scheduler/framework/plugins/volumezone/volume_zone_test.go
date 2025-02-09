@@ -548,7 +548,7 @@ func TestWithBinding(t *testing.T) {
 func TestIsSchedulableAfterPersistentVolumeClaimAdded(t *testing.T) {
 	testcases := map[string]struct {
 		pod            *v1.Pod
-		oldObj, newObj interface{}
+		oldObj, newObj any
 		expectedHint   framework.QueueingHint
 		expectedErr    bool
 	}{
@@ -637,7 +637,7 @@ func TestIsSchedulableAfterStorageClassAdded(t *testing.T) {
 
 	testcases := map[string]struct {
 		pod            *v1.Pod
-		oldObj, newObj interface{}
+		oldObj, newObj any
 		expectedHint   framework.QueueingHint
 		expectedErr    bool
 	}{
@@ -683,7 +683,7 @@ func TestIsSchedulableAfterStorageClassAdded(t *testing.T) {
 func TestIsSchedulableAfterPersistentVolumeChange(t *testing.T) {
 	testcases := map[string]struct {
 		pod            *v1.Pod
-		oldObj, newObj interface{}
+		oldObj, newObj any
 		expectedHint   framework.QueueingHint
 		expectedErr    bool
 	}{

@@ -109,14 +109,14 @@ var _ = SIGDescribe("CustomResourceValidationRules [Privileged:ClusterAdmin]", f
 		ginkgo.By("Creating a custom resource with values that are allowed by the validation rules set on the custom resource definition")
 		crClient, gvr := customResourceClient(crd)
 		name1 := names.SimpleNameGenerator.GenerateName("cr-1")
-		_, err = crClient.Namespace(f.Namespace.Name).Create(ctx, &unstructured.Unstructured{Object: map[string]interface{}{
+		_, err = crClient.Namespace(f.Namespace.Name).Create(ctx, &unstructured.Unstructured{Object: map[string]any{
 			"apiVersion": gvr.Group + "/" + gvr.Version,
 			"kind":       crd.Spec.Names.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      name1,
 				"namespace": f.Namespace.Name,
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"x":           int64(1),
 				"y":           int64(0),
 				"firstArray":  []int64{3, 4},
@@ -139,14 +139,14 @@ var _ = SIGDescribe("CustomResourceValidationRules [Privileged:ClusterAdmin]", f
 		ginkgo.By("Creating a custom resource with values that fail the validation rules set on the custom resource definition")
 		crClient, gvr := customResourceClient(crd)
 		name1 := names.SimpleNameGenerator.GenerateName("cr-1")
-		_, err = crClient.Namespace(f.Namespace.Name).Create(ctx, &unstructured.Unstructured{Object: map[string]interface{}{
+		_, err = crClient.Namespace(f.Namespace.Name).Create(ctx, &unstructured.Unstructured{Object: map[string]any{
 			"apiVersion": gvr.Group + "/" + gvr.Version,
 			"kind":       crd.Spec.Names.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      name1,
 				"namespace": f.Namespace.Name,
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"x": int64(0),
 				"y": int64(0),
 			},
@@ -250,14 +250,14 @@ var _ = SIGDescribe("CustomResourceValidationRules [Privileged:ClusterAdmin]", f
 		ginkgo.By("Attempting to create a custom resource that will exceed the runtime cost limit")
 		crClient, gvr := customResourceClient(crd)
 		name1 := names.SimpleNameGenerator.GenerateName("cr-1")
-		_, err = crClient.Namespace(f.Namespace.Name).Create(ctx, &unstructured.Unstructured{Object: map[string]interface{}{
+		_, err = crClient.Namespace(f.Namespace.Name).Create(ctx, &unstructured.Unstructured{Object: map[string]any{
 			"apiVersion": gvr.Group + "/" + gvr.Version,
 			"kind":       crd.Spec.Names.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      name1,
 				"namespace": f.Namespace.Name,
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"largeArray": genLargeArray(725, 20),
 			},
 		}}, metav1.CreateOptions{})
@@ -296,28 +296,28 @@ var _ = SIGDescribe("CustomResourceValidationRules [Privileged:ClusterAdmin]", f
 		ginkgo.By("Attempting to create a custom resource")
 		crClient, gvr := customResourceClient(crd)
 		name1 := names.SimpleNameGenerator.GenerateName("cr-1")
-		unstruct, err := crClient.Namespace(f.Namespace.Name).Create(ctx, &unstructured.Unstructured{Object: map[string]interface{}{
+		unstruct, err := crClient.Namespace(f.Namespace.Name).Create(ctx, &unstructured.Unstructured{Object: map[string]any{
 			"apiVersion": gvr.Group + "/" + gvr.Version,
 			"kind":       crd.Spec.Names.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      name1,
 				"namespace": f.Namespace.Name,
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"num": int64(10),
 			},
 		}}, metav1.CreateOptions{})
 		framework.ExpectNoError(err, "transition rules do not apply to create operations")
 		ginkgo.By("Updating a custom resource with a value that does not satisfy an x-kubernetes-validations transition rule")
-		_, err = crClient.Namespace(f.Namespace.Name).Update(ctx, &unstructured.Unstructured{Object: map[string]interface{}{
+		_, err = crClient.Namespace(f.Namespace.Name).Update(ctx, &unstructured.Unstructured{Object: map[string]any{
 			"apiVersion": gvr.Group + "/" + gvr.Version,
 			"kind":       crd.Spec.Names.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":            name1,
 				"namespace":       f.Namespace.Name,
 				"resourceVersion": unstruct.GetResourceVersion(),
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"num": int64(9),
 			},
 		}}, metav1.UpdateOptions{})

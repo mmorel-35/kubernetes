@@ -467,7 +467,7 @@ func getStubObj(gvr schema.GroupVersionResource) (*unstructured.Unstructured, er
 		return nil, fmt.Errorf("no stub data for %#v", gvr)
 	}
 
-	stubObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	stubObj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := json.Unmarshal([]byte(stub), &stubObj.Object); err != nil {
 		return nil, fmt.Errorf("error unmarshaling stub for %#v: %v", gvr, err)
 	}

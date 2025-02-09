@@ -53,7 +53,7 @@ func (c defaultTableConvertor) ConvertToTable(ctx context.Context, object runtim
 			return errNotAcceptable{resource: resource}
 		}
 		table.Rows = append(table.Rows, metav1.TableRow{
-			Cells:  []interface{}{m.GetName(), m.GetCreationTimestamp().Time.UTC().Format(time.RFC3339)},
+			Cells:  []any{m.GetName(), m.GetCreationTimestamp().Time.UTC().Format(time.RFC3339)},
 			Object: runtime.RawExtension{Object: obj},
 		})
 		return nil

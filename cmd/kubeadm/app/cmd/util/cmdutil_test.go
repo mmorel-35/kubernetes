@@ -110,9 +110,9 @@ func TestValueFromFlagsOrConfig(t *testing.T) {
 	var tests = []struct {
 		name      string
 		flag      string
-		cfg       interface{}
-		flagValue interface{}
-		expected  interface{}
+		cfg       any
+		flagValue any
+		expected  any
 	}{
 		{
 			name:      "string: config is overridden by the flag",

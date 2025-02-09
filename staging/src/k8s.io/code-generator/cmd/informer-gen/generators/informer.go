@@ -77,7 +77,7 @@ func (g *informerGenerator) GenerateType(c *generator.Context, t *types.Type, w 
 		return err
 	}
 
-	m := map[string]interface{}{
+	m := map[string]any{
 		"apiScheme":                       c.Universe.Type(apiScheme),
 		"cacheIndexers":                   c.Universe.Type(cacheIndexers),
 		"cacheListWatch":                  c.Universe.Type(cacheListWatch),

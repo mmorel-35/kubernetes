@@ -104,7 +104,7 @@ func fixupPatchForNodeStatusAddresses(patchBytes []byte, addresses []v1.NodeAddr
 	//     }
 	//   }
 
-	var patchMap map[string]interface{}
+	var patchMap map[string]any
 	if err := json.Unmarshal(patchBytes, &patchMap); err != nil {
 		return nil, err
 	}
@@ -113,18 +113,18 @@ func fixupPatchForNodeStatusAddresses(patchBytes []byte, addresses []v1.NodeAddr
 	if err != nil {
 		return nil, err
 	}
-	var addrArray []interface{}
+	var addrArray []any
 	if err := json.Unmarshal(addrBytes, &addrArray); err != nil {
 		return nil, err
 	}
-	addrArray = append(addrArray, map[string]interface{}{"$patch": "replace"})
+	addrArray = append(addrArray, map[string]any{"$patch": "replace"})
 
 	status := patchMap["status"]
 	if status == nil {
-		status = map[string]interface{}{}
+		status = map[string]any{}
 		patchMap["status"] = status
 	}
-	statusMap, ok := status.(map[string]interface{})
+	statusMap, ok := status.(map[string]any)
 	if !ok {
 		return nil, fmt.Errorf("unexpected data in patch")
 	}

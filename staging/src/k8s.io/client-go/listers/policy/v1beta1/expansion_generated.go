@@ -20,8 +20,8 @@ package v1beta1
 
 // EvictionListerExpansion allows custom methods to be added to
 // EvictionLister.
-type EvictionListerExpansion interface{}
+type EvictionListerExpansion any
 
 // EvictionNamespaceListerExpansion allows custom methods to be added to
 // EvictionNamespaceLister.
-type EvictionNamespaceListerExpansion interface{}
+type EvictionNamespaceListerExpansion any

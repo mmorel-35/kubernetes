@@ -576,7 +576,7 @@ func Test_isSchedulableAfterPodDeleted(t *testing.T) {
 
 	testcases := map[string]struct {
 		pod            *v1.Pod
-		oldObj, newObj interface{}
+		oldObj, newObj any
 		existingPods   []*v1.Pod
 		existingPVC    *v1.PersistentVolumeClaim
 		expectedHint   framework.QueueingHint
@@ -717,7 +717,7 @@ func Test_isSchedulableAfterPersistentVolumeClaimChange(t *testing.T) {
 	testcases := map[string]struct {
 		existingPods   []*v1.Pod
 		pod            *v1.Pod
-		oldObj, newObj interface{}
+		oldObj, newObj any
 		expectedHint   framework.QueueingHint
 		expectedErr    bool
 	}{

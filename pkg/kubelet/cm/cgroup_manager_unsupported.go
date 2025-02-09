@@ -33,11 +33,11 @@ var errNotSupported = errors.New("Cgroup Manager is not supported in this build"
 var _ CgroupManager = &unsupportedCgroupManager{}
 
 type CgroupSubsystems struct {
-	Mounts      []interface{}
+	Mounts      []any
 	MountPoints map[string]string
 }
 
-func NewCgroupManager(_ interface{}) CgroupManager {
+func NewCgroupManager(_ any) CgroupManager {
 	return &unsupportedCgroupManager{}
 }
 

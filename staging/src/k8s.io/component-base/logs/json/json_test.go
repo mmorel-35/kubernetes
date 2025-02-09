@@ -39,28 +39,28 @@ func TestZapLoggerInfo(t *testing.T) {
 	var testDataInfo = []struct {
 		msg        string
 		format     string
-		keysValues []interface{}
+		keysValues []any
 		names      []string
 	}{
 		{
 			msg:        "test",
 			format:     "{\"ts\":%f,\"caller\":\"json/json_test.go:%d\",\"msg\":\"test\",\"v\":0,\"ns\":\"default\",\"podnum\":2}\n",
-			keysValues: []interface{}{"ns", "default", "podnum", 2},
+			keysValues: []any{"ns", "default", "podnum", 2},
 		},
 		{
 			msg:        "test for strongly typed Zap field",
 			format:     "{\"ts\":%f,\"caller\":\"json/json_test.go:%d\",\"msg\":\"strongly-typed Zap Field passed to logr\",\"zap field\":{\"Key\":\"attempt\",\"Type\":11,\"Integer\":3,\"String\":\"\",\"Interface\":null}}\n{\"ts\":%f,\"caller\":\"json/json_test.go:%d\",\"msg\":\"test for strongly typed Zap field\",\"v\":0,\"ns\":\"default\",\"podnum\":2}\n",
-			keysValues: []interface{}{"ns", "default", "podnum", 2, zap.Int("attempt", 3), "attempt", "Running", 10},
+			keysValues: []any{"ns", "default", "podnum", 2, zap.Int("attempt", 3), "attempt", "Running", 10},
 		},
 		{
 			msg:        "test for non-string key argument",
 			format:     "{\"ts\":%f,\"caller\":\"json/json_test.go:%d\",\"msg\":\"non-string key argument passed to logging, ignoring all later arguments\",\"invalid key\":200}\n{\"ts\":%f,\"caller\":\"json/json_test.go:%d\",\"msg\":\"test for non-string key argument\",\"v\":0,\"ns\":\"default\",\"podnum\":2}\n",
-			keysValues: []interface{}{"ns", "default", "podnum", 2, 200, "replica", "Running", 10},
+			keysValues: []any{"ns", "default", "podnum", 2, 200, "replica", "Running", 10},
 		},
 		{
 			msg:        "test for duration value argument",
 			format:     "{\"ts\":%f,\"caller\":\"json/json_test.go:%d\",\"msg\":\"test for duration value argument\",\"v\":0,\"duration\":\"5s\"}\n",
-			keysValues: []interface{}{"duration", time.Duration(5 * time.Second)},
+			keysValues: []any{"duration", time.Duration(5 * time.Second)},
 		},
 		{
 			msg:    "test for WithName",
@@ -70,17 +70,17 @@ func TestZapLoggerInfo(t *testing.T) {
 		{
 			msg:        "test for duplicate keys",
 			format:     "{\"ts\":%f,\"caller\":\"json/json_test.go:%d\",\"msg\":\"test for duplicate keys\",\"v\":0,\"akey\":\"avalue\",\"akey\":\"anothervalue\"}\n",
-			keysValues: []interface{}{"akey", "avalue", "akey", "anothervalue"},
+			keysValues: []any{"akey", "avalue", "akey", "anothervalue"},
 		},
 		{
 			msg:        "test for NamespacedName argument",
 			format:     "{\"ts\":%f,\"caller\":\"json/json_test.go:%d\",\"msg\":\"test for NamespacedName argument\",\"v\":0,\"obj\":{\"name\":\"kube-proxy\",\"namespace\":\"kube-system\"}}\n",
-			keysValues: []interface{}{"obj", types.NamespacedName{Name: "kube-proxy", Namespace: "kube-system"}},
+			keysValues: []any{"obj", types.NamespacedName{Name: "kube-proxy", Namespace: "kube-system"}},
 		},
 		{
 			msg:        "test for NamespacedName argument with no namespace",
 			format:     "{\"ts\":%f,\"caller\":\"json/json_test.go:%d\",\"msg\":\"test for NamespacedName argument with no namespace\",\"v\":0,\"obj\":{\"name\":\"kube-proxy\"}}\n",
-			keysValues: []interface{}{"obj", types.NamespacedName{Name: "kube-proxy"}},
+			keysValues: []any{"obj", types.NamespacedName{Name: "kube-proxy"}},
 		},
 	}
 

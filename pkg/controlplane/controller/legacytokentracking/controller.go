@@ -93,13 +93,13 @@ func newController(cs kubernetes.Interface, cl clock.Clock, limiter *rate.Limite
 	}
 
 	informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			c.enqueue()
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			c.enqueue()
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			c.enqueue()
 		},
 	})

@@ -357,7 +357,7 @@ func verifyReplicas(t *testing.T, b []byte, r int) {
 	if !ok {
 		t.Fatalf("failed to find replicas number in response:\n%v", string(b))
 	}
-	specMap, ok := spec.(map[string]interface{})
+	specMap, ok := spec.(map[string]any)
 	if !ok {
 		t.Fatalf("failed to find replicas number in response:\n%v", string(b))
 	}
@@ -385,7 +385,7 @@ func verifyNumPorts(t *testing.T, b []byte, n int) {
 	if !ok {
 		t.Fatalf("failed to find ports list in response:\n%v", string(b))
 	}
-	specMap, ok := spec.(map[string]interface{})
+	specMap, ok := spec.(map[string]any)
 	if !ok {
 		t.Fatalf("failed to find ports list in response:\n%v", string(b))
 	}
@@ -393,7 +393,7 @@ func verifyNumPorts(t *testing.T, b []byte, n int) {
 	if !ok {
 		t.Fatalf("failed to find ports list in response:\n%v", string(b))
 	}
-	portsList, ok := ports.([]interface{})
+	portsList, ok := ports.([]any)
 	if !ok {
 		t.Fatalf("failed to find ports list in response: expected array but got: %v", reflect.TypeOf(ports))
 	}
@@ -798,13 +798,13 @@ func TestNoOpApplyWithDefaultsSameResourceVersionCRD(t *testing.T) {
 
 	// fieldWithDefault will be defaulted
 	applyConfiguration := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": apiVersion,
 			"kind":       kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": name,
 			},
-			"spec": map[string]interface{}{"infrastructureRef": map[string]interface{}{"name": "infrastructure-machine-1\n"}},
+			"spec": map[string]any{"infrastructureRef": map[string]any{"name": "infrastructure-machine-1\n"}},
 		},
 	}
 

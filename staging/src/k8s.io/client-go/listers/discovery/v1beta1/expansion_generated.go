@@ -20,8 +20,8 @@ package v1beta1
 
 // EndpointSliceListerExpansion allows custom methods to be added to
 // EndpointSliceLister.
-type EndpointSliceListerExpansion interface{}
+type EndpointSliceListerExpansion any
 
 // EndpointSliceNamespaceListerExpansion allows custom methods to be added to
 // EndpointSliceNamespaceLister.
-type EndpointSliceNamespaceListerExpansion interface{}
+type EndpointSliceNamespaceListerExpansion any

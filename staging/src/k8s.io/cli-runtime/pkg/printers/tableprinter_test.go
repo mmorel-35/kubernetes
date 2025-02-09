@@ -114,7 +114,7 @@ func TestPrintTable_ColumnPriority(t *testing.T) {
 				{Name: "Age", Type: "string", Priority: 1},      // Priority > 0
 			},
 			rows: []metav1.TableRow{
-				{Cells: []interface{}{"test1", "1/1", "podPhase", int64(5), "20h"}},
+				{Cells: []any{"test1", "1/1", "podPhase", int64(5), "20h"}},
 			},
 			options:  PrintOptions{},
 			expected: "NAME    READY   STATUS\ntest1   1/1     podPhase\n",
@@ -129,9 +129,9 @@ func TestPrintTable_ColumnPriority(t *testing.T) {
 				{Name: "Age", Type: "string", Priority: 1},      // Priority > 0
 			},
 			rows: []metav1.TableRow{
-				{Cells: []interface{}{"test1", "1/1", "podPhase", int64(5), "20h"}},
-				{Cells: []interface{}{"test2", "1/2", "podPhase", int64(30), "21h"}},
-				{Cells: []interface{}{"test3", "4/4", "podPhase", int64(1), "22h"}},
+				{Cells: []any{"test1", "1/1", "podPhase", int64(5), "20h"}},
+				{Cells: []any{"test2", "1/2", "podPhase", int64(30), "21h"}},
+				{Cells: []any{"test3", "4/4", "podPhase", int64(1), "22h"}},
 			},
 			options: PrintOptions{},
 			expected: `NAME    READY   STATUS
@@ -150,7 +150,7 @@ test3   4/4     podPhase
 				{Name: "Age", Type: "string", Priority: 1},
 			},
 			rows: []metav1.TableRow{
-				{Cells: []interface{}{"test1", "1/1", "podPhase", int64(5), "20h"}},
+				{Cells: []any{"test1", "1/1", "podPhase", int64(5), "20h"}},
 			},
 			// Print with no headers.
 			options:  PrintOptions{Wide: true},
@@ -166,9 +166,9 @@ test3   4/4     podPhase
 				{Name: "Age", Type: "string", Priority: 1},
 			},
 			rows: []metav1.TableRow{
-				{Cells: []interface{}{"test1", "1/1", "podPhase", int64(5), "20h"}},
-				{Cells: []interface{}{"test2", "1/2", "podPhase", int64(30), "21h"}},
-				{Cells: []interface{}{"test3", "4/4", "podPhase", int64(1), "22h"}},
+				{Cells: []any{"test1", "1/1", "podPhase", int64(5), "20h"}},
+				{Cells: []any{"test2", "1/2", "podPhase", int64(30), "21h"}},
+				{Cells: []any{"test3", "4/4", "podPhase", int64(1), "22h"}},
 			},
 			options: PrintOptions{Wide: true},
 			expected: `NAME    READY   STATUS     RETRIES   AGE
@@ -212,7 +212,7 @@ func TestPrintTable_ColumnHeaders(t *testing.T) {
 				{Name: "Age", Type: "string"},
 			},
 			rows: []metav1.TableRow{
-				{Cells: []interface{}{"test1", "1/1", "podPhase", int64(5), "20h"}},
+				{Cells: []any{"test1", "1/1", "podPhase", int64(5), "20h"}},
 			},
 			options:  PrintOptions{},
 			expected: "NAME    READY   STATUS     RETRIES   AGE\ntest1   1/1     podPhase   5         20h\n",
@@ -227,9 +227,9 @@ func TestPrintTable_ColumnHeaders(t *testing.T) {
 				{Name: "Age", Type: "string"},
 			},
 			rows: []metav1.TableRow{
-				{Cells: []interface{}{"test1", "1/1", "podPhase", int64(5), "20h"}},
-				{Cells: []interface{}{"test2", "1/2", "podPhase", int64(30), "21h"}},
-				{Cells: []interface{}{"test3", "4/4", "podPhase", int64(1), "22h"}},
+				{Cells: []any{"test1", "1/1", "podPhase", int64(5), "20h"}},
+				{Cells: []any{"test2", "1/2", "podPhase", int64(30), "21h"}},
+				{Cells: []any{"test3", "4/4", "podPhase", int64(1), "22h"}},
 			},
 			options: PrintOptions{},
 			expected: `NAME    READY   STATUS     RETRIES   AGE
@@ -248,7 +248,7 @@ test3   4/4     podPhase   1         22h
 				{Name: "Age", Type: "string"},
 			},
 			rows: []metav1.TableRow{
-				{Cells: []interface{}{"test1", "1/1", "podPhase", int64(5), "20h"}},
+				{Cells: []any{"test1", "1/1", "podPhase", int64(5), "20h"}},
 			},
 			// Print with no headers.
 			options:  PrintOptions{NoHeaders: true},
@@ -264,9 +264,9 @@ test3   4/4     podPhase   1         22h
 				{Name: "Age", Type: "string"},
 			},
 			rows: []metav1.TableRow{
-				{Cells: []interface{}{"test1", "1/1", "podPhase", int64(5), "20h"}},
-				{Cells: []interface{}{"test2", "1/2", "podPhase", int64(30), "21h"}},
-				{Cells: []interface{}{"test3", "4/4", "podPhase", int64(1), "22h"}},
+				{Cells: []any{"test1", "1/1", "podPhase", int64(5), "20h"}},
+				{Cells: []any{"test2", "1/2", "podPhase", int64(30), "21h"}},
+				{Cells: []any{"test3", "4/4", "podPhase", int64(1), "22h"}},
 			},
 			options: PrintOptions{NoHeaders: true},
 			expected: `test1   1/1   podPhase   5     20h
@@ -310,7 +310,7 @@ func TestPrintTable_WithNamespace(t *testing.T) {
 			},
 			rows: []metav1.TableRow{
 				{
-					Cells:  []interface{}{"test1", "1/1", "podPhase", int64(5), "20h"},
+					Cells:  []any{"test1", "1/1", "podPhase", int64(5), "20h"},
 					Object: runtime.RawExtension{Object: testPod},
 				},
 			},
@@ -356,7 +356,7 @@ func TestPrintTable_WithKind(t *testing.T) {
 			},
 			rows: []metav1.TableRow{
 				{
-					Cells: []interface{}{"test1", "1/1", "podPhase", int64(5), "20h"},
+					Cells: []any{"test1", "1/1", "podPhase", int64(5), "20h"},
 				},
 			},
 			// Print with Kind "pod" prepended to name.
@@ -401,7 +401,7 @@ func TestPrintTable_WithLabels(t *testing.T) {
 			},
 			rows: []metav1.TableRow{
 				{
-					Cells:  []interface{}{"test1", "1/1", "podPhase", int64(5), "20h"},
+					Cells:  []any{"test1", "1/1", "podPhase", int64(5), "20h"},
 					Object: runtime.RawExtension{Object: testPod},
 				},
 			},
@@ -421,7 +421,7 @@ test1   1/1     podPhase   5         20h   first-label=12,second-label=label-val
 			},
 			rows: []metav1.TableRow{
 				{
-					Cells:  []interface{}{"test1", "1/1", "podPhase", int64(5), "20h"},
+					Cells:  []any{"test1", "1/1", "podPhase", int64(5), "20h"},
 					Object: runtime.RawExtension{Object: testPod},
 				},
 			},
@@ -442,7 +442,7 @@ test1   1/1     podPhase   5         20h   label-value
 			},
 			rows: []metav1.TableRow{
 				{
-					Cells:  []interface{}{"test1", "1/1", "podPhase", int64(5), "20h"},
+					Cells:  []any{"test1", "1/1", "podPhase", int64(5), "20h"},
 					Object: runtime.RawExtension{Object: testPod},
 				},
 			},
@@ -547,7 +547,7 @@ func TestPrintTable_WatchEvents(t *testing.T) {
 			},
 			rows: []metav1.TableRow{
 				{
-					Cells:  []interface{}{"test1", "1/1", "podPhase", int64(5), "20h"},
+					Cells:  []any{"test1", "1/1", "podPhase", int64(5), "20h"},
 					Object: runtime.RawExtension{Object: testPod},
 				},
 			},
@@ -567,7 +567,7 @@ Added   test1   1/1     podPhase   5         20h
 			},
 			rows: []metav1.TableRow{
 				{
-					Cells:  []interface{}{"test1", "1/1", "podPhase", int64(5), "20h"},
+					Cells:  []any{"test1", "1/1", "podPhase", int64(5), "20h"},
 					Object: runtime.RawExtension{Object: testPod},
 				},
 			},
@@ -599,22 +599,22 @@ Added   test1   1/1     podPhase   5         20h
 
 func TestPrintUnstructuredObject(t *testing.T) {
 	obj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "v1",
 			"kind":       "Test",
 			"dummy1":     "present",
 			"dummy2":     "present",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":              "MyName",
 				"namespace":         "MyNamespace",
 				"creationTimestamp": "2017-04-01T00:00:00Z",
 				"resourceVersion":   123,
 				"uid":               "00000000-0000-0000-0000-000000000001",
 				"dummy3":            "present",
-				"labels":            map[string]interface{}{"test": "other"},
+				"labels":            map[string]any{"test": "other"},
 			},
-			/*"items": []interface{}{
-				map[string]interface{}{
+			/*"items": []any{
+				map[string]any{
 					"itemBool": true,
 					"itemInt":  42,
 				},
@@ -651,25 +651,25 @@ func TestPrintUnstructuredObject(t *testing.T) {
 		{
 			expected: "NAME\\s+AGE\nMyName\\s+\\d+\\w+\nMyName2\\s+\\d+",
 			object: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Test",
 					"dummy1":     "present",
 					"dummy2":     "present",
-					"items": []interface{}{
-						map[string]interface{}{
-							"metadata": map[string]interface{}{
+					"items": []any{
+						map[string]any{
+							"metadata": map[string]any{
 								"name":              "MyName",
 								"namespace":         "MyNamespace",
 								"creationTimestamp": "2017-04-01T00:00:00Z",
 								"resourceVersion":   123,
 								"uid":               "00000000-0000-0000-0000-000000000001",
 								"dummy3":            "present",
-								"labels":            map[string]interface{}{"test": "other"},
+								"labels":            map[string]any{"test": "other"},
 							},
 						},
-						map[string]interface{}{
-							"metadata": map[string]interface{}{
+						map[string]any{
+							"metadata": map[string]any{
 								"name":              "MyName2",
 								"namespace":         "MyNamespace",
 								"creationTimestamp": "2017-04-01T00:00:00Z",
@@ -737,7 +737,7 @@ func TestStringPrinting(t *testing.T) {
 				{Name: "Description", Type: "string"},
 			},
 			rows: []metav1.TableRow{
-				{Cells: []interface{}{"test1", "20h", "This is first line\nThis is second line\nThis is third line\nand another one\n"}},
+				{Cells: []any{"test1", "20h", "This is first line\nThis is second line\nThis is third line\nand another one\n"}},
 			},
 			expected: `NAME    AGE   DESCRIPTION
 test1   20h   This is first line...
@@ -751,7 +751,7 @@ test1   20h   This is first line...
 				{Name: "Description", Type: "string"},
 			},
 			rows: []metav1.TableRow{
-				{Cells: []interface{}{"test1", "20h", "This is first line which is long and goes for on and on and on an on and on and on and on and on and on and on and on and on and on and on"}},
+				{Cells: []any{"test1", "20h", "This is first line which is long and goes for on and on and on an on and on and on and on and on and on and on and on and on and on and on"}},
 			},
 			expected: `NAME    AGE   DESCRIPTION
 test1   20h   This is first line which is long and goes for on and on and on an on and on and on and on and on and on and on and on and on and on and on
@@ -765,7 +765,7 @@ test1   20h   This is first line which is long and goes for on and on and on an 
 				{Name: "Description", Type: "string"},
 			},
 			rows: []metav1.TableRow{
-				{Cells: []interface{}{"test1", "20h", "This is first\n line which is long and goes for on and on and on an on and on and on and on and on and on and on and on and on and on and on"}},
+				{Cells: []any{"test1", "20h", "This is first\n line which is long and goes for on and on and on an on and on and on and on and on and on and on and on and on and on and on"}},
 			},
 			expected: `NAME    AGE   DESCRIPTION
 test1   20h   This is first...
@@ -777,7 +777,7 @@ test1   20h   This is first...
 				{Name: "Name", Type: "string"},
 			},
 			rows: []metav1.TableRow{
-				{Cells: []interface{}{"test1\x1b"}},
+				{Cells: []any{"test1\x1b"}},
 			},
 			expected: `NAME
 test1^[

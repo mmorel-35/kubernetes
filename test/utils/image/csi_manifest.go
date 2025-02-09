@@ -68,7 +68,7 @@ func appendCSIImageConfigs(configs map[ImageID]Config) {
 		for i, item := range items {
 			// We don't care what the actual type is. We just
 			// unmarshal into generic maps and then look up images.
-			var object interface{}
+			var object any
 			if err := yaml.Unmarshal(item, &object); err != nil {
 				return fmt.Errorf("decode item #%d in %s: %v",
 					i, path, err)
@@ -109,7 +109,7 @@ func appendCSIImageConfigs(configs map[ImageID]Config) {
 // list elements will be followed.
 //
 // Conceptually this is similar to a JSON path.
-func findStrings(object interface{}, visit func(value string), path ...string) {
+func findStrings(object any, visit func(value string), path ...string) {
 	if len(path) == 0 {
 		// Found it. May or may not be a string, though.
 		if object, ok := object.(string); ok {
@@ -119,12 +119,12 @@ func findStrings(object interface{}, visit func(value string), path ...string) {
 	}
 
 	switch object := object.(type) {
-	case []interface{}:
+	case []any:
 		// If we are in a list, check each entry.
 		for _, child := range object {
 			findStrings(child, visit, path...)
 		}
-	case map[string]interface{}:
+	case map[string]any:
 		// Follow path if possible
 		if child, ok := object[path[0]]; ok {
 			findStrings(child, visit, path[1:]...)

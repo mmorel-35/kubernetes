@@ -34,8 +34,8 @@ import (
 // @TODO(88634): v2 of these types should be defined with proper JSON tags to enforce field casing to a single approach
 func TestCompatibility(t *testing.T) {
 	testcases := []struct {
-		emptyObj   interface{}
-		obj        interface{}
+		emptyObj   any
+		obj        any
 		expectJSON string
 	}{
 		{

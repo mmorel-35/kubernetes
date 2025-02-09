@@ -68,13 +68,13 @@ func NewClusterRoleAggregation(clusterRoleInformer rbacinformers.ClusterRoleInfo
 	c.syncHandler = c.syncClusterRole
 
 	clusterRoleInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			c.enqueue()
 		},
-		UpdateFunc: func(old, cur interface{}) {
+		UpdateFunc: func(old, cur any) {
 			c.enqueue()
 		},
-		DeleteFunc: func(uncast interface{}) {
+		DeleteFunc: func(uncast any) {
 			c.enqueue()
 		},
 	})

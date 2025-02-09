@@ -101,11 +101,11 @@ func (kc *kubeletConfig) Unmarshal(docmap kubeadmapi.DocumentMap) error {
 	return kc.configBase.Unmarshal(docmap, &kc.config)
 }
 
-func (kc *kubeletConfig) Get() interface{} {
+func (kc *kubeletConfig) Get() any {
 	return &kc.config
 }
 
-func (kc *kubeletConfig) Set(cfg interface{}) {
+func (kc *kubeletConfig) Set(cfg any) {
 	kc.config = *cfg.(*kubeletconfig.KubeletConfiguration)
 }
 

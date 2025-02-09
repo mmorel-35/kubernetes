@@ -72,7 +72,7 @@ func New(crdColumns []apiextensionsv1.CustomResourceColumnDefinition) (rest.Tabl
 }
 
 type columnPrinter interface {
-	FindResults(data interface{}) ([][]reflect.Value, error)
+	FindResults(data any) ([][]reflect.Value, error)
 	PrintResults(w io.Writer, results []reflect.Value) error
 }
 
@@ -101,8 +101,8 @@ func (c *convertor) ConvertToTable(ctx context.Context, obj runtime.Object, tabl
 
 	var err error
 	buf := &bytes.Buffer{}
-	table.Rows, err = metatable.MetaToTableRow(obj, func(obj runtime.Object, m metav1.Object, name, age string) ([]interface{}, error) {
-		cells := make([]interface{}, 1, 1+len(c.additionalColumns))
+	table.Rows, err = metatable.MetaToTableRow(obj, func(obj runtime.Object, m metav1.Object, name, age string) ([]any, error) {
+		cells := make([]any, 1, 1+len(c.additionalColumns))
 		cells[0] = name
 		customHeaders := c.headers[1:]
 		us, ok := obj.(runtime.Unstructured)
@@ -138,7 +138,7 @@ func (c *convertor) ConvertToTable(ctx context.Context, obj runtime.Object, tabl
 	return table, err
 }
 
-func cellForJSONValue(headerType string, value interface{}) interface{} {
+func cellForJSONValue(headerType string, value any) any {
 	if value == nil {
 		return nil
 	}

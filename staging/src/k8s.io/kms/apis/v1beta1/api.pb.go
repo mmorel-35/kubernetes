@@ -434,7 +434,7 @@ func RegisterKeyManagementServiceServer(s *grpc.Server, srv KeyManagementService
 	s.RegisterService(&_KeyManagementService_serviceDesc, srv)
 }
 
-func _KeyManagementService_Version_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KeyManagementService_Version_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(VersionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -446,13 +446,13 @@ func _KeyManagementService_Version_Handler(srv interface{}, ctx context.Context,
 		Server:     srv,
 		FullMethod: "/v1beta1.KeyManagementService/Version",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KeyManagementServiceServer).Version(ctx, req.(*VersionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KeyManagementService_Decrypt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KeyManagementService_Decrypt_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(DecryptRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -464,13 +464,13 @@ func _KeyManagementService_Decrypt_Handler(srv interface{}, ctx context.Context,
 		Server:     srv,
 		FullMethod: "/v1beta1.KeyManagementService/Decrypt",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KeyManagementServiceServer).Decrypt(ctx, req.(*DecryptRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _KeyManagementService_Encrypt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _KeyManagementService_Encrypt_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(EncryptRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -482,7 +482,7 @@ func _KeyManagementService_Encrypt_Handler(srv interface{}, ctx context.Context,
 		Server:     srv,
 		FullMethod: "/v1beta1.KeyManagementService/Encrypt",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(KeyManagementServiceServer).Encrypt(ctx, req.(*EncryptRequest))
 	}
 	return interceptor(ctx, in, info, handler)

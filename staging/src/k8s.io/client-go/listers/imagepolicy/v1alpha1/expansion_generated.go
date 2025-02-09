@@ -20,4 +20,4 @@ package v1alpha1
 
 // ImageReviewListerExpansion allows custom methods to be added to
 // ImageReviewLister.
-type ImageReviewListerExpansion interface{}
+type ImageReviewListerExpansion any

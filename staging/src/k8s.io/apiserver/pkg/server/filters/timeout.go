@@ -91,7 +91,7 @@ func (t *timeoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	timeoutCh := r.Context().Done()
 
 	// resultCh is used as both errCh and stopCh
-	resultCh := make(chan interface{})
+	resultCh := make(chan any)
 	var tw timeoutWriter
 	tw, w = newTimeoutWriter(w)
 

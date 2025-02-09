@@ -94,7 +94,7 @@ func ReadAdmissionConfiguration(pluginNames []string, configFilePath string, con
 	}
 
 	// Only tolerate load errors if the file appears to be one of the two legacy plugin configs
-	unstructuredData := map[string]interface{}{}
+	unstructuredData := map[string]any{}
 	if err2 := yaml.Unmarshal(data, &unstructuredData); err2 != nil {
 		return nil, err
 	}

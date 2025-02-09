@@ -408,12 +408,12 @@ func (f *FakeRecorder) Event(obj runtime.Object, eventtype, reason, message stri
 }
 
 // Eventf emits a fake formatted event to the fake recorder
-func (f *FakeRecorder) Eventf(obj runtime.Object, eventtype, reason, messageFmt string, args ...interface{}) {
+func (f *FakeRecorder) Eventf(obj runtime.Object, eventtype, reason, messageFmt string, args ...any) {
 	f.Event(obj, eventtype, reason, fmt.Sprintf(messageFmt, args...))
 }
 
 // AnnotatedEventf emits a fake formatted event to the fake recorder
-func (f *FakeRecorder) AnnotatedEventf(obj runtime.Object, annotations map[string]string, eventtype, reason, messageFmt string, args ...interface{}) {
+func (f *FakeRecorder) AnnotatedEventf(obj runtime.Object, annotations map[string]string, eventtype, reason, messageFmt string, args ...any) {
 	f.Eventf(obj, eventtype, reason, messageFmt, args...)
 }
 
@@ -536,7 +536,7 @@ func CreateZoneID(region, zone string) string {
 
 // GetKey is a helper function used by controllers unit tests to get the
 // key for a given kubernetes resource.
-func GetKey(obj interface{}, t *testing.T) string {
+func GetKey(obj any, t *testing.T) string {
 	t.Helper()
 	tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
 	if ok {

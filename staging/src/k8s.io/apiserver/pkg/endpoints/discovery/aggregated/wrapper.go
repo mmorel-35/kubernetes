@@ -54,7 +54,7 @@ func (wrapped *WrappedHandler) restfulHandle(req *restful.Request, resp *restful
 	wrapped.ServeHTTP(resp.ResponseWriter, req.Request)
 }
 
-func (wrapped *WrappedHandler) GenerateWebService(prefix string, returnType interface{}) *restful.WebService {
+func (wrapped *WrappedHandler) GenerateWebService(prefix string, returnType any) *restful.WebService {
 	mediaTypes, _ := negotiation.MediaTypesForSerializer(wrapped.s)
 	ws := new(restful.WebService)
 	ws.Path(prefix)

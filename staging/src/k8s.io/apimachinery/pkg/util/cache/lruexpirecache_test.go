@@ -24,7 +24,7 @@ import (
 	testingclock "k8s.io/utils/clock/testing"
 )
 
-func expectEntry(t *testing.T, c *LRUExpireCache, key interface{}, value interface{}) {
+func expectEntry(t *testing.T, c *LRUExpireCache, key any, value any) {
 	t.Helper()
 	result, ok := c.Get(key)
 	if !ok || result != value {
@@ -32,7 +32,7 @@ func expectEntry(t *testing.T, c *LRUExpireCache, key interface{}, value interfa
 	}
 }
 
-func expectNotEntry(t *testing.T, c *LRUExpireCache, key interface{}) {
+func expectNotEntry(t *testing.T, c *LRUExpireCache, key any) {
 	t.Helper()
 	if result, ok := c.Get(key); ok {
 		t.Errorf("Expected cache[%v] to be empty, got %v", key, result)
@@ -41,7 +41,7 @@ func expectNotEntry(t *testing.T, c *LRUExpireCache, key interface{}) {
 
 // Note: Check keys before checking individual entries, because Get() changes
 // the eviction list.
-func assertKeys(t *testing.T, gotKeys, wantKeys []interface{}) {
+func assertKeys(t *testing.T, gotKeys, wantKeys []any) {
 	t.Helper()
 	if diff := cmp.Diff(gotKeys, wantKeys); diff != "" {
 		t.Errorf("Wrong result for keys: diff (-got +want):\n%s", diff)
@@ -52,7 +52,7 @@ func TestSimpleGet(t *testing.T) {
 	c := NewLRUExpireCache(10)
 	c.Add("long-lived", "12345", 10*time.Hour)
 
-	assertKeys(t, c.Keys(), []interface{}{"long-lived"})
+	assertKeys(t, c.Keys(), []any{"long-lived"})
 
 	expectEntry(t, c, "long-lived", "12345")
 }
@@ -62,7 +62,7 @@ func TestSimpleRemove(t *testing.T) {
 	c.Add("long-lived", "12345", 10*time.Hour)
 	c.Remove("long-lived")
 
-	assertKeys(t, c.Keys(), []interface{}{})
+	assertKeys(t, c.Keys(), []any{})
 
 	expectNotEntry(t, c, "long-lived")
 }
@@ -89,7 +89,7 @@ func TestExpiredGet(t *testing.T) {
 	fakeClock.Step(2 * time.Millisecond)
 
 	// Keys() should not return expired keys.
-	assertKeys(t, c.Keys(), []interface{}{})
+	assertKeys(t, c.Keys(), []any{})
 
 	expectNotEntry(t, c, "short-lived")
 }
@@ -102,7 +102,7 @@ func TestLRUOverflow(t *testing.T) {
 	c.Add("elem4", "4", 10*time.Hour)
 	c.Add("elem5", "5", 10*time.Hour)
 
-	assertKeys(t, c.Keys(), []interface{}{"elem2", "elem3", "elem4", "elem5"})
+	assertKeys(t, c.Keys(), []any{"elem2", "elem3", "elem4", "elem5"})
 
 	expectNotEntry(t, c, "elem1")
 	expectEntry(t, c, "elem2", "2")
@@ -122,7 +122,7 @@ func TestAddBringsToFront(t *testing.T) {
 
 	c.Add("elem5", "5", 10*time.Hour)
 
-	assertKeys(t, c.Keys(), []interface{}{"elem3", "elem4", "elem1", "elem5"})
+	assertKeys(t, c.Keys(), []any{"elem3", "elem4", "elem1", "elem5"})
 
 	expectNotEntry(t, c, "elem2")
 	expectEntry(t, c, "elem1", "1-new")
@@ -142,7 +142,7 @@ func TestGetBringsToFront(t *testing.T) {
 
 	c.Add("elem5", "5", 10*time.Hour)
 
-	assertKeys(t, c.Keys(), []interface{}{"elem3", "elem4", "elem1", "elem5"})
+	assertKeys(t, c.Keys(), []any{"elem3", "elem4", "elem1", "elem5"})
 
 	expectNotEntry(t, c, "elem2")
 	expectEntry(t, c, "elem1", "1")
@@ -158,5 +158,5 @@ func TestLRUKeys(t *testing.T) {
 	c.Add("elem3", "3", 10*time.Hour)
 	c.Add("elem4", "4", 10*time.Hour)
 
-	assertKeys(t, c.Keys(), []interface{}{"elem1", "elem2", "elem3", "elem4"})
+	assertKeys(t, c.Keys(), []any{"elem1", "elem2", "elem3", "elem4"})
 }

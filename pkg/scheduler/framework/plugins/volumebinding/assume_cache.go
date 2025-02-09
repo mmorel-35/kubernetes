@@ -31,7 +31,7 @@ type PVAssumeCache struct {
 	logger klog.Logger
 }
 
-func pvStorageClassIndexFunc(obj interface{}) ([]string, error) {
+func pvStorageClassIndexFunc(obj any) ([]string, error) {
 	if pv, ok := obj.(*v1.PersistentVolume); ok {
 		return []string{storagehelpers.GetPersistentVolumeClass(pv)}, nil
 	}

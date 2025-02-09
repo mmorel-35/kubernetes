@@ -88,7 +88,7 @@ func NewEndpointController(ctx context.Context, podInformer coreinformers.PodInf
 
 	serviceInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: e.onServiceUpdate,
-		UpdateFunc: func(old, cur interface{}) {
+		UpdateFunc: func(old, cur any) {
 			e.onServiceUpdate(cur)
 		},
 		DeleteFunc: e.onServiceDelete,
@@ -200,7 +200,7 @@ func (e *Controller) Run(ctx context.Context, workers int) {
 
 // When a pod is added, figure out what services it will be a member of and
 // enqueue them. obj must have *v1.Pod type.
-func (e *Controller) addPod(obj interface{}) {
+func (e *Controller) addPod(obj any) {
 	pod := obj.(*v1.Pod)
 	services, err := endpointsliceutil.GetPodServiceMemberships(e.serviceLister, pod)
 	if err != nil {
@@ -270,7 +270,7 @@ func podToEndpointAddressForService(svc *v1.Service, pod *v1.Pod) (*v1.EndpointA
 // When a pod is updated, figure out what services it used to be a member of
 // and what services it will be a member of, and enqueue the union of these.
 // old and cur must be *v1.Pod types.
-func (e *Controller) updatePod(old, cur interface{}) {
+func (e *Controller) updatePod(old, cur any) {
 	services := endpointsliceutil.GetServicesToUpdateOnPodChange(e.serviceLister, old, cur)
 	for key := range services {
 		e.queue.AddAfter(key, e.endpointUpdatesBatchPeriod)
@@ -279,7 +279,7 @@ func (e *Controller) updatePod(old, cur interface{}) {
 
 // When a pod is deleted, enqueue the services the pod used to be a member of.
 // obj could be an *v1.Pod, or a DeletionFinalStateUnknown marker item.
-func (e *Controller) deletePod(obj interface{}) {
+func (e *Controller) deletePod(obj any) {
 	pod := endpointsliceutil.GetPodFromDeleteAction(obj)
 	if pod != nil {
 		e.addPod(pod)
@@ -287,7 +287,7 @@ func (e *Controller) deletePod(obj interface{}) {
 }
 
 // onServiceUpdate updates the Service Selector in the cache and queues the Service for processing.
-func (e *Controller) onServiceUpdate(obj interface{}) {
+func (e *Controller) onServiceUpdate(obj any) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("Couldn't get key for object %+v: %v", obj, err))
@@ -297,7 +297,7 @@ func (e *Controller) onServiceUpdate(obj interface{}) {
 }
 
 // onServiceDelete removes the Service Selector from the cache and queues the Service for processing.
-func (e *Controller) onServiceDelete(obj interface{}) {
+func (e *Controller) onServiceDelete(obj any) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("Couldn't get key for object %+v: %v", obj, err))
@@ -306,7 +306,7 @@ func (e *Controller) onServiceDelete(obj interface{}) {
 	e.queue.Add(key)
 }
 
-func (e *Controller) onEndpointsDelete(obj interface{}) {
+func (e *Controller) onEndpointsDelete(obj any) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("Couldn't get key for object %+v: %v", obj, err))

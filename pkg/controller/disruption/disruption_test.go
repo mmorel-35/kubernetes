@@ -409,13 +409,13 @@ func newStatefulSet(t *testing.T, size int32) (*apps.StatefulSet, string) {
 	return ss, ssName
 }
 
-func update(t *testing.T, store cache.Store, obj interface{}) {
+func update(t *testing.T, store cache.Store, obj any) {
 	if err := store.Update(obj); err != nil {
 		t.Fatalf("Could not add %+v to %+v: %v", obj, store, err)
 	}
 }
 
-func add(t *testing.T, store cache.Store, obj interface{}) {
+func add(t *testing.T, store cache.Store, obj any) {
 	if err := store.Add(obj); err != nil {
 		t.Fatalf("Could not add %+v to %+v: %v", obj, store, err)
 	}

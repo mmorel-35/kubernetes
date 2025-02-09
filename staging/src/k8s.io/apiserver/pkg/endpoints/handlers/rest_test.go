@@ -287,14 +287,14 @@ func TestPatchCustomResource(t *testing.T) {
 	defaulter := runtime.ObjectDefaulter(scheme)
 
 	original := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "mygroup.example.com/v1beta1",
 			"kind":       "Noxu",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace": "Namespaced",
 				"name":      "foo",
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"num": "10",
 			},
 		},
@@ -1022,17 +1022,17 @@ want: %#+v`, got, update)
 func TestPatchToUpdateOptions(t *testing.T) {
 	tests := []struct {
 		name        string
-		converterFn func(po *metav1.PatchOptions) interface{}
+		converterFn func(po *metav1.PatchOptions) any
 	}{
 		{
 			name: "patchToUpdateOptions",
-			converterFn: func(patch *metav1.PatchOptions) interface{} {
+			converterFn: func(patch *metav1.PatchOptions) any {
 				return patchToUpdateOptions(patch)
 			},
 		},
 		{
 			name: "patchToCreateOptions",
-			converterFn: func(patch *metav1.PatchOptions) interface{} {
+			converterFn: func(patch *metav1.PatchOptions) any {
 				return patchToCreateOptions(patch)
 			},
 		},
@@ -1363,7 +1363,7 @@ spec:
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			obj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+			obj := &unstructured.Unstructured{Object: map[string]any{}}
 			if err := yaml.UnmarshalStrict([]byte(tc.yaml), &obj.Object); err != nil {
 				parsedErrs := parseYAMLWarnings(err.Error())
 				if !reflect.DeepEqual(tc.expected, parsedErrs) {

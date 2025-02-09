@@ -344,19 +344,19 @@ func (c *NamingConditionController) enqueue(obj *apiextensionsv1.CustomResourceD
 	c.queue.Add(key)
 }
 
-func (c *NamingConditionController) addCustomResourceDefinition(obj interface{}) {
+func (c *NamingConditionController) addCustomResourceDefinition(obj any) {
 	castObj := obj.(*apiextensionsv1.CustomResourceDefinition)
 	klog.V(4).Infof("Adding %s", castObj.Name)
 	c.enqueue(castObj)
 }
 
-func (c *NamingConditionController) updateCustomResourceDefinition(obj, _ interface{}) {
+func (c *NamingConditionController) updateCustomResourceDefinition(obj, _ any) {
 	castObj := obj.(*apiextensionsv1.CustomResourceDefinition)
 	klog.V(4).Infof("Updating %s", castObj.Name)
 	c.enqueue(castObj)
 }
 
-func (c *NamingConditionController) deleteCustomResourceDefinition(obj interface{}) {
+func (c *NamingConditionController) deleteCustomResourceDefinition(obj any) {
 	castObj, ok := obj.(*apiextensionsv1.CustomResourceDefinition)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)

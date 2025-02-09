@@ -31,9 +31,9 @@ func TestPatches(t *testing.T) {
 	sidecarImage = "test-image"
 	testCases := []struct {
 		patch    string
-		initial  interface{}
-		expected interface{}
-		toTest   interface{}
+		initial  any
+		expected any
+		toTest   any
 	}{
 		{
 			patch: configMapPatch1,
@@ -143,10 +143,10 @@ func TestPatches(t *testing.T) {
 
 func TestJSONPatchForUnstructured(t *testing.T) {
 	cr := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "Something",
 			"apiVersion": "somegroup/v1",
-			"data": map[string]interface{}{
+			"data": map[string]any{
 				"mutation-start": "yes",
 			},
 		},
@@ -169,7 +169,7 @@ func TestJSONPatchForUnstructured(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	expectedData := map[string]interface{}{
+	expectedData := map[string]any{
 		"mutation-start":   "yes",
 		"mutation-stage-1": "yes",
 	}

@@ -98,7 +98,7 @@ func TestUnschedulableNodes(t *testing.T) {
 				if _, err := c.CoreV1().Nodes().Update(context.TODO(), n, metav1.UpdateOptions{}); err != nil {
 					t.Fatalf("Failed to update node with unschedulable=true: %v", err)
 				}
-				err = testutils.WaitForReflection(testCtx.Ctx, t, nodeLister, nodeKey, func(node interface{}) bool {
+				err = testutils.WaitForReflection(testCtx.Ctx, t, nodeLister, nodeKey, func(node any) bool {
 					// An unschedulable node should still be present in the store
 					// Nodes that are unschedulable or that are not ready or
 					// have their disk full (Node.Spec.Conditions) are excluded
@@ -114,7 +114,7 @@ func TestUnschedulableNodes(t *testing.T) {
 				if _, err := c.CoreV1().Nodes().Update(context.TODO(), n, metav1.UpdateOptions{}); err != nil {
 					t.Fatalf("Failed to update node with unschedulable=false: %v", err)
 				}
-				err = testutils.WaitForReflection(testCtx.Ctx, t, nodeLister, nodeKey, func(node interface{}) bool {
+				err = testutils.WaitForReflection(testCtx.Ctx, t, nodeLister, nodeKey, func(node any) bool {
 					return node != nil && node.(*v1.Node).Spec.Unschedulable == false
 				})
 				if err != nil {

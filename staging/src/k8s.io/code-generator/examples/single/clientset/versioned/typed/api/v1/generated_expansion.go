@@ -18,6 +18,6 @@ limitations under the License.
 
 package v1
 
-type ClusterTestTypeExpansion interface{}
+type ClusterTestTypeExpansion any
 
-type TestTypeExpansion interface{}
+type TestTypeExpansion any

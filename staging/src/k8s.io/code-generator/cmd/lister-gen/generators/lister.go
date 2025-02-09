@@ -220,7 +220,7 @@ func (g *listerGenerator) GenerateType(c *generator.Context, t *types.Type, w io
 	sw := generator.NewSnippetWriter(w, c, "$", "$")
 
 	klog.V(5).Infof("processing type %v", t)
-	m := map[string]interface{}{
+	m := map[string]any{
 		"Resource":               c.Universe.Function(types.Name{Package: t.Name.Package, Name: "Resource"}),
 		"labelsSelector":         c.Universe.Function(types.Name{Package: "k8s.io/apimachinery/pkg/labels", Name: "Selector"}),
 		"listersResourceIndexer": c.Universe.Function(types.Name{Package: "k8s.io/client-go/listers", Name: "ResourceIndexer"}),

@@ -156,7 +156,7 @@ func MatchContainerOutput(
 	pod *v1.Pod,
 	containerName string,
 	expectedOutput []string,
-	matcher func(string, ...interface{}) gomegatypes.GomegaMatcher) error {
+	matcher func(string, ...any) gomegatypes.GomegaMatcher) error {
 
 	return MatchMultipleContainerOutputs(ctx, f, pod, map[string][]string{containerName: expectedOutput}, matcher)
 }
@@ -166,7 +166,7 @@ func MatchMultipleContainerOutputs(
 	f *framework.Framework,
 	pod *v1.Pod,
 	expectedOutputs map[string][]string, // map of container name -> expected outputs
-	matcher func(string, ...interface{}) gomegatypes.GomegaMatcher) error {
+	matcher func(string, ...any) gomegatypes.GomegaMatcher) error {
 	ns := pod.ObjectMeta.Namespace
 	if ns == "" {
 		ns = f.Namespace.Name
@@ -255,7 +255,7 @@ func TestContainerOutputMatcher(ctx context.Context, f *framework.Framework,
 	pod *v1.Pod,
 	containerIndex int,
 	expectedOutput []string,
-	matcher func(string, ...interface{}) gomegatypes.GomegaMatcher) {
+	matcher func(string, ...any) gomegatypes.GomegaMatcher) {
 	ginkgo.By(fmt.Sprintf("Creating a pod to test %v", scenarioName))
 	if containerIndex < 0 || containerIndex >= len(pod.Spec.Containers) {
 		framework.Failf("Invalid container index: %d", containerIndex)
@@ -267,7 +267,7 @@ func TestContainerOutputsMatcher(ctx context.Context, f *framework.Framework,
 	scenarioName string,
 	pod *v1.Pod,
 	expectedOutputs map[int][]string,
-	matcher func(string, ...interface{}) gomegatypes.GomegaMatcher) {
+	matcher func(string, ...any) gomegatypes.GomegaMatcher) {
 
 	ginkgo.By(fmt.Sprintf("Creating a pod to test %v", scenarioName))
 

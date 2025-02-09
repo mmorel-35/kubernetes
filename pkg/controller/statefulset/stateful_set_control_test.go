@@ -2985,7 +2985,7 @@ func checkClaimInvarients(set *apps.StatefulSet, pod *v1.Pod, claim *v1.Persiste
 	return nil
 }
 
-func fakeResourceVersion(object interface{}) {
+func fakeResourceVersion(object any) {
 	obj, isObj := object.(metav1.Object)
 	if !isObj {
 		return

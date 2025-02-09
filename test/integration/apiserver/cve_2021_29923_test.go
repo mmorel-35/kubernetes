@@ -70,7 +70,7 @@ func TestCanaryCVE_2021_29923(t *testing.T) {
 
 	for gvr, data := range objects {
 		t.Run(gvr.String(), func(t *testing.T) {
-			obj := map[string]interface{}{}
+			obj := map[string]any{}
 			if err := json.Unmarshal([]byte(data), &obj); err != nil {
 				t.Fatal(err)
 			}

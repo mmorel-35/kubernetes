@@ -297,10 +297,10 @@ var _ = SIGDescribe("CustomResourceDefinition resources [Privileged:ClusterAdmin
 			Resource: crd.Spec.Names.Plural,
 		}
 		crClient := dynamicClient.Resource(gvr)
-		_, err = crClient.Create(ctx, &unstructured.Unstructured{Object: map[string]interface{}{
+		_, err = crClient.Create(ctx, &unstructured.Unstructured{Object: map[string]any{
 			"apiVersion": gvr.Group + "/" + gvr.Version,
 			"kind":       crd.Spec.Names.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": name1,
 			},
 		}}, metav1.CreateOptions{})
@@ -333,10 +333,10 @@ var _ = SIGDescribe("CustomResourceDefinition resources [Privileged:ClusterAdmin
 
 		// create CR with default in storage
 		name2 := names.SimpleNameGenerator.GenerateName("cr-2")
-		u2, err := crClient.Create(ctx, &unstructured.Unstructured{Object: map[string]interface{}{
+		u2, err := crClient.Create(ctx, &unstructured.Unstructured{Object: map[string]any{
 			"apiVersion": gvr.Group + "/" + gvr.Version,
 			"kind":       crd.Spec.Names.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": name2,
 			},
 		}}, metav1.CreateOptions{})

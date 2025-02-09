@@ -110,7 +110,7 @@ func (c *controller[T]) Run(ctx context.Context) error {
 	// would never shut down the workqueue
 	defer c.queue.ShutDown()
 
-	enqueue := func(obj interface{}, isInInitialList bool) {
+	enqueue := func(obj any, isInInitialList bool) {
 		var key string
 		var err error
 		if key, err = cache.DeletionHandlingMetaNamespaceKeyFunc(obj); err != nil {
@@ -126,7 +126,7 @@ func (c *controller[T]) Run(ctx context.Context) error {
 
 	registration, err := c.informer.AddEventHandler(cache.ResourceEventHandlerDetailedFuncs{
 		AddFunc: enqueue,
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			oldMeta, err1 := meta.Accessor(oldObj)
 			newMeta, err2 := meta.Accessor(newObj)
 
@@ -148,7 +148,7 @@ func (c *controller[T]) Run(ctx context.Context) error {
 
 			enqueue(newObj, false)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			// Enqueue
 			enqueue(obj, false)
 		},

@@ -277,7 +277,7 @@ type draPlugin struct {
 // is required. Implementing drapbv1beta1.DRAPluginServer is recommended for
 // DRA driver targeting Kubernetes >= 1.32. To be compatible with Kubernetes 1.31,
 // DRA drivers must implement only [drapbv1alpha4.NodeServer].
-func Start(ctx context.Context, nodeServers []interface{}, opts ...Option) (result DRAPlugin, finalErr error) {
+func Start(ctx context.Context, nodeServers []any, opts ...Option) (result DRAPlugin, finalErr error) {
 	logger := klog.FromContext(ctx)
 	o := options{
 		logger:        klog.Background(),

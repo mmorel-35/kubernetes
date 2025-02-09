@@ -197,7 +197,7 @@ type NestedValueValidation struct {
 
 // JSON wraps an arbitrary JSON value to be able to implement deepcopy.
 type JSON struct {
-	Object interface{}
+	Object any
 }
 
 // DeepCopy creates a deep copy of the wrapped JSON value.

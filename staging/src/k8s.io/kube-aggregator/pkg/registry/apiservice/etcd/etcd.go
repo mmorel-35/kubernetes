@@ -93,7 +93,7 @@ func (c *REST) ConvertToTable(ctx context.Context, obj runtime.Object, tableOpti
 	}
 
 	var err error
-	table.Rows, err = metatable.MetaToTableRow(obj, func(obj runtime.Object, m metav1.Object, name, age string) ([]interface{}, error) {
+	table.Rows, err = metatable.MetaToTableRow(obj, func(obj runtime.Object, m metav1.Object, name, age string) ([]any, error) {
 		svc := obj.(*apiregistration.APIService)
 		service := "Local"
 		if svc.Spec.Service != nil {
@@ -110,7 +110,7 @@ func (c *REST) ConvertToTable(ctx context.Context, obj runtime.Object, tableOpti
 				status = string(condition.Status)
 			}
 		}
-		return []interface{}{name, service, status, age}, nil
+		return []any{name, service, status, age}, nil
 	})
 	return table, err
 }

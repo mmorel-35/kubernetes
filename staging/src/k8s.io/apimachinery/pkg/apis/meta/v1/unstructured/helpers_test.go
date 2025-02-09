@@ -35,7 +35,7 @@ func TestCodecOfUnstructuredList(t *testing.T) {
 	var wg sync.WaitGroup
 	concurrency := 10
 	list := UnstructuredList{
-		Object: map[string]interface{}{},
+		Object: map[string]any{},
 	}
 	wg.Add(concurrency)
 	for i := 0; i < concurrency; i++ {
@@ -48,8 +48,8 @@ func TestCodecOfUnstructuredList(t *testing.T) {
 }
 
 func TestRemoveNestedField(t *testing.T) {
-	obj := map[string]interface{}{
-		"x": map[string]interface{}{
+	obj := map[string]any{
+		"x": map[string]any{
 			"y": 1,
 			"a": "foo",
 		},
@@ -65,15 +65,15 @@ func TestRemoveNestedField(t *testing.T) {
 }
 
 func TestNestedFieldNoCopy(t *testing.T) {
-	target := map[string]interface{}{"foo": "bar"}
+	target := map[string]any{"foo": "bar"}
 
-	obj := map[string]interface{}{
-		"a": map[string]interface{}{
+	obj := map[string]any{
+		"a": map[string]any{
 			"b": target,
 			"c": nil,
-			"d": []interface{}{"foo"},
-			"e": []interface{}{
-				map[string]interface{}{
+			"d": []any{"foo"},
+			"e": []any{
+				map[string]any{
 					"f": "bar",
 				},
 			},
@@ -86,7 +86,7 @@ func TestNestedFieldNoCopy(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, target, res)
 	target["foo"] = "baz"
-	assert.Equal(t, target["foo"], res.(map[string]interface{})["foo"], "result should be a reference to the expected item")
+	assert.Equal(t, target["foo"], res.(map[string]any)["foo"], "result should be a reference to the expected item")
 
 	// case 2: field exists and is nil
 	res, exists, err = NestedFieldNoCopy(obj, "a", "c")
@@ -128,13 +128,13 @@ func TestNestedFieldNoCopy(t *testing.T) {
 }
 
 func TestNestedFieldCopy(t *testing.T) {
-	target := map[string]interface{}{"foo": "bar"}
+	target := map[string]any{"foo": "bar"}
 
-	obj := map[string]interface{}{
-		"a": map[string]interface{}{
+	obj := map[string]any{
+		"a": map[string]any{
 			"b": target,
 			"c": nil,
-			"d": []interface{}{"foo"},
+			"d": []any{"foo"},
 		},
 	}
 
@@ -144,7 +144,7 @@ func TestNestedFieldCopy(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, target, res)
 	target["foo"] = "baz"
-	assert.NotEqual(t, target["foo"], res.(map[string]interface{})["foo"], "result should be a copy of the expected item")
+	assert.NotEqual(t, target["foo"], res.(map[string]any)["foo"], "result should be a copy of the expected item")
 
 	// case 2: field exists and is nil
 	res, exists, err = NestedFieldCopy(obj, "a", "c")
@@ -170,8 +170,8 @@ func TestCacheableObject(t *testing.T) {
 }
 
 func TestSetNestedStringSlice(t *testing.T) {
-	obj := map[string]interface{}{
-		"x": map[string]interface{}{
+	obj := map[string]any{
+		"x": map[string]any{
 			"y": 1,
 			"a": "foo",
 		},
@@ -180,28 +180,28 @@ func TestSetNestedStringSlice(t *testing.T) {
 	err := SetNestedStringSlice(obj, []string{"bar"}, "x", "z")
 	assert.NoError(t, err)
 	assert.Len(t, obj["x"], 3)
-	assert.Len(t, obj["x"].(map[string]interface{})["z"], 1)
-	assert.Equal(t, "bar", obj["x"].(map[string]interface{})["z"].([]interface{})[0])
+	assert.Len(t, obj["x"].(map[string]any)["z"], 1)
+	assert.Equal(t, "bar", obj["x"].(map[string]any)["z"].([]any)[0])
 }
 
 func TestSetNestedSlice(t *testing.T) {
-	obj := map[string]interface{}{
-		"x": map[string]interface{}{
+	obj := map[string]any{
+		"x": map[string]any{
 			"y": 1,
 			"a": "foo",
 		},
 	}
 
-	err := SetNestedSlice(obj, []interface{}{"bar"}, "x", "z")
+	err := SetNestedSlice(obj, []any{"bar"}, "x", "z")
 	assert.NoError(t, err)
 	assert.Len(t, obj["x"], 3)
-	assert.Len(t, obj["x"].(map[string]interface{})["z"], 1)
-	assert.Equal(t, "bar", obj["x"].(map[string]interface{})["z"].([]interface{})[0])
+	assert.Len(t, obj["x"].(map[string]any)["z"], 1)
+	assert.Equal(t, "bar", obj["x"].(map[string]any)["z"].([]any)[0])
 }
 
 func TestSetNestedStringMap(t *testing.T) {
-	obj := map[string]interface{}{
-		"x": map[string]interface{}{
+	obj := map[string]any{
+		"x": map[string]any{
 			"y": 1,
 			"a": "foo",
 		},
@@ -210,29 +210,29 @@ func TestSetNestedStringMap(t *testing.T) {
 	err := SetNestedStringMap(obj, map[string]string{"b": "bar"}, "x", "z")
 	assert.NoError(t, err)
 	assert.Len(t, obj["x"], 3)
-	assert.Len(t, obj["x"].(map[string]interface{})["z"], 1)
-	assert.Equal(t, "bar", obj["x"].(map[string]interface{})["z"].(map[string]interface{})["b"])
+	assert.Len(t, obj["x"].(map[string]any)["z"], 1)
+	assert.Equal(t, "bar", obj["x"].(map[string]any)["z"].(map[string]any)["b"])
 }
 
 func TestSetNestedMap(t *testing.T) {
-	obj := map[string]interface{}{
-		"x": map[string]interface{}{
+	obj := map[string]any{
+		"x": map[string]any{
 			"y": 1,
 			"a": "foo",
 		},
 	}
 
-	err := SetNestedMap(obj, map[string]interface{}{"b": "bar"}, "x", "z")
+	err := SetNestedMap(obj, map[string]any{"b": "bar"}, "x", "z")
 	assert.NoError(t, err)
 	assert.Len(t, obj["x"], 3)
-	assert.Len(t, obj["x"].(map[string]interface{})["z"], 1)
-	assert.Equal(t, "bar", obj["x"].(map[string]interface{})["z"].(map[string]interface{})["b"])
+	assert.Len(t, obj["x"].(map[string]any)["z"], 1)
+	assert.Equal(t, "bar", obj["x"].(map[string]any)["z"].(map[string]any)["b"])
 }
 
 func TestNestedNumberAsFloat64(t *testing.T) {
 	for _, tc := range []struct {
 		name           string
-		obj            map[string]interface{}
+		obj            map[string]any
 		path           []string
 		wantFloat64    float64
 		wantBool       bool
@@ -248,7 +248,7 @@ func TestNestedNumberAsFloat64(t *testing.T) {
 		},
 		{
 			name:           "found float64",
-			obj:            map[string]interface{}{"value": float64(42)},
+			obj:            map[string]any{"value": float64(42)},
 			path:           []string{"value"},
 			wantFloat64:    42,
 			wantBool:       true,
@@ -256,7 +256,7 @@ func TestNestedNumberAsFloat64(t *testing.T) {
 		},
 		{
 			name:           "found unexpected type bool",
-			obj:            map[string]interface{}{"value": true},
+			obj:            map[string]any{"value": true},
 			path:           []string{"value"},
 			wantFloat64:    0,
 			wantBool:       false,
@@ -264,7 +264,7 @@ func TestNestedNumberAsFloat64(t *testing.T) {
 		},
 		{
 			name:           "found int64",
-			obj:            map[string]interface{}{"value": int64(42)},
+			obj:            map[string]any{"value": int64(42)},
 			path:           []string{"value"},
 			wantFloat64:    42,
 			wantBool:       true,
@@ -272,7 +272,7 @@ func TestNestedNumberAsFloat64(t *testing.T) {
 		},
 		{
 			name:           "found int64 not representable as float64",
-			obj:            map[string]interface{}{"value": int64(math.MaxInt64)},
+			obj:            map[string]any{"value": int64(math.MaxInt64)},
 			path:           []string{"value"},
 			wantFloat64:    0,
 			wantBool:       false,
@@ -303,7 +303,7 @@ func TestNestedNumberAsFloat64(t *testing.T) {
 func TestNestedNullCoercingStringMap(t *testing.T) {
 	for _, tc := range []struct {
 		name           string
-		obj            map[string]interface{}
+		obj            map[string]any
 		path           []string
 		wantObj        map[string]string
 		wantFound      bool
@@ -319,7 +319,7 @@ func TestNestedNullCoercingStringMap(t *testing.T) {
 		},
 		{
 			name:           "null map",
-			obj:            map[string]interface{}{"path": nil},
+			obj:            map[string]any{"path": nil},
 			path:           []string{"path"},
 			wantObj:        nil,
 			wantFound:      true,
@@ -327,7 +327,7 @@ func TestNestedNullCoercingStringMap(t *testing.T) {
 		},
 		{
 			name:           "non map",
-			obj:            map[string]interface{}{"path": 0},
+			obj:            map[string]any{"path": 0},
 			path:           []string{"path"},
 			wantObj:        nil,
 			wantFound:      false,
@@ -335,7 +335,7 @@ func TestNestedNullCoercingStringMap(t *testing.T) {
 		},
 		{
 			name:           "empty map",
-			obj:            map[string]interface{}{"path": map[string]interface{}{}},
+			obj:            map[string]any{"path": map[string]any{}},
 			path:           []string{"path"},
 			wantObj:        map[string]string{},
 			wantFound:      true,
@@ -343,7 +343,7 @@ func TestNestedNullCoercingStringMap(t *testing.T) {
 		},
 		{
 			name:           "string value",
-			obj:            map[string]interface{}{"path": map[string]interface{}{"a": "1", "b": "2"}},
+			obj:            map[string]any{"path": map[string]any{"a": "1", "b": "2"}},
 			path:           []string{"path"},
 			wantObj:        map[string]string{"a": "1", "b": "2"},
 			wantFound:      true,
@@ -351,7 +351,7 @@ func TestNestedNullCoercingStringMap(t *testing.T) {
 		},
 		{
 			name:           "null value",
-			obj:            map[string]interface{}{"path": map[string]interface{}{"a": "1", "b": nil}},
+			obj:            map[string]any{"path": map[string]any{"a": "1", "b": nil}},
 			path:           []string{"path"},
 			wantObj:        map[string]string{"a": "1", "b": ""},
 			wantFound:      true,
@@ -359,7 +359,7 @@ func TestNestedNullCoercingStringMap(t *testing.T) {
 		},
 		{
 			name:           "invalid value",
-			obj:            map[string]interface{}{"path": map[string]interface{}{"a": "1", "b": nil, "c": 0}},
+			obj:            map[string]any{"path": map[string]any{"a": "1", "b": nil, "c": 0}},
 			path:           []string{"path"},
 			wantObj:        nil,
 			wantFound:      false,

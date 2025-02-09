@@ -35,7 +35,7 @@ func (ServiceGeneratorV1) ParamNames() []generate.GeneratorParam {
 	return paramNames()
 }
 
-func (ServiceGeneratorV1) Generate(params map[string]interface{}) (runtime.Object, error) {
+func (ServiceGeneratorV1) Generate(params map[string]any) (runtime.Object, error) {
 	params["port-name"] = "default"
 	return generateService(params)
 }
@@ -46,7 +46,7 @@ func (ServiceGeneratorV2) ParamNames() []generate.GeneratorParam {
 	return paramNames()
 }
 
-func (ServiceGeneratorV2) Generate(params map[string]interface{}) (runtime.Object, error) {
+func (ServiceGeneratorV2) Generate(params map[string]any) (runtime.Object, error) {
 	return generateService(params)
 }
 
@@ -77,7 +77,7 @@ func paramNames() []generate.GeneratorParam {
 	}
 }
 
-func generateService(genericParams map[string]interface{}) (runtime.Object, error) {
+func generateService(genericParams map[string]any) (runtime.Object, error) {
 	params := map[string]string{}
 	for key, value := range genericParams {
 		strVal, isString := value.(string)

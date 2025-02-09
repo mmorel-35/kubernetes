@@ -41,7 +41,7 @@ import (
 // checked. It is usually less important for the CI and more relevant when
 // using test suite interactively. To see what that Ginkgo output looks like,
 // run tests with "go test -v".
-func TestGinkgoOutput(t *testing.T, expected TestResult, runSpecsArgs ...interface{}) {
+func TestGinkgoOutput(t *testing.T, expected TestResult, runSpecsArgs ...any) {
 	tmpdir := t.TempDir()
 	junitFile := path.Join(tmpdir, "junit.xml")
 	gomega.RegisterFailHandler(framework.Fail)

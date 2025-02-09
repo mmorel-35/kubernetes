@@ -147,7 +147,7 @@ func (s *serializer) EncodeNondeterministic(obj runtime.Object, w io.Writer) err
 }
 
 func (s *serializer) encode(mode modes.EncMode, obj runtime.Object, w io.Writer) error {
-	var v interface{} = obj
+	var v any = obj
 	if u, ok := obj.(runtime.Unstructured); ok {
 		v = u.UnstructuredContent()
 	}
@@ -195,9 +195,9 @@ func diagnose(data []byte) string {
 // configured to report strict errors, the first error return value may be a non-nil strict decoding
 // error. If the last error return value is non-nil, then the unmarshal failed entirely and the
 // state of the destination object should not be relied on.
-func (s *serializer) unmarshal(data []byte, into interface{}) (strict, lax error) {
+func (s *serializer) unmarshal(data []byte, into any) (strict, lax error) {
 	if u, ok := into.(runtime.Unstructured); ok {
-		var content map[string]interface{}
+		var content map[string]any
 		defer func() {
 			switch u := u.(type) {
 			case *unstructured.UnstructuredList:
@@ -218,10 +218,10 @@ func (s *serializer) unmarshal(data []byte, into interface{}) (strict, lax error
 				//      case.
 				//
 				// UnstructuredJSONScheme's behavior is replicated here.
-				var items []interface{}
+				var items []any
 				if uncast, present := content["items"]; present {
 					var cast bool
-					items, cast = uncast.([]interface{})
+					items, cast = uncast.([]any)
 					if !cast {
 						strict, lax = nil, fmt.Errorf("items field of UnstructuredList must be encoded as an array or null if present")
 						return
@@ -235,7 +235,7 @@ func (s *serializer) unmarshal(data []byte, into interface{}) (strict, lax error
 					unstructureds = make([]unstructured.Unstructured, len(items))
 				}
 				for i := range items {
-					object, cast := items[i].(map[string]interface{})
+					object, cast := items[i].(map[string]any)
 					if !cast {
 						strict, lax = nil, fmt.Errorf("elements of the items field of UnstructuredList must be encoded as a map")
 						return

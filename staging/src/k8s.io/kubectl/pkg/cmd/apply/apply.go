@@ -774,7 +774,7 @@ See https://kubernetes.io/docs/reference/using-api/server-side-apply/#conflicts`
 	return nil
 }
 
-func pruneNullsFromMap(data map[string]interface{}) {
+func pruneNullsFromMap(data map[string]any) {
 	for k, v := range data {
 		if v == nil {
 			delete(data, k)
@@ -783,16 +783,16 @@ func pruneNullsFromMap(data map[string]interface{}) {
 		}
 	}
 }
-func pruneNullsFromSlice(data []interface{}) {
+func pruneNullsFromSlice(data []any) {
 	for _, v := range data {
 		pruneNulls(v)
 	}
 }
-func pruneNulls(v interface{}) {
+func pruneNulls(v any) {
 	switch v := v.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		pruneNullsFromMap(v)
-	case []interface{}:
+	case []any:
 		pruneNullsFromSlice(v)
 	}
 }

@@ -35,7 +35,7 @@ import (
 	"k8s.io/client-go/rest/fake"
 )
 
-func objBody(object interface{}) io.ReadCloser {
+func objBody(object any) io.ReadCloser {
 	output, err := json.MarshalIndent(object, "", "")
 	if err != nil {
 		panic(err)

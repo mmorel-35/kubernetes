@@ -32,7 +32,7 @@ import (
 	"k8s.io/utils/ptr"
 )
 
-func jsonPtr(x interface{}) *apiextensions.JSON {
+func jsonPtr(x any) *apiextensions.JSON {
 	ret := apiextensions.JSON(x)
 	return &ret
 }
@@ -93,7 +93,7 @@ func TestDefaultValidationWithCostBudget(t *testing.T) {
 									Rule: "self.field1 < self.field2",
 								},
 							},
-							Default: jsonPtr(map[string]interface{}{"field1": 1, "field2": 2}),
+							Default: jsonPtr(map[string]any{"field1": 1, "field2": 2}),
 						},
 					},
 				},

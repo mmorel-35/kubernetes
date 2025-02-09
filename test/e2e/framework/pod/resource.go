@@ -45,14 +45,14 @@ const LabelLogOnPodFailure = "log-on-pod-failure"
 
 // TODO: Move to its own subpkg.
 // expectNoError checks if "err" is set, and if so, fails assertion while logging the error.
-func expectNoError(err error, explain ...interface{}) {
+func expectNoError(err error, explain ...any) {
 	expectNoErrorWithOffset(1, err, explain...)
 }
 
 // TODO: Move to its own subpkg.
 // expectNoErrorWithOffset checks if "err" is set, and if so, fails assertion while logging the error at "offset" levels above its caller
 // (for example, for call chain f -> g -> expectNoErrorWithOffset(1, ...) error would be logged for "f").
-func expectNoErrorWithOffset(offset int, err error, explain ...interface{}) {
+func expectNoErrorWithOffset(offset int, err error, explain ...any) {
 	if err != nil {
 		framework.Logf("Unexpected error occurred: %v", err)
 	}

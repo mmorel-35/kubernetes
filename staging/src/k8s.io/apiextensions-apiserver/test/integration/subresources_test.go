@@ -94,18 +94,18 @@ func NewNoxuSubresourcesCRDs(scope apiextensionsv1.ResourceScope) []*apiextensio
 
 func NewNoxuSubresourceInstance(namespace, name, version string) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": fmt.Sprintf("mygroup.example.com/%s", version),
 			"kind":       "WishIHadChosenNoxu",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace": namespace,
 				"name":      name,
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"num":      int64(10),
 				"replicas": int64(3),
 			},
-			"status": map[string]interface{}{
+			"status": map[string]any{
 				"replicas": int64(7),
 			},
 		},
@@ -114,18 +114,18 @@ func NewNoxuSubresourceInstance(namespace, name, version string) *unstructured.U
 
 func NewNoxuSubresourceInstanceWithReplicas(namespace, name, version, replicasField string) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": fmt.Sprintf("mygroup.example.com/%s", version),
 			"kind":       "WishIHadChosenNoxu",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace": namespace,
 				"name":      name,
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"num":         int64(10),
 				replicasField: int64(3),
 			},
-			"status": map[string]interface{}{
+			"status": map[string]any{
 				"replicas": int64(7),
 			},
 		},

@@ -38,7 +38,7 @@ type Quantity struct {
 	*resource.Quantity
 }
 
-func (d Quantity) ConvertToNative(typeDesc reflect.Type) (interface{}, error) {
+func (d Quantity) ConvertToNative(typeDesc reflect.Type) (any, error) {
 	if reflect.TypeOf(d.Quantity).AssignableTo(typeDesc) {
 		return d.Quantity, nil
 	}
@@ -71,6 +71,6 @@ func (d Quantity) Type() ref.Type {
 	return quantityTypeValue
 }
 
-func (d Quantity) Value() interface{} {
+func (d Quantity) Value() any {
 	return d.Quantity
 }

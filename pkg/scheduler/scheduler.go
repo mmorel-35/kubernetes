@@ -387,7 +387,7 @@ func New(ctx context.Context,
 
 // defaultQueueingHintFn is the default queueing hint function.
 // It always returns Queue as the queueing hint.
-var defaultQueueingHintFn = func(_ klog.Logger, _ *v1.Pod, _, _ interface{}) (framework.QueueingHint, error) {
+var defaultQueueingHintFn = func(_ klog.Logger, _ *v1.Pod, _, _ any) (framework.QueueingHint, error) {
 	return framework.Queue, nil
 }
 
@@ -576,7 +576,7 @@ func newPodInformer(cs clientset.Interface, resyncPeriod time.Duration) cache.Sh
 
 	// Dropping `.metadata.managedFields` to improve memory usage.
 	// The Extract workflow (i.e. `ExtractPod`) should be unused.
-	trim := func(obj interface{}) (interface{}, error) {
+	trim := func(obj any) (any, error) {
 		if accessor, err := meta.Accessor(obj); err == nil {
 			if accessor.GetManagedFields() != nil {
 				accessor.SetManagedFields(nil)

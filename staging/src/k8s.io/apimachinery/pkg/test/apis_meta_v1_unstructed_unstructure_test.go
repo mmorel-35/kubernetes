@@ -50,7 +50,7 @@ func TestDecodeUnstructured(t *testing.T) {
 				ContentType: runtime.ContentTypeJSON,
 			},
 			&unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind":       "Foo",
 					"apiVersion": "Bar",
 					"test":       "value",
@@ -61,10 +61,10 @@ func TestDecodeUnstructured(t *testing.T) {
 	if errs := runtime.DecodeList(pl.Items, unstructured.UnstructuredJSONScheme); len(errs) == 1 {
 		t.Fatalf("unexpected error %v", errs)
 	}
-	if pod, ok := pl.Items[1].(*unstructured.Unstructured); !ok || pod.Object["kind"] != "Pod" || pod.Object["metadata"].(map[string]interface{})["name"] != "test" {
+	if pod, ok := pl.Items[1].(*unstructured.Unstructured); !ok || pod.Object["kind"] != "Pod" || pod.Object["metadata"].(map[string]any)["name"] != "test" {
 		t.Errorf("object not converted: %#v", pl.Items[1])
 	}
-	if pod, ok := pl.Items[2].(*unstructured.Unstructured); !ok || pod.Object["kind"] != "Pod" || pod.Object["metadata"].(map[string]interface{})["name"] != "test" {
+	if pod, ok := pl.Items[2].(*unstructured.Unstructured); !ok || pod.Object["kind"] != "Pod" || pod.Object["metadata"].(map[string]any)["name"] != "test" {
 		t.Errorf("object not converted: %#v", pl.Items[2])
 	}
 }
@@ -77,31 +77,31 @@ func TestDecode(t *testing.T) {
 		{
 			json: []byte(`{"apiVersion": "test", "kind": "test_kind"}`),
 			want: &unstructured.Unstructured{
-				Object: map[string]interface{}{"apiVersion": "test", "kind": "test_kind"},
+				Object: map[string]any{"apiVersion": "test", "kind": "test_kind"},
 			},
 		},
 		{
 			json: []byte(`{"apiVersion": "test", "kind": "test_list", "items": []}`),
 			want: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{"apiVersion": "test", "kind": "test_list"},
+				Object: map[string]any{"apiVersion": "test", "kind": "test_list"},
 				Items:  []unstructured.Unstructured{},
 			},
 		},
 		{
 			json: []byte(`{"items": [{"metadata": {"name": "object1", "deletionGracePeriodSeconds": 10}, "apiVersion": "test", "kind": "test_kind"}, {"metadata": {"name": "object2"}, "apiVersion": "test", "kind": "test_kind"}], "apiVersion": "test", "kind": "test_list"}`),
 			want: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{"apiVersion": "test", "kind": "test_list"},
+				Object: map[string]any{"apiVersion": "test", "kind": "test_list"},
 				Items: []unstructured.Unstructured{
 					{
-						Object: map[string]interface{}{
-							"metadata":   map[string]interface{}{"name": "object1", "deletionGracePeriodSeconds": int64(10)},
+						Object: map[string]any{
+							"metadata":   map[string]any{"name": "object1", "deletionGracePeriodSeconds": int64(10)},
 							"apiVersion": "test",
 							"kind":       "test_kind",
 						},
 					},
 					{
-						Object: map[string]interface{}{
-							"metadata":   map[string]interface{}{"name": "object2"},
+						Object: map[string]any{
+							"metadata":   map[string]any{"name": "object2"},
 							"apiVersion": "test",
 							"kind":       "test_kind",
 						},
@@ -128,10 +128,10 @@ func TestUnstructuredGetters(t *testing.T) {
 	trueVar := true
 	ten := int64(10)
 	unstruct := unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "test_kind",
 			"apiVersion": "test_version",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":                       "test_name",
 				"namespace":                  "test_namespace",
 				"generateName":               "test_generateName",
@@ -142,20 +142,20 @@ func TestUnstructuredGetters(t *testing.T) {
 				"selfLink":                   "test_selfLink",
 				"creationTimestamp":          "2009-11-10T23:00:00Z",
 				"deletionTimestamp":          "2010-11-10T23:00:00Z",
-				"labels": map[string]interface{}{
+				"labels": map[string]any{
 					"test_label": "test_value",
 				},
-				"annotations": map[string]interface{}{
+				"annotations": map[string]any{
 					"test_annotation": "test_value",
 				},
-				"ownerReferences": []interface{}{
-					map[string]interface{}{
+				"ownerReferences": []any{
+					map[string]any{
 						"kind":       "Pod",
 						"name":       "poda",
 						"apiVersion": "v1",
 						"uid":        "1",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"kind":       "Pod",
 						"name":       "podb",
 						"apiVersion": "v1",
@@ -166,7 +166,7 @@ func TestUnstructuredGetters(t *testing.T) {
 						"blockOwnerDeletion": true,
 					},
 				},
-				"finalizers": []interface{}{
+				"finalizers": []any{
 					"finalizer.1",
 					"finalizer.2",
 				},
@@ -258,10 +258,10 @@ func TestUnstructuredSetters(t *testing.T) {
 	ten := int64(10)
 
 	want := unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "test_kind",
 			"apiVersion": "test_version",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":                       "test_name",
 				"namespace":                  "test_namespace",
 				"generateName":               "test_generateName",
@@ -272,20 +272,20 @@ func TestUnstructuredSetters(t *testing.T) {
 				"deletionTimestamp":          "2010-11-10T23:00:00Z",
 				"deletionGracePeriodSeconds": ten,
 				"generation":                 ten,
-				"labels": map[string]interface{}{
+				"labels": map[string]any{
 					"test_label": "test_value",
 				},
-				"annotations": map[string]interface{}{
+				"annotations": map[string]any{
 					"test_annotation": "test_value",
 				},
-				"ownerReferences": []interface{}{
-					map[string]interface{}{
+				"ownerReferences": []any{
+					map[string]any{
 						"kind":       "Pod",
 						"name":       "poda",
 						"apiVersion": "v1",
 						"uid":        "1",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"kind":               "Pod",
 						"name":               "podb",
 						"apiVersion":         "v1",
@@ -294,7 +294,7 @@ func TestUnstructuredSetters(t *testing.T) {
 						"blockOwnerDeletion": true,
 					},
 				},
-				"finalizers": []interface{}{
+				"finalizers": []any{
 					"finalizer.1",
 					"finalizer.2",
 				},
@@ -374,7 +374,7 @@ func TestOwnerReferences(t *testing.T) {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			t.Parallel()
 			u1 := unstructured.Unstructured{
-				Object: make(map[string]interface{}),
+				Object: make(map[string]any),
 			}
 			refsX := []metav1.OwnerReference{ref}
 			u1.SetOwnerReferences(refsX)
@@ -389,10 +389,10 @@ func TestOwnerReferences(t *testing.T) {
 
 func TestUnstructuredListGetters(t *testing.T) {
 	unstruct := unstructured.UnstructuredList{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "test_kind",
 			"apiVersion": "test_version",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"resourceVersion": "test_resourceVersion",
 				"selfLink":        "test_selfLink",
 			},
@@ -420,10 +420,10 @@ func TestUnstructuredListSetters(t *testing.T) {
 	unstruct := unstructured.UnstructuredList{}
 
 	want := unstructured.UnstructuredList{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "test_kind",
 			"apiVersion": "test_version",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"resourceVersion": "test_resourceVersion",
 				"selfLink":        "test_selfLink",
 			},
@@ -505,7 +505,7 @@ func TestAccessorMethods(t *testing.T) {
 	}
 	tests := []struct {
 		accessor string
-		val      interface{}
+		val      any
 		nilVal   reflect.Value
 	}{
 		{accessor: "Namespace", val: "foo"},
@@ -547,7 +547,7 @@ func TestAccessorMethods(t *testing.T) {
 		ret := getter.Call([]reflect.Value{})
 		actual := ret[0].Interface()
 
-		var expected interface{}
+		var expected any
 		if test.val != nil {
 			expected = test.val
 		} else {

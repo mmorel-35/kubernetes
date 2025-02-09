@@ -102,7 +102,7 @@ func TestCmdVersionOutputJsonOrYaml(t *testing.T) {
 			}
 
 			if rt.expected {
-				var obj interface{}
+				var obj any
 				switch rt.format {
 				case "json":
 					err := json.Unmarshal([]byte(stdout), &obj)
@@ -116,11 +116,11 @@ func TestCmdVersionOutputJsonOrYaml(t *testing.T) {
 					}
 				}
 
-				m := obj.(map[string]interface{})
+				m := obj.(map[string]any)
 				if m["clientVersion"] == nil {
 					t.Errorf("failed to get the information of clientVersion from 'kubeadm version %s'", rt.args)
 				}
-				info := m["clientVersion"].(map[string]interface{})
+				info := m["clientVersion"].(map[string]any)
 				for _, key := range VersionInfo {
 					if len(info[key].(string)) == 0 {
 						t.Errorf("failed to get the information of %s from 'kubeadm version %s'", key, rt.args)

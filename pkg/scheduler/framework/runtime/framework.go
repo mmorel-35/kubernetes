@@ -97,7 +97,7 @@ type extensionPoint struct {
 	plugins *config.PluginSet
 	// a pointer to the slice storing plugins implementations that will run at this
 	// extension point.
-	slicePtr interface{}
+	slicePtr any
 }
 
 func (f *frameworkImpl) getExtensionPoints(plugins *config.Plugins) []extensionPoint {
@@ -648,7 +648,7 @@ func (p *defaultEnqueueExtension) EventsToRegister(_ context.Context) ([]framewo
 	return framework.UnrollWildCardResource(), nil
 }
 
-func updatePluginList(pluginList interface{}, pluginSet config.PluginSet, pluginsMap map[string]framework.Plugin) error {
+func updatePluginList(pluginList any, pluginSet config.PluginSet, pluginsMap map[string]framework.Plugin) error {
 	plugins := reflect.ValueOf(pluginList).Elem()
 	pluginType := plugins.Type().Elem()
 	set := sets.New[string]()

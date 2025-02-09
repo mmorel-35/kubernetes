@@ -29,7 +29,7 @@ import (
 
 // ForKind returns an apply configuration type for the given GroupVersionKind, or nil if no
 // apply configuration type exists for the given GroupVersionKind.
-func ForKind(kind schema.GroupVersionKind) interface{} {
+func ForKind(kind schema.GroupVersionKind) any {
 	switch kind {
 	// Group=example-group.hyphens.code-generator.k8s.io, Version=v1
 	case v1.SchemeGroupVersion.WithKind("ClusterTestType"):

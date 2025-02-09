@@ -226,72 +226,72 @@ func convertExternalTestType2ToTestType2(in *ExternalTestType2, out *TestType2, 
 }
 
 func RegisterConversions(s *runtime.Scheme) error {
-	if err := s.AddConversionFunc((*EmbeddedTest)(nil), (*EmbeddedTestExternal)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*EmbeddedTest)(nil), (*EmbeddedTestExternal)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertEmbeddedTestToEmbeddedTestExternal(a.(*EmbeddedTest), b.(*EmbeddedTestExternal), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*EmbeddedTestExternal)(nil), (*EmbeddedTest)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*EmbeddedTestExternal)(nil), (*EmbeddedTest)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertEmbeddedTestExternalToEmbeddedTest(a.(*EmbeddedTestExternal), b.(*EmbeddedTest), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*ObjectTest)(nil), (*ObjectTestExternal)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*ObjectTest)(nil), (*ObjectTestExternal)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertObjectTestToObjectTestExternal(a.(*ObjectTest), b.(*ObjectTestExternal), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*ObjectTestExternal)(nil), (*ObjectTest)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*ObjectTestExternal)(nil), (*ObjectTest)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertObjectTestExternalToObjectTest(a.(*ObjectTestExternal), b.(*ObjectTest), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*InternalSimple)(nil), (*ExternalSimple)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*InternalSimple)(nil), (*ExternalSimple)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertInternalSimpleToExternalSimple(a.(*InternalSimple), b.(*ExternalSimple), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*ExternalSimple)(nil), (*InternalSimple)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*ExternalSimple)(nil), (*InternalSimple)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertExternalSimpleToInternalSimple(a.(*ExternalSimple), b.(*InternalSimple), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*InternalExtensionType)(nil), (*ExternalExtensionType)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*InternalExtensionType)(nil), (*ExternalExtensionType)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertInternalExtensionTypeToExternalExtensionType(a.(*InternalExtensionType), b.(*ExternalExtensionType), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*ExternalExtensionType)(nil), (*InternalExtensionType)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*ExternalExtensionType)(nil), (*InternalExtensionType)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertExternalExtensionTypeToInternalExtensionType(a.(*ExternalExtensionType), b.(*InternalExtensionType), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*InternalOptionalExtensionType)(nil), (*ExternalOptionalExtensionType)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*InternalOptionalExtensionType)(nil), (*ExternalOptionalExtensionType)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertInternalOptionalExtensionTypeToExternalOptionalExtensionType(a.(*InternalOptionalExtensionType), b.(*ExternalOptionalExtensionType), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*ExternalOptionalExtensionType)(nil), (*InternalOptionalExtensionType)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*ExternalOptionalExtensionType)(nil), (*InternalOptionalExtensionType)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertExternalOptionalExtensionTypeToInternalOptionalExtensionType(a.(*ExternalOptionalExtensionType), b.(*InternalOptionalExtensionType), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*TestType1)(nil), (*ExternalTestType1)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*TestType1)(nil), (*ExternalTestType1)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertTestType1ToExternalTestType1(a.(*TestType1), b.(*ExternalTestType1), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*ExternalTestType1)(nil), (*TestType1)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*ExternalTestType1)(nil), (*TestType1)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertExternalTestType1ToTestType1(a.(*ExternalTestType1), b.(*TestType1), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*TestType2)(nil), (*ExternalTestType2)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*TestType2)(nil), (*ExternalTestType2)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertTestType2ToExternalTestType2(a.(*TestType2), b.(*ExternalTestType2), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*ExternalTestType2)(nil), (*TestType2)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*ExternalTestType2)(nil), (*TestType2)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertExternalTestType2ToTestType2(a.(*ExternalTestType2), b.(*TestType2), scope)
 	}); err != nil {
 		return err

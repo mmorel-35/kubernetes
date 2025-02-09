@@ -20,8 +20,8 @@ package v1
 
 // ExampleListerExpansion allows custom methods to be added to
 // ExampleLister.
-type ExampleListerExpansion interface{}
+type ExampleListerExpansion any
 
 // ExampleNamespaceListerExpansion allows custom methods to be added to
 // ExampleNamespaceLister.
-type ExampleNamespaceListerExpansion interface{}
+type ExampleNamespaceListerExpansion any

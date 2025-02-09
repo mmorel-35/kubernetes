@@ -121,13 +121,13 @@ func NewController(leaseInformer coordinationv1informers.LeaseInformer, leaseCan
 		clock: clock.RealClock{},
 	}
 	leaseSynced, err := leaseInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			c.enqueueLease(obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			c.enqueueLease(newObj)
 		},
-		DeleteFunc: func(oldObj interface{}) {
+		DeleteFunc: func(oldObj any) {
 			c.enqueueLease(oldObj)
 		},
 	})
@@ -135,13 +135,13 @@ func NewController(leaseInformer coordinationv1informers.LeaseInformer, leaseCan
 		return nil, err
 	}
 	leaseCandidateSynced, err := leaseCandidateInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			c.enqueueCandidate(obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			c.enqueueCandidate(newObj)
 		},
-		DeleteFunc: func(oldObj interface{}) {
+		DeleteFunc: func(oldObj any) {
 			c.enqueueCandidate(oldObj)
 		},
 	})

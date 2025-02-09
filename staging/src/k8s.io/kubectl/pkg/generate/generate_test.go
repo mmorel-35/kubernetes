@@ -32,7 +32,7 @@ type TestStruct struct {
 func TestIsZero(t *testing.T) {
 	tests := []struct {
 		name       string
-		val        interface{}
+		val        any
 		expectZero bool
 	}{
 		{
@@ -86,13 +86,13 @@ func TestValidateParams(t *testing.T) {
 	tests := []struct {
 		name      string
 		paramSpec []GeneratorParam
-		params    map[string]interface{}
+		params    map[string]any
 		valid     bool
 	}{
 		{
 			name:      "test1",
 			paramSpec: []GeneratorParam{},
-			params:    map[string]interface{}{},
+			params:    map[string]any{},
 			valid:     true,
 		},
 		{
@@ -100,7 +100,7 @@ func TestValidateParams(t *testing.T) {
 			paramSpec: []GeneratorParam{
 				{Name: "foo"},
 			},
-			params: map[string]interface{}{},
+			params: map[string]any{},
 			valid:  true,
 		},
 		{
@@ -108,7 +108,7 @@ func TestValidateParams(t *testing.T) {
 			paramSpec: []GeneratorParam{
 				{Name: "foo", Required: true},
 			},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"foo": "bar",
 			},
 			valid: true,
@@ -118,7 +118,7 @@ func TestValidateParams(t *testing.T) {
 			paramSpec: []GeneratorParam{
 				{Name: "foo", Required: true},
 			},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"baz": "blah",
 				"foo": "bar",
 			},
@@ -130,7 +130,7 @@ func TestValidateParams(t *testing.T) {
 				{Name: "foo", Required: true},
 				{Name: "baz", Required: true},
 			},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"baz": "blah",
 				"foo": "bar",
 			},
@@ -142,7 +142,7 @@ func TestValidateParams(t *testing.T) {
 				{Name: "foo", Required: true},
 				{Name: "baz", Required: true},
 			},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"foo": "bar",
 			},
 			valid: false,
@@ -171,7 +171,7 @@ func TestMakeParams(t *testing.T) {
 		{Name: "foo", Required: true},
 		{Name: "baz", Required: true},
 	}
-	expected := map[string]interface{}{
+	expected := map[string]any{
 		"foo": "bar",
 		"baz": "blah",
 	}
@@ -317,7 +317,7 @@ func TestMakeParseLabels(t *testing.T) {
 
 	errorCases := []struct {
 		name   string
-		labels interface{}
+		labels any
 	}{
 		{
 			name:   "non-string",
@@ -400,7 +400,7 @@ func TestMakeParseProtocols(t *testing.T) {
 
 	errorCases := []struct {
 		name      string
-		protocols interface{}
+		protocols any
 	}{
 		{
 			name:      "non-string",

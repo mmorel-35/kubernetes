@@ -590,7 +590,7 @@ func (m *MetadataRESTStorage) ProducesMIMETypes(method string) []string {
 	return m.types
 }
 
-func (m *MetadataRESTStorage) ProducesObject(verb string) interface{} {
+func (m *MetadataRESTStorage) ProducesObject(verb string) any {
 	return nil
 }
 
@@ -1712,7 +1712,7 @@ func TestGetTable(t *testing.T) {
 					{Name: "Created At", Type: "date", Description: metaDoc["creationTimestamp"]},
 				},
 				Rows: []metav1.TableRow{
-					{Cells: []interface{}{"foo1", now.Time.UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedV1Body}},
+					{Cells: []any{"foo1", now.Time.UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedV1Body}},
 				},
 			},
 		},
@@ -1727,7 +1727,7 @@ func TestGetTable(t *testing.T) {
 					{Name: "Created At", Type: "date", Description: metaDoc["creationTimestamp"]},
 				},
 				Rows: []metav1.TableRow{
-					{Cells: []interface{}{"foo1", now.Time.UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedV1Beta1Body}},
+					{Cells: []any{"foo1", now.Time.UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedV1Beta1Body}},
 				},
 			},
 		},
@@ -1745,7 +1745,7 @@ func TestGetTable(t *testing.T) {
 					{Name: "Created At", Type: "date", Description: metaDoc["creationTimestamp"]},
 				},
 				Rows: []metav1.TableRow{
-					{Cells: []interface{}{"foo1", now.Time.UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedV1Beta1Body}},
+					{Cells: []any{"foo1", now.Time.UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedV1Beta1Body}},
 				},
 			},
 		},
@@ -1761,7 +1761,7 @@ func TestGetTable(t *testing.T) {
 					{Name: "Created At", Type: "date", Description: metaDoc["creationTimestamp"]},
 				},
 				Rows: []metav1.TableRow{
-					{Cells: []interface{}{"foo1", now.Time.UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedV1Beta1Body}},
+					{Cells: []any{"foo1", now.Time.UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedV1Beta1Body}},
 				},
 			},
 		},
@@ -1776,7 +1776,7 @@ func TestGetTable(t *testing.T) {
 					{Name: "Created At", Type: "date", Description: metaDoc["creationTimestamp"]},
 				},
 				Rows: []metav1.TableRow{
-					{Cells: []interface{}{"foo1", now.Time.UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedV1Beta1Body}},
+					{Cells: []any{"foo1", now.Time.UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedV1Beta1Body}},
 				},
 			},
 		},
@@ -1900,7 +1900,7 @@ func TestWatchTable(t *testing.T) {
 								{Name: "Created At", Type: "date", Description: metaDoc["creationTimestamp"]},
 							},
 							Rows: []metav1.TableRow{
-								{Cells: []interface{}{"foo1", time.Unix(1, 0).UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedBody}},
+								{Cells: []any{"foo1", time.Unix(1, 0).UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedBody}},
 							},
 						}))),
 					},
@@ -1925,7 +1925,7 @@ func TestWatchTable(t *testing.T) {
 								{Name: "Created At", Type: "date", Description: metaDoc["creationTimestamp"]},
 							},
 							Rows: []metav1.TableRow{
-								{Cells: []interface{}{"foo1", time.Unix(1, 0).UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedBody}},
+								{Cells: []any{"foo1", time.Unix(1, 0).UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedBody}},
 							},
 						}))),
 					},
@@ -1937,7 +1937,7 @@ func TestWatchTable(t *testing.T) {
 							TypeMeta: metav1.TypeMeta{Kind: "Table", APIVersion: "meta.k8s.io/v1beta1"},
 							ListMeta: metav1.ListMeta{ResourceVersion: "10"},
 							Rows: []metav1.TableRow{
-								{Cells: []interface{}{"foo1", time.Unix(1, 0).UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedBody}},
+								{Cells: []any{"foo1", time.Unix(1, 0).UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedBody}},
 							},
 						}))),
 					},
@@ -1962,7 +1962,7 @@ func TestWatchTable(t *testing.T) {
 								{Name: "Created At", Type: "date", Description: metaDoc["creationTimestamp"]},
 							},
 							Rows: []metav1.TableRow{
-								{Cells: []interface{}{"foo1", time.Unix(1, 0).UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedBodyV1}},
+								{Cells: []any{"foo1", time.Unix(1, 0).UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedBodyV1}},
 							},
 						}))),
 					},
@@ -1974,7 +1974,7 @@ func TestWatchTable(t *testing.T) {
 							TypeMeta: metav1.TypeMeta{Kind: "Table", APIVersion: "meta.k8s.io/v1"},
 							ListMeta: metav1.ListMeta{ResourceVersion: "10"},
 							Rows: []metav1.TableRow{
-								{Cells: []interface{}{"foo1", time.Unix(1, 0).UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedBodyV1}},
+								{Cells: []any{"foo1", time.Unix(1, 0).UTC().Format(time.RFC3339)}, Object: runtime.RawExtension{Raw: encodedBodyV1}},
 							},
 						}))),
 					},
@@ -3952,7 +3952,7 @@ func TestCreateDefaultsAPIVersion(t *testing.T) {
 		t.Errorf("unexpected error: %v", err)
 	}
 
-	m := make(map[string]interface{})
+	m := make(map[string]any)
 	if err := json.Unmarshal(data, &m); err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}

@@ -360,8 +360,8 @@ func TestIsSchedulableAfterNodeChange(t *testing.T) {
 	tests := []struct {
 		name         string
 		pod          *v1.Pod
-		oldObj       interface{}
-		newObj       interface{}
+		oldObj       any
+		newObj       any
 		expectedHint framework.QueueingHint
 		wantErr      bool
 	}{
@@ -424,7 +424,7 @@ func TestIsSchedulableAfterNodeChange(t *testing.T) {
 func Test_isSchedulableAfterPodTolerationChange(t *testing.T) {
 	testcases := map[string]struct {
 		pod            *v1.Pod
-		oldObj, newObj interface{}
+		oldObj, newObj any
 		expectedHint   framework.QueueingHint
 		expectedErr    bool
 	}{

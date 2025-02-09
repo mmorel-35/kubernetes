@@ -136,7 +136,7 @@ func NewExpandController(
 
 	pvcInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: expc.enqueuePVC,
-		UpdateFunc: func(old, new interface{}) {
+		UpdateFunc: func(old, new any) {
 			oldPVC, ok := old.(*v1.PersistentVolumeClaim)
 			if !ok {
 				return
@@ -163,7 +163,7 @@ func NewExpandController(
 	return expc, nil
 }
 
-func (expc *expandController) enqueuePVC(obj interface{}) {
+func (expc *expandController) enqueuePVC(obj any) {
 	pvc, ok := obj.(*v1.PersistentVolumeClaim)
 	if !ok {
 		return

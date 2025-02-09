@@ -82,11 +82,11 @@ func AddGraphEventHandlers(
 	go cache.WaitForNamedCacheSync("node_authorizer", wait.NeverStop, synced...)
 }
 
-func (g *graphPopulator) addPod(obj interface{}) {
+func (g *graphPopulator) addPod(obj any) {
 	g.updatePod(nil, obj)
 }
 
-func (g *graphPopulator) updatePod(oldObj, obj interface{}) {
+func (g *graphPopulator) updatePod(oldObj, obj any) {
 	pod := obj.(*corev1.Pod)
 	if len(pod.Spec.NodeName) == 0 {
 		// No node assigned
@@ -111,7 +111,7 @@ func (g *graphPopulator) updatePod(oldObj, obj interface{}) {
 	klog.V(5).Infof("updatePod %s/%s for node %s completed in %v", pod.Namespace, pod.Name, pod.Spec.NodeName, time.Since(startTime))
 }
 
-func (g *graphPopulator) deletePod(obj interface{}) {
+func (g *graphPopulator) deletePod(obj any) {
 	if tombstone, ok := obj.(cache.DeletedFinalStateUnknown); ok {
 		obj = tombstone.Obj
 	}
@@ -131,17 +131,17 @@ func (g *graphPopulator) deletePod(obj interface{}) {
 	klog.V(5).Infof("deletePod %s/%s for node %s completed in %v", pod.Namespace, pod.Name, pod.Spec.NodeName, time.Since(startTime))
 }
 
-func (g *graphPopulator) addPV(obj interface{}) {
+func (g *graphPopulator) addPV(obj any) {
 	g.updatePV(nil, obj)
 }
 
-func (g *graphPopulator) updatePV(oldObj, obj interface{}) {
+func (g *graphPopulator) updatePV(oldObj, obj any) {
 	pv := obj.(*corev1.PersistentVolume)
 	// TODO: skip add if uid, pvc, and secrets are all identical between old and new
 	g.graph.AddPV(pv)
 }
 
-func (g *graphPopulator) deletePV(obj interface{}) {
+func (g *graphPopulator) deletePV(obj any) {
 	if tombstone, ok := obj.(cache.DeletedFinalStateUnknown); ok {
 		obj = tombstone.Obj
 	}
@@ -153,11 +153,11 @@ func (g *graphPopulator) deletePV(obj interface{}) {
 	g.graph.DeletePV(pv.Name)
 }
 
-func (g *graphPopulator) addVolumeAttachment(obj interface{}) {
+func (g *graphPopulator) addVolumeAttachment(obj any) {
 	g.updateVolumeAttachment(nil, obj)
 }
 
-func (g *graphPopulator) updateVolumeAttachment(oldObj, obj interface{}) {
+func (g *graphPopulator) updateVolumeAttachment(oldObj, obj any) {
 	attachment := obj.(*storagev1.VolumeAttachment)
 	if oldObj != nil {
 		// skip add if node name is identical
@@ -169,7 +169,7 @@ func (g *graphPopulator) updateVolumeAttachment(oldObj, obj interface{}) {
 	g.graph.AddVolumeAttachment(attachment.Name, attachment.Spec.NodeName)
 }
 
-func (g *graphPopulator) deleteVolumeAttachment(obj interface{}) {
+func (g *graphPopulator) deleteVolumeAttachment(obj any) {
 	if tombstone, ok := obj.(cache.DeletedFinalStateUnknown); ok {
 		obj = tombstone.Obj
 	}
@@ -181,7 +181,7 @@ func (g *graphPopulator) deleteVolumeAttachment(obj interface{}) {
 	g.graph.DeleteVolumeAttachment(attachment.Name)
 }
 
-func (g *graphPopulator) addResourceSlice(obj interface{}) {
+func (g *graphPopulator) addResourceSlice(obj any) {
 	slice, ok := obj.(*resourceapi.ResourceSlice)
 	if !ok {
 		klog.Infof("unexpected type %T", obj)
@@ -190,7 +190,7 @@ func (g *graphPopulator) addResourceSlice(obj interface{}) {
 	g.graph.AddResourceSlice(slice.Name, slice.Spec.NodeName)
 }
 
-func (g *graphPopulator) deleteResourceSlice(obj interface{}) {
+func (g *graphPopulator) deleteResourceSlice(obj any) {
 	if tombstone, ok := obj.(cache.DeletedFinalStateUnknown); ok {
 		obj = tombstone.Obj
 	}

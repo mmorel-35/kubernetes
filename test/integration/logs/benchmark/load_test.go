@@ -101,7 +101,7 @@ func TestData(t *testing.T) {
 			messages: []logMessage{
 				{
 					msg: "Pod status update",
-					kvs: []interface{}{"err", errors.New("failed")},
+					kvs: []any{"err", errors.New("failed")},
 				},
 			},
 			printf:     `Pod status update: [err failed]`,
@@ -120,7 +120,7 @@ func TestData(t *testing.T) {
 			messages: []logMessage{
 				{
 					msg: "Example",
-					kvs: []interface{}{
+					kvs: []any{
 						"pod", klog.KRef("system", "kube-scheduler"),
 						"pv", klog.KRef("", "volume"),
 						"someString", "hello world",
@@ -147,7 +147,7 @@ func TestData(t *testing.T) {
 				{
 					msg:       "[RemoteRuntimeService] Version Response",
 					verbosity: 10,
-					kvs: []interface{}{
+					kvs: []any{
 						"apiVersion", versionResponse,
 					},
 				},
@@ -165,7 +165,7 @@ func TestData(t *testing.T) {
 					totalArg: 1,
 					otherArg: 1,
 				},
-				OtherArgs: []interface{}{
+				OtherArgs: []any{
 					versionResponse,
 				},
 			},

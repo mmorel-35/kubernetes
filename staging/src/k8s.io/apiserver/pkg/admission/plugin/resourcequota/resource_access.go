@@ -118,7 +118,7 @@ func (e *quotaAccessor) GetQuotas(namespace string) ([]corev1.ResourceQuota, err
 		if !ok || lruItemObj.(liveLookupEntry).expiry.Before(time.Now()) {
 			// use singleflight.Group to avoid flooding the apiserver with repeated
 			// requests. See #22422 for details.
-			lruItemObj, err, _ = e.group.Do(namespace, func() (interface{}, error) {
+			lruItemObj, err, _ = e.group.Do(namespace, func() (any, error) {
 				liveList, err := e.client.CoreV1().ResourceQuotas(namespace).List(context.TODO(), metav1.ListOptions{})
 				if err != nil {
 					return nil, err

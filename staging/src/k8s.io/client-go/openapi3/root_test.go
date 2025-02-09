@@ -218,7 +218,7 @@ func TestOpenAPIV3Root_GVSpecAsMap(t *testing.T) {
 			require.NoError(t, err)
 			for _, path := range test.expectedPaths {
 				pathsMap := gvSpecAsMap["paths"]
-				if _, found := pathsMap.(map[string]interface{})[path]; !found {
+				if _, found := pathsMap.(map[string]any)[path]; !found {
 					assert.True(t, found, "expected path not found (%s)\n", path)
 				}
 			}

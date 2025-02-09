@@ -205,14 +205,14 @@ func daemons() error {
 
 // printError provides its arguments to print a format string to the console (newline terminated) and returns an
 // error with the same string
-func printError(s string, args ...interface{}) error {
+func printError(s string, args ...any) error {
 	es := fmt.Sprintf(s, args...)
 	fmt.Println(es)
 	return errors.New(es)
 }
 
 // printSuccess provides its arguments to print a format string to the console (newline terminated) and returns nil
-func printSuccess(s string, args ...interface{}) error {
+func printSuccess(s string, args ...any) error {
 	fmt.Println(fmt.Sprintf(s, args...))
 	return nil
 }

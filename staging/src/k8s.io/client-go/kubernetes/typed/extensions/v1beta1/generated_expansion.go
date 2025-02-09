@@ -18,10 +18,10 @@ limitations under the License.
 
 package v1beta1
 
-type DaemonSetExpansion interface{}
+type DaemonSetExpansion any
 
-type IngressExpansion interface{}
+type IngressExpansion any
 
-type NetworkPolicyExpansion interface{}
+type NetworkPolicyExpansion any
 
-type ReplicaSetExpansion interface{}
+type ReplicaSetExpansion any

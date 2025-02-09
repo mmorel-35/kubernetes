@@ -188,7 +188,7 @@ var _ = utils.SIGDescribe("CSI Mock volume snapshot", func() {
 			CSISnapshotterSecretNamespaceAnnotation string = "csi.storage.k8s.io/snapshotter-secret-namespace"
 
 			// anotations holds the annotations object
-			annotations interface{}
+			annotations any
 		)
 
 		tests := []struct {
@@ -271,7 +271,7 @@ var _ = utils.SIGDescribe("CSI Mock volume snapshot", func() {
 				_, snapshot := storageframework.CreateSnapshot(ctx, sDriver, m.config, storageframework.DynamicSnapshotDelete, pvc.Name, pvc.Namespace, f.Timeouts, parameters)
 				framework.ExpectNoError(err, "failed to create snapshot")
 				snapshotcontent := utils.GetSnapshotContentFromSnapshot(ctx, m.config.Framework.DynamicClient, snapshot, f.Timeouts.SnapshotCreate)
-				if annotations, ok = snapshotcontent.Object["metadata"].(map[string]interface{})["annotations"]; !ok {
+				if annotations, ok = snapshotcontent.Object["metadata"].(map[string]any)["annotations"]; !ok {
 					framework.Failf("Unable to get volume snapshot content annotations")
 				}
 
@@ -388,7 +388,7 @@ var _ = utils.SIGDescribe("CSI Mock volume snapshot", func() {
 })
 
 // checkDeleteSnapshotSecrets checks if delete snapshot secrets annotation is applied to the VolumeSnapshotContent.
-func checkDeleteSnapshotSecrets(cs clientset.Interface, annotations interface{}) error {
+func checkDeleteSnapshotSecrets(cs clientset.Interface, annotations any) error {
 	ginkgo.By("checking if delete snapshot secrets annotation is applied to the VolumeSnapshotContent")
 
 	var (
@@ -404,7 +404,7 @@ func checkDeleteSnapshotSecrets(cs clientset.Interface, annotations interface{})
 		CSISnapshotterDeleteSecretNamespaceAnnotation string = "snapshot.storage.kubernetes.io/deletion-secret-namespace"
 	)
 
-	annotationsObj, ok := annotations.(map[string]interface{})
+	annotationsObj, ok := annotations.(map[string]any)
 	if !ok {
 		framework.Failf("failed to get annotations from annotations object")
 	}

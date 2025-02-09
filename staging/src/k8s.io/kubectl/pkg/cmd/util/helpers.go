@@ -56,7 +56,7 @@ const (
 )
 
 type debugError interface {
-	DebugError() (msg string, args []interface{})
+	DebugError() (msg string, args []any)
 }
 
 // AddSourceToErr adds handleResourcePrefix and source string to error message.
@@ -336,7 +336,7 @@ func messageForError(err error) string {
 	return msg
 }
 
-func UsageErrorf(cmd *cobra.Command, format string, args ...interface{}) error {
+func UsageErrorf(cmd *cobra.Command, format string, args ...any) error {
 	msg := fmt.Sprintf(format, args...)
 	return fmt.Errorf("%s\nSee '%s -h' for help and examples", msg, cmd.CommandPath())
 }

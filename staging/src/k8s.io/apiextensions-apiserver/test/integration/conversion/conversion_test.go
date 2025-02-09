@@ -600,7 +600,7 @@ func validateDefaulting(t *testing.T, ctc *conversionTestContext) {
 			client := ctc.versionedClient(ns, createVersion.Name)
 
 			fixture := newConversionMultiVersionFixture(ns, name, createVersion.Name)
-			if err := unstructured.SetNestedField(fixture.Object, map[string]interface{}{}, "defaults"); err != nil {
+			if err := unstructured.SetNestedField(fixture.Object, map[string]any{}, "defaults"); err != nil {
 				t.Fatal(err)
 			}
 			created, err := client.Create(context.TODO(), fixture, metav1.CreateOptions{})
@@ -729,13 +729,13 @@ func expectConversionFailureMessage(id, message string) func(t *testing.T, ctc *
 						o := objv1beta2
 						if subresource == "scale" {
 							o = &unstructured.Unstructured{
-								Object: map[string]interface{}{
+								Object: map[string]any{
 									"apiVersion": "autoscaling/v1",
 									"kind":       "Scale",
-									"metadata": map[string]interface{}{
+									"metadata": map[string]any{
 										"name": obj.GetName(),
 									},
-									"spec": map[string]interface{}{
+									"spec": map[string]any{
 										"replicas": 42,
 									},
 								},
@@ -760,7 +760,7 @@ func expectConversionFailureMessage(id, message string) func(t *testing.T, ctc *
 }
 
 func noopConverter(desiredAPIVersion string, obj runtime.RawExtension) (runtime.RawExtension, error) {
-	u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	u := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := json.Unmarshal(obj.Raw, u); err != nil {
 		return runtime.RawExtension{}, fmt.Errorf("failed to deserialize object: %s with error: %v", string(obj.Raw), err)
 	}
@@ -812,7 +812,7 @@ func failureV1Beta1ResponseConverter(message string) func(review *apiextensionsv
 }
 
 func nontrivialConverter(desiredAPIVersion string, obj runtime.RawExtension) (runtime.RawExtension, error) {
-	u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	u := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := json.Unmarshal(obj.Raw, u); err != nil {
 		return runtime.RawExtension{}, fmt.Errorf("failed to deserialize object: %s with error: %v", string(obj.Raw), err)
 	}
@@ -850,7 +850,7 @@ func metadataMutatingConverter(desiredAPIVersion string, obj runtime.RawExtensio
 		return runtime.RawExtension{}, err
 	}
 
-	u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	u := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := json.Unmarshal(obj.Raw, u); err != nil {
 		return runtime.RawExtension{}, fmt.Errorf("failed to deserialize object: %s with error: %v", string(obj.Raw), err)
 	}
@@ -904,7 +904,7 @@ func metadataMutatingConverter(desiredAPIVersion string, obj runtime.RawExtensio
 }
 
 func uidMutatingConverter(desiredAPIVersion string, obj runtime.RawExtension) (runtime.RawExtension, error) {
-	u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	u := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := json.Unmarshal(obj.Raw, u); err != nil {
 		return runtime.RawExtension{}, fmt.Errorf("failed to deserialize object: %s with error: %v", string(obj.Raw), err)
 	}
@@ -1230,10 +1230,10 @@ var multiVersionFixture = &apiextensionsv1.CustomResourceDefinition{
 
 func newConversionMultiVersionFixture(namespace, name, version string) *unstructured.Unstructured {
 	u := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "stable.example.com/" + version,
 			"kind":       "MultiVersion",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace": namespace,
 				"name":      name,
 			},
@@ -1242,26 +1242,26 @@ func newConversionMultiVersionFixture(namespace, name, version string) *unstruct
 
 	switch version {
 	case "v1alpha1":
-		u.Object["content"] = map[string]interface{}{
+		u.Object["content"] = map[string]any{
 			"key": "value",
 		}
-		u.Object["num"] = map[string]interface{}{
+		u.Object["num"] = map[string]any{
 			"num1": int64(1),
 			"num2": int64(1000000),
 		}
 	case "v1beta1":
-		u.Object["content"] = map[string]interface{}{
+		u.Object["content"] = map[string]any{
 			"key": "value",
 		}
-		u.Object["num"] = map[string]interface{}{
+		u.Object["num"] = map[string]any{
 			"num1": int64(1),
 			"num2": int64(1000000),
 		}
 	case "v1beta2":
-		u.Object["contentv2"] = map[string]interface{}{
+		u.Object["contentv2"] = map[string]any{
 			"key": "value",
 		}
-		u.Object["numv2"] = map[string]interface{}{
+		u.Object["numv2"] = map[string]any{
 			"num1": int64(1),
 			"num2": int64(1000000),
 		}
@@ -1282,14 +1282,14 @@ func verifyMultiVersionObject(t *testing.T, v string, obj *unstructured.Unstruct
 
 	delete(j, "metadata")
 
-	var expected = map[string]map[string]interface{}{
+	var expected = map[string]map[string]any{
 		"v1alpha1": {
 			"apiVersion": "stable.example.com/v1alpha1",
 			"kind":       "MultiVersion",
-			"content": map[string]interface{}{
+			"content": map[string]any{
 				"key": "value",
 			},
-			"num": map[string]interface{}{
+			"num": map[string]any{
 				"num1": int64(1),
 				"num2": int64(1000000),
 			},
@@ -1297,10 +1297,10 @@ func verifyMultiVersionObject(t *testing.T, v string, obj *unstructured.Unstruct
 		"v1beta1": {
 			"apiVersion": "stable.example.com/v1beta1",
 			"kind":       "MultiVersion",
-			"content": map[string]interface{}{
+			"content": map[string]any{
 				"key": "value",
 			},
-			"num": map[string]interface{}{
+			"num": map[string]any{
 				"num1": int64(1),
 				"num2": int64(1000000),
 			},
@@ -1308,10 +1308,10 @@ func verifyMultiVersionObject(t *testing.T, v string, obj *unstructured.Unstruct
 		"v1beta2": {
 			"apiVersion": "stable.example.com/v1beta2",
 			"kind":       "MultiVersion",
-			"contentv2": map[string]interface{}{
+			"contentv2": map[string]any{
 				"key": "value",
 			},
-			"numv2": map[string]interface{}{
+			"numv2": map[string]any{
 				"num1": int64(1),
 				"num2": int64(1000000),
 			},
@@ -1333,7 +1333,7 @@ func closeOnCall(h http.Handler) (chan struct{}, http.Handler) {
 	})
 }
 
-func jsonPtr(x interface{}) *apiextensionsv1.JSON {
+func jsonPtr(x any) *apiextensionsv1.JSON {
 	bs, err := json.Marshal(x)
 	if err != nil {
 		panic(err)

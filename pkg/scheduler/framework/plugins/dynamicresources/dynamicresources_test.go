@@ -932,7 +932,7 @@ type testContext struct {
 	state           *framework.CycleState
 }
 
-func (tc *testContext) verify(t *testing.T, expected result, initialObjects []metav1.Object, result interface{}, status *framework.Status) {
+func (tc *testContext) verify(t *testing.T, expected result, initialObjects []metav1.Object, result any, status *framework.Status) {
 	t.Helper()
 	if actualErr := status.AsError(); actualErr != nil {
 		// Compare only the error strings.
@@ -1190,7 +1190,7 @@ func Test_isSchedulableAfterClaimChange(t *testing.T) {
 	testcases := map[string]struct {
 		pod            *v1.Pod
 		claims         []*resourceapi.ResourceClaim
-		oldObj, newObj interface{}
+		oldObj, newObj any
 		wantHint       framework.QueueingHint
 		wantErr        bool
 	}{
@@ -1347,7 +1347,7 @@ func Test_isSchedulableAfterPodChange(t *testing.T) {
 		objs     []apiruntime.Object
 		pod      *v1.Pod
 		claims   []*resourceapi.ResourceClaim
-		obj      interface{}
+		obj      any
 		wantHint framework.QueueingHint
 		wantErr  bool
 	}{

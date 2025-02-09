@@ -68,7 +68,7 @@ type fakeTokenGenerator struct {
 	staticToken string
 }
 
-func (f fakeTokenGenerator) GenerateToken(ctx context.Context, claims *jwt.Claims, privateClaims interface{}) (string, error) {
+func (f fakeTokenGenerator) GenerateToken(ctx context.Context, claims *jwt.Claims, privateClaims any) (string, error) {
 	return f.staticToken, nil
 }
 

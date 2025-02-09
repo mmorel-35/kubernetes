@@ -163,7 +163,7 @@ func dedup(errors []packages.Error) []string {
 
 var outMu sync.Mutex
 
-func serialFprintf(w io.Writer, format string, a ...interface{}) {
+func serialFprintf(w io.Writer, format string, a ...any) {
 	outMu.Lock()
 	defer outMu.Unlock()
 	_, _ = fmt.Fprintf(w, format, a...)

@@ -47,8 +47,8 @@ type SortMergeListTestCases struct {
 
 type SortMergeListTestCase struct {
 	Description string
-	Original    map[string]interface{}
-	Sorted      map[string]interface{}
+	Original    map[string]any
+	Sorted      map[string]any
 }
 
 type StrategicMergePatchTestCases struct {
@@ -67,20 +67,20 @@ type StrategicMergePatchRawTestCase struct {
 
 type StrategicMergePatchTestCaseData struct {
 	// Original is the original object (last-applied config in annotation)
-	Original map[string]interface{}
+	Original map[string]any
 	// Modified is the modified object (new config we want)
-	Modified map[string]interface{}
+	Modified map[string]any
 	// Current is the current object (live config in the server)
-	Current map[string]interface{}
+	Current map[string]any
 	// TwoWay is the expected two-way merge patch diff between original and modified
-	TwoWay map[string]interface{}
+	TwoWay map[string]any
 	// ThreeWay is the expected three-way merge patch
-	ThreeWay map[string]interface{}
+	ThreeWay map[string]any
 	// Result is the expected object after applying the three-way patch on current object.
-	Result map[string]interface{}
+	Result map[string]any
 	// TwoWayResult is the expected object after applying the two-way patch on current object.
 	// If nil, Modified is used.
-	TwoWayResult map[string]interface{}
+	TwoWayResult map[string]any
 }
 
 // The meaning of each field is the same as StrategicMergePatchTestCaseData's.
@@ -6233,7 +6233,7 @@ func TestStrategicMergePatch(t *testing.T) {
 	}
 }
 
-func testStrategicMergePatchWithCustomArgumentsUsingStruct(t *testing.T, description, original, patch string, dataStruct interface{}, expected error) {
+func testStrategicMergePatchWithCustomArgumentsUsingStruct(t *testing.T, description, original, patch string, dataStruct any, expected error) {
 	schema, actual := NewPatchMetaFromStruct(dataStruct)
 	// If actual is not nil, check error. If errors match, return.
 	if actual != nil {
@@ -6441,7 +6441,7 @@ func testPatchApplication(t *testing.T, original, patch, expected []byte, descri
 	}
 }
 
-func testObjectToJSONOrFail(t *testing.T, o map[string]interface{}) []byte {
+func testObjectToJSONOrFail(t *testing.T, o map[string]any) []byte {
 	if o == nil {
 		return nil
 	}
@@ -6479,7 +6479,7 @@ func jsonToYAMLOrError(j []byte) string {
 	return string(y)
 }
 
-func toJSON(v interface{}) ([]byte, error) {
+func toJSON(v any) ([]byte, error) {
 	j, err := json.Marshal(v)
 	if err != nil {
 		return nil, fmt.Errorf("json marshal failed: %v\n%v\n", err, dump.Pretty(v))

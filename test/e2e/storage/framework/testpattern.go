@@ -81,7 +81,7 @@ func (t TestSnapshotDeletionPolicy) String() string {
 // TestPattern represents a combination of parameters to be tested in a TestSuite
 type TestPattern struct {
 	Name                   string                      // Name of TestPattern
-	TestTags               []interface{}               // additional parameters for framework.It, like framework.WithDisruptive()
+	TestTags               []any                       // additional parameters for framework.It, like framework.WithDisruptive()
 	VolType                TestVolType                 // Volume type of the volume
 	FsType                 string                      // Fstype of the volume
 	VolMode                v1.PersistentVolumeMode     // PersistentVolumeMode of the volume
@@ -198,35 +198,35 @@ var (
 		Name:     "Inline-volume (xfs)",
 		VolType:  InlineVolume,
 		FsType:   "xfs",
-		TestTags: []interface{}{framework.WithSlow()},
+		TestTags: []any{framework.WithSlow()},
 	}
 	// XfsCSIEphemeralVolume is TestPattern for "CSI Ephemeral-volume (xfs)"
 	XfsCSIEphemeralVolume = TestPattern{
 		Name:     "CSI Ephemeral-volume (xfs)",
 		VolType:  CSIInlineVolume,
 		FsType:   "xfs",
-		TestTags: []interface{}{framework.WithSlow()},
+		TestTags: []any{framework.WithSlow()},
 	}
 	// XfsGenericEphemeralVolume is TestPattern for "Generic Ephemeral-volume (xfs)"
 	XfsGenericEphemeralVolume = TestPattern{
 		Name:     "Generic Ephemeral-volume (xfs)",
 		VolType:  GenericEphemeralVolume,
 		FsType:   "xfs",
-		TestTags: []interface{}{framework.WithSlow()},
+		TestTags: []any{framework.WithSlow()},
 	}
 	// XfsPreprovisionedPV is TestPattern for "Pre-provisioned PV (xfs)"
 	XfsPreprovisionedPV = TestPattern{
 		Name:     "Pre-provisioned PV (xfs)",
 		VolType:  PreprovisionedPV,
 		FsType:   "xfs",
-		TestTags: []interface{}{framework.WithSlow()},
+		TestTags: []any{framework.WithSlow()},
 	}
 	// XfsDynamicPV is TestPattern for "Dynamic PV (xfs)"
 	XfsDynamicPV = TestPattern{
 		Name:                   "Dynamic PV (xfs)",
 		VolType:                DynamicPV,
 		FsType:                 "xfs",
-		TestTags:               []interface{}{framework.WithSlow()},
+		TestTags:               []any{framework.WithSlow()},
 		SnapshotType:           DynamicCreatedSnapshot,
 		SnapshotDeletionPolicy: DeleteSnapshot,
 	}
@@ -238,35 +238,35 @@ var (
 		Name:     "Inline-volume (ntfs)",
 		VolType:  InlineVolume,
 		FsType:   "ntfs",
-		TestTags: []interface{}{feature.Windows},
+		TestTags: []any{feature.Windows},
 	}
 	// NtfsCSIEphemeralVolume is TestPattern for "CSI Ephemeral-volume (ntfs)"
 	NtfsCSIEphemeralVolume = TestPattern{
 		Name:     "CSI Ephemeral-volume (ntfs) [alpha]",
 		VolType:  CSIInlineVolume,
 		FsType:   "ntfs",
-		TestTags: []interface{}{feature.Windows},
+		TestTags: []any{feature.Windows},
 	}
 	// NtfsGenericEphemeralVolume is TestPattern for "Generic Ephemeral-volume (ntfs)"
 	NtfsGenericEphemeralVolume = TestPattern{
 		Name:     "Generic Ephemeral-volume (ntfs)",
 		VolType:  GenericEphemeralVolume,
 		FsType:   "ntfs",
-		TestTags: []interface{}{feature.Windows},
+		TestTags: []any{feature.Windows},
 	}
 	// NtfsPreprovisionedPV is TestPattern for "Pre-provisioned PV (ntfs)"
 	NtfsPreprovisionedPV = TestPattern{
 		Name:     "Pre-provisioned PV (ntfs)",
 		VolType:  PreprovisionedPV,
 		FsType:   "ntfs",
-		TestTags: []interface{}{feature.Windows},
+		TestTags: []any{feature.Windows},
 	}
 	// NtfsDynamicPV is TestPattern for "Dynamic PV (ntfs)"
 	NtfsDynamicPV = TestPattern{
 		Name:                   "Dynamic PV (ntfs)",
 		VolType:                DynamicPV,
 		FsType:                 "ntfs",
-		TestTags:               []interface{}{feature.Windows},
+		TestTags:               []any{feature.Windows},
 		SnapshotDeletionPolicy: DeleteSnapshot,
 		SnapshotType:           DynamicCreatedSnapshot,
 	}
@@ -381,7 +381,7 @@ var (
 		VolType:        DynamicPV,
 		AllowExpansion: true,
 		FsType:         "ntfs",
-		TestTags:       []interface{}{feature.Windows},
+		TestTags:       []any{feature.Windows},
 	}
 
 	// BlockVolModeDynamicPVAllowExpansion is TestPattern for "Dynamic PV (block volmode)(allowExpansion)"

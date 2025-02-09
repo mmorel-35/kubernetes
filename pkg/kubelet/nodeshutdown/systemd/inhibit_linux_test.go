@@ -30,23 +30,23 @@ import (
 )
 
 type fakeDBusObject struct {
-	properties map[string]interface{}
-	bodyValue  interface{}
+	properties map[string]any
+	bodyValue  any
 }
 
-func (obj *fakeDBusObject) Call(method string, flags dbus.Flags, args ...interface{}) *dbus.Call {
-	return &dbus.Call{Err: nil, Body: []interface{}{obj.bodyValue}}
+func (obj *fakeDBusObject) Call(method string, flags dbus.Flags, args ...any) *dbus.Call {
+	return &dbus.Call{Err: nil, Body: []any{obj.bodyValue}}
 }
 
-func (obj *fakeDBusObject) CallWithContext(ctx context.Context, method string, flags dbus.Flags, args ...interface{}) *dbus.Call {
+func (obj *fakeDBusObject) CallWithContext(ctx context.Context, method string, flags dbus.Flags, args ...any) *dbus.Call {
 	return nil
 }
 
-func (obj *fakeDBusObject) Go(method string, flags dbus.Flags, ch chan *dbus.Call, args ...interface{}) *dbus.Call {
+func (obj *fakeDBusObject) Go(method string, flags dbus.Flags, ch chan *dbus.Call, args ...any) *dbus.Call {
 	return nil
 }
 
-func (obj *fakeDBusObject) GoWithContext(ctx context.Context, method string, flags dbus.Flags, ch chan *dbus.Call, args ...interface{}) *dbus.Call {
+func (obj *fakeDBusObject) GoWithContext(ctx context.Context, method string, flags dbus.Flags, ch chan *dbus.Call, args ...any) *dbus.Call {
 	return nil
 }
 
@@ -68,11 +68,11 @@ func (obj *fakeDBusObject) GetProperty(p string) (dbus.Variant, error) {
 	return dbus.MakeVariant(value), nil
 }
 
-func (obj *fakeDBusObject) SetProperty(p string, v interface{}) error {
+func (obj *fakeDBusObject) SetProperty(p string, v any) error {
 	return nil
 }
 
-func (obj *fakeDBusObject) StoreProperty(p string, v interface{}) error {
+func (obj *fakeDBusObject) StoreProperty(p string, v any) error {
 	return nil
 }
 
@@ -107,7 +107,7 @@ func TestCurrentInhibitDelay(t *testing.T) {
 	bus := DBusCon{
 		SystemBus: &fakeSystemDBus{
 			fakeDBusObject: &fakeDBusObject{
-				properties: map[string]interface{}{
+				properties: map[string]any{
 					"org.freedesktop.login1.Manager.InhibitDelayMaxUSec": uint64(thirtySeconds / time.Microsecond),
 				},
 			},
@@ -183,7 +183,7 @@ func TestMonitorShutdown(t *testing.T) {
 				}
 			}()
 
-			signal := &dbus.Signal{Body: []interface{}{tc.shutdownActive}}
+			signal := &dbus.Signal{Body: []any{tc.shutdownActive}}
 			fakeSystemBus.signalChannel <- signal
 			<-done
 		})

@@ -454,13 +454,13 @@ func waitListSchedulableNodesOrDie(ctx context.Context, c clientset.Interface) *
 }
 
 // expectNoError checks if "err" is set, and if so, fails assertion while logging the error.
-func expectNoError(err error, explain ...interface{}) {
+func expectNoError(err error, explain ...any) {
 	expectNoErrorWithOffset(1, err, explain...)
 }
 
 // expectNoErrorWithOffset checks if "err" is set, and if so, fails assertion while logging the error at "offset" levels above its caller
 // (for example, for call chain f -> g -> ExpectNoErrorWithOffset(1, ...) error would be logged for "f").
-func expectNoErrorWithOffset(offset int, err error, explain ...interface{}) {
+func expectNoErrorWithOffset(offset int, err error, explain ...any) {
 	if err != nil {
 		framework.Logf("Unexpected error occurred: %v", err)
 	}

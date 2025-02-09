@@ -52,7 +52,7 @@ func annotationsString(annotations map[string]string) string {
 	}
 }
 
-func (f *FakeRecorder) writeEvent(object runtime.Object, annotations map[string]string, eventtype, reason, messageFmt string, args ...interface{}) {
+func (f *FakeRecorder) writeEvent(object runtime.Object, annotations map[string]string, eventtype, reason, messageFmt string, args ...any) {
 	if f.Events != nil {
 		f.Events <- fmt.Sprintf(eventtype+" "+reason+" "+messageFmt, args...) +
 			objectString(object, f.IncludeObject) + annotationsString(annotations)
@@ -63,11 +63,11 @@ func (f *FakeRecorder) Event(object runtime.Object, eventtype, reason, message s
 	f.writeEvent(object, nil, eventtype, reason, "%s", message)
 }
 
-func (f *FakeRecorder) Eventf(object runtime.Object, eventtype, reason, messageFmt string, args ...interface{}) {
+func (f *FakeRecorder) Eventf(object runtime.Object, eventtype, reason, messageFmt string, args ...any) {
 	f.writeEvent(object, nil, eventtype, reason, messageFmt, args...)
 }
 
-func (f *FakeRecorder) AnnotatedEventf(object runtime.Object, annotations map[string]string, eventtype, reason, messageFmt string, args ...interface{}) {
+func (f *FakeRecorder) AnnotatedEventf(object runtime.Object, annotations map[string]string, eventtype, reason, messageFmt string, args ...any) {
 	f.writeEvent(object, annotations, eventtype, reason, messageFmt, args...)
 }
 

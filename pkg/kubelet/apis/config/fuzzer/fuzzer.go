@@ -35,8 +35,8 @@ import (
 )
 
 // Funcs returns the fuzzer functions for the kubeletconfig apis.
-func Funcs(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+func Funcs(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		// provide non-empty values for fields with defaults, so the defaulter doesn't change values during round-trip
 		func(obj *kubeletconfig.KubeletConfiguration, c fuzz.Continue) {
 			c.FuzzNoCustom(obj)

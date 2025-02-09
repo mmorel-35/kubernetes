@@ -20,8 +20,8 @@ package v1alpha2
 
 // LeaseCandidateListerExpansion allows custom methods to be added to
 // LeaseCandidateLister.
-type LeaseCandidateListerExpansion interface{}
+type LeaseCandidateListerExpansion any
 
 // LeaseCandidateNamespaceListerExpansion allows custom methods to be added to
 // LeaseCandidateNamespaceLister.
-type LeaseCandidateNamespaceListerExpansion interface{}
+type LeaseCandidateNamespaceListerExpansion any

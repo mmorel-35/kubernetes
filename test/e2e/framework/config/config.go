@@ -125,12 +125,12 @@ func CopyFlags(source *flag.FlagSet, target *flag.FlagSet) {
 //
 // It panics when it encounters an error, like unsupported types
 // or option name conflicts.
-func AddOptions(options interface{}, prefix string) bool {
+func AddOptions(options any, prefix string) bool {
 	return AddOptionsToSet(Flags, options, prefix)
 }
 
 // AddOptionsToSet is the same as AddOption, except that it allows choosing the flag set.
-func AddOptionsToSet(flags *flag.FlagSet, options interface{}, prefix string) bool {
+func AddOptionsToSet(flags *flag.FlagSet, options any, prefix string) bool {
 	optionsType := reflect.TypeOf(options)
 	if optionsType == nil {
 		panic("options parameter without a type - nil?!")
@@ -219,11 +219,11 @@ func addStructFields(flags *flag.FlagSet, structType reflect.Type, structValue r
 // actual type and cannot take a string. It would be nice to reuse the
 // existing code for parsing from the "flag" package, but it isn't
 // exported.
-func parseDefault(value interface{}, name, def string) {
+func parseDefault(value any, name, def string) {
 	if def == "" {
 		return
 	}
-	checkErr := func(err error, value interface{}) {
+	checkErr := func(err error, value any) {
 		if err != nil {
 			panic(fmt.Sprintf("invalid default %q for %T entry %s: %s", def, value, name, err))
 		}

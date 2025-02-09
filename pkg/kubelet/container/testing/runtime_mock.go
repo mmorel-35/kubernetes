@@ -132,7 +132,7 @@ type MockRuntime_CheckpointContainer_Call struct {
 // CheckpointContainer is a helper method to define mock.On call
 //   - ctx context.Context
 //   - options *v1.CheckpointContainerRequest
-func (_e *MockRuntime_Expecter) CheckpointContainer(ctx interface{}, options interface{}) *MockRuntime_CheckpointContainer_Call {
+func (_e *MockRuntime_Expecter) CheckpointContainer(ctx any, options any) *MockRuntime_CheckpointContainer_Call {
 	return &MockRuntime_CheckpointContainer_Call{Call: _e.mock.On("CheckpointContainer", ctx, options)}
 }
 
@@ -179,7 +179,7 @@ type MockRuntime_DeleteContainer_Call struct {
 // DeleteContainer is a helper method to define mock.On call
 //   - ctx context.Context
 //   - containerID container.ContainerID
-func (_e *MockRuntime_Expecter) DeleteContainer(ctx interface{}, containerID interface{}) *MockRuntime_DeleteContainer_Call {
+func (_e *MockRuntime_Expecter) DeleteContainer(ctx any, containerID any) *MockRuntime_DeleteContainer_Call {
 	return &MockRuntime_DeleteContainer_Call{Call: _e.mock.On("DeleteContainer", ctx, containerID)}
 }
 
@@ -228,7 +228,7 @@ type MockRuntime_GarbageCollect_Call struct {
 //   - gcPolicy container.GCPolicy
 //   - allSourcesReady bool
 //   - evictNonDeletedPods bool
-func (_e *MockRuntime_Expecter) GarbageCollect(ctx interface{}, gcPolicy interface{}, allSourcesReady interface{}, evictNonDeletedPods interface{}) *MockRuntime_GarbageCollect_Call {
+func (_e *MockRuntime_Expecter) GarbageCollect(ctx any, gcPolicy any, allSourcesReady any, evictNonDeletedPods any) *MockRuntime_GarbageCollect_Call {
 	return &MockRuntime_GarbageCollect_Call{Call: _e.mock.On("GarbageCollect", ctx, gcPolicy, allSourcesReady, evictNonDeletedPods)}
 }
 
@@ -286,7 +286,7 @@ type MockRuntime_GeneratePodStatus_Call struct {
 
 // GeneratePodStatus is a helper method to define mock.On call
 //   - event *v1.ContainerEventResponse
-func (_e *MockRuntime_Expecter) GeneratePodStatus(event interface{}) *MockRuntime_GeneratePodStatus_Call {
+func (_e *MockRuntime_Expecter) GeneratePodStatus(event any) *MockRuntime_GeneratePodStatus_Call {
 	return &MockRuntime_GeneratePodStatus_Call{Call: _e.mock.On("GeneratePodStatus", event)}
 }
 
@@ -337,7 +337,7 @@ type MockRuntime_GetContainerLogs_Call struct {
 //   - logOptions *corev1.PodLogOptions
 //   - stdout io.Writer
 //   - stderr io.Writer
-func (_e *MockRuntime_Expecter) GetContainerLogs(ctx interface{}, pod interface{}, containerID interface{}, logOptions interface{}, stdout interface{}, stderr interface{}) *MockRuntime_GetContainerLogs_Call {
+func (_e *MockRuntime_Expecter) GetContainerLogs(ctx any, pod any, containerID any, logOptions any, stdout any, stderr any) *MockRuntime_GetContainerLogs_Call {
 	return &MockRuntime_GetContainerLogs_Call{Call: _e.mock.On("GetContainerLogs", ctx, pod, containerID, logOptions, stdout, stderr)}
 }
 
@@ -396,7 +396,7 @@ type MockRuntime_GetContainerStatus_Call struct {
 // GetContainerStatus is a helper method to define mock.On call
 //   - ctx context.Context
 //   - id container.ContainerID
-func (_e *MockRuntime_Expecter) GetContainerStatus(ctx interface{}, id interface{}) *MockRuntime_GetContainerStatus_Call {
+func (_e *MockRuntime_Expecter) GetContainerStatus(ctx any, id any) *MockRuntime_GetContainerStatus_Call {
 	return &MockRuntime_GetContainerStatus_Call{Call: _e.mock.On("GetContainerStatus", ctx, id)}
 }
 
@@ -453,7 +453,7 @@ type MockRuntime_GetImageRef_Call struct {
 // GetImageRef is a helper method to define mock.On call
 //   - ctx context.Context
 //   - image container.ImageSpec
-func (_e *MockRuntime_Expecter) GetImageRef(ctx interface{}, image interface{}) *MockRuntime_GetImageRef_Call {
+func (_e *MockRuntime_Expecter) GetImageRef(ctx any, image any) *MockRuntime_GetImageRef_Call {
 	return &MockRuntime_GetImageRef_Call{Call: _e.mock.On("GetImageRef", ctx, image)}
 }
 
@@ -510,7 +510,7 @@ type MockRuntime_GetImageSize_Call struct {
 // GetImageSize is a helper method to define mock.On call
 //   - ctx context.Context
 //   - image container.ImageSpec
-func (_e *MockRuntime_Expecter) GetImageSize(ctx interface{}, image interface{}) *MockRuntime_GetImageSize_Call {
+func (_e *MockRuntime_Expecter) GetImageSize(ctx any, image any) *MockRuntime_GetImageSize_Call {
 	return &MockRuntime_GetImageSize_Call{Call: _e.mock.On("GetImageSize", ctx, image)}
 }
 
@@ -571,7 +571,7 @@ type MockRuntime_GetPodStatus_Call struct {
 //   - uid types.UID
 //   - name string
 //   - namespace string
-func (_e *MockRuntime_Expecter) GetPodStatus(ctx interface{}, uid interface{}, name interface{}, namespace interface{}) *MockRuntime_GetPodStatus_Call {
+func (_e *MockRuntime_Expecter) GetPodStatus(ctx any, uid any, name any, namespace any) *MockRuntime_GetPodStatus_Call {
 	return &MockRuntime_GetPodStatus_Call{Call: _e.mock.On("GetPodStatus", ctx, uid, name, namespace)}
 }
 
@@ -630,7 +630,7 @@ type MockRuntime_GetPods_Call struct {
 // GetPods is a helper method to define mock.On call
 //   - ctx context.Context
 //   - all bool
-func (_e *MockRuntime_Expecter) GetPods(ctx interface{}, all interface{}) *MockRuntime_GetPods_Call {
+func (_e *MockRuntime_Expecter) GetPods(ctx any, all any) *MockRuntime_GetPods_Call {
 	return &MockRuntime_GetPods_Call{Call: _e.mock.On("GetPods", ctx, all)}
 }
 
@@ -688,7 +688,7 @@ type MockRuntime_ImageFsInfo_Call struct {
 
 // ImageFsInfo is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockRuntime_Expecter) ImageFsInfo(ctx interface{}) *MockRuntime_ImageFsInfo_Call {
+func (_e *MockRuntime_Expecter) ImageFsInfo(ctx any) *MockRuntime_ImageFsInfo_Call {
 	return &MockRuntime_ImageFsInfo_Call{Call: _e.mock.On("ImageFsInfo", ctx)}
 }
 
@@ -746,7 +746,7 @@ type MockRuntime_ImageStats_Call struct {
 
 // ImageStats is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockRuntime_Expecter) ImageStats(ctx interface{}) *MockRuntime_ImageStats_Call {
+func (_e *MockRuntime_Expecter) ImageStats(ctx any) *MockRuntime_ImageStats_Call {
 	return &MockRuntime_ImageStats_Call{Call: _e.mock.On("ImageStats", ctx)}
 }
 
@@ -795,7 +795,7 @@ type MockRuntime_KillPod_Call struct {
 //   - pod *corev1.Pod
 //   - runningPod container.Pod
 //   - gracePeriodOverride *int64
-func (_e *MockRuntime_Expecter) KillPod(ctx interface{}, pod interface{}, runningPod interface{}, gracePeriodOverride interface{}) *MockRuntime_KillPod_Call {
+func (_e *MockRuntime_Expecter) KillPod(ctx any, pod any, runningPod any, gracePeriodOverride any) *MockRuntime_KillPod_Call {
 	return &MockRuntime_KillPod_Call{Call: _e.mock.On("KillPod", ctx, pod, runningPod, gracePeriodOverride)}
 }
 
@@ -853,7 +853,7 @@ type MockRuntime_ListImages_Call struct {
 
 // ListImages is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockRuntime_Expecter) ListImages(ctx interface{}) *MockRuntime_ListImages_Call {
+func (_e *MockRuntime_Expecter) ListImages(ctx any) *MockRuntime_ListImages_Call {
 	return &MockRuntime_ListImages_Call{Call: _e.mock.On("ListImages", ctx)}
 }
 
@@ -911,7 +911,7 @@ type MockRuntime_ListMetricDescriptors_Call struct {
 
 // ListMetricDescriptors is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockRuntime_Expecter) ListMetricDescriptors(ctx interface{}) *MockRuntime_ListMetricDescriptors_Call {
+func (_e *MockRuntime_Expecter) ListMetricDescriptors(ctx any) *MockRuntime_ListMetricDescriptors_Call {
 	return &MockRuntime_ListMetricDescriptors_Call{Call: _e.mock.On("ListMetricDescriptors", ctx)}
 }
 
@@ -969,7 +969,7 @@ type MockRuntime_ListPodSandboxMetrics_Call struct {
 
 // ListPodSandboxMetrics is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockRuntime_Expecter) ListPodSandboxMetrics(ctx interface{}) *MockRuntime_ListPodSandboxMetrics_Call {
+func (_e *MockRuntime_Expecter) ListPodSandboxMetrics(ctx any) *MockRuntime_ListPodSandboxMetrics_Call {
 	return &MockRuntime_ListPodSandboxMetrics_Call{Call: _e.mock.On("ListPodSandboxMetrics", ctx)}
 }
 
@@ -1028,7 +1028,7 @@ type MockRuntime_PullImage_Call struct {
 //   - image container.ImageSpec
 //   - pullSecrets []corev1.Secret
 //   - podSandboxConfig *v1.PodSandboxConfig
-func (_e *MockRuntime_Expecter) PullImage(ctx interface{}, image interface{}, pullSecrets interface{}, podSandboxConfig interface{}) *MockRuntime_PullImage_Call {
+func (_e *MockRuntime_Expecter) PullImage(ctx any, image any, pullSecrets any, podSandboxConfig any) *MockRuntime_PullImage_Call {
 	return &MockRuntime_PullImage_Call{Call: _e.mock.On("PullImage", ctx, image, pullSecrets, podSandboxConfig)}
 }
 
@@ -1075,7 +1075,7 @@ type MockRuntime_RemoveImage_Call struct {
 // RemoveImage is a helper method to define mock.On call
 //   - ctx context.Context
 //   - image container.ImageSpec
-func (_e *MockRuntime_Expecter) RemoveImage(ctx interface{}, image interface{}) *MockRuntime_RemoveImage_Call {
+func (_e *MockRuntime_Expecter) RemoveImage(ctx any, image any) *MockRuntime_RemoveImage_Call {
 	return &MockRuntime_RemoveImage_Call{Call: _e.mock.On("RemoveImage", ctx, image)}
 }
 
@@ -1133,7 +1133,7 @@ type MockRuntime_Status_Call struct {
 
 // Status is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockRuntime_Expecter) Status(ctx interface{}) *MockRuntime_Status_Call {
+func (_e *MockRuntime_Expecter) Status(ctx any) *MockRuntime_Status_Call {
 	return &MockRuntime_Status_Call{Call: _e.mock.On("Status", ctx)}
 }
 
@@ -1183,7 +1183,7 @@ type MockRuntime_SyncPod_Call struct {
 //   - podStatus *container.PodStatus
 //   - pullSecrets []corev1.Secret
 //   - backOff *flowcontrol.Backoff
-func (_e *MockRuntime_Expecter) SyncPod(ctx interface{}, pod interface{}, podStatus interface{}, pullSecrets interface{}, backOff interface{}) *MockRuntime_SyncPod_Call {
+func (_e *MockRuntime_Expecter) SyncPod(ctx any, pod any, podStatus any, pullSecrets any, backOff any) *MockRuntime_SyncPod_Call {
 	return &MockRuntime_SyncPod_Call{Call: _e.mock.On("SyncPod", ctx, pod, podStatus, pullSecrets, backOff)}
 }
 
@@ -1275,7 +1275,7 @@ type MockRuntime_UpdatePodCIDR_Call struct {
 // UpdatePodCIDR is a helper method to define mock.On call
 //   - ctx context.Context
 //   - podCIDR string
-func (_e *MockRuntime_Expecter) UpdatePodCIDR(ctx interface{}, podCIDR interface{}) *MockRuntime_UpdatePodCIDR_Call {
+func (_e *MockRuntime_Expecter) UpdatePodCIDR(ctx any, podCIDR any) *MockRuntime_UpdatePodCIDR_Call {
 	return &MockRuntime_UpdatePodCIDR_Call{Call: _e.mock.On("UpdatePodCIDR", ctx, podCIDR)}
 }
 
@@ -1333,7 +1333,7 @@ type MockRuntime_Version_Call struct {
 
 // Version is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockRuntime_Expecter) Version(ctx interface{}) *MockRuntime_Version_Call {
+func (_e *MockRuntime_Expecter) Version(ctx any) *MockRuntime_Version_Call {
 	return &MockRuntime_Version_Call{Call: _e.mock.On("Version", ctx)}
 }
 

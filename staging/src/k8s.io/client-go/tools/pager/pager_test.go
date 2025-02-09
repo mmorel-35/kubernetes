@@ -331,7 +331,7 @@ func TestListPager_EachListItem(t *testing.T) {
 				return nil
 			}
 			var err error
-			var panic interface{}
+			var panic any
 			func() {
 				defer func() {
 					panic = recover()

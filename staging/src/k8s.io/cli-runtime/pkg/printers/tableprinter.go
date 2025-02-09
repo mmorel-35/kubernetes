@@ -71,7 +71,7 @@ var (
 // received from watches.
 type HumanReadablePrinter struct {
 	options        PrintOptions
-	lastType       interface{}
+	lastType       any
 	lastColumns    []metav1.TableColumnDefinition
 	printedHeaders bool
 }
@@ -135,7 +135,7 @@ func (h *HumanReadablePrinter) PrintObj(obj runtime.Object, output io.Writer) er
 		if len(eventType) > 0 {
 			if err := addColumns(beginning, table,
 				[]metav1.TableColumnDefinition{{Name: "Event", Type: "string"}},
-				[]cellValueFunc{func(metav1.TableRow) (interface{}, error) { return formatEventType(eventType), nil }},
+				[]cellValueFunc{func(metav1.TableRow) (any, error) { return formatEventType(eventType), nil }},
 			); err != nil {
 				return err
 			}
@@ -233,7 +233,7 @@ func printTable(table *metav1.Table, output io.Writer, options PrintOptions) err
 	return nil
 }
 
-type cellValueFunc func(metav1.TableRow) (interface{}, error)
+type cellValueFunc func(metav1.TableRow) (any, error)
 
 type columnAddPosition int
 
@@ -251,9 +251,9 @@ func addColumns(pos columnAddPosition, table *metav1.Table, columns []metav1.Tab
 	}
 
 	// Compute the new rows
-	newRows := make([][]interface{}, len(table.Rows))
+	newRows := make([][]any, len(table.Rows))
 	for i := range table.Rows {
-		newCells := make([]interface{}, 0, len(columns)+len(table.Rows[i].Cells))
+		newCells := make([]any, 0, len(columns)+len(table.Rows[i].Cells))
 
 		if pos == end {
 			// If we're appending, start with the existing cells,
@@ -370,7 +370,7 @@ func decorateTable(table *metav1.Table, options PrintOptions) error {
 			// if we can't get an accessor, fill out the appropriate columns with empty spaces
 			if m == nil {
 				if options.WithNamespace {
-					r := make([]interface{}, 1, width)
+					r := make([]any, 1, width)
 					row.Cells = append(r, row.Cells...)
 				}
 				for j := 0; j < width-len(row.Cells); j++ {
@@ -381,7 +381,7 @@ func decorateTable(table *metav1.Table, options PrintOptions) error {
 			}
 
 			if options.WithNamespace {
-				r := make([]interface{}, 1, width)
+				r := make([]any, 1, width)
 				r[0] = m.GetNamespace()
 				row.Cells = append(r, row.Cells...)
 			}
@@ -527,7 +527,7 @@ func labelValues(itemLabels map[string]string, opts PrintOptions) []string {
 
 // appendLabelCells returns a slice of value columns matching the requested print options.
 // Intended for use with tables.
-func appendLabelCells(values []interface{}, itemLabels map[string]string, opts PrintOptions) []interface{} {
+func appendLabelCells(values []any, itemLabels map[string]string, opts PrintOptions) []any {
 	for _, key := range opts.ColumnLabels {
 		values = append(values, itemLabels[key])
 	}
@@ -544,7 +544,7 @@ func printStatus(obj runtime.Object, options PrintOptions) ([]metav1.TableRow, e
 	}
 	return []metav1.TableRow{{
 		Object: runtime.RawExtension{Object: obj},
-		Cells:  []interface{}{status.Status, status.Reason, status.Message},
+		Cells:  []any{status.Status, status.Reason, status.Message},
 	}}, nil
 }
 

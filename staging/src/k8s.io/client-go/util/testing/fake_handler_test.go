@@ -70,11 +70,11 @@ type fakeError struct {
 	errors []string
 }
 
-func (f *fakeError) Errorf(format string, args ...interface{}) {
+func (f *fakeError) Errorf(format string, args ...any) {
 	f.errors = append(f.errors, format)
 }
 
-func (f *fakeError) Logf(format string, args ...interface{}) {}
+func (f *fakeError) Logf(format string, args ...any) {}
 
 func TestFakeHandlerWrongPath(t *testing.T) {
 	handler := FakeHandler{StatusCode: http.StatusOK}

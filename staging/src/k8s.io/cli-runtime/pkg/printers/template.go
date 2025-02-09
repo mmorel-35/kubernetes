@@ -72,7 +72,7 @@ func (p *GoTemplatePrinter) PrintObj(obj runtime.Object, w io.Writer) error {
 		return err
 	}
 
-	out := map[string]interface{}{}
+	out := map[string]any{}
 	if err := json.Unmarshal(data, &out); err != nil {
 		return err
 	}
@@ -91,7 +91,7 @@ func (p *GoTemplatePrinter) PrintObj(obj runtime.Object, w io.Writer) error {
 
 // safeExecute tries to execute the template, but catches panics and returns an error
 // should the template engine panic.
-func (p *GoTemplatePrinter) safeExecute(w io.Writer, obj interface{}) error {
+func (p *GoTemplatePrinter) safeExecute(w io.Writer, obj any) error {
 	var panicErr error
 	// Sorry for the double anonymous function. There's probably a clever way
 	// to do this that has the defer'd func setting the value to be returned, but

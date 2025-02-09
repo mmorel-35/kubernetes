@@ -32,7 +32,7 @@ import (
 type NoCompatiblePrinterError struct {
 	OutputFormat   *string
 	AllowedFormats []string
-	Options        interface{}
+	Options        any
 }
 
 func (e NoCompatiblePrinterError) Error() string {

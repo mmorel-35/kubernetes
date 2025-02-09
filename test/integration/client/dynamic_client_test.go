@@ -182,7 +182,7 @@ func TestDynamicClientWatchWithCBOR(t *testing.T) {
 					t.Errorf("non-cbor event: 0x%x", buf.Bytes())
 					return
 				}
-				if err := cbor.Unmarshal(event.Object.Raw, new(interface{})); err != nil {
+				if err := cbor.Unmarshal(event.Object.Raw, new(any)); err != nil {
 					t.Errorf("non-cbor event object: 0x%x", buf.Bytes())
 				}
 			})
@@ -286,19 +286,19 @@ func TestUnstructuredExtract(t *testing.T) {
 	// Apply an unstructured with the dynamic client
 	name := "test-pod"
 	pod := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "v1",
 			"kind":       "Pod",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": name,
 				// namespace will always get set by extract,
 				// so we add it here (even though it's optional)
 				// to ensure what we apply equals what we extract.
 				"namespace": "default",
 			},
-			"spec": map[string]interface{}{
-				"containers": []interface{}{
-					map[string]interface{}{
+			"spec": map[string]any{
+				"containers": []any{
+					map[string]any{
 						"name":  "test",
 						"image": "test-image",
 					},
@@ -373,8 +373,8 @@ func TestDynamicClientCBOREnablement(t *testing.T) {
 		_, err = client.Resource(corev1.SchemeGroupVersion.WithResource("namespaces")).Create(
 			context.TODO(),
 			&unstructured.Unstructured{
-				Object: map[string]interface{}{
-					"metadata": map[string]interface{}{
+				Object: map[string]any{
+					"metadata": map[string]any{
 						"name": "test-dynamic-client-cbor-enablement",
 					},
 				},
@@ -395,10 +395,10 @@ func TestDynamicClientCBOREnablement(t *testing.T) {
 			context.TODO(),
 			name,
 			&unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Namespace",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name": name,
 					},
 				},
@@ -638,7 +638,7 @@ func TestUnsupportedMediaTypeCircuitBreakerDynamicClient(t *testing.T) {
 
 	if _, err := client.Resource(corev1.SchemeGroupVersion.WithResource("namespaces")).Create(
 		context.TODO(),
-		&unstructured.Unstructured{Object: map[string]interface{}{"metadata": map[string]interface{}{"name": "test-dynamic-client-415"}}},
+		&unstructured.Unstructured{Object: map[string]any{"metadata": map[string]any{"name": "test-dynamic-client-415"}}},
 		metav1.CreateOptions{DryRun: []string{metav1.DryRunAll}},
 	); !errors.IsUnsupportedMediaType(err) {
 		t.Errorf("expected to receive unsupported media type on first cbor request, got: %v", err)
@@ -647,7 +647,7 @@ func TestUnsupportedMediaTypeCircuitBreakerDynamicClient(t *testing.T) {
 	// Requests from this client should fall back from application/cbor to application/json.
 	if _, err := client.Resource(corev1.SchemeGroupVersion.WithResource("namespaces")).Create(
 		context.TODO(),
-		&unstructured.Unstructured{Object: map[string]interface{}{"metadata": map[string]interface{}{"name": "test-dynamic-client-415"}}},
+		&unstructured.Unstructured{Object: map[string]any{"metadata": map[string]any{"name": "test-dynamic-client-415"}}},
 		metav1.CreateOptions{DryRun: []string{metav1.DryRunAll}},
 	); err != nil {
 		t.Errorf("expected to receive nil error on subsequent cbor request, got: %v", err)
@@ -662,7 +662,7 @@ func TestUnsupportedMediaTypeCircuitBreakerDynamicClient(t *testing.T) {
 
 	if _, err := client.Resource(corev1.SchemeGroupVersion.WithResource("namespaces")).Create(
 		context.TODO(),
-		&unstructured.Unstructured{Object: map[string]interface{}{"metadata": map[string]interface{}{"name": "test-dynamic-client-415"}}},
+		&unstructured.Unstructured{Object: map[string]any{"metadata": map[string]any{"name": "test-dynamic-client-415"}}},
 		metav1.CreateOptions{DryRun: []string{metav1.DryRunAll}},
 	); !errors.IsUnsupportedMediaType(err) {
 		t.Errorf("expected to receive unsupported media type on cbor request with fresh client, got: %v", err)

@@ -250,18 +250,18 @@ type fakePrinter struct {
 
 var _ printers.PrintHandler = &fakePrinter{}
 
-func (f *fakePrinter) Handler(columns, columnsWithWide []string, printFunc interface{}) error {
+func (f *fakePrinter) Handler(columns, columnsWithWide []string, printFunc any) error {
 	return nil
 }
 
-func (f *fakePrinter) TableHandler(columns []metav1beta1.TableColumnDefinition, printFunc interface{}) error {
+func (f *fakePrinter) TableHandler(columns []metav1beta1.TableColumnDefinition, printFunc any) error {
 	printFuncValue := reflect.ValueOf(printFunc)
 	objType := printFuncValue.Type().In(0)
 	f.handlers[objType] = columns
 	return nil
 }
 
-func (f *fakePrinter) DefaultTableHandler(columns []metav1beta1.TableColumnDefinition, printFunc interface{}) error {
+func (f *fakePrinter) DefaultTableHandler(columns []metav1beta1.TableColumnDefinition, printFunc any) error {
 	return nil
 }
 

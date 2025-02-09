@@ -143,7 +143,7 @@ func (f *fakePodWorkers) IsPodForMirrorPodTerminatingByFullName(podFullname stri
 }
 
 type TestingInterface interface {
-	Errorf(format string, args ...interface{})
+	Errorf(format string, args ...any)
 }
 
 func newPodWithPhase(uid, name string, phase v1.PodPhase) *v1.Pod {

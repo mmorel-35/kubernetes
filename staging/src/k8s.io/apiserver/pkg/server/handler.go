@@ -78,7 +78,7 @@ func NewAPIServerHandler(name string, s runtime.NegotiatedSerializer, handlerCha
 
 	gorestfulContainer := restful.NewContainer()
 	gorestfulContainer.Router(restful.CurlyRouter{}) // e.g. for proxy/{kind}/{name}/{*}
-	gorestfulContainer.RecoverHandler(func(panicReason interface{}, httpWriter http.ResponseWriter) {
+	gorestfulContainer.RecoverHandler(func(panicReason any, httpWriter http.ResponseWriter) {
 		logStackOnRecover(s, panicReason, httpWriter)
 	})
 	gorestfulContainer.ServiceErrorHandler(func(serviceErr restful.ServiceError, request *restful.Request, response *restful.Response) {
@@ -154,7 +154,7 @@ func (d director) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 // TODO: Unify with RecoverPanics?
-func logStackOnRecover(s runtime.NegotiatedSerializer, panicReason interface{}, w http.ResponseWriter) {
+func logStackOnRecover(s runtime.NegotiatedSerializer, panicReason any, w http.ResponseWriter) {
 	var buffer bytes.Buffer
 	buffer.WriteString(fmt.Sprintf("recover from panic situation: - %v\r\n", panicReason))
 	for i := 2; ; i++ {

@@ -93,7 +93,7 @@ func TestJsonRoundTripApplyConfigurations(t *testing.T) {
 	}
 }
 
-func unstructuredRoundTripApplyConfiguration(t *testing.T, item runtime.Object, applyConfig interface{}) {
+func unstructuredRoundTripApplyConfiguration(t *testing.T, item runtime.Object, applyConfig any) {
 	u, err := runtime.DefaultUnstructuredConverter.ToUnstructured(item)
 	if err != nil {
 		t.Errorf("ToUnstructured failed: %v", err)
@@ -120,7 +120,7 @@ func unstructuredRoundTripApplyConfiguration(t *testing.T, item runtime.Object, 
 	}
 }
 
-func jsonRoundTripApplyConfiguration(t *testing.T, item runtime.Object, applyConfig interface{}) {
+func jsonRoundTripApplyConfiguration(t *testing.T, item runtime.Object, applyConfig any) {
 
 	objData, err := json.Marshal(item)
 	if err != nil {
@@ -196,7 +196,7 @@ func fuzzObject(t *testing.T, gvk schema.GroupVersionKind) runtime.Object {
 func BenchmarkApplyConfigurationsFromUnstructured(b *testing.B) {
 	items := benchmarkItems(b)
 	convertor := runtime.DefaultUnstructuredConverter
-	unstr := make([]map[string]interface{}, len(items))
+	unstr := make([]map[string]any, len(items))
 	for i := range items {
 		item, err := convertor.ToUnstructured(&items[i])
 		if err != nil || item == nil {

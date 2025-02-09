@@ -262,7 +262,7 @@ type checkConvertor struct {
 	directConvert bool
 }
 
-func (c *checkConvertor) Convert(in, out, context interface{}) error {
+func (c *checkConvertor) Convert(in, out, context any) error {
 	if !c.directConvert {
 		return fmt.Errorf("unexpected call to Convert")
 	}
@@ -293,7 +293,7 @@ func (c *checkConvertor) ConvertFieldLabel(gvk schema.GroupVersionKind, label, v
 type mockConvertor struct {
 }
 
-func (c *mockConvertor) Convert(in, out, context interface{}) error {
+func (c *mockConvertor) Convert(in, out, context any) error {
 	return fmt.Errorf("unexpect call to Convert")
 }
 

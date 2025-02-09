@@ -3303,20 +3303,20 @@ var _ = common.SIGDescribe("Services", func() {
 		framework.ExpectNoError(err, "failed to fetch Endpoint")
 		gomega.Expect(foundEndpoint.ObjectMeta.Labels).To(gomega.HaveKeyWithValue("test-service", "updated"), "failed to update Endpoint %v in namespace %v label not updated", testEndpointName, testNamespaceName)
 
-		endpointPatch, err := json.Marshal(map[string]interface{}{
-			"metadata": map[string]interface{}{
+		endpointPatch, err := json.Marshal(map[string]any{
+			"metadata": map[string]any{
 				"labels": map[string]string{
 					"test-service": "patched",
 				},
 			},
-			"subsets": []map[string]interface{}{
+			"subsets": []map[string]any{
 				{
 					"addresses": []map[string]string{
 						{
 							"ip": "10.0.0.25",
 						},
 					},
-					"ports": []map[string]interface{}{
+					"ports": []map[string]any{
 						{
 							"name": "http-test",
 							"port": int32(8080),

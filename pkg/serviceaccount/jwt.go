@@ -53,12 +53,12 @@ type TokenGenerator interface {
 	// the payload object. Public claims take precedent over private
 	// claims i.e. if both claims and privateClaims have an "exp" field,
 	// the value in claims will be used.
-	GenerateToken(ctx context.Context, claims *jwt.Claims, privateClaims interface{}) (string, error)
+	GenerateToken(ctx context.Context, claims *jwt.Claims, privateClaims any) (string, error)
 }
 
 // JWTTokenGenerator returns a TokenGenerator that generates signed JWT tokens, using the given privateKey.
 // privateKey is a PEM-encoded byte array of a private RSA key.
-func JWTTokenGenerator(iss string, privateKey interface{}) (TokenGenerator, error) {
+func JWTTokenGenerator(iss string, privateKey any) (TokenGenerator, error) {
 	var signer jose.Signer
 	var err error
 	switch pk := privateKey.(type) {
@@ -96,7 +96,7 @@ func JWTTokenGenerator(iss string, privateKey interface{}) (TokenGenerator, erro
 // Making the derivation non-reversible makes it impossible for someone to
 // accidentally obtain the real key from the key ID and use it for token
 // validation.
-func keyIDFromPublicKey(publicKey interface{}) (string, error) {
+func keyIDFromPublicKey(publicKey any) (string, error) {
 	publicKeyDERBytes, err := x509.MarshalPKIXPublicKey(publicKey)
 	if err != nil {
 		return "", fmt.Errorf("failed to serialize public key to DER format: %v", err)
@@ -217,7 +217,7 @@ type jwtTokenGenerator struct {
 	signer jose.Signer
 }
 
-func (j *jwtTokenGenerator) GenerateToken(ctx context.Context, claims *jwt.Claims, privateClaims interface{}) (string, error) {
+func (j *jwtTokenGenerator) GenerateToken(ctx context.Context, claims *jwt.Claims, privateClaims any) (string, error) {
 	return GenerateToken(j.signer, j.iss, claims, privateClaims)
 }
 
@@ -261,7 +261,7 @@ type PublicKeysGetter interface {
 
 type PublicKey struct {
 	KeyID                    string
-	PublicKey                interface{}
+	PublicKey                any
 	ExcludeFromOIDCDiscovery bool
 }
 
@@ -274,7 +274,7 @@ type staticPublicKeysGetter struct {
 // which returns all public keys when key id is unspecified, and returns
 // the public keys matching the keyIDFromPublicKey-derived key id when
 // a key id is specified.
-func StaticPublicKeysGetter(keys []interface{}) (PublicKeysGetter, error) {
+func StaticPublicKeysGetter(keys []any) (PublicKeysGetter, error) {
 	allPublicKeys := []PublicKey{}
 	publicKeysByID := map[string][]PublicKey{}
 	for _, key := range keys {
@@ -440,7 +440,7 @@ func (j *jwtTokenAuthenticator[PrivateClaims]) hasCorrectIssuer(tokenData string
 }
 
 // GenerateToken is shared between internal and external signer code to ensure that claim merging logic remains consistent between them.
-func GenerateToken(signer jose.Signer, iss string, claims *jwt.Claims, privateClaims interface{}) (string, error) {
+func GenerateToken(signer jose.Signer, iss string, claims *jwt.Claims, privateClaims any) (string, error) {
 	// claims are applied in reverse precedence
 	return jwt.Signed(signer).
 		Claims(privateClaims).

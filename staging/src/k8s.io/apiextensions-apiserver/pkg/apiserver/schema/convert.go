@@ -124,7 +124,7 @@ func newGenerics(s *apiextensions.JSONSchemaProps) (*Generic, error) {
 		Nullable:    s.Nullable,
 	}
 	if s.Default != nil {
-		g.Default = JSON{interface{}(*s.Default)}
+		g.Default = JSON{any(*s.Default)}
 	}
 
 	return g, nil

@@ -256,7 +256,7 @@ func (e *watchEncoder) typeIdentifier(eventType watch.EventType) runtime.Identif
 }
 
 // doTransformResponseObject is used for handling all requests, including watch.
-func doTransformObject(ctx context.Context, obj runtime.Object, opts interface{}, target *schema.GroupVersionKind, scope *RequestScope) (runtime.Object, error) {
+func doTransformObject(ctx context.Context, obj runtime.Object, opts any, target *schema.GroupVersionKind, scope *RequestScope) (runtime.Object, error) {
 	if _, ok := obj.(*metav1.Status); ok {
 		return obj, nil
 	}
@@ -289,7 +289,7 @@ func doTransformObject(ctx context.Context, obj runtime.Object, opts interface{}
 
 // optionsForTransform will load and validate any additional query parameter options for
 // a conversion or return an error.
-func optionsForTransform(mediaType negotiation.MediaTypeOptions, req *http.Request) (interface{}, error) {
+func optionsForTransform(mediaType negotiation.MediaTypeOptions, req *http.Request) (any, error) {
 	switch target := mediaType.Convert; {
 	case target == nil:
 	case target.Kind == "Table" && (target.GroupVersion() == metav1beta1.SchemeGroupVersion || target.GroupVersion() == metav1.SchemeGroupVersion):

@@ -83,7 +83,7 @@ func (v *ClaimMappingExpression) GetExpression() string {
 // ReturnTypes returns the CEL expression return types.
 func (v *ClaimMappingExpression) ReturnTypes() []*celgo.Type {
 	// return types is only used for validation. The claims variable that's available
-	// to the claim mapping expressions is a map[string]interface{}, so we can't
+	// to the claim mapping expressions is a map[string]any, so we can't
 	// really know what the return type is during compilation. Strict type checking
 	// is done during evaluation.
 	return []*celgo.Type{celgo.AnyType}
@@ -123,7 +123,7 @@ func (v *ExtraMappingExpression) GetExpression() string {
 // ReturnTypes returns the CEL expression return types.
 func (v *ExtraMappingExpression) ReturnTypes() []*celgo.Type {
 	// return types is only used for validation. The claims variable that's available
-	// to the claim mapping expressions is a map[string]interface{}, so we can't
+	// to the claim mapping expressions is a map[string]any, so we can't
 	// really know what the return type is during compilation. Strict type checking
 	// is done during evaluation.
 	return []*celgo.Type{celgo.AnyType}

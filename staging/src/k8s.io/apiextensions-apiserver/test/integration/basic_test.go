@@ -367,7 +367,7 @@ func TestInvalidCRUD(t *testing.T) {
 		}
 		// Case when apiVersion and Kind would be set up from GVK, but no other objects are present
 		typedNoBodyInstance := &unstructured.Unstructured{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"apiVersion": "mygroup.example.com/" + version,
 				"kind":       "WishIHadChosenNoxu",
 			},
@@ -665,7 +665,7 @@ func TestPreserveInt(t *testing.T) {
 
 	// Check if int is preserved.
 	unstructuredObj := gottenNoxuInstance.(*unstructured.Unstructured).Object
-	num := unstructuredObj["num"].(map[string]interface{})
+	num := unstructuredObj["num"].(map[string]any)
 	num1 := num["num1"].(int64)
 	num2 := num["num2"].(int64)
 	if num1 != 9223372036854775807 || num2 != 1000000 {
@@ -743,7 +743,7 @@ func TestPatch(t *testing.T) {
 
 	// Check if int is preserved.
 	unstructuredObj := gottenNoxuInstance.(*unstructured.Unstructured).Object
-	num := unstructuredObj["num"].(map[string]interface{})
+	num := unstructuredObj["num"].(map[string]any)
 	num1 := num["num1"].(int64)
 	num2 := num["num2"].(int64)
 	if num1 != 9223372036854775807 || num2 != 999 {
@@ -989,7 +989,7 @@ func TestStatusGetAndPatch(t *testing.T) {
 	}
 }
 
-func expectInt64(t *testing.T, obj map[string]interface{}, value int64, pth ...string) {
+func expectInt64(t *testing.T, obj map[string]any, value int64, pth ...string) {
 	if v, found, err := unstructured.NestedInt64(obj, pth...); err != nil {
 		t.Fatalf("failed to access .%s: %v", strings.Join(pth, "."), err)
 	} else if !found {
@@ -998,7 +998,7 @@ func expectInt64(t *testing.T, obj map[string]interface{}, value int64, pth ...s
 		t.Fatalf("wanted %d at .%s, got %d", value, strings.Join(pth, "."), v)
 	}
 }
-func expectString(t *testing.T, obj map[string]interface{}, value string, pth ...string) {
+func expectString(t *testing.T, obj map[string]any, value string, pth ...string) {
 	if v, found, err := unstructured.NestedString(obj, pth...); err != nil {
 		t.Fatalf("failed to access .%s: %v", strings.Join(pth, "."), err)
 	} else if !found {

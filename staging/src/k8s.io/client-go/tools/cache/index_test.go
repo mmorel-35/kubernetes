@@ -25,7 +25,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func testIndexFunc(obj interface{}) ([]string, error) {
+func testIndexFunc(obj any) ([]string, error) {
 	pod := obj.(*v1.Pod)
 	return []string{pod.Labels["foo"]}, nil
 }
@@ -53,7 +53,7 @@ func TestGetIndexFuncValues(t *testing.T) {
 	}
 }
 
-func testUsersIndexFunc(obj interface{}) ([]string, error) {
+func testUsersIndexFunc(obj any) ([]string, error) {
 	pod := obj.(*v1.Pod)
 	usersString := pod.Annotations["users"]
 

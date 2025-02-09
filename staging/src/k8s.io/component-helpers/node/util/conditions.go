@@ -44,8 +44,8 @@ func GetNodeCondition(status *v1.NodeStatus, conditionType v1.NodeConditionType)
 // SetNodeCondition updates specific node condition with patch operation.
 func SetNodeCondition(c clientset.Interface, node types.NodeName, condition v1.NodeCondition) error {
 	condition.LastHeartbeatTime = metav1.NewTime(time.Now())
-	patch, err := json.Marshal(map[string]interface{}{
-		"status": map[string]interface{}{
+	patch, err := json.Marshal(map[string]any{
+		"status": map[string]any{
 			"conditions": []v1.NodeCondition{condition},
 		},
 	})

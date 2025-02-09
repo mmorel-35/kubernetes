@@ -111,7 +111,7 @@ func SchemaDeclType(s Schema, isResourceRoot bool) *apiservercel.DeclType {
 		// an object will always be serialized at least as {}, so account for that
 		minSerializedSize := int64(2)
 		for name, prop := range s.Properties() {
-			var enumValues []interface{}
+			var enumValues []any
 			if prop.Enum() != nil {
 				for _, e := range prop.Enum() {
 					enumValues = append(enumValues, e)

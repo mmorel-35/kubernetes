@@ -36,7 +36,7 @@ func (e explainError) Error() string {
 }
 
 func WithBuiltinTemplateFuncs(tmpl *template.Template) *template.Template {
-	return tmpl.Funcs(map[string]interface{}{
+	return tmpl.Funcs(map[string]any{
 		"throw": func(e string, args ...any) (string, error) {
 			errString := fmt.Sprintf(e, args...)
 			return "", explainError(errString)
@@ -70,7 +70,7 @@ func WithBuiltinTemplateFuncs(tmpl *template.Template) *template.Template {
 		"join": func(sep string, strs ...string) string {
 			return strings.Join(strs, sep)
 		},
-		"include": func(name string, data interface{}) (string, error) {
+		"include": func(name string, data any) (string, error) {
 			buf := bytes.NewBuffer(nil)
 			if err := tmpl.ExecuteTemplate(buf, name, data); err != nil {
 				return "", err

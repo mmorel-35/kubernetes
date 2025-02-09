@@ -119,20 +119,20 @@ const (
 
 // TestLogger is an interface for log.
 type TestLogger interface {
-	Infof(format string, args ...interface{})
-	Errorf(format string, args ...interface{})
+	Infof(format string, args ...any)
+	Errorf(format string, args ...any)
 }
 
 // E2ELogger is test logger.
 type E2ELogger struct{}
 
 // Infof outputs log.
-func (l *E2ELogger) Infof(format string, args ...interface{}) {
+func (l *E2ELogger) Infof(format string, args ...any) {
 	framework.Logf(format, args...)
 }
 
 // Errorf outputs log.
-func (l *E2ELogger) Errorf(format string, args ...interface{}) {
+func (l *E2ELogger) Errorf(format string, args ...any) {
 	framework.Logf(format, args...)
 }
 

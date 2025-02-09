@@ -50,7 +50,7 @@ func TestTokenGroupAdder(t *testing.T) {
 	}
 }
 
-func toJson(x interface{}) string {
+func toJson(x any) string {
 	b, _ := json.Marshal(x)
 	return string(b)
 }

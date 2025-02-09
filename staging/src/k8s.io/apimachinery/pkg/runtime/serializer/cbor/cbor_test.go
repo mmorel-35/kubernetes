@@ -103,7 +103,7 @@ func (w stubWriter) Write([]byte) (int, error) {
 
 // anyObject wraps arbitrary concrete values to be encoded or decoded.
 type anyObject struct {
-	Value interface{}
+	Value any
 }
 
 func (p anyObject) GetObjectKind() schema.ObjectKind {
@@ -184,13 +184,13 @@ func TestEncode(t *testing.T) {
 		{
 			name: "unstructuredlist",
 			in: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v",
 					"kind":       "kList",
 				},
 				Items: []unstructured.Unstructured{
-					{Object: map[string]interface{}{"foo": int64(1)}},
-					{Object: map[string]interface{}{"foo": int64(2)}},
+					{Object: map[string]any{"foo": int64(1)}},
+					{Object: map[string]any{"foo": int64(2)}},
 				},
 			},
 			assertOnWriter: func() (io.Writer, func(t *testing.T)) {
@@ -228,7 +228,7 @@ func TestEncode(t *testing.T) {
 		{
 			name: "unsupported marshaler within unstructured content",
 			in: &unstructured.Unstructured{
-				Object: map[string]interface{}{"": textMarshalerObject{}},
+				Object: map[string]any{"": textMarshalerObject{}},
 			},
 			assertOnWriter: func() (io.Writer, func(*testing.T)) {
 				var b bytes.Buffer
@@ -542,7 +542,7 @@ func TestDecode(t *testing.T) {
 			name: "into unstructured",
 			data: []byte("\xa2\x6aapiVersion\x61v\x64kind\x61k"),
 			into: &unstructured.Unstructured{},
-			expectedObj: &unstructured.Unstructured{Object: map[string]interface{}{
+			expectedObj: &unstructured.Unstructured{Object: map[string]any{
 				"apiVersion": "v",
 				"kind":       "k",
 			}},
@@ -558,7 +558,7 @@ func TestDecode(t *testing.T) {
 			data:        []byte("\xa2\x6aapiVersion\x61v\x64kind\x61k"),
 			metaFactory: &defaultMetaFactory{},
 			creater:     stubCreater{obj: &unstructured.Unstructured{}},
-			expectedObj: &unstructured.Unstructured{Object: map[string]interface{}{
+			expectedObj: &unstructured.Unstructured{Object: map[string]any{
 				"apiVersion": "v",
 				"kind":       "k",
 			}},
@@ -597,7 +597,7 @@ func TestDecode(t *testing.T) {
 			name: "into unstructuredlist empty",
 			data: []byte("\xa2\x6aapiVersion\x61v\x64kind\x65kList"),
 			into: &unstructured.UnstructuredList{},
-			expectedObj: &unstructured.UnstructuredList{Object: map[string]interface{}{
+			expectedObj: &unstructured.UnstructuredList{Object: map[string]any{
 				"apiVersion": "v",
 				"kind":       "kList",
 			}},
@@ -613,13 +613,13 @@ func TestDecode(t *testing.T) {
 			data: []byte("\xa3\x6aapiVersion\x61v\x64kind\x65kList\x65items\x82\xa1\x63foo\x01\xa1\x63foo\x02"), // {"apiVersion": "v", "kind": "kList", "items": [{"foo": 1}, {"foo": 2}]}
 			into: &unstructured.UnstructuredList{},
 			expectedObj: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v",
 					"kind":       "kList",
 				},
 				Items: []unstructured.Unstructured{
-					{Object: map[string]interface{}{"apiVersion": "v", "kind": "k", "foo": int64(1)}},
-					{Object: map[string]interface{}{"apiVersion": "v", "kind": "k", "foo": int64(2)}},
+					{Object: map[string]any{"apiVersion": "v", "kind": "k", "foo": int64(1)}},
+					{Object: map[string]any{"apiVersion": "v", "kind": "k", "foo": int64(2)}},
 				},
 			},
 			expectedGVK: &schema.GroupVersionKind{Version: "v", Kind: "kList"},
@@ -634,12 +634,12 @@ func TestDecode(t *testing.T) {
 			data: []byte("\xa3\x6aapiVersion\x61v\x64kind\x65kList\x65items\x81\xa2\x6aapiVersion\x62vv\x64kind\x62kk"), // {"apiVersion": "v", "kind": "kList", "items": [{"apiVersion": "vv", "kind": "kk"}]}
 			into: &unstructured.UnstructuredList{},
 			expectedObj: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v",
 					"kind":       "kList",
 				},
 				Items: []unstructured.Unstructured{
-					{Object: map[string]interface{}{"apiVersion": "vv", "kind": "kk"}},
+					{Object: map[string]any{"apiVersion": "vv", "kind": "kk"}},
 				},
 			},
 			expectedGVK: &schema.GroupVersionKind{Version: "v", Kind: "kList"},
@@ -678,7 +678,7 @@ func TestDecode(t *testing.T) {
 			data:        []byte("\xa2\x6aapiVersion\x61v\x64kind\x65kList"),
 			metaFactory: &defaultMetaFactory{},
 			creater:     stubCreater{obj: &unstructured.UnstructuredList{}},
-			expectedObj: &unstructured.UnstructuredList{Object: map[string]interface{}{
+			expectedObj: &unstructured.UnstructuredList{Object: map[string]any{
 				"apiVersion": "v",
 				"kind":       "kList",
 			}},
@@ -793,7 +793,7 @@ func (mf stubMetaFactory) Interpret([]byte) (*schema.GroupVersionKind, error) {
 
 type oneMapField struct {
 	metav1.TypeMeta `json:",inline"`
-	Map             map[string]interface{} `json:"map"`
+	Map             map[string]any `json:"map"`
 }
 
 func (o oneMapField) DeepCopyObject() runtime.Object {
@@ -837,7 +837,7 @@ func TestEncodeNondeterministic(t *testing.T) {
 		{
 			name: "map",
 			input: func() runtime.Object {
-				m := map[string]interface{}{}
+				m := map[string]any{}
 				for i := 1; i <= 8; i++ {
 					m[strconv.Itoa(i)] = strconv.Itoa(i)
 

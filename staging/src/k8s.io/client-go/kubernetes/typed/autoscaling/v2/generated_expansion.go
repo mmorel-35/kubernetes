@@ -18,4 +18,4 @@ limitations under the License.
 
 package v2
 
-type HorizontalPodAutoscalerExpansion interface{}
+type HorizontalPodAutoscalerExpansion any

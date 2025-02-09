@@ -169,7 +169,7 @@ func (l *LimitRanger) GetLimitRanges(a admission.Attributes) ([]*corev1.LimitRan
 		if !ok || lruItemObj.(liveLookupEntry).expiry.Before(time.Now()) {
 			// Fixed: #22422
 			// use singleflight to alleviate simultaneous calls to
-			lruItemObj, err, _ = l.group.Do(a.GetNamespace(), func() (interface{}, error) {
+			lruItemObj, err, _ = l.group.Do(a.GetNamespace(), func() (any, error) {
 				liveList, err := l.client.CoreV1().LimitRanges(a.GetNamespace()).List(context.TODO(), metav1.ListOptions{})
 				if err != nil {
 					return nil, admission.NewForbidden(a, err)

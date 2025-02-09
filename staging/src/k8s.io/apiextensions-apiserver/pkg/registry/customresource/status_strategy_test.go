@@ -39,17 +39,17 @@ func TestPrepareForUpdate(t *testing.T) {
 		{
 			// changes to spec are ignored
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"spec": "old",
 				},
 			},
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"spec": "new",
 				},
 			},
 			expected: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"spec": "old",
 				},
 			},
@@ -57,17 +57,17 @@ func TestPrepareForUpdate(t *testing.T) {
 		{
 			// changes to other places are also ignored
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"spec": "old",
 				},
 			},
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"new": "new",
 				},
 			},
 			expected: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"spec": "old",
 				},
 			},
@@ -75,18 +75,18 @@ func TestPrepareForUpdate(t *testing.T) {
 		{
 			// delete status
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"spec":   "old",
 					"status": "old",
 				},
 			},
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"spec": "old",
 				},
 			},
 			expected: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"spec": "old",
 				},
 			},
@@ -94,18 +94,18 @@ func TestPrepareForUpdate(t *testing.T) {
 		{
 			// update status
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"spec":   "old",
 					"status": "old",
 				},
 			},
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"status": "new",
 				},
 			},
 			expected: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"spec":   "old",
 					"status": "new",
 				},
@@ -114,20 +114,20 @@ func TestPrepareForUpdate(t *testing.T) {
 		{
 			// update status and other parts
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"spec":   "old",
 					"status": "old",
 				},
 			},
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"spec":   "new",
 					"new":    "new",
 					"status": "new",
 				},
 			},
 			expected: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"spec":   "old",
 					"status": "new",
 				},
@@ -210,26 +210,26 @@ func TestStatusStrategyValidateUpdate(t *testing.T) {
 	}{
 		{
 			name:    "bothValid",
-			old:     &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "test/v1", "kind": "Foo", "numArray": []interface{}{1, 2}}},
-			obj:     &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "test/v1", "kind": "Foo", "numArray": []interface{}{1, 3}, "metadata": map[string]interface{}{"resourceVersion": "1"}}},
+			old:     &unstructured.Unstructured{Object: map[string]any{"apiVersion": "test/v1", "kind": "Foo", "numArray": []any{1, 2}}},
+			obj:     &unstructured.Unstructured{Object: map[string]any{"apiVersion": "test/v1", "kind": "Foo", "numArray": []any{1, 3}, "metadata": map[string]any{"resourceVersion": "1"}}},
 			isValid: true,
 		},
 		{
 			name:    "change to invalid",
-			old:     &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "test/v1", "kind": "Foo", "spec": "old", "numArray": []interface{}{1, 2}}},
-			obj:     &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "test/v1", "kind": "Foo", "spec": "new", "numArray": []interface{}{1, 1}, "metadata": map[string]interface{}{"resourceVersion": "1"}}},
+			old:     &unstructured.Unstructured{Object: map[string]any{"apiVersion": "test/v1", "kind": "Foo", "spec": "old", "numArray": []any{1, 2}}},
+			obj:     &unstructured.Unstructured{Object: map[string]any{"apiVersion": "test/v1", "kind": "Foo", "spec": "new", "numArray": []any{1, 1}, "metadata": map[string]any{"resourceVersion": "1"}}},
 			isValid: false,
 		},
 		{
 			name:    "change to valid",
-			old:     &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "test/v1", "kind": "Foo", "spec": "new", "numArray": []interface{}{1, 1}}},
-			obj:     &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "test/v1", "kind": "Foo", "spec": "old", "numArray": []interface{}{1, 2}, "metadata": map[string]interface{}{"resourceVersion": "1"}}},
+			old:     &unstructured.Unstructured{Object: map[string]any{"apiVersion": "test/v1", "kind": "Foo", "spec": "new", "numArray": []any{1, 1}}},
+			obj:     &unstructured.Unstructured{Object: map[string]any{"apiVersion": "test/v1", "kind": "Foo", "spec": "old", "numArray": []any{1, 2}, "metadata": map[string]any{"resourceVersion": "1"}}},
 			isValid: true,
 		},
 		{
 			name:    "keeps invalid",
-			old:     &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "test/v1", "kind": "Foo", "spec": "new", "numArray": []interface{}{1, 1}}},
-			obj:     &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "test/v1", "kind": "Foo", "spec": "old", "numArray": []interface{}{1, 1}, "metadata": map[string]interface{}{"resourceVersion": "1"}}},
+			old:     &unstructured.Unstructured{Object: map[string]any{"apiVersion": "test/v1", "kind": "Foo", "spec": "new", "numArray": []any{1, 1}}},
+			obj:     &unstructured.Unstructured{Object: map[string]any{"apiVersion": "test/v1", "kind": "Foo", "spec": "old", "numArray": []any{1, 1}, "metadata": map[string]any{"resourceVersion": "1"}}},
 			isValid: true,
 		},
 	}

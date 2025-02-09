@@ -611,7 +611,7 @@ func collectResourcePaths(t *testing.T, resourcename string, path *field.Path, n
 			resourcePaths.Insert(sets.List[string](collectResourcePaths(t, resourcename, path.Child(field.Name), field.Name, field.Type))...)
 		}
 	case reflect.Interface:
-		t.Errorf("cannot find %s fields in interface{} field %s", resourcename, path.String())
+		t.Errorf("cannot find %s fields in any field %s", resourcename, path.String())
 	case reflect.Map:
 		resourcePaths.Insert(sets.List[string](collectResourcePaths(t, resourcename, path.Key("*"), "", tp.Elem()))...)
 	case reflect.Slice:

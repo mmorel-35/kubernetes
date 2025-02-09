@@ -34,8 +34,8 @@ import (
 func Test_cellForJSONValue(t *testing.T) {
 	tests := []struct {
 		headerType string
-		value      interface{}
-		want       interface{}
+		value      any
+		want       any
 	}{
 		{"integer", int64(42), int64(42)},
 		{"integer", float64(3.14), int64(3)},
@@ -107,7 +107,7 @@ func Test_convertor_ConvertToTable(t *testing.T) {
 				ColumnDefinitions: []metav1.TableColumnDefinition{{Name: "name", Type: "string"}},
 				Rows: []metav1.TableRow{
 					{
-						Cells: []interface{}{"blah"},
+						Cells: []any{"blah"},
 						Object: runtime.RawExtension{
 							Object: &metav1beta1.PartialObjectMetadata{
 								ObjectMeta: metav1.ObjectMeta{Name: "blah", CreationTimestamp: metav1.NewTime(time.Unix(1, 0))},
@@ -135,7 +135,7 @@ func Test_convertor_ConvertToTable(t *testing.T) {
 				ColumnDefinitions: []metav1.TableColumnDefinition{{Name: "name", Type: "string"}},
 				Rows: []metav1.TableRow{
 					{
-						Cells: []interface{}{"blah"},
+						Cells: []any{"blah"},
 						Object: runtime.RawExtension{
 							Object: &metav1beta1.PartialObjectMetadata{
 								ObjectMeta: metav1.ObjectMeta{Name: "blah", CreationTimestamp: metav1.NewTime(time.Unix(1, 0))},
@@ -143,7 +143,7 @@ func Test_convertor_ConvertToTable(t *testing.T) {
 						},
 					},
 					{
-						Cells: []interface{}{"blah-2"},
+						Cells: []any{"blah-2"},
 						Object: runtime.RawExtension{
 							Object: &metav1beta1.PartialObjectMetadata{
 								ObjectMeta: metav1.ObjectMeta{Name: "blah-2", CreationTimestamp: metav1.NewTime(time.Unix(2, 0))},
@@ -168,7 +168,7 @@ func Test_convertor_ConvertToTable(t *testing.T) {
 				ColumnDefinitions: []metav1.TableColumnDefinition{{Name: "name", Type: "string"}},
 				Rows: []metav1.TableRow{
 					{
-						Cells: []interface{}{"blah"},
+						Cells: []any{"blah"},
 						Object: runtime.RawExtension{
 							Object: &metav1beta1.PartialObjectMetadata{
 								ObjectMeta: metav1.ObjectMeta{Name: "blah", CreationTimestamp: metav1.NewTime(time.Unix(1, 0))},
@@ -192,7 +192,7 @@ func Test_convertor_ConvertToTable(t *testing.T) {
 			want: &metav1.Table{
 				Rows: []metav1.TableRow{
 					{
-						Cells: []interface{}{"blah"},
+						Cells: []any{"blah"},
 						Object: runtime.RawExtension{
 							Object: &metav1beta1.PartialObjectMetadata{
 								ObjectMeta: metav1.ObjectMeta{Name: "blah", CreationTimestamp: metav1.NewTime(time.Unix(1, 0))},
@@ -221,14 +221,14 @@ func Test_convertor_ConvertToTable(t *testing.T) {
 			},
 			args: args{
 				obj: &unstructured.Unstructured{
-					Object: map[string]interface{}{
+					Object: map[string]any{
 						"apiVersion": "example.istio.io/v1alpha1",
 						"kind":       "Blah",
-						"metadata": map[string]interface{}{
+						"metadata": map[string]any{
 							"name": "blah",
 						},
-						"spec": map[string]interface{}{
-							"servers": []map[string]interface{}{
+						"spec": map[string]any{
+							"servers": []map[string]any{
 								{"hosts": []string{"foo"}},
 								{"hosts": []string{"bar", "baz"}},
 							},
@@ -247,7 +247,7 @@ func Test_convertor_ConvertToTable(t *testing.T) {
 				},
 				Rows: []metav1.TableRow{
 					{
-						Cells: []interface{}{
+						Cells: []any{
 							"blah",
 							"foo",
 							`["foo"]`,
@@ -256,14 +256,14 @@ func Test_convertor_ConvertToTable(t *testing.T) {
 						},
 						Object: runtime.RawExtension{
 							Object: &unstructured.Unstructured{
-								Object: map[string]interface{}{
+								Object: map[string]any{
 									"apiVersion": "example.istio.io/v1alpha1",
 									"kind":       "Blah",
-									"metadata": map[string]interface{}{
+									"metadata": map[string]any{
 										"name": "blah",
 									},
-									"spec": map[string]interface{}{
-										"servers": []map[string]interface{}{
+									"spec": map[string]any{
+										"servers": []map[string]any{
 											{"hosts": []string{"foo"}},
 											{"hosts": []string{"bar", "baz"}},
 										},
@@ -294,14 +294,14 @@ func Test_convertor_ConvertToTable(t *testing.T) {
 			},
 			args: args{
 				obj: &unstructured.Unstructured{
-					Object: map[string]interface{}{
+					Object: map[string]any{
 						"apiVersion": "example.istio.io/v1alpha1",
 						"kind":       "Blah",
-						"metadata": map[string]interface{}{
+						"metadata": map[string]any{
 							"name": "blah",
 						},
-						"spec": map[string]interface{}{
-							"foo": []map[string]interface{}{
+						"spec": map[string]any{
+							"foo": []map[string]any{
 								{"bar": []int64{1}},
 								{"bar": []int64{2, 3}},
 							},
@@ -320,7 +320,7 @@ func Test_convertor_ConvertToTable(t *testing.T) {
 				},
 				Rows: []metav1.TableRow{
 					{
-						Cells: []interface{}{
+						Cells: []any{
 							"blah",
 							"1",
 							"[1]",
@@ -329,14 +329,14 @@ func Test_convertor_ConvertToTable(t *testing.T) {
 						},
 						Object: runtime.RawExtension{
 							Object: &unstructured.Unstructured{
-								Object: map[string]interface{}{
+								Object: map[string]any{
 									"apiVersion": "example.istio.io/v1alpha1",
 									"kind":       "Blah",
-									"metadata": map[string]interface{}{
+									"metadata": map[string]any{
 										"name": "blah",
 									},
-									"spec": map[string]interface{}{
-										"foo": []map[string]interface{}{
+									"spec": map[string]any{
+										"foo": []map[string]any{
 											{"bar": []int64{1}},
 											{"bar": []int64{2, 3}},
 										},
@@ -367,14 +367,14 @@ func Test_convertor_ConvertToTable(t *testing.T) {
 			},
 			args: args{
 				obj: &unstructured.Unstructured{
-					Object: map[string]interface{}{
+					Object: map[string]any{
 						"apiVersion": "example.istio.io/v1alpha1",
 						"kind":       "Blah",
-						"metadata": map[string]interface{}{
+						"metadata": map[string]any{
 							"name": "blah",
 						},
-						"spec": map[string]interface{}{
-							"foo": []map[string]interface{}{
+						"spec": map[string]any{
+							"foo": []map[string]any{
 								{"bar": []int64{1}},
 								{"bar": []int64{2, 3}},
 							},
@@ -393,7 +393,7 @@ func Test_convertor_ConvertToTable(t *testing.T) {
 				},
 				Rows: []metav1.TableRow{
 					{
-						Cells: []interface{}{
+						Cells: []any{
 							"blah",
 							int64(1),
 							nil, // TODO: Seems like this should either return some data or return an error, not just be nil
@@ -402,14 +402,14 @@ func Test_convertor_ConvertToTable(t *testing.T) {
 						},
 						Object: runtime.RawExtension{
 							Object: &unstructured.Unstructured{
-								Object: map[string]interface{}{
+								Object: map[string]any{
 									"apiVersion": "example.istio.io/v1alpha1",
 									"kind":       "Blah",
-									"metadata": map[string]interface{}{
+									"metadata": map[string]any{
 										"name": "blah",
 									},
-									"spec": map[string]interface{}{
-										"foo": []map[string]interface{}{
+									"spec": map[string]any{
+										"foo": []map[string]any{
 											{"bar": []int64{1}},
 											{"bar": []int64{2, 3}},
 										},

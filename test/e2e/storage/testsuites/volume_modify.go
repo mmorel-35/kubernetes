@@ -61,7 +61,7 @@ func InitCustomVolumeModifyTestSuite(patterns []storageframework.TestPattern) st
 			SupportedSizeRange: e2evolume.SizeRange{
 				Min: "1Gi",
 			},
-			TestTags: []interface{}{e2efeature.VolumeAttributesClass, framework.WithFeatureGate(features.VolumeAttributesClass)},
+			TestTags: []any{e2efeature.VolumeAttributesClass, framework.WithFeatureGate(features.VolumeAttributesClass)},
 		},
 	}
 }
@@ -275,7 +275,7 @@ func SetPVCVACName(ctx context.Context, origPVC *v1.PersistentVolumeClaim, name 
 
 	gomega.Eventually(ctx, func(g gomega.Gomega) {
 		var err error
-		patch := []map[string]interface{}{{"op": "replace", "path": "/spec/volumeAttributesClassName", "value": name}}
+		patch := []map[string]any{{"op": "replace", "path": "/spec/volumeAttributesClassName", "value": name}}
 		patchBytes, _ := json.Marshal(patch)
 
 		patchedPVC, err = c.CoreV1().PersistentVolumeClaims(origPVC.Namespace).Patch(ctx, pvcName, types.JSONPatchType, patchBytes, metav1.PatchOptions{})

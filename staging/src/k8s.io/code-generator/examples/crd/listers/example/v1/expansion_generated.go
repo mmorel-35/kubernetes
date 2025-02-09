@@ -20,12 +20,12 @@ package v1
 
 // ClusterTestTypeListerExpansion allows custom methods to be added to
 // ClusterTestTypeLister.
-type ClusterTestTypeListerExpansion interface{}
+type ClusterTestTypeListerExpansion any
 
 // TestTypeListerExpansion allows custom methods to be added to
 // TestTypeLister.
-type TestTypeListerExpansion interface{}
+type TestTypeListerExpansion any
 
 // TestTypeNamespaceListerExpansion allows custom methods to be added to
 // TestTypeNamespaceLister.
-type TestTypeNamespaceListerExpansion interface{}
+type TestTypeNamespaceListerExpansion any

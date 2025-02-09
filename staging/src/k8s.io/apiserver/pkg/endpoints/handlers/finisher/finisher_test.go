@@ -52,7 +52,7 @@ func TestFinishRequest(t *testing.T) {
 		expectedErr   error
 		expectedPanic string
 
-		expectedPanicObj interface{}
+		expectedPanicObj any
 	}{
 		{
 			name:    "Expected obj is returned",

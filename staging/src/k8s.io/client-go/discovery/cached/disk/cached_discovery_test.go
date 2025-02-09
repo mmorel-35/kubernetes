@@ -339,7 +339,7 @@ func TestCachedDiscoveryClientUnaggregatedServerGroups(t *testing.T) {
 		os.RemoveAll(httpCache)
 		defer os.RemoveAll(httpCache)
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-			var body interface{}
+			var body any
 			switch req.URL.Path {
 			case "/api":
 				body = test.corev1

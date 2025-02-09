@@ -194,13 +194,13 @@ var annotationsToSkip = map[string]bool{
 // previous version. If the returned error is nil the patch is valid.
 func getDeploymentPatch(podTemplate *corev1.PodTemplateSpec, annotations map[string]string) (types.PatchType, []byte, error) {
 	// Create a patch of the Deployment that replaces spec.template
-	patch, err := json.Marshal([]interface{}{
-		map[string]interface{}{
+	patch, err := json.Marshal([]any{
+		map[string]any{
 			"op":    "replace",
 			"path":  "/spec/template",
 			"value": podTemplate,
 		},
-		map[string]interface{}{
+		map[string]any{
 			"op":    "replace",
 			"path":  "/metadata/annotations",
 			"value": annotations,
@@ -328,17 +328,17 @@ func getDaemonSetPatch(ds *appsv1.DaemonSet) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	var raw map[string]interface{}
+	var raw map[string]any
 	err = json.Unmarshal(dsBytes, &raw)
 	if err != nil {
 		return nil, err
 	}
-	objCopy := make(map[string]interface{})
-	specCopy := make(map[string]interface{})
+	objCopy := make(map[string]any)
+	specCopy := make(map[string]any)
 
 	// Create a patch of the DaemonSet that replaces spec.template
-	spec := raw["spec"].(map[string]interface{})
-	template := spec["template"].(map[string]interface{})
+	spec := raw["spec"].(map[string]any)
+	template := spec["template"].(map[string]any)
 	specCopy["template"] = template
 	template["$patch"] = "replace"
 	objCopy["spec"] = specCopy
@@ -436,14 +436,14 @@ func getStatefulSetPatch(set *appsv1.StatefulSet) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	var raw map[string]interface{}
+	var raw map[string]any
 	if err := json.Unmarshal([]byte(str), &raw); err != nil {
 		return nil, err
 	}
-	objCopy := make(map[string]interface{})
-	specCopy := make(map[string]interface{})
-	spec := raw["spec"].(map[string]interface{})
-	template := spec["template"].(map[string]interface{})
+	objCopy := make(map[string]any)
+	specCopy := make(map[string]any)
+	spec := raw["spec"].(map[string]any)
+	template := spec["template"].(map[string]any)
 	specCopy["template"] = template
 	template["$patch"] = "replace"
 	objCopy["spec"] = specCopy

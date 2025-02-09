@@ -60,7 +60,7 @@ func (g *versionInterfaceGenerator) Imports(c *generator.Context) (imports []str
 func (g *versionInterfaceGenerator) GenerateType(c *generator.Context, t *types.Type, w io.Writer) error {
 	sw := generator.NewSnippetWriter(w, c, "$", "$")
 
-	m := map[string]interface{}{
+	m := map[string]any{
 		"interfacesTweakListOptionsFunc":  c.Universe.Type(types.Name{Package: g.internalInterfacesPackage, Name: "TweakListOptionsFunc"}),
 		"interfacesSharedInformerFactory": c.Universe.Type(types.Name{Package: g.internalInterfacesPackage, Name: "SharedInformerFactory"}),
 		"types":                           g.types,

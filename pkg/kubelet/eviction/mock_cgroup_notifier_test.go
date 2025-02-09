@@ -45,7 +45,7 @@ type MockCgroupNotifier_Start_Call struct {
 
 // Start is a helper method to define mock.On call
 //   - eventCh chan<- struct{}
-func (_e *MockCgroupNotifier_Expecter) Start(eventCh interface{}) *MockCgroupNotifier_Start_Call {
+func (_e *MockCgroupNotifier_Expecter) Start(eventCh any) *MockCgroupNotifier_Start_Call {
 	return &MockCgroupNotifier_Start_Call{Call: _e.mock.On("Start", eventCh)}
 }
 

@@ -24,7 +24,7 @@ type TestTypeListerExpansion interface {
 
 // TestTypeNamespaceListerExpansion allows custom methods to be added to
 // TestTypeNamespaceLister.
-type TestTypeNamespaceListerExpansion interface{}
+type TestTypeNamespaceListerExpansion any
 
 func (*testTypeLister) CheckExpansionSupport() {
 	// This checks that lister-gen correctly supports expansions

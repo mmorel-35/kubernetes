@@ -231,14 +231,14 @@ func (irecorder *innerEventRecorder) Event(object runtime.Object, eventtype, rea
 	}
 }
 
-func (irecorder *innerEventRecorder) Eventf(object runtime.Object, eventtype, reason, messageFmt string, args ...interface{}) {
+func (irecorder *innerEventRecorder) Eventf(object runtime.Object, eventtype, reason, messageFmt string, args ...any) {
 	if ref, ok := irecorder.shouldRecordEvent(object); ok {
 		irecorder.recorder.Eventf(ref, eventtype, reason, messageFmt, args...)
 	}
 
 }
 
-func (irecorder *innerEventRecorder) AnnotatedEventf(object runtime.Object, annotations map[string]string, eventtype, reason, messageFmt string, args ...interface{}) {
+func (irecorder *innerEventRecorder) AnnotatedEventf(object runtime.Object, annotations map[string]string, eventtype, reason, messageFmt string, args ...any) {
 	if ref, ok := irecorder.shouldRecordEvent(object); ok {
 		irecorder.recorder.AnnotatedEventf(ref, annotations, eventtype, reason, messageFmt, args...)
 	}

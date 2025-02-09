@@ -122,7 +122,7 @@ func (g *genericGenerator) GenerateType(c *generator.Context, t *types.Type, w i
 	}
 	sort.Sort(groupSort(groups))
 
-	m := map[string]interface{}{
+	m := map[string]any{
 		"cacheGenericLister":         c.Universe.Type(cacheGenericLister),
 		"cacheNewGenericLister":      c.Universe.Function(cacheNewGenericLister),
 		"cacheSharedIndexInformer":   c.Universe.Type(cacheSharedIndexInformer),

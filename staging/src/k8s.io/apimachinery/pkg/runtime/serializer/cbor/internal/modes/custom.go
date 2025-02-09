@@ -35,7 +35,7 @@ import (
 // transcoding between CBOR and JSON/text for these types. This restriction allows CBOR to be
 // exercised for in-tree and unstructured types while mitigating the risk of mangling out-of-tree
 // types in client programs.
-func RejectCustomMarshalers(v interface{}) error {
+func RejectCustomMarshalers(v any) error {
 	if v == nil {
 		return nil
 	}
@@ -158,7 +158,7 @@ func (cache *checkers) getCheckerInternal(rt reflect.Type, parent *path) (c chec
 	// Take a nonreflective path for the unstructured container types. They're common and
 	// usually nested inside one another.
 	switch rt {
-	case reflect.TypeFor[map[string]interface{}](), reflect.TypeFor[[]interface{}]():
+	case reflect.TypeFor[map[string]any](), reflect.TypeFor[[]any]():
 		return checker{
 			safe: func() bool {
 				return false
@@ -256,8 +256,8 @@ func (cache *checkers) getCheckerInternal(rt reflect.Type, parent *path) (c chec
 				}
 				// Unpacking interfaces must count against recursion depth,
 				// consider this cycle:
-				// >  var i interface{}
-				// >  var p *interface{} = &i
+				// >  var i any
+				// >  var p *any = &i
 				// >  i = p
 				// >  rv := reflect.ValueOf(i)
 				// >  for {
@@ -388,11 +388,11 @@ func (cache *checkers) getCheckerInternal(rt reflect.Type, parent *path) (c chec
 	}
 }
 
-func checkUnstructuredValue(cache *checkers, v interface{}, depth int) error {
+func checkUnstructuredValue(cache *checkers, v any, depth int) error {
 	switch v := v.(type) {
 	case nil, bool, int64, float64, string:
 		return nil
-	case []interface{}:
+	case []any:
 		if depth <= 0 {
 			return errMaxDepthExceeded
 		}
@@ -402,7 +402,7 @@ func checkUnstructuredValue(cache *checkers, v interface{}, depth int) error {
 			}
 		}
 		return nil
-	case map[string]interface{}:
+	case map[string]any:
 		if depth <= 0 {
 			return errMaxDepthExceeded
 		}

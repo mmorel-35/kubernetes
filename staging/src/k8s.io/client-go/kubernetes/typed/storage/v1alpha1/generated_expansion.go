@@ -18,8 +18,8 @@ limitations under the License.
 
 package v1alpha1
 
-type CSIStorageCapacityExpansion interface{}
+type CSIStorageCapacityExpansion any
 
-type VolumeAttachmentExpansion interface{}
+type VolumeAttachmentExpansion any
 
-type VolumeAttributesClassExpansion interface{}
+type VolumeAttributesClassExpansion any

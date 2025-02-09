@@ -78,7 +78,7 @@ func (g *groupInterfaceGenerator) GenerateType(c *generator.Context, t *types.Ty
 			New:       c.Universe.Function(types.Name{Package: versionPackage, Name: "New"}),
 		})
 	}
-	m := map[string]interface{}{
+	m := map[string]any{
 		"interfacesTweakListOptionsFunc":  c.Universe.Type(types.Name{Package: g.internalInterfacesPackage, Name: "TweakListOptionsFunc"}),
 		"interfacesSharedInformerFactory": c.Universe.Type(types.Name{Package: g.internalInterfacesPackage, Name: "SharedInformerFactory"}),
 		"versions":                        versions,

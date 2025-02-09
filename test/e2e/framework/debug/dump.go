@@ -104,7 +104,7 @@ func dumpAllNodeInfo(ctx context.Context, c clientset.Interface, nodes *v1.NodeL
 }
 
 // DumpNodeDebugInfo dumps debug information of the given nodes.
-func DumpNodeDebugInfo(ctx context.Context, c clientset.Interface, nodeNames []string, logFunc func(fmt string, args ...interface{})) {
+func DumpNodeDebugInfo(ctx context.Context, c clientset.Interface, nodeNames []string, logFunc func(fmt string, args ...any)) {
 	for _, n := range nodeNames {
 		logFunc("\nLogging node info for node %v", n)
 		node, err := c.CoreV1().Nodes().Get(ctx, n, metav1.GetOptions{})

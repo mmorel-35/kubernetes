@@ -69,9 +69,9 @@ type event struct {
 	// virtual indicates this event did not come from an informer, but was constructed artificially
 	virtual   bool
 	eventType eventType
-	obj       interface{}
+	obj       any
 	// the update event comes with an old object, but it's not used by the garbage collector.
-	oldObj interface{}
+	oldObj any
 	gvk    schema.GroupVersionKind
 }
 
@@ -186,7 +186,7 @@ func NewDependencyGraphBuilder(
 func (gb *GraphBuilder) controllerFor(logger klog.Logger, resource schema.GroupVersionResource, kind schema.GroupVersionKind) (cache.Controller, cache.Store, error) {
 	handlers := cache.ResourceEventHandlerFuncs{
 		// add the event to the dependencyGraphBuilder's graphChanges.
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			event := &event{
 				eventType: addEvent,
 				obj:       obj,
@@ -194,7 +194,7 @@ func (gb *GraphBuilder) controllerFor(logger klog.Logger, resource schema.GroupV
 			}
 			gb.graphChanges.Add(event)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			// TODO: check if there are differences in the ownerRefs,
 			// finalizers, and DeletionTimestamp; if not, ignore the update.
 			event := &event{
@@ -205,7 +205,7 @@ func (gb *GraphBuilder) controllerFor(logger klog.Logger, resource schema.GroupV
 			}
 			gb.graphChanges.Add(event)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			// delta fifo may wrap the object in a cache.DeletedFinalStateUnknown, unwrap it
 			if deletedFinalStateUnknown, ok := obj.(cache.DeletedFinalStateUnknown); ok {
 				obj = deletedFinalStateUnknown.Obj
@@ -561,7 +561,7 @@ func referencesDiffs(old []metav1.OwnerReference, new []metav1.OwnerReference) (
 	return added, removed, changed
 }
 
-func deletionStartsWithFinalizer(oldObj interface{}, newAccessor metav1.Object, matchingFinalizer string) bool {
+func deletionStartsWithFinalizer(oldObj any, newAccessor metav1.Object, matchingFinalizer string) bool {
 	// if the new object isn't being deleted, or doesn't have the finalizer we're interested in, return false
 	if !beingDeleted(newAccessor) || !hasFinalizer(newAccessor, matchingFinalizer) {
 		return false
@@ -603,13 +603,13 @@ func hasFinalizer(accessor metav1.Object, matchingFinalizer string) bool {
 
 // this function takes newAccessor directly because the caller already
 // instantiates an accessor for the newObj.
-func startsWaitingForDependentsDeleted(oldObj interface{}, newAccessor metav1.Object) bool {
+func startsWaitingForDependentsDeleted(oldObj any, newAccessor metav1.Object) bool {
 	return deletionStartsWithFinalizer(oldObj, newAccessor, metav1.FinalizerDeleteDependents)
 }
 
 // this function takes newAccessor directly because the caller already
 // instantiates an accessor for the newObj.
-func startsWaitingForDependentsOrphaned(oldObj interface{}, newAccessor metav1.Object) bool {
+func startsWaitingForDependentsOrphaned(oldObj any, newAccessor metav1.Object) bool {
 	return deletionStartsWithFinalizer(oldObj, newAccessor, metav1.FinalizerOrphanDependents)
 }
 
@@ -640,7 +640,7 @@ func (gb *GraphBuilder) addUnblockedOwnersToDeleteQueue(logger klog.Logger, remo
 	}
 }
 
-func (gb *GraphBuilder) processTransitions(logger klog.Logger, oldObj interface{}, newAccessor metav1.Object, n *node) {
+func (gb *GraphBuilder) processTransitions(logger klog.Logger, oldObj any, newAccessor metav1.Object, n *node) {
 	if startsWaitingForDependentsOrphaned(oldObj, newAccessor) {
 		logger.V(5).Info("add item to attemptToOrphan", "item", n.identity)
 		gb.attemptToOrphan.Add(n)

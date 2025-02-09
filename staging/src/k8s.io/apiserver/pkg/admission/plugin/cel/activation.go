@@ -80,12 +80,12 @@ func newActivation(compositionCtx CompositionContext, versionedAttr *admission.V
 }
 
 type evaluationActivation struct {
-	object, oldObject, params, request, namespace, authorizer, requestResourceAuthorizer, variables interface{}
+	object, oldObject, params, request, namespace, authorizer, requestResourceAuthorizer, variables any
 }
 
 // ResolveName returns a value from the activation by qualified name, or false if the name
 // could not be found.
-func (a *evaluationActivation) ResolveName(name string) (interface{}, bool) {
+func (a *evaluationActivation) ResolveName(name string) (any, bool) {
 	switch name {
 	case ObjectVarName:
 		return a.object, true

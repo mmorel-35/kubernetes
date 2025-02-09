@@ -224,8 +224,8 @@ var _ = SIGDescribe("ReplicationController", func() {
 				framework.Failf("failed to find RC %v event", watch.Added)
 			}
 
-			rcStatusPatchPayload, err := json.Marshal(map[string]interface{}{
-				"status": map[string]interface{}{
+			rcStatusPatchPayload, err := json.Marshal(map[string]any{
+				"status": map[string]any{
 					"readyReplicas":     0,
 					"availableReplicas": 0,
 				},

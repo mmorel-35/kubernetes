@@ -219,7 +219,7 @@ func (f *fakeRoot) GVSpec(gv schema.GroupVersion) (*spec3.OpenAPI, error) {
 	return f.spec, nil
 }
 
-func (f *fakeRoot) GVSpecAsMap(gv schema.GroupVersion) (map[string]interface{}, error) {
+func (f *fakeRoot) GVSpecAsMap(gv schema.GroupVersion) (map[string]any, error) {
 	// Unused
 	return nil, nil
 }

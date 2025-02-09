@@ -77,7 +77,7 @@ type SyncResult struct {
 	// The target of the action, now the target can only be:
 	//  * Container: Target should be container name
 	//  * Network: Target is useless now, we just set it as pod full name now
-	Target interface{}
+	Target any
 	// Brief error reason
 	Error error
 	// Human readable error reason
@@ -85,7 +85,7 @@ type SyncResult struct {
 }
 
 // NewSyncResult generates new SyncResult with specific Action and Target
-func NewSyncResult(action SyncAction, target interface{}) *SyncResult {
+func NewSyncResult(action SyncAction, target any) *SyncResult {
 	return &SyncResult{Action: action, Target: target}
 }
 

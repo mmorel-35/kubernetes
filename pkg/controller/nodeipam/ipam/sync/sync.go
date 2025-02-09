@@ -58,7 +58,7 @@ type kubeAPI interface {
 	// UpdateNodeNetworkUnavailable updates the network unavailable status for the node.
 	UpdateNodeNetworkUnavailable(nodeName string, unavailable bool) error
 	// EmitNodeWarningEvent emits an event for the given node.
-	EmitNodeWarningEvent(nodeName, reason, fmt string, args ...interface{})
+	EmitNodeWarningEvent(nodeName, reason, fmt string, args ...any)
 }
 
 // controller is the interface to the controller.

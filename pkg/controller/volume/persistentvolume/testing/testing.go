@@ -61,7 +61,7 @@ var ErrVersionConflict = errors.New("VersionError")
 type VolumeReactor struct {
 	volumes              map[string]*v1.PersistentVolume
 	claims               map[string]*v1.PersistentVolumeClaim
-	changedObjects       []interface{}
+	changedObjects       []any
 	changedSinceLastSync int
 	fakeVolumeWatch      *watch.FakeWatcher
 	fakeClaimWatch       *watch.FakeWatcher
@@ -386,7 +386,7 @@ func (r *VolumeReactor) CheckClaims(expectedClaims []*v1.PersistentVolumeClaim) 
 
 // PopChange returns one recorded updated object, either *v1.PersistentVolume
 // or *v1.PersistentVolumeClaim. Returns nil when there are no changes.
-func (r *VolumeReactor) PopChange(ctx context.Context) interface{} {
+func (r *VolumeReactor) PopChange(ctx context.Context) any {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

@@ -28,7 +28,7 @@ import (
 )
 
 // AppendFunc is used to add a matching item to whatever list the caller is using
-type AppendFunc func(interface{})
+type AppendFunc func(any)
 
 // ListAll lists items in the store matching the given selector, calling appendFn on each one.
 func ListAll(store Store, selector labels.Selector, appendFn AppendFunc) error {
@@ -130,7 +130,7 @@ type genericLister struct {
 }
 
 func (s *genericLister) List(selector labels.Selector) (ret []runtime.Object, err error) {
-	err = ListAll(s.indexer, selector, func(m interface{}) {
+	err = ListAll(s.indexer, selector, func(m any) {
 		ret = append(ret, m.(runtime.Object))
 	})
 	return ret, err
@@ -158,7 +158,7 @@ type genericNamespaceLister struct {
 }
 
 func (s *genericNamespaceLister) List(selector labels.Selector) (ret []runtime.Object, err error) {
-	err = ListAllByNamespace(s.indexer, s.namespace, selector, func(m interface{}) {
+	err = ListAllByNamespace(s.indexer, s.namespace, selector, func(m any) {
 		ret = append(ret, m.(runtime.Object))
 	})
 	return ret, err

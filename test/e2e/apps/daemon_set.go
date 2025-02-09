@@ -1096,8 +1096,8 @@ func patchNamespaceAnnotations(ctx context.Context, c clientset.Interface, nsNam
 	for _, n := range NamespaceNodeSelectors {
 		annotations[n] = ""
 	}
-	nsPatch, err := json.Marshal(map[string]interface{}{
-		"metadata": map[string]interface{}{
+	nsPatch, err := json.Marshal(map[string]any{
+		"metadata": map[string]any{
 			"annotations": annotations,
 		},
 	})

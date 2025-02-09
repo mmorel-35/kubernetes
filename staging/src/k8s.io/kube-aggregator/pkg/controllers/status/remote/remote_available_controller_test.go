@@ -107,8 +107,8 @@ func newRemoteAPIService(name string) *apiregistration.APIService {
 }
 
 type T interface {
-	Fatalf(format string, args ...interface{})
-	Errorf(format string, args ...interface{})
+	Fatalf(format string, args ...any)
+	Errorf(format string, args ...any)
 }
 
 func setupAPIServices(t T, apiServices []runtime.Object) (*AvailableConditionController, *fake.Clientset) {

@@ -148,7 +148,7 @@ func validateKubeSchedulerProfile(path *field.Path, apiVersion string, profile *
 
 func validatePluginConfig(path *field.Path, apiVersion string, profile *config.KubeSchedulerProfile) []error {
 	var errs []error
-	m := map[string]interface{}{
+	m := map[string]any{
 		"DefaultPreemption":               ValidateDefaultPreemptionArgs,
 		"InterPodAffinity":                ValidateInterPodAffinityArgs,
 		"NodeAffinity":                    ValidateNodeAffinityArgs,

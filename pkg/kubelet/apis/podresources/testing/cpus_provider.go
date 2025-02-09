@@ -108,7 +108,7 @@ type MockCPUsProvider_GetCPUs_Call struct {
 // GetCPUs is a helper method to define mock.On call
 //   - podUID string
 //   - containerName string
-func (_e *MockCPUsProvider_Expecter) GetCPUs(podUID interface{}, containerName interface{}) *MockCPUsProvider_GetCPUs_Call {
+func (_e *MockCPUsProvider_Expecter) GetCPUs(podUID any, containerName any) *MockCPUsProvider_GetCPUs_Call {
 	return &MockCPUsProvider_GetCPUs_Call{Call: _e.mock.On("GetCPUs", podUID, containerName)}
 }
 

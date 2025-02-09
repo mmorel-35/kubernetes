@@ -49,8 +49,8 @@ import (
 
 // overrideGenericFuncs override some generic fuzzer funcs from k8s.io/apiserver in order to have more realistic
 // values in a Kubernetes context.
-func overrideGenericFuncs(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+func overrideGenericFuncs(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(j *runtime.Object, c fuzz.Continue) {
 			// TODO: uncomment when round trip starts from a versioned object
 			if true { //c.RandBool() {

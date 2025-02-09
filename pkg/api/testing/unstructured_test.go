@@ -77,7 +77,7 @@ func doRoundTrip(t *testing.T, internalVersion schema.GroupVersion, externalVers
 		t.Errorf("Error when marshaling object: %v", err)
 		return
 	}
-	unstr := make(map[string]interface{})
+	unstr := make(map[string]any)
 	err = json.Unmarshal(data, &unstr)
 	if err != nil {
 		t.Errorf("Error when unmarshaling to unstructured: %v", err)
@@ -203,7 +203,7 @@ func BenchmarkToUnstructured(b *testing.B) {
 func BenchmarkFromUnstructured(b *testing.B) {
 	items := benchmarkItems(b)
 	convertor := runtime.DefaultUnstructuredConverter
-	var unstr []map[string]interface{}
+	var unstr []map[string]any
 	for i := range items {
 		item, err := convertor.ToUnstructured(&items[i])
 		if err != nil || item == nil {
@@ -235,7 +235,7 @@ func BenchmarkToUnstructuredViaJSON(b *testing.B) {
 	size := len(items)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		unstr := map[string]interface{}{}
+		unstr := map[string]any{}
 		if err := json.Unmarshal(data[i%size], &unstr); err != nil {
 			b.Fatalf("unexpected error: %v", err)
 		}
@@ -245,13 +245,13 @@ func BenchmarkToUnstructuredViaJSON(b *testing.B) {
 
 func BenchmarkFromUnstructuredViaJSON(b *testing.B) {
 	items := benchmarkItems(b)
-	var unstr []map[string]interface{}
+	var unstr []map[string]any
 	for i := range items {
 		data, err := json.Marshal(&items[i])
 		if err != nil {
 			b.Fatalf("unexpected error: %v", err)
 		}
-		item := map[string]interface{}{}
+		item := map[string]any{}
 		if err := json.Unmarshal(data, &item); err != nil {
 			b.Fatalf("unexpected error: %v", err)
 		}

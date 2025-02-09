@@ -54,13 +54,13 @@ func NewPeerProxyHandler(informerFactory kubeinformers.SharedInformerFactory,
 	h.storageversionInformer = svi.Informer()
 
 	svi.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			h.addSV(obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			h.updateSV(oldObj, newObj)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			h.deleteSV(obj)
 		}})
 	return h

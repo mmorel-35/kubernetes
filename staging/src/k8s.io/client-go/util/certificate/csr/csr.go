@@ -47,7 +47,7 @@ import (
 // PEM encoded CSR and send it to API server.  An optional requestedDuration may be passed
 // to set the spec.expirationSeconds field on the CSR to control the lifetime of the issued
 // certificate.  This is not guaranteed as the signer may choose to ignore the request.
-func RequestCertificate(client clientset.Interface, csrData []byte, name, signerName string, requestedDuration *time.Duration, usages []certificatesv1.KeyUsage, privateKey interface{}) (reqName string, reqUID types.UID, err error) {
+func RequestCertificate(client clientset.Interface, csrData []byte, name, signerName string, requestedDuration *time.Duration, usages []certificatesv1.KeyUsage, privateKey any) (reqName string, reqUID types.UID, err error) {
 	csr := &certificatesv1.CertificateSigningRequest{
 		// Username, UID, Groups will be injected by API server.
 		TypeMeta: metav1.TypeMeta{Kind: "CertificateSigningRequest"},
@@ -304,7 +304,7 @@ func WaitForCertificate(ctx context.Context, client clientset.Interface, reqName
 }
 
 // ensureCompatible ensures that a CSR object is compatible with an original CSR
-func ensureCompatible(new, orig *certificatesv1.CertificateSigningRequest, privateKey interface{}) error {
+func ensureCompatible(new, orig *certificatesv1.CertificateSigningRequest, privateKey any) error {
 	newCSR, err := parseCSR(new.Spec.Request)
 	if err != nil {
 		return fmt.Errorf("unable to parse new csr: %v", err)

@@ -568,7 +568,7 @@ func TestInitPluginsWithIndexers(t *testing.T) {
 	}
 }
 
-func indexByPodSpecNodeName(obj interface{}) ([]string, error) {
+func indexByPodSpecNodeName(obj any) ([]string, error) {
 	pod, ok := obj.(*v1.Pod)
 	if !ok {
 		return []string{}, nil
@@ -579,7 +579,7 @@ func indexByPodSpecNodeName(obj interface{}) ([]string, error) {
 	return []string{pod.Spec.NodeName}, nil
 }
 
-func indexByPodAnnotationNodeName(obj interface{}) ([]string, error) {
+func indexByPodAnnotationNodeName(obj any) ([]string, error) {
 	pod, ok := obj.(*v1.Pod)
 	if !ok {
 		return []string{}, nil
@@ -1155,7 +1155,7 @@ var hintFromFakeNode = framework.QueueingHint(100)
 
 type fakeNodePlugin struct{}
 
-var fakeNodePluginQueueingFn = func(_ klog.Logger, _ *v1.Pod, _, _ interface{}) (framework.QueueingHint, error) {
+var fakeNodePluginQueueingFn = func(_ klog.Logger, _ *v1.Pod, _, _ any) (framework.QueueingHint, error) {
 	return hintFromFakeNode, nil
 }
 
@@ -1175,7 +1175,7 @@ var hintFromFakePod = framework.QueueingHint(101)
 
 type fakePodPlugin struct{}
 
-var fakePodPluginQueueingFn = func(_ klog.Logger, _ *v1.Pod, _, _ interface{}) (framework.QueueingHint, error) {
+var fakePodPluginQueueingFn = func(_ klog.Logger, _ *v1.Pod, _, _ any) (framework.QueueingHint, error) {
 	return hintFromFakePod, nil
 }
 

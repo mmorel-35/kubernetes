@@ -114,9 +114,9 @@ type ReinvocationContext interface {
 	// SetShouldReinvoke signals that a re-invocation is desired.
 	SetShouldReinvoke()
 	// AddValue set a value for a plugin name, possibly overriding a previous value.
-	SetValue(plugin string, v interface{})
+	SetValue(plugin string, v any)
 	// Value reads a value for a webhook.
-	Value(plugin string) interface{}
+	Value(plugin string) any
 }
 
 // Interface is an abstract, pluggable interface for Admission Control decisions.

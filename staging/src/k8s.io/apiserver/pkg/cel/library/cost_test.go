@@ -1250,7 +1250,7 @@ func testCost(t *testing.T, expr string, expectEsimatedCost checker.CostEstimate
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-	_, details, err := prog.Eval(map[string]interface{}{"authorizer": NewAuthorizerVal(nil, alwaysAllowAuthorizer{})})
+	_, details, err := prog.Eval(map[string]any{"authorizer": NewAuthorizerVal(nil, alwaysAllowAuthorizer{})})
 	if err != nil {
 		t.Fatalf("%v", err)
 	}

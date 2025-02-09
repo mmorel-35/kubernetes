@@ -18,6 +18,6 @@ limitations under the License.
 
 package v1beta1
 
-type SelfSubjectReviewExpansion interface{}
+type SelfSubjectReviewExpansion any
 
-type TokenReviewExpansion interface{}
+type TokenReviewExpansion any

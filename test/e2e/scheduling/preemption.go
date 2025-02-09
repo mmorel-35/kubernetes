@@ -761,7 +761,7 @@ var _ = SIGDescribe("SchedulerPreemption", framework.WithSerial(), func() {
 				&v1.Pod{},
 				0,
 				cache.ResourceEventHandlerFuncs{
-					AddFunc: func(obj interface{}) {
+					AddFunc: func(obj any) {
 						if pod, ok := obj.(*v1.Pod); ok {
 							if strings.HasPrefix(pod.Name, "rs-pod1") {
 								atomic.AddInt32(&podNamesSeen[0], 1)

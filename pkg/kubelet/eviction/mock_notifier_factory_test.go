@@ -72,7 +72,7 @@ type MockNotifierFactory_NewCgroupNotifier_Call struct {
 //   - path string
 //   - attribute string
 //   - threshold int64
-func (_e *MockNotifierFactory_Expecter) NewCgroupNotifier(path interface{}, attribute interface{}, threshold interface{}) *MockNotifierFactory_NewCgroupNotifier_Call {
+func (_e *MockNotifierFactory_Expecter) NewCgroupNotifier(path any, attribute any, threshold any) *MockNotifierFactory_NewCgroupNotifier_Call {
 	return &MockNotifierFactory_NewCgroupNotifier_Call{Call: _e.mock.On("NewCgroupNotifier", path, attribute, threshold)}
 }
 

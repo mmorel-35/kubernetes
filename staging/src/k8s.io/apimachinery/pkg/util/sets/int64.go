@@ -29,7 +29,7 @@ func NewInt64(items ...int64) Int64 {
 	return Int64(New[int64](items...))
 }
 
-// Int64KeySet creates a Int64 from a keys of a map[int64](? extends interface{}).
+// Int64KeySet creates a Int64 from a keys of a map[int64](? extends any).
 // If the value passed in is not actually a map, this will panic.
 func Int64KeySet[T any](theMap map[int64]T) Int64 {
 	return Int64(KeySet(theMap))

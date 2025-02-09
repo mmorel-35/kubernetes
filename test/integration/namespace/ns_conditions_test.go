@@ -162,7 +162,7 @@ func TestNamespaceLabels(t *testing.T) {
 // JSONToUnstructured converts a JSON stub to unstructured.Unstructured and
 // returns a dynamic resource client that can be used to interact with it
 func jsonToUnstructured(stub, version, kind string) (*unstructured.Unstructured, error) {
-	typeMetaAdder := map[string]interface{}{}
+	typeMetaAdder := map[string]any{}
 	if err := json.Unmarshal([]byte(stub), &typeMetaAdder); err != nil {
 		return nil, err
 	}

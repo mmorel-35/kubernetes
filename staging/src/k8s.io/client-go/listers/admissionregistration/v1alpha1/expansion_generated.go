@@ -20,16 +20,16 @@ package v1alpha1
 
 // MutatingAdmissionPolicyListerExpansion allows custom methods to be added to
 // MutatingAdmissionPolicyLister.
-type MutatingAdmissionPolicyListerExpansion interface{}
+type MutatingAdmissionPolicyListerExpansion any
 
 // MutatingAdmissionPolicyBindingListerExpansion allows custom methods to be added to
 // MutatingAdmissionPolicyBindingLister.
-type MutatingAdmissionPolicyBindingListerExpansion interface{}
+type MutatingAdmissionPolicyBindingListerExpansion any
 
 // ValidatingAdmissionPolicyListerExpansion allows custom methods to be added to
 // ValidatingAdmissionPolicyLister.
-type ValidatingAdmissionPolicyListerExpansion interface{}
+type ValidatingAdmissionPolicyListerExpansion any
 
 // ValidatingAdmissionPolicyBindingListerExpansion allows custom methods to be added to
 // ValidatingAdmissionPolicyBindingLister.
-type ValidatingAdmissionPolicyBindingListerExpansion interface{}
+type ValidatingAdmissionPolicyBindingListerExpansion any

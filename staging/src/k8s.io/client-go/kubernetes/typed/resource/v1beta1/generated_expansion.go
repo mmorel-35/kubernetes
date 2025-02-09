@@ -18,10 +18,10 @@ limitations under the License.
 
 package v1beta1
 
-type DeviceClassExpansion interface{}
+type DeviceClassExpansion any
 
-type ResourceClaimExpansion interface{}
+type ResourceClaimExpansion any
 
-type ResourceClaimTemplateExpansion interface{}
+type ResourceClaimTemplateExpansion any
 
-type ResourceSliceExpansion interface{}
+type ResourceSliceExpansion any

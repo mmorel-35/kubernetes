@@ -25,10 +25,10 @@ import (
 )
 
 // Funcs returns the fuzzer functions for the admission api group.
-var Funcs = func(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+var Funcs = func(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(s *runtime.RawExtension, c fuzz.Continue) {
-			u := &unstructured.Unstructured{Object: map[string]interface{}{
+			u := &unstructured.Unstructured{Object: map[string]any{
 				"apiVersion": "unknown.group/unknown",
 				"kind":       "Something",
 				"somekey":    "somevalue",

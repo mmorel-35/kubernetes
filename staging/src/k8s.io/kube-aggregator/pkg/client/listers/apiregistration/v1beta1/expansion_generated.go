@@ -20,4 +20,4 @@ package v1beta1
 
 // APIServiceListerExpansion allows custom methods to be added to
 // APIServiceLister.
-type APIServiceListerExpansion interface{}
+type APIServiceListerExpansion any

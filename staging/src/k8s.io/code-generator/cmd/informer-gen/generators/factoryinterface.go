@@ -62,7 +62,7 @@ func (g *factoryInterfaceGenerator) GenerateType(c *generator.Context, t *types.
 
 	klog.V(5).Infof("processing type %v", t)
 
-	m := map[string]interface{}{
+	m := map[string]any{
 		"cacheSharedIndexInformer": c.Universe.Type(cacheSharedIndexInformer),
 		"clientSetPackage":         c.Universe.Type(types.Name{Package: g.clientSetPackage, Name: "Interface"}),
 		"runtimeObject":            c.Universe.Type(runtimeObject),

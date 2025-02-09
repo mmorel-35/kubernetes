@@ -41,7 +41,7 @@ type testDecodable struct {
 	Other     string
 	Value     int           `json:"value"`
 	Spec      DecodableSpec `json:"spec"`
-	Interface interface{}   `json:"interface"`
+	Interface any           `json:"interface"`
 }
 
 // DecodableSpec has 15 fields.
@@ -217,7 +217,7 @@ func TestDecode(t *testing.T) {
 			into:  &unstructured.Unstructured{},
 
 			expectedGVK:    &schema.GroupVersionKind{Kind: "Foo"},
-			expectedObject: &unstructured.Unstructured{Object: map[string]interface{}{"kind": "Foo"}},
+			expectedObject: &unstructured.Unstructured{Object: map[string]any{"kind": "Foo"}},
 			// TODO(109023): expect this to error; unstructured decoding currently only requires kind to be set, not apiVersion
 		},
 		{
@@ -226,7 +226,7 @@ func TestDecode(t *testing.T) {
 			into:  &unstructured.Unstructured{},
 
 			expectedGVK:    &schema.GroupVersionKind{Kind: "Foo"},
-			expectedObject: &unstructured.Unstructured{Object: map[string]interface{}{"kind": "Foo"}},
+			expectedObject: &unstructured.Unstructured{Object: map[string]any{"kind": "Foo"}},
 			strict:         true,
 			// TODO(109023): expect this to error; unstructured decoding currently only requires kind to be set, not apiVersion
 		},
@@ -255,7 +255,7 @@ func TestDecode(t *testing.T) {
 			into:  &unstructured.Unstructured{},
 
 			expectedGVK:    &schema.GroupVersionKind{Group: "", Version: "v1", Kind: "Foo"},
-			expectedObject: &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "/v1", "kind": "Foo"}},
+			expectedObject: &unstructured.Unstructured{Object: map[string]any{"apiVersion": "/v1", "kind": "Foo"}},
 		},
 		{
 			data:  []byte(`{"apiVersion":"/v1","kind":"Foo"}`),
@@ -263,7 +263,7 @@ func TestDecode(t *testing.T) {
 			into:  &unstructured.Unstructured{},
 
 			expectedGVK:    &schema.GroupVersionKind{Group: "", Version: "v1", Kind: "Foo"},
-			expectedObject: &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "/v1", "kind": "Foo"}},
+			expectedObject: &unstructured.Unstructured{Object: map[string]any{"apiVersion": "/v1", "kind": "Foo"}},
 			strict:         true,
 		},
 
@@ -271,7 +271,7 @@ func TestDecode(t *testing.T) {
 		{
 			data:  []byte("{}"),
 			typer: &mockTyper{gvk: &schema.GroupVersionKind{Kind: "Test", Group: "other", Version: "blah"}},
-			into:  &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "into/v1", "kind": "Into"}},
+			into:  &unstructured.Unstructured{Object: map[string]any{"apiVersion": "into/v1", "kind": "Into"}},
 
 			expectedGVK: &schema.GroupVersionKind{},
 			errFn:       func(err error) bool { return strings.Contains(err.Error(), "Object 'Kind' is missing in") },
@@ -279,7 +279,7 @@ func TestDecode(t *testing.T) {
 		{
 			data:  []byte("{}"),
 			typer: &mockTyper{gvk: &schema.GroupVersionKind{Kind: "Test", Group: "other", Version: "blah"}},
-			into:  &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "into/v1", "kind": "Into"}},
+			into:  &unstructured.Unstructured{Object: map[string]any{"apiVersion": "into/v1", "kind": "Into"}},
 
 			expectedGVK: &schema.GroupVersionKind{},
 			errFn:       func(err error) bool { return strings.Contains(err.Error(), "Object 'Kind' is missing in") },
@@ -289,19 +289,19 @@ func TestDecode(t *testing.T) {
 		{
 			data:  []byte(`{"kind":"Foo"}`),
 			typer: &mockTyper{gvk: &schema.GroupVersionKind{Kind: "Test", Group: "other", Version: "blah"}},
-			into:  &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "into/v1", "kind": "Into"}},
+			into:  &unstructured.Unstructured{Object: map[string]any{"apiVersion": "into/v1", "kind": "Into"}},
 
 			expectedGVK:    &schema.GroupVersionKind{Kind: "Foo"},
-			expectedObject: &unstructured.Unstructured{Object: map[string]interface{}{"kind": "Foo"}},
+			expectedObject: &unstructured.Unstructured{Object: map[string]any{"kind": "Foo"}},
 			// TODO(109023): expect this to error; unstructured decoding currently only requires kind to be set, not apiVersion
 		},
 		{
 			data:  []byte(`{"kind":"Foo"}`),
 			typer: &mockTyper{gvk: &schema.GroupVersionKind{Kind: "Test", Group: "other", Version: "blah"}},
-			into:  &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "into/v1", "kind": "Into"}},
+			into:  &unstructured.Unstructured{Object: map[string]any{"apiVersion": "into/v1", "kind": "Into"}},
 
 			expectedGVK:    &schema.GroupVersionKind{Kind: "Foo"},
-			expectedObject: &unstructured.Unstructured{Object: map[string]interface{}{"kind": "Foo"}},
+			expectedObject: &unstructured.Unstructured{Object: map[string]any{"kind": "Foo"}},
 			strict:         true,
 			// TODO(109023): expect this to error; unstructured decoding currently only requires kind to be set, not apiVersion
 		},
@@ -309,7 +309,7 @@ func TestDecode(t *testing.T) {
 		{
 			data:  []byte(`{"apiVersion":"foo/v1"}`),
 			typer: &mockTyper{gvk: &schema.GroupVersionKind{Kind: "Test", Group: "other", Version: "blah"}},
-			into:  &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "into/v1", "kind": "Into"}},
+			into:  &unstructured.Unstructured{Object: map[string]any{"apiVersion": "into/v1", "kind": "Into"}},
 
 			expectedGVK: &schema.GroupVersionKind{Group: "foo", Version: "v1"},
 			errFn:       func(err error) bool { return strings.Contains(err.Error(), "Object 'Kind' is missing in") },
@@ -317,7 +317,7 @@ func TestDecode(t *testing.T) {
 		{
 			data:  []byte(`{"apiVersion":"foo/v1"}`),
 			typer: &mockTyper{gvk: &schema.GroupVersionKind{Kind: "Test", Group: "other", Version: "blah"}},
-			into:  &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "into/v1", "kind": "Into"}},
+			into:  &unstructured.Unstructured{Object: map[string]any{"apiVersion": "into/v1", "kind": "Into"}},
 
 			expectedGVK: &schema.GroupVersionKind{Group: "foo", Version: "v1"},
 			errFn:       func(err error) bool { return strings.Contains(err.Error(), "Object 'Kind' is missing in") },
@@ -327,18 +327,18 @@ func TestDecode(t *testing.T) {
 		{
 			data:  []byte(`{"apiVersion":"/v1","kind":"Foo"}`),
 			typer: &mockTyper{gvk: &schema.GroupVersionKind{Kind: "Test", Group: "other", Version: "blah"}},
-			into:  &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "into/v1", "kind": "Into"}},
+			into:  &unstructured.Unstructured{Object: map[string]any{"apiVersion": "into/v1", "kind": "Into"}},
 
 			expectedGVK:    &schema.GroupVersionKind{Group: "", Version: "v1", Kind: "Foo"},
-			expectedObject: &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "/v1", "kind": "Foo"}},
+			expectedObject: &unstructured.Unstructured{Object: map[string]any{"apiVersion": "/v1", "kind": "Foo"}},
 		},
 		{
 			data:  []byte(`{"apiVersion":"/v1","kind":"Foo"}`),
 			typer: &mockTyper{gvk: &schema.GroupVersionKind{Kind: "Test", Group: "other", Version: "blah"}},
-			into:  &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "into/v1", "kind": "Into"}},
+			into:  &unstructured.Unstructured{Object: map[string]any{"apiVersion": "into/v1", "kind": "Into"}},
 
 			expectedGVK:    &schema.GroupVersionKind{Group: "", Version: "v1", Kind: "Foo"},
-			expectedObject: &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "/v1", "kind": "Foo"}},
+			expectedObject: &unstructured.Unstructured{Object: map[string]any{"apiVersion": "/v1", "kind": "Foo"}},
 			strict:         true,
 		},
 
@@ -403,7 +403,7 @@ func TestDecode(t *testing.T) {
 			creater: &mockCreater{obj: &unstructured.Unstructured{}},
 
 			expectedGVK:    &schema.GroupVersionKind{Group: "", Version: "v1", Kind: "Foo"},
-			expectedObject: &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "/v1", "kind": "Foo"}},
+			expectedObject: &unstructured.Unstructured{Object: map[string]any{"apiVersion": "/v1", "kind": "Foo"}},
 		},
 		{
 			data:    []byte(`{"apiVersion":"/v1","kind":"Foo"}`),
@@ -411,7 +411,7 @@ func TestDecode(t *testing.T) {
 			creater: &mockCreater{obj: &unstructured.Unstructured{}},
 
 			expectedGVK:    &schema.GroupVersionKind{Group: "", Version: "v1", Kind: "Foo"},
-			expectedObject: &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "/v1", "kind": "Foo"}},
+			expectedObject: &unstructured.Unstructured{Object: map[string]any{"apiVersion": "/v1", "kind": "Foo"}},
 			strict:         true,
 		},
 
@@ -966,7 +966,7 @@ func (staticTextMarshaler) MarshalText() ([]byte, error) {
 	return []byte("static"), nil
 }
 
-type testEncodableMap[K comparable] map[K]interface{}
+type testEncodableMap[K comparable] map[K]any
 
 func (testEncodableMap[K]) GetObjectKind() schema.ObjectKind {
 	panic("unimplemented")
@@ -1044,16 +1044,16 @@ func TestEncode(t *testing.T) {
 }
 
 // TestRoundtripUnstructuredFloat64 demonstrates that encoding a fractionless float64 value to JSON
-// then decoding into interface{} can produce a value with concrete type int64. This is a
+// then decoding into any can produce a value with concrete type int64. This is a
 // consequence of two specific behaviors. First, there is nothing in the JSON encoding of a
 // fractionless float64 value to distinguish it from the JSON encoding of an integer value. Second,
-// if, when unmarshaling into interface{}, the decoder encounters a JSON number with no decimal
+// if, when unmarshaling into any, the decoder encounters a JSON number with no decimal
 // point in the input, it produces a value with concrete type int64 as long as the number can be
 // precisely represented by an int64.
 func TestRoundtripUnstructuredFractionlessFloat64(t *testing.T) {
 	s := json.NewSerializerWithOptions(json.DefaultMetaFactory, runtime.NewScheme(), runtime.NewScheme(), json.SerializerOptions{})
 
-	initial := &unstructured.Unstructured{Object: map[string]interface{}{
+	initial := &unstructured.Unstructured{Object: map[string]any{
 		"apiVersion":                    "v1",
 		"kind":                          "Test",
 		"with-fraction":                 float64(1.5),
@@ -1076,7 +1076,7 @@ func TestRoundtripUnstructuredFractionlessFloat64(t *testing.T) {
 		t.Fatalf("expected Decode to return target Unstructured object but got: %v", got)
 	}
 
-	expected := &unstructured.Unstructured{Object: map[string]interface{}{
+	expected := &unstructured.Unstructured{Object: map[string]any{
 		"apiVersion":                    "v1",
 		"kind":                          "Test",
 		"with-fraction":                 float64(1.5),

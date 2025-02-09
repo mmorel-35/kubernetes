@@ -373,7 +373,7 @@ func TestEstimateMaxLengthJSON(t *testing.T) {
 		{
 			Name: "maxintOrStringSize",
 			InputSchema: &spec.Schema{
-				VendorExtensible: spec.VendorExtensible{Extensions: map[string]interface{}{
+				VendorExtensible: spec.VendorExtensible{Extensions: map[string]any{
 					extIntOrString: true,
 				}}},
 			// should be exactly equal to maxRequestSizeBytes - 2 (to allow for quotes in the case of a string)

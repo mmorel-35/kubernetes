@@ -54,8 +54,8 @@ func TestValidationExpressions(t *testing.T) {
 		name          string
 		schema        *schema.Structural
 		oldSchema     *schema.Structural
-		obj           interface{}
-		oldObj        interface{}
+		obj           any
+		oldObj        any
 		valid         []string
 		errors        map[string]string // rule -> string that error message must contain
 		costBudget    int64
@@ -368,7 +368,7 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "enums",
-			obj: map[string]interface{}{"enumStr": "Pending"},
+			obj: map[string]any{"enumStr": "Pending"},
 			schema: objectTypePtr(map[string]schema.Structural{"enumStr": {
 				Generic: schema.Generic{
 					Type: "string",
@@ -414,7 +414,7 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "lists",
-			obj:    objs([]interface{}{1, 2, 3}, []interface{}{1, 2, 3}),
+			obj:    objs([]any{1, 2, 3}, []any{1, 2, 3}),
 			schema: schemas(listType(&integerType), listType(&integerType)),
 			valid: []string{
 				ValsEqualThemselvesAndDataLiteral("self.val1", "self.val2", "[1, 2, 3]"),
@@ -430,7 +430,7 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "string lists",
-			obj:    objs([]interface{}{"a", "b", "c"}),
+			obj:    objs([]any{"a", "b", "c"}),
 			schema: schemas(listType(&stringType)),
 			valid: []string{
 				// Join function
@@ -441,7 +441,7 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "listSets",
-			obj:    objs([]interface{}{"a", "b", "c"}, []interface{}{"a", "c", "b"}),
+			obj:    objs([]any{"a", "b", "c"}, []any{"a", "c", "b"}),
 			schema: schemas(listSetType(&stringType), listSetType(&stringType)),
 			valid: []string{
 				// equal even though order is different
@@ -497,22 +497,22 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "listMaps",
-			obj: map[string]interface{}{
-				"objs": []interface{}{
-					[]interface{}{
-						map[string]interface{}{"k": "a", "v": "1"},
-						map[string]interface{}{"k": "b", "v": "2"},
+			obj: map[string]any{
+				"objs": []any{
+					[]any{
+						map[string]any{"k": "a", "v": "1"},
+						map[string]any{"k": "b", "v": "2"},
 					},
-					[]interface{}{
-						map[string]interface{}{"k": "b", "v": "2"},
-						map[string]interface{}{"k": "a", "v": "1"},
+					[]any{
+						map[string]any{"k": "b", "v": "2"},
+						map[string]any{"k": "a", "v": "1"},
 					},
-					[]interface{}{
-						map[string]interface{}{"k": "b", "v": "3"},
-						map[string]interface{}{"k": "a", "v": "1"},
+					[]any{
+						map[string]any{"k": "b", "v": "3"},
+						map[string]any{"k": "a", "v": "1"},
 					},
-					[]interface{}{
-						map[string]interface{}{"k": "c", "v": "4"},
+					[]any{
+						map[string]any{"k": "c", "v": "4"},
 					},
 				},
 			},
@@ -538,7 +538,7 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "maps",
-			obj:    objs(map[string]interface{}{"k1": "a", "k2": "b"}, map[string]interface{}{"k2": "b", "k1": "a"}),
+			obj:    objs(map[string]any{"k1": "a", "k2": "b"}, map[string]any{"k2": "b", "k1": "a"}),
 			schema: schemas(mapType(&stringType), mapType(&stringType)),
 			valid: []string{
 				"self.val1 == self.val2", // equal even though order is different
@@ -552,10 +552,10 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "objects",
-			obj: map[string]interface{}{
-				"objs": []interface{}{
-					map[string]interface{}{"f1": "a", "f2": "b"},
-					map[string]interface{}{"f1": "a", "f2": "b"},
+			obj: map[string]any{
+				"objs": []any{
+					map[string]any{"f1": "a", "f2": "b"},
+					map[string]any{"f1": "a", "f2": "b"},
 				},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -572,17 +572,17 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "object access",
-			obj: map[string]interface{}{
-				"a": map[string]interface{}{
+			obj: map[string]any{
+				"a": map[string]any{
 					"b": 1,
 					"d": nil,
 				},
-				"a1": map[string]interface{}{
-					"b1": map[string]interface{}{
+				"a1": map[string]any{
+					"b1": map[string]any{
 						"c1": 4,
 					},
 				},
-				"a3": map[string]interface{}{},
+				"a3": map[string]any{},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
 				"a": objectType(map[string]schema.Structural{
@@ -615,8 +615,8 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "map access",
-			obj: map[string]interface{}{
-				"val": map[string]interface{}{
+			obj: map[string]any{
+				"val": map[string]any{
 					"b": 1,
 					"d": 2,
 				},
@@ -658,11 +658,11 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "listMap access",
-			obj: map[string]interface{}{
-				"listMap": []interface{}{
-					map[string]interface{}{"k": "a1", "v": "b1"},
-					map[string]interface{}{"k": "a2", "v": "b2"},
-					map[string]interface{}{"k": "a3", "v": "b3", "v2": "z"},
+			obj: map[string]any{
+				"listMap": []any{
+					map[string]any{"k": "a1", "v": "b1"},
+					map[string]any{"k": "a2", "v": "b2"},
+					map[string]any{"k": "a3", "v": "b3", "v2": "z"},
 				},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -725,8 +725,8 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "list access",
-			obj: map[string]interface{}{
-				"array": []interface{}{1, 1, 2, 2, 3, 3, 4, 5},
+			obj: map[string]any{
+				"array": []any{1, 1, 2, 2, 3, 3, 4, 5},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
 				"array": listType(&integerType),
@@ -756,8 +756,8 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "listSet access",
-			obj: map[string]interface{}{
-				"set": []interface{}{1, 2, 3, 4, 5},
+			obj: map[string]any{
+				"set": []any{1, 2, 3, 4, 5},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
 				"set": listType(&integerType),
@@ -777,10 +777,10 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "typemeta and objectmeta access specified",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"apiVersion": "v1",
 				"kind":       "Pod",
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name":         "foo",
 					"generateName": "pickItForMe",
 					"namespace":    "xyz",
@@ -806,15 +806,15 @@ func TestValidationExpressions(t *testing.T) {
 		},
 		{name: "typemeta and objectmeta access not specified",
 			isRoot: true,
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"apiVersion": "v1",
 				"kind":       "Pod",
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name":         "foo",
 					"generateName": "pickItForMe",
 					"namespace":    "xyz",
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"field1": "a",
 				},
 			},
@@ -837,16 +837,16 @@ func TestValidationExpressions(t *testing.T) {
 
 		// Kubernetes special types
 		{name: "embedded object",
-			obj: map[string]interface{}{
-				"embedded": map[string]interface{}{
+			obj: map[string]any{
+				"embedded": map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Pod",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name":         "foo",
 						"generateName": "pickItForMe",
 						"namespace":    "xyz",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"field1": "a",
 					},
 				},
@@ -874,16 +874,16 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "embedded object with properties",
-			obj: map[string]interface{}{
-				"embedded": map[string]interface{}{
+			obj: map[string]any{
+				"embedded": map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Pod",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name":         "foo",
 						"generateName": "pickItForMe",
 						"namespace":    "xyz",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"field1": "a",
 					},
 				},
@@ -923,16 +923,16 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "embedded object with usage of reserved keywords",
-			obj: map[string]interface{}{
-				"embedded": map[string]interface{}{
+			obj: map[string]any{
+				"embedded": map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Pod",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name":         "foo",
 						"generateName": "pickItForMe",
 						"namespace":    "reserved_keyword_namespace",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"if": "reserved_keyword_if",
 					},
 				},
@@ -965,16 +965,16 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "embedded object with preserve unknown",
-			obj: map[string]interface{}{
-				"embedded": map[string]interface{}{
+			obj: map[string]any{
+				"embedded": map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Pod",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name":         "foo",
 						"generateName": "pickItForMe",
 						"namespace":    "xyz",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"field1": "a",
 					},
 				},
@@ -1006,7 +1006,7 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "string in intOrString",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"something": "25%",
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -1031,7 +1031,7 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "int in intOrString",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"something": int64(1),
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -1056,7 +1056,7 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "null in intOrString",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"something": nil,
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -1070,7 +1070,7 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "percent comparison using intOrString",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"min":       "50%",
 				"current":   5,
 				"available": 10,
@@ -1088,40 +1088,40 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "preserve unknown fields",
-			obj: map[string]interface{}{
-				"withUnknown": map[string]interface{}{
+			obj: map[string]any{
+				"withUnknown": map[string]any{
 					"field1": "a",
 					"field2": "b",
 				},
-				"withUnknownList": []interface{}{
-					map[string]interface{}{
+				"withUnknownList": []any{
+					map[string]any{
 						"field1": "a",
 						"field2": "b",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"field1": "x",
 						"field2": "y",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"field1": "x",
 						"field2": "y",
 					},
-					map[string]interface{}{},
-					map[string]interface{}{},
+					map[string]any{},
+					map[string]any{},
 				},
-				"withUnknownFieldList": []interface{}{
-					map[string]interface{}{
+				"withUnknownFieldList": []any{
+					map[string]any{
 						"fieldOfUnknownType": "a",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"fieldOfUnknownType": 1,
 					},
-					map[string]interface{}{
+					map[string]any{
 						"fieldOfUnknownType": 1,
 					},
 				},
-				"anyvalList":   []interface{}{"a", 2},
-				"anyvalMap":    map[string]interface{}{"k": "1"},
+				"anyvalList":   []any{"a", 2},
+				"anyvalMap":    map[string]any{"k": "1"},
 				"anyvalField1": 1,
 				"anyvalField2": "a",
 			},
@@ -1193,31 +1193,31 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "known and unknown fields",
-			obj: map[string]interface{}{
-				"withUnknown": map[string]interface{}{
+			obj: map[string]any{
+				"withUnknown": map[string]any{
 					"known":   1,
 					"unknown": "a",
 				},
-				"withUnknownList": []interface{}{
-					map[string]interface{}{
+				"withUnknownList": []any{
+					map[string]any{
 						"known":   1,
 						"unknown": "a",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"known":   1,
 						"unknown": "b",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"known":   1,
 						"unknown": "b",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"known": 1,
 					},
-					map[string]interface{}{
+					map[string]any{
 						"known": 1,
 					},
-					map[string]interface{}{
+					map[string]any{
 						"known": 2,
 					},
 				},
@@ -1268,7 +1268,7 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "field nullability",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"setPlainStr":          "v1",
 				"setDefaultedStr":      "v2",
 				"setNullableStr":       "v3",
@@ -1315,15 +1315,15 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "null values in container types",
-			obj: map[string]interface{}{
-				"m": map[string]interface{}{
+			obj: map[string]any{
+				"m": map[string]any{
 					"a": nil,
 					"b": "not-nil",
 				},
-				"l": []interface{}{
+				"l": []any{
 					nil, "not-nil",
 				},
-				"s": []interface{}{
+				"s": []any{
 					nil, "not-nil",
 				},
 			},
@@ -1357,7 +1357,7 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "escaping",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				// RESERVED symbols defined in the CEL lexer
 				"true": 1, "false": 2, "null": 3, "in": 4, "as": 5,
 				"break": 6, "const": 7, "continue": 8, "else": 9,
@@ -1451,8 +1451,8 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "map keys are not escaped",
-			obj: map[string]interface{}{
-				"m": map[string]interface{}{
+			obj: map[string]any{
+				"m": map[string]any{
 					"@":   1,
 					"9":   2,
 					"int": 3,
@@ -1470,20 +1470,20 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "object types are not accessible",
-			obj: map[string]interface{}{
-				"nestedInMap": map[string]interface{}{
-					"k1": map[string]interface{}{
+			obj: map[string]any{
+				"nestedInMap": map[string]any{
+					"k1": map[string]any{
 						"inMapField": 1,
 					},
-					"k2": map[string]interface{}{
+					"k2": map[string]any{
 						"inMapField": 2,
 					},
 				},
-				"nestedInList": []interface{}{
-					map[string]interface{}{
+				"nestedInList": []any{
+					map[string]any{
 						"inListField": 1,
 					},
-					map[string]interface{}{
+					map[string]any{
 						"inListField": 2,
 					},
 				},
@@ -1513,23 +1513,23 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "listMaps with unsupported identity characters in property names",
-			obj: map[string]interface{}{
-				"objs": []interface{}{
-					[]interface{}{
-						map[string]interface{}{"k!": "a", "k.": "1"},
-						map[string]interface{}{"k!": "b", "k.": "2"},
+			obj: map[string]any{
+				"objs": []any{
+					[]any{
+						map[string]any{"k!": "a", "k.": "1"},
+						map[string]any{"k!": "b", "k.": "2"},
 					},
-					[]interface{}{
-						map[string]interface{}{"k!": "b", "k.": "2"},
-						map[string]interface{}{"k!": "a", "k.": "1"},
+					[]any{
+						map[string]any{"k!": "b", "k.": "2"},
+						map[string]any{"k!": "a", "k.": "1"},
 					},
-					[]interface{}{
-						map[string]interface{}{"k!": "b", "k.": "2"},
-						map[string]interface{}{"k!": "c", "k.": "1"},
+					[]any{
+						map[string]any{"k!": "b", "k.": "2"},
+						map[string]any{"k!": "c", "k.": "1"},
 					},
-					[]interface{}{
-						map[string]interface{}{"k!": "b", "k.": "2"},
-						map[string]interface{}{"k!": "a", "k.": "3"},
+					[]any{
+						map[string]any{"k!": "b", "k.": "2"},
+						map[string]any{"k!": "a", "k.": "3"},
 					},
 				},
 			},
@@ -1551,50 +1551,50 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "container type composition",
-			obj: map[string]interface{}{
-				"obj": map[string]interface{}{
+			obj: map[string]any{
+				"obj": map[string]any{
 					"field": "a",
 				},
-				"mapOfMap": map[string]interface{}{
-					"x": map[string]interface{}{
+				"mapOfMap": map[string]any{
+					"x": map[string]any{
 						"y": "b",
 					},
 				},
-				"mapOfObj": map[string]interface{}{
-					"k": map[string]interface{}{
+				"mapOfObj": map[string]any{
+					"k": map[string]any{
 						"field2": "c",
 					},
 				},
-				"mapOfListMap": map[string]interface{}{
-					"o": []interface{}{
-						map[string]interface{}{
+				"mapOfListMap": map[string]any{
+					"o": []any{
+						map[string]any{
 							"k": "1",
 							"v": "d",
 						},
 					},
 				},
-				"mapOfList": map[string]interface{}{
-					"l": []interface{}{"e"},
+				"mapOfList": map[string]any{
+					"l": []any{"e"},
 				},
-				"listMapOfObj": []interface{}{
-					map[string]interface{}{
+				"listMapOfObj": []any{
+					map[string]any{
 						"k2": "2",
 						"v2": "f",
 					},
 				},
-				"listOfMap": []interface{}{
-					map[string]interface{}{
+				"listOfMap": []any{
+					map[string]any{
 						"z": "g",
 					},
 				},
-				"listOfObj": []interface{}{
-					map[string]interface{}{
+				"listOfObj": []any{
+					map[string]any{
 						"field3": "h",
 					},
 				},
-				"listOfListMap": []interface{}{
-					[]interface{}{
-						map[string]interface{}{
+				"listOfListMap": []any{
+					[]any{
+						map[string]any{
 							"k3": "3",
 							"v3": "i",
 						},
@@ -1641,14 +1641,14 @@ func TestValidationExpressions(t *testing.T) {
 			errors: map[string]string{},
 		},
 		{name: "invalid data",
-			obj: map[string]interface{}{
-				"o":           []interface{}{},
-				"m":           []interface{}{},
-				"l":           map[string]interface{}{},
-				"s":           map[string]interface{}{},
-				"lm":          map[string]interface{}{},
+			obj: map[string]any{
+				"o":           []any{},
+				"m":           []any{},
+				"l":           map[string]any{},
+				"s":           map[string]any{},
+				"lm":          map[string]any{},
 				"intorstring": true,
-				"nullable":    []interface{}{nil},
+				"nullable":    []any{nil},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
 				"o": objectType(map[string]schema.Structural{
@@ -1677,36 +1677,36 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "stdlib list functions",
-			obj: map[string]interface{}{
-				"ints":         []interface{}{int64(1), int64(2), int64(2), int64(3)},
-				"unsortedInts": []interface{}{int64(2), int64(1)},
-				"emptyInts":    []interface{}{},
+			obj: map[string]any{
+				"ints":         []any{int64(1), int64(2), int64(2), int64(3)},
+				"unsortedInts": []any{int64(2), int64(1)},
+				"emptyInts":    []any{},
 
-				"doubles":         []interface{}{float64(1), float64(2), float64(2), float64(3)},
-				"unsortedDoubles": []interface{}{float64(2), float64(1)},
-				"emptyDoubles":    []interface{}{},
+				"doubles":         []any{float64(1), float64(2), float64(2), float64(3)},
+				"unsortedDoubles": []any{float64(2), float64(1)},
+				"emptyDoubles":    []any{},
 
-				"intBackedDoubles":          []interface{}{int64(1), int64(2), int64(2), int64(3)},
-				"unsortedIntBackedDDoubles": []interface{}{int64(2), int64(1)},
-				"emptyIntBackedDDoubles":    []interface{}{},
+				"intBackedDoubles":          []any{int64(1), int64(2), int64(2), int64(3)},
+				"unsortedIntBackedDDoubles": []any{int64(2), int64(1)},
+				"emptyIntBackedDDoubles":    []any{},
 
-				"durations":         []interface{}{"1s", "1m", "1m", "1h"},
-				"unsortedDurations": []interface{}{"1m", "1s"},
-				"emptyDurations":    []interface{}{},
+				"durations":         []any{"1s", "1m", "1m", "1h"},
+				"unsortedDurations": []any{"1m", "1s"},
+				"emptyDurations":    []any{},
 
-				"strings":         []interface{}{"a", "b", "b", "c"},
-				"unsortedStrings": []interface{}{"b", "a"},
-				"emptyStrings":    []interface{}{},
+				"strings":         []any{"a", "b", "b", "c"},
+				"unsortedStrings": []any{"b", "a"},
+				"emptyStrings":    []any{},
 
-				"dates":         []interface{}{"2000-01-01", "2000-02-01", "2000-02-01", "2010-01-01"},
-				"unsortedDates": []interface{}{"2000-02-01", "2000-01-01"},
-				"emptyDates":    []interface{}{},
+				"dates":         []any{"2000-01-01", "2000-02-01", "2000-02-01", "2010-01-01"},
+				"unsortedDates": []any{"2000-02-01", "2000-01-01"},
+				"emptyDates":    []any{},
 
-				"objs": []interface{}{
-					map[string]interface{}{"f1": "a", "f2": "a"},
-					map[string]interface{}{"f1": "a", "f2": "b"},
-					map[string]interface{}{"f1": "a", "f2": "b"},
-					map[string]interface{}{"f1": "a", "f2": "c"},
+				"objs": []any{
+					map[string]any{"f1": "a", "f2": "a"},
+					map[string]any{"f1": "a", "f2": "b"},
+					map[string]any{"f1": "a", "f2": "b"},
+					map[string]any{"f1": "a", "f2": "c"},
 				},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -1842,7 +1842,7 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "stdlib regex functions",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"str": "this is a 123 string 456",
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -1871,7 +1871,7 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "URL parsing",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"url": "https://user:pass@kubernetes.io:80/docs/home?k1=a&k2=b&k2=c#anchor",
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -1915,10 +1915,10 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "transition rules",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"v": "new",
 			},
-			oldObj: map[string]interface{}{
+			oldObj: map[string]any{
 				"v": "old",
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -1940,7 +1940,7 @@ func TestValidationExpressions(t *testing.T) {
 		},
 		{name: "skipped transition rule for nil old array",
 			expectSkipped: true,
-			obj:           []interface{}{},
+			obj:           []any{},
 			oldObj:        nil,
 			schema:        listTypePtr(&stringType),
 			valid: []string{
@@ -1949,7 +1949,7 @@ func TestValidationExpressions(t *testing.T) {
 		},
 		{name: "skipped transition rule for nil old object",
 			expectSkipped: true,
-			obj:           map[string]interface{}{"f": "exists"},
+			obj:           map[string]any{"f": "exists"},
 			oldObj:        nil,
 			schema: objectTypePtr(map[string]schema.Structural{
 				"f": stringType,
@@ -1960,7 +1960,7 @@ func TestValidationExpressions(t *testing.T) {
 		},
 		{name: "skipped transition rule for old with non-nil interface but nil value",
 			expectSkipped: true,
-			obj:           []interface{}{},
+			obj:           []any{},
 			oldObj:        nilInterfaceOfStringSlice(),
 			schema:        listTypePtr(&stringType),
 			valid: []string{
@@ -1968,20 +1968,20 @@ func TestValidationExpressions(t *testing.T) {
 			},
 		},
 		{name: "authorizer is not supported for CRD Validation Rules",
-			obj:    []interface{}{},
-			oldObj: []interface{}{},
+			obj:    []any{},
+			oldObj: []any{},
 			schema: objectTypePtr(map[string]schema.Structural{}),
 			errors: map[string]string{
 				"authorizer.path('/healthz').check('get').allowed()": "undeclared reference to 'authorizer'",
 			},
 		},
 		{name: "optionals", // https://github.com/google/cel-spec/wiki/proposal-246
-			obj: map[string]interface{}{
-				"presentObj": map[string]interface{}{
+			obj: map[string]any{
+				"presentObj": map[string]any{
 					"presentStr": "value",
 				},
-				"m": map[string]interface{}{"k": "v"},
-				"l": []interface{}{"a"},
+				"m": map[string]any{"k": "v"},
+				"l": []any{"a"},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
 				"presentObj": objectType(map[string]schema.Structural{
@@ -2223,13 +2223,13 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 	tests := []struct {
 		name   string
 		schema *schema.Structural
-		obj    interface{}
-		oldObj interface{}
+		obj    any
+		oldObj any
 		errors []string // strings that error message must contain
 	}{
 		{name: "invalid rule under array items",
-			obj: map[string]interface{}{
-				"f": []interface{}{1},
+			obj: map[string]any{
+				"f": []any{1},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
 				"f": listType(cloneWithRule(&integerType, "self == 'abc'")),
@@ -2237,8 +2237,8 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			errors: []string{"found no matching overload for '_==_' applied to '(int, string)"},
 		},
 		{name: "invalid rule under array items, parent has rule",
-			obj: map[string]interface{}{
-				"f": []interface{}{1},
+			obj: map[string]any{
+				"f": []any{1},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
 				"f": withRule(listType(cloneWithRule(&integerType, "self == 'abc'")), "1 == 1"),
@@ -2246,8 +2246,8 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			errors: []string{"found no matching overload for '_==_' applied to '(int, string)"},
 		},
 		{name: "invalid rule under additionalProperties",
-			obj: map[string]interface{}{
-				"f": map[string]interface{}{"k": 1},
+			obj: map[string]any{
+				"f": map[string]any{"k": 1},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
 				"f": mapType(cloneWithRule(&integerType, "self == 'abc'")),
@@ -2255,8 +2255,8 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			errors: []string{"found no matching overload for '_==_' applied to '(int, string)"},
 		},
 		{name: "invalid rule under additionalProperties, parent has rule",
-			obj: map[string]interface{}{
-				"f": map[string]interface{}{"k": 1},
+			obj: map[string]any{
+				"f": map[string]any{"k": 1},
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
 				"f": withRule(mapType(cloneWithRule(&integerType, "self == 'abc'")), "1 == 1"),
@@ -2264,8 +2264,8 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			errors: []string{"found no matching overload for '_==_' applied to '(int, string)"},
 		},
 		{name: "invalid rule under unescaped field name",
-			obj: map[string]interface{}{
-				"f": map[string]interface{}{
+			obj: map[string]any{
+				"f": map[string]any{
 					"m": 1,
 				},
 			},
@@ -2275,8 +2275,8 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			errors: []string{"found no matching overload for '_==_' applied to '(int, string)"},
 		},
 		{name: "invalid rule under unescaped field name, parent has rule",
-			obj: map[string]interface{}{
-				"f": map[string]interface{}{
+			obj: map[string]any{
+				"f": map[string]any{
 					"m": 1,
 				},
 			},
@@ -2287,8 +2287,8 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 		},
 		// check that escaped field names do not impact CEL rule validation
 		{name: "invalid rule under escaped field name",
-			obj: map[string]interface{}{
-				"f/2": map[string]interface{}{
+			obj: map[string]any{
+				"f/2": map[string]any{
 					"m": 1,
 				},
 			},
@@ -2298,8 +2298,8 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			errors: []string{"found no matching overload for '_==_' applied to '(int, string)"},
 		},
 		{name: "invalid rule under escaped field name, parent has rule",
-			obj: map[string]interface{}{
-				"f/2": map[string]interface{}{
+			obj: map[string]any{
+				"f/2": map[string]any{
 					"m": 1,
 				},
 			},
@@ -2309,8 +2309,8 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			errors: []string{"found no matching overload for '_==_' applied to '(int, string)"},
 		},
 		{name: "failing rule under escaped field name",
-			obj: map[string]interface{}{
-				"f/2": map[string]interface{}{
+			obj: map[string]any{
+				"f/2": map[string]any{
 					"m": 1,
 				},
 			},
@@ -2321,8 +2321,8 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 		},
 		// unescapable field names that are not accessed by the CEL rule are allowed and should not impact CEL rule validation
 		{name: "invalid rule under unescapable field name",
-			obj: map[string]interface{}{
-				"a@b": map[string]interface{}{
+			obj: map[string]any{
+				"a@b": map[string]any{
 					"m": 1,
 				},
 			},
@@ -2332,8 +2332,8 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			errors: []string{"found no matching overload for '_==_' applied to '(int, string)"},
 		},
 		{name: "invalid rule under unescapable field name, parent has rule",
-			obj: map[string]interface{}{
-				"f@2": map[string]interface{}{
+			obj: map[string]any{
+				"f@2": map[string]any{
 					"m": 1,
 				},
 			},
@@ -2343,8 +2343,8 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			errors: []string{"found no matching overload for '_==_' applied to '(int, string)"},
 		},
 		{name: "failing rule under unescapable field name",
-			obj: map[string]interface{}{
-				"a@b": map[string]interface{}{
+			obj: map[string]any{
+				"a@b": map[string]any{
 					"m": 1,
 				},
 			},
@@ -2354,12 +2354,12 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			errors: []string{"Invalid value: \"object\": failed rule: self.m == 2"},
 		},
 		{name: "matchExpressions - 'values' must be specified when 'operator' is 'In' or 'NotIn'",
-			obj: map[string]interface{}{
-				"matchExpressions": []interface{}{
-					map[string]interface{}{
+			obj: map[string]any{
+				"matchExpressions": []any{
+					map[string]any{
 						"key":      "tier",
 						"operator": "In",
-						"values":   []interface{}{},
+						"values":   []any{},
 					},
 				},
 			},
@@ -2367,12 +2367,12 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			errors: []string{"failed rule"},
 		},
 		{name: "matchExpressions - 'values' may not be specified when 'operator' is 'Exists' or 'DoesNotExist'",
-			obj: map[string]interface{}{
-				"matchExpressions": []interface{}{
-					map[string]interface{}{
+			obj: map[string]any{
+				"matchExpressions": []any{
+					map[string]any{
 						"key":      "tier",
 						"operator": "Exists",
-						"values":   []interface{}{"somevalue"},
+						"values":   []any{"somevalue"},
 					},
 				},
 			},
@@ -2380,12 +2380,12 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			errors: []string{"failed rule"},
 		},
 		{name: "matchExpressions - invalid selector operator",
-			obj: map[string]interface{}{
-				"matchExpressions": []interface{}{
-					map[string]interface{}{
+			obj: map[string]any{
+				"matchExpressions": []any{
+					map[string]any{
 						"key":      "tier",
 						"operator": "badop",
-						"values":   []interface{}{},
+						"values":   []any{},
 					},
 				},
 			},
@@ -2393,12 +2393,12 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			errors: []string{"failed rule"},
 		},
 		{name: "matchExpressions - invalid label value",
-			obj: map[string]interface{}{
-				"matchExpressions": []interface{}{
-					map[string]interface{}{
+			obj: map[string]any{
+				"matchExpressions": []any{
+					map[string]any{
 						"key":      "badkey!",
 						"operator": "Exists",
-						"values":   []interface{}{},
+						"values":   []any{},
 					},
 				},
 			},
@@ -2411,7 +2411,7 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 				`key must be 'value' and key2 must be 'value2'`,
 				`key must not be equal to key2`,
 			},
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"key":  "value",
 				"key2": "value",
 			},
@@ -2455,7 +2455,7 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			// shows that a rule that would otherwise be an error has those
 			// fields ignored (CRD validation shoulds will throw error in this case)
 			name: "anyOf rule ignored",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"key":  "value",
 				"key2": "value",
 			},
@@ -2506,7 +2506,7 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			// shows that a rule that would otherwise be an error has those
 			// fields ignored (CRD validation shoulds will throw error in this case)
 			name: "oneOf rule ignored",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"key":  "value",
 				"key2": "value",
 			},
@@ -2557,7 +2557,7 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 			// shows that a rule that would otherwise be an error has those
 			// fields ignored (CRD validation shoulds will throw error in this case)
 			name: "not rule ignored",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"key":  "value",
 				"key2": "value",
 			},
@@ -2592,8 +2592,8 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 		},
 		{
 			name: "allOf.items",
-			obj: map[string]interface{}{
-				"myList": []interface{}{"value", "value2"},
+			obj: map[string]any{
+				"myList": []any{"value", "value2"},
 			},
 			errors: []string{
 				`must be value2 or not value`,
@@ -2643,8 +2643,8 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 		},
 		{
 			name: "allOf.additionalProperties",
-			obj: map[string]interface{}{
-				"myProperty": map[string]interface{}{
+			obj: map[string]any{
+				"myProperty": map[string]any{
 					"key":  "value",
 					"key2": "value2",
 				},
@@ -2691,7 +2691,7 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 		},
 		{
 			name: "allOf.properties",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"key":  "value",
 				"key2": "value2",
 			},
@@ -2739,7 +2739,7 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 		},
 		{
 			name: "allOf.items.allOf",
-			obj:  map[string]interface{}{"myList": []interface{}{"value", "value2"}},
+			obj:  map[string]any{"myList": []any{"value", "value2"}},
 			errors: []string{
 				`must be value2 or not value`,
 				`len must be 5`,
@@ -2800,9 +2800,9 @@ func TestValidationExpressionsAtSchemaLevels(t *testing.T) {
 		},
 		{
 			name: "properties.allOf.additionalProperties.allOf.properties",
-			obj: map[string]interface{}{
-				"myProperty": map[string]interface{}{
-					"randomKey": map[string]interface{}{
+			obj: map[string]any{
+				"myProperty": map[string]any{
+					"randomKey": map[string]any{
 						"key":  "value",
 						"key2": "value2",
 					},
@@ -2924,7 +2924,7 @@ func TestCELValidationLimit(t *testing.T) {
 	tests := []struct {
 		name   string
 		schema *schema.Structural
-		obj    interface{}
+		obj    any
 		valid  []string
 	}{
 		{
@@ -2986,18 +2986,18 @@ func TestCELValidationLimit(t *testing.T) {
 }
 
 func TestCELValidationContextCancellation(t *testing.T) {
-	items := make([]interface{}, 1000)
+	items := make([]any, 1000)
 	for i := int64(0); i < 1000; i++ {
 		items[i] = i
 	}
 	tests := []struct {
 		name   string
 		schema *schema.Structural
-		obj    map[string]interface{}
+		obj    map[string]any
 		rule   string
 	}{
 		{name: "test cel validation with context cancellation",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"array": items,
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -3047,8 +3047,8 @@ func TestCELMaxRecursionDepth(t *testing.T) {
 	tests := []struct {
 		name          string
 		schema        *schema.Structural
-		obj           interface{}
-		oldObj        interface{}
+		obj           any
+		oldObj        any
 		valid         []string
 		errors        map[string]string // rule -> string that error message must contain
 		costBudget    int64
@@ -3242,7 +3242,7 @@ func TestMessageExpression(t *testing.T) {
 				s = withRuleAndMessageExpression(objectType(map[string]schema.Structural{
 					"str": stringType}), "false", tt.messageExpression)
 			}
-			obj := map[string]interface{}{
+			obj := map[string]any{
 				"str": "a string",
 			}
 
@@ -3292,12 +3292,12 @@ func TestReasonAndFldPath(t *testing.T) {
 	tests := []struct {
 		name   string
 		schema *schema.Structural
-		obj    interface{}
+		obj    any
 		errors field.ErrorList
 	}{
 		{name: "Return error based on input reason",
-			obj: map[string]interface{}{
-				"f": map[string]interface{}{
+			obj: map[string]any{
+				"f": map[string]any{
 					"m": 1,
 				},
 			},
@@ -3312,8 +3312,8 @@ func TestReasonAndFldPath(t *testing.T) {
 			},
 		},
 		{name: "Return error default is invalid",
-			obj: map[string]interface{}{
-				"f": map[string]interface{}{
+			obj: map[string]any{
+				"f": map[string]any{
 					"m": 1,
 				},
 			},
@@ -3328,8 +3328,8 @@ func TestReasonAndFldPath(t *testing.T) {
 			},
 		},
 		{name: "Return error based on input fieldPath",
-			obj: map[string]interface{}{
-				"f": map[string]interface{}{
+			obj: map[string]any{
+				"f": map[string]any{
 					"m": 1,
 				},
 			},
@@ -3345,7 +3345,7 @@ func TestReasonAndFldPath(t *testing.T) {
 		},
 		{
 			name: "multiple rules with custom reason and field path",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"field1": "value1",
 				"field2": "value2",
 				"field3": "value3",
@@ -3820,10 +3820,10 @@ func mustSchema(source string) *schema.Structural {
 }
 
 // Creates an *unstructured by decoding the given YAML. Panics on error
-func mustUnstructured(source string) interface{} {
+func mustUnstructured(source string) any {
 	source = FixTabsOrDie(source)
 	d := yaml.NewYAMLOrJSONDecoder(strings.NewReader(source), 4096)
-	var res interface{}
+	var res any
 	if err := d.Decode(&res); err != nil {
 		panic(err)
 	}
@@ -3855,8 +3855,8 @@ func TestRatcheting(t *testing.T) {
 	cases := []struct {
 		name   string
 		schema *schema.Structural
-		oldObj interface{}
-		newObj interface{}
+		oldObj any
+		newObj any
 
 		// Errors that should occur when evaluating this operation with
 		// ratcheting feature enabled
@@ -4443,13 +4443,13 @@ func TestOptionalOldSelf(t *testing.T) {
 	tests := []struct {
 		name   string
 		schema *schema.Structural
-		obj    interface{}
-		oldObj interface{}
+		obj    any
+		oldObj any
 		errors []string // strings that error message must contain
 	}{
 		{
 			name: "allow new value if old value is null",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"foo": "bar",
 			},
 			schema: withRulePtr(objectTypePtr(map[string]schema.Structural{
@@ -4458,10 +4458,10 @@ func TestOptionalOldSelf(t *testing.T) {
 		},
 		{
 			name: "block new value if old value is not null",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"foo": "invalid",
 			},
-			oldObj: map[string]interface{}{
+			oldObj: map[string]any{
 				"foo": "bar",
 			},
 			schema: withRulePtr(objectTypePtr(map[string]schema.Structural{
@@ -4471,10 +4471,10 @@ func TestOptionalOldSelf(t *testing.T) {
 		},
 		{
 			name: "allow invalid new value if old value is also invalid",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"foo": "invalid again",
 			},
-			oldObj: map[string]interface{}{
+			oldObj: map[string]any{
 				"foo": "invalid",
 			},
 			schema: withRulePtr(objectTypePtr(map[string]schema.Structural{
@@ -4483,10 +4483,10 @@ func TestOptionalOldSelf(t *testing.T) {
 		},
 		{
 			name: "allow invalid new value if old value is also invalid with chained optionals",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"foo": "invalid again",
 			},
-			oldObj: map[string]interface{}{
+			oldObj: map[string]any{
 				"foo": "invalid",
 			},
 			schema: withRulePtr(objectTypePtr(map[string]schema.Structural{
@@ -4495,10 +4495,10 @@ func TestOptionalOldSelf(t *testing.T) {
 		},
 		{
 			name: "block invalid new value if old value is valid",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"foo": "invalid",
 			},
-			oldObj: map[string]interface{}{
+			oldObj: map[string]any{
 				"foo": "valid",
 			},
 			schema: withRulePtr(objectTypePtr(map[string]schema.Structural{
@@ -4598,15 +4598,15 @@ func TestOptionalOldSelfCheckForNull(t *testing.T) {
 	tests := []struct {
 		name   string
 		schema schema.Structural
-		obj    interface{}
-		oldObj interface{}
+		obj    any
+		oldObj any
 	}{
 		{
 			name: "object",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"foo": "bar",
 			},
-			oldObj: map[string]interface{}{
+			oldObj: map[string]any{
 				"foo": "baz",
 			},
 			schema: withRule(objectType(map[string]schema.Structural{
@@ -4615,10 +4615,10 @@ func TestOptionalOldSelfCheckForNull(t *testing.T) {
 		},
 		{
 			name: "object - conditional field",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"foo": "bar",
 			},
-			oldObj: map[string]interface{}{
+			oldObj: map[string]any{
 				"foo": "baz",
 			},
 			schema: withRule(objectType(map[string]schema.Structural{
@@ -4659,16 +4659,16 @@ func TestOptionalOldSelfCheckForNull(t *testing.T) {
 		},
 		{
 			name:   "array",
-			obj:    []interface{}{"bar"},
-			oldObj: []interface{}{"baz"},
+			obj:    []any{"bar"},
+			oldObj: []any{"baz"},
 			schema: withRule(arrayType("", nil, &stringSchema), `
 				!oldSelf.hasValue() || self[0] == "bar"
 			`),
 		},
 		{
 			name: "array - conditional index",
-			obj:  []interface{}{},
-			oldObj: []interface{}{
+			obj:  []any{},
+			oldObj: []any{
 				"baz",
 			},
 			schema: withRule(arrayType("", nil, &stringSchema), `
@@ -4677,19 +4677,19 @@ func TestOptionalOldSelfCheckForNull(t *testing.T) {
 		},
 		{
 			name:   "set-array",
-			obj:    []interface{}{"bar"},
-			oldObj: []interface{}{"baz"},
+			obj:    []any{"bar"},
+			oldObj: []any{"baz"},
 			schema: withRule(arrayType("set", nil, &stringSchema), `
 				!oldSelf.hasValue() || self[0] == "bar"
 			`),
 		},
 		{
 			name: "map-array",
-			obj: []interface{}{map[string]interface{}{
+			obj: []any{map[string]any{
 				"key":   "foo",
 				"value": "bar",
 			}},
-			oldObj: []interface{}{map[string]interface{}{
+			oldObj: []any{map[string]any{
 				"key":   "foo",
 				"value": "baz",
 			}},
@@ -4740,7 +4740,7 @@ func TestOptionalOldSelfIsOptionalType(t *testing.T) {
 	cases := []struct {
 		name   string
 		schema schema.Structural
-		obj    interface{}
+		obj    any
 		errors []string
 	}{
 		{
@@ -4764,7 +4764,7 @@ func TestOptionalOldSelfIsOptionalType(t *testing.T) {
 			schema: withRule(arrayType("", nil, &stringSchema), `
 				oldSelf.all(x, x == x)
 			`),
-			obj:    []interface{}{"bar"},
+			obj:    []any{"bar"},
 			errors: []string{"expression of type 'optional_type(list(string))' cannot be range of a comprehension"},
 		},
 		{
@@ -4772,7 +4772,7 @@ func TestOptionalOldSelfIsOptionalType(t *testing.T) {
 			schema: withRule(arrayType("", nil, &stringSchema), `
 				oldSelf[0] == "foo"
 			`),
-			obj:    []interface{}{"bar"},
+			obj:    []any{"bar"},
 			errors: []string{"found no matching overload for '_==_' applied to '(optional_type(string), string)"},
 		},
 		{
@@ -4781,7 +4781,7 @@ func TestOptionalOldSelfIsOptionalType(t *testing.T) {
 				"key":   stringType,
 				"value": stringType,
 			})), `oldSelf.key == "foo"`),
-			obj: []interface{}{map[string]interface{}{
+			obj: []any{map[string]any{
 				"key":   "bar",
 				"value": "baz",
 			}},
@@ -4848,18 +4848,18 @@ func setDefaultVerbosity(v int) {
 }
 
 func BenchmarkCELValidationWithContext(b *testing.B) {
-	items := make([]interface{}, 1000)
+	items := make([]any, 1000)
 	for i := int64(0); i < 1000; i++ {
 		items[i] = i
 	}
 	tests := []struct {
 		name   string
 		schema *schema.Structural
-		obj    map[string]interface{}
+		obj    map[string]any
 		rule   string
 	}{
 		{name: "benchmark for cel validation with context",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"array": items,
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -4888,18 +4888,18 @@ func BenchmarkCELValidationWithContext(b *testing.B) {
 }
 
 func BenchmarkCELValidationWithCancelledContext(b *testing.B) {
-	items := make([]interface{}, 1000)
+	items := make([]any, 1000)
 	for i := int64(0); i < 1000; i++ {
 		items[i] = i
 	}
 	tests := []struct {
 		name   string
 		schema *schema.Structural
-		obj    map[string]interface{}
+		obj    map[string]any
 		rule   string
 	}{
 		{name: "benchmark for cel validation with context",
-			obj: map[string]interface{}{
+			obj: map[string]any{
 				"array": items,
 			},
 			schema: objectTypePtr(map[string]schema.Structural{
@@ -4944,7 +4944,7 @@ func BenchmarkCELValidationWithAndWithoutOldSelfReference(b *testing.B) {
 		"oldSelf.getMonth() >= 0",
 	} {
 		b.Run(rule, func(b *testing.B) {
-			obj := map[string]interface{}{
+			obj := map[string]any{
 				"datetime": time.Time{}.Format(strfmt.ISO8601LocalTime),
 			}
 			s := &schema.Structural{
@@ -5059,8 +5059,8 @@ func ValsEqualThemselvesAndDataLiteral(val1, val2 string, dataLiteral string) st
 	return fmt.Sprintf("%s == %s && %s == %s && %s == %s", val1, dataLiteral, dataLiteral, val1, val1, val2)
 }
 
-func objs(val ...interface{}) map[string]interface{} {
-	result := make(map[string]interface{}, len(val))
+func objs(val ...any) map[string]any {
+	result := make(map[string]any, len(val))
 	for i, v := range val {
 		result[fmt.Sprintf("val%d", i+1)] = v
 	}
@@ -5191,7 +5191,7 @@ func withMaxProperties(s schema.Structural, maxProperties *int64) schema.Structu
 	return s
 }
 
-func withDefault(dflt interface{}, s schema.Structural) schema.Structural {
+func withDefault(dflt any, s schema.Structural) schema.Structural {
 	s.Generic.Default = schema.JSON{Object: dflt}
 	return s
 }
@@ -5206,7 +5206,7 @@ func withNullablePtr(nullable bool, s schema.Structural) *schema.Structural {
 	return &s
 }
 
-func nilInterfaceOfStringSlice() []interface{} {
-	var slice []interface{} = nil
+func nilInterfaceOfStringSlice() []any {
+	var slice []any = nil
 	return slice
 }

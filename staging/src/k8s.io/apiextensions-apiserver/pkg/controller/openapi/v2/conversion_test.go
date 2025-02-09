@@ -690,7 +690,7 @@ func Test_ConvertJSONSchemaPropsToOpenAPIv2SchemaByType(t *testing.T) {
 	}
 }
 
-func withVendorExtensions(s *spec.Schema, key string, value interface{}) *spec.Schema {
+func withVendorExtensions(s *spec.Schema, key string, value any) *spec.Schema {
 	s.VendorExtensible.AddExtension(key, value)
 	return s
 }
@@ -802,7 +802,7 @@ func fuzzFuncs(f *fuzz.Fuzzer, refFunc func(ref *spec.Ref, c fuzz.Continue, visi
 		f.NumElements(0, max(0, maxDepth-depth))
 	}
 	updateFuzzer(depth)
-	enter := func(o interface{}, recursive bool, c fuzz.Continue) {
+	enter := func(o any, recursive bool, c fuzz.Continue) {
 		if recursive {
 			depth++
 			updateFuzzer(depth)
@@ -904,7 +904,7 @@ func fuzzFuncs(f *fuzz.Fuzzer, refFunc func(ref *spec.Ref, c fuzz.Continue, visi
 				s.Enum[i] = "42"
 			}
 		},
-		func(i *interface{}, c fuzz.Continue) {
+		func(i *any, c fuzz.Continue) {
 			// do nothing for examples and defaults. These are free form JSON fields.
 		},
 	)

@@ -27,8 +27,8 @@ import (
 )
 
 // Funcs returns the fuzzer functions for the batch api group.
-var Funcs = func(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+var Funcs = func(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(j *batch.Job, c fuzz.Continue) {
 			c.FuzzNoCustom(j) // fuzz self without calling this function again
 

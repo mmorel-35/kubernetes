@@ -89,7 +89,7 @@ type MockProvider_GetCgroupCPUAndMemoryStats_Call struct {
 // GetCgroupCPUAndMemoryStats is a helper method to define mock.On call
 //   - cgroupName string
 //   - updateStats bool
-func (_e *MockProvider_Expecter) GetCgroupCPUAndMemoryStats(cgroupName interface{}, updateStats interface{}) *MockProvider_GetCgroupCPUAndMemoryStats_Call {
+func (_e *MockProvider_Expecter) GetCgroupCPUAndMemoryStats(cgroupName any, updateStats any) *MockProvider_GetCgroupCPUAndMemoryStats_Call {
 	return &MockProvider_GetCgroupCPUAndMemoryStats_Call{Call: _e.mock.On("GetCgroupCPUAndMemoryStats", cgroupName, updateStats)}
 }
 
@@ -157,7 +157,7 @@ type MockProvider_GetCgroupStats_Call struct {
 // GetCgroupStats is a helper method to define mock.On call
 //   - cgroupName string
 //   - updateStats bool
-func (_e *MockProvider_Expecter) GetCgroupStats(cgroupName interface{}, updateStats interface{}) *MockProvider_GetCgroupStats_Call {
+func (_e *MockProvider_Expecter) GetCgroupStats(cgroupName any, updateStats any) *MockProvider_GetCgroupStats_Call {
 	return &MockProvider_GetCgroupStats_Call{Call: _e.mock.On("GetCgroupStats", cgroupName, updateStats)}
 }
 
@@ -317,7 +317,7 @@ type MockProvider_GetPodByCgroupfs_Call struct {
 
 // GetPodByCgroupfs is a helper method to define mock.On call
 //   - cgroupfs string
-func (_e *MockProvider_Expecter) GetPodByCgroupfs(cgroupfs interface{}) *MockProvider_GetPodByCgroupfs_Call {
+func (_e *MockProvider_Expecter) GetPodByCgroupfs(cgroupfs any) *MockProvider_GetPodByCgroupfs_Call {
 	return &MockProvider_GetPodByCgroupfs_Call{Call: _e.mock.On("GetPodByCgroupfs", cgroupfs)}
 }
 
@@ -376,7 +376,7 @@ type MockProvider_GetPodByName_Call struct {
 // GetPodByName is a helper method to define mock.On call
 //   - namespace string
 //   - name string
-func (_e *MockProvider_Expecter) GetPodByName(namespace interface{}, name interface{}) *MockProvider_GetPodByName_Call {
+func (_e *MockProvider_Expecter) GetPodByName(namespace any, name any) *MockProvider_GetPodByName_Call {
 	return &MockProvider_GetPodByName_Call{Call: _e.mock.On("GetPodByName", namespace, name)}
 }
 
@@ -527,7 +527,7 @@ type MockProvider_GetRequestedContainersInfo_Call struct {
 // GetRequestedContainersInfo is a helper method to define mock.On call
 //   - containerName string
 //   - options v2.RequestOptions
-func (_e *MockProvider_Expecter) GetRequestedContainersInfo(containerName interface{}, options interface{}) *MockProvider_GetRequestedContainersInfo_Call {
+func (_e *MockProvider_Expecter) GetRequestedContainersInfo(containerName any, options any) *MockProvider_GetRequestedContainersInfo_Call {
 	return &MockProvider_GetRequestedContainersInfo_Call{Call: _e.mock.On("GetRequestedContainersInfo", containerName, options)}
 }
 
@@ -594,7 +594,7 @@ type MockProvider_ImageFsStats_Call struct {
 
 // ImageFsStats is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockProvider_Expecter) ImageFsStats(ctx interface{}) *MockProvider_ImageFsStats_Call {
+func (_e *MockProvider_Expecter) ImageFsStats(ctx any) *MockProvider_ImageFsStats_Call {
 	return &MockProvider_ImageFsStats_Call{Call: _e.mock.On("ImageFsStats", ctx)}
 }
 
@@ -652,7 +652,7 @@ type MockProvider_ListBlockVolumesForPod_Call struct {
 
 // ListBlockVolumesForPod is a helper method to define mock.On call
 //   - podUID types.UID
-func (_e *MockProvider_Expecter) ListBlockVolumesForPod(podUID interface{}) *MockProvider_ListBlockVolumesForPod_Call {
+func (_e *MockProvider_Expecter) ListBlockVolumesForPod(podUID any) *MockProvider_ListBlockVolumesForPod_Call {
 	return &MockProvider_ListBlockVolumesForPod_Call{Call: _e.mock.On("ListBlockVolumesForPod", podUID)}
 }
 
@@ -710,7 +710,7 @@ type MockProvider_ListPodCPUAndMemoryStats_Call struct {
 
 // ListPodCPUAndMemoryStats is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockProvider_Expecter) ListPodCPUAndMemoryStats(ctx interface{}) *MockProvider_ListPodCPUAndMemoryStats_Call {
+func (_e *MockProvider_Expecter) ListPodCPUAndMemoryStats(ctx any) *MockProvider_ListPodCPUAndMemoryStats_Call {
 	return &MockProvider_ListPodCPUAndMemoryStats_Call{Call: _e.mock.On("ListPodCPUAndMemoryStats", ctx)}
 }
 
@@ -768,7 +768,7 @@ type MockProvider_ListPodStats_Call struct {
 
 // ListPodStats is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockProvider_Expecter) ListPodStats(ctx interface{}) *MockProvider_ListPodStats_Call {
+func (_e *MockProvider_Expecter) ListPodStats(ctx any) *MockProvider_ListPodStats_Call {
 	return &MockProvider_ListPodStats_Call{Call: _e.mock.On("ListPodStats", ctx)}
 }
 
@@ -826,7 +826,7 @@ type MockProvider_ListPodStatsAndUpdateCPUNanoCoreUsage_Call struct {
 
 // ListPodStatsAndUpdateCPUNanoCoreUsage is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockProvider_Expecter) ListPodStatsAndUpdateCPUNanoCoreUsage(ctx interface{}) *MockProvider_ListPodStatsAndUpdateCPUNanoCoreUsage_Call {
+func (_e *MockProvider_Expecter) ListPodStatsAndUpdateCPUNanoCoreUsage(ctx any) *MockProvider_ListPodStatsAndUpdateCPUNanoCoreUsage_Call {
 	return &MockProvider_ListPodStatsAndUpdateCPUNanoCoreUsage_Call{Call: _e.mock.On("ListPodStatsAndUpdateCPUNanoCoreUsage", ctx)}
 }
 
@@ -884,7 +884,7 @@ type MockProvider_ListVolumesForPod_Call struct {
 
 // ListVolumesForPod is a helper method to define mock.On call
 //   - podUID types.UID
-func (_e *MockProvider_Expecter) ListVolumesForPod(podUID interface{}) *MockProvider_ListVolumesForPod_Call {
+func (_e *MockProvider_Expecter) ListVolumesForPod(podUID any) *MockProvider_ListVolumesForPod_Call {
 	return &MockProvider_ListVolumesForPod_Call{Call: _e.mock.On("ListVolumesForPod", podUID)}
 }
 

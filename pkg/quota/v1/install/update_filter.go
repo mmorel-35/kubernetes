@@ -28,8 +28,8 @@ import (
 )
 
 // DefaultUpdateFilter returns the default update filter for resource update events for consideration for quota.
-func DefaultUpdateFilter() func(resource schema.GroupVersionResource, oldObj, newObj interface{}) bool {
-	return func(resource schema.GroupVersionResource, oldObj, newObj interface{}) bool {
+func DefaultUpdateFilter() func(resource schema.GroupVersionResource, oldObj, newObj any) bool {
+	return func(resource schema.GroupVersionResource, oldObj, newObj any) bool {
 		switch resource.GroupResource() {
 		case schema.GroupResource{Resource: "pods"}:
 			oldPod := oldObj.(*v1.Pod)

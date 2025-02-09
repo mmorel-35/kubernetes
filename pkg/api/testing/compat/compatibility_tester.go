@@ -64,7 +64,7 @@ func TestCompatibility(
 	}
 
 	// Validate old and new fields are encoded
-	generic := map[string]interface{}{}
+	generic := map[string]any{}
 	if err := json.Unmarshal(output, &generic); err != nil {
 		t.Fatalf("Unexpected error: %v", err)
 	}
@@ -97,7 +97,7 @@ func TestCompatibility(
 	}
 }
 
-func getJSONValue(data map[string]interface{}, keys ...string) (interface{}, bool, error) {
+func getJSONValue(data map[string]any, keys ...string) (any, bool, error) {
 	// No keys, current value is it
 	if len(keys) == 0 {
 		return data, true, nil
@@ -119,7 +119,7 @@ func getJSONValue(data map[string]interface{}, keys ...string) (interface{}, boo
 
 	// Get the indexed value if an index is specified
 	if index >= 0 {
-		valueSlice, ok := value.([]interface{})
+		valueSlice, ok := value.([]any)
 		if !ok {
 			return nil, false, fmt.Errorf("key %s did not hold a slice", key)
 		}
@@ -133,7 +133,7 @@ func getJSONValue(data map[string]interface{}, keys ...string) (interface{}, boo
 		return value, true, nil
 	}
 
-	childData, ok := value.(map[string]interface{})
+	childData, ok := value.(map[string]any)
 	if !ok {
 		return nil, false, fmt.Errorf("key %s did not hold a map", keys[0])
 	}

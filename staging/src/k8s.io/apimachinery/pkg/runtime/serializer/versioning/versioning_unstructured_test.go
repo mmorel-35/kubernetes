@@ -174,7 +174,7 @@ func (c *mockUnstructuredNopConvertor) recognizeGVK(gvkToCheck schema.GroupVersi
 	return nil
 }
 
-func (c *mockUnstructuredNopConvertor) Convert(in, out, context interface{}) error {
+func (c *mockUnstructuredNopConvertor) Convert(in, out, context any) error {
 	inObj := in.(*unstructured.Unstructured)
 	outObj := out.(*unstructured.Unstructured)
 	if err := c.recognizeGVK(outObj.GroupVersionKind()); err != nil {

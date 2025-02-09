@@ -25,6 +25,6 @@ import (
 // makeMapList returns a queryable interface over the provided x-kubernetes-list-type=map
 // keyedItems. If the provided schema is _not_ an array with x-kubernetes-list-type=map, returns an
 // empty mapList.
-func makeMapList(sts *schema.Structural, items []interface{}) (rv common.MapList) {
+func makeMapList(sts *schema.Structural, items []any) (rv common.MapList) {
 	return common.MakeMapList(&model.Structural{Structural: sts}, items)
 }

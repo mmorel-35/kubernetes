@@ -657,7 +657,7 @@ func GetControlPlaneNodes(ctx context.Context, c clientset.Interface) *v1.NodeLi
 }
 
 // PrettyPrintJSON converts metrics to JSON format.
-func PrettyPrintJSON(metrics interface{}) string {
+func PrettyPrintJSON(metrics any) string {
 	output := &bytes.Buffer{}
 	if err := json.NewEncoder(output).Encode(metrics); err != nil {
 		Logf("Error building encoder: %v", err)

@@ -120,7 +120,7 @@ func NewRequestHeaderAuthRequestController(
 	})
 
 	c.configmapInformer.AddEventHandler(cache.FilteringResourceEventHandler{
-		FilterFunc: func(obj interface{}) bool {
+		FilterFunc: func(obj any) bool {
 			if cast, ok := obj.(*corev1.ConfigMap); ok {
 				return cast.Name == c.configmapName && cast.Namespace == c.configmapNamespace
 			}
@@ -134,13 +134,13 @@ func NewRequestHeaderAuthRequestController(
 		Handler: cache.ResourceEventHandlerFuncs{
 			// we have a filter, so any time we're called, we may as well queue. We only ever check one configmap
 			// so we don't have to be choosy about our key.
-			AddFunc: func(obj interface{}) {
+			AddFunc: func(obj any) {
 				c.queue.Add(c.keyFn())
 			},
-			UpdateFunc: func(oldObj, newObj interface{}) {
+			UpdateFunc: func(oldObj, newObj any) {
 				c.queue.Add(c.keyFn())
 			},
-			DeleteFunc: func(obj interface{}) {
+			DeleteFunc: func(obj any) {
 				c.queue.Add(c.keyFn())
 			},
 		},

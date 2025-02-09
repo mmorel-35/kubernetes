@@ -39,7 +39,7 @@ import (
 
 const InvalidSinceLabelKey = "kubernetes.io/legacy-token-invalid-since"
 
-func LegacyClaims(serviceAccount v1.ServiceAccount, secret v1.Secret) (*jwt.Claims, interface{}) {
+func LegacyClaims(serviceAccount v1.ServiceAccount, secret v1.Secret) (*jwt.Claims, any) {
 	return &jwt.Claims{
 			Subject: apiserverserviceaccount.MakeUsername(serviceAccount.Namespace, serviceAccount.Name),
 		}, &legacyPrivateClaims{

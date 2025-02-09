@@ -90,11 +90,11 @@ func kubeProxyDefaultBindAddress(localAdvertiseAddress string) string {
 	return kubeadmapiv1.DefaultProxyBindAddressv6
 }
 
-func (kp *kubeProxyConfig) Get() interface{} {
+func (kp *kubeProxyConfig) Get() any {
 	return &kp.config
 }
 
-func (kp *kubeProxyConfig) Set(cfg interface{}) {
+func (kp *kubeProxyConfig) Set(cfg any) {
 	kp.config = *cfg.(*kubeproxyconfig.KubeProxyConfiguration)
 }
 

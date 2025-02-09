@@ -28,18 +28,18 @@ import (
 // 3. then update the cache
 type ObjectCache struct {
 	cache   expirationcache.Store
-	updater func() (interface{}, error)
+	updater func() (any, error)
 }
 
 // objectEntry is an object with string type key.
 type objectEntry struct {
 	key string
-	obj interface{}
+	obj any
 }
 
 // NewObjectCache creates ObjectCache with an updater.
 // updater returns an object to cache.
-func NewObjectCache(f func() (interface{}, error), ttl time.Duration) *ObjectCache {
+func NewObjectCache(f func() (any, error), ttl time.Duration) *ObjectCache {
 	return &ObjectCache{
 		updater: f,
 		cache:   expirationcache.NewTTLStore(stringKeyFunc, ttl),
@@ -47,13 +47,13 @@ func NewObjectCache(f func() (interface{}, error), ttl time.Duration) *ObjectCac
 }
 
 // stringKeyFunc is a string as cache key function
-func stringKeyFunc(obj interface{}) (string, error) {
+func stringKeyFunc(obj any) (string, error) {
 	key := obj.(objectEntry).key
 	return key, nil
 }
 
 // Get gets cached objectEntry by using a unique string as the key.
-func (c *ObjectCache) Get(key string) (interface{}, error) {
+func (c *ObjectCache) Get(key string) (any, error) {
 	value, ok, err := c.cache.Get(objectEntry{key: key})
 	if err != nil {
 		return nil, err
@@ -76,6 +76,6 @@ func (c *ObjectCache) Get(key string) (interface{}, error) {
 }
 
 // Add adds objectEntry by using a unique string as the key.
-func (c *ObjectCache) Add(key string, obj interface{}) error {
+func (c *ObjectCache) Add(key string, obj any) error {
 	return c.cache.Add(objectEntry{key: key, obj: obj})
 }

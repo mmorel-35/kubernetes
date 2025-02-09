@@ -71,9 +71,9 @@ type TestServer struct {
 
 // Logger allows t.Testing and b.Testing to be passed to StartTestServer and StartTestServerOrDie
 type Logger interface {
-	Errorf(format string, args ...interface{})
-	Fatalf(format string, args ...interface{})
-	Logf(format string, args ...interface{})
+	Errorf(format string, args ...any)
+	Fatalf(format string, args ...any)
+	Logf(format string, args ...any)
 }
 
 // NewDefaultTestServerOptions Default options for TestServer instances

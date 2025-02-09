@@ -156,7 +156,7 @@ func TestKlogIntegration(t *testing.T) {
 			name: "KObjSlice",
 			fun: func() {
 				klog.InfoS("several", "pods",
-					klog.KObjSlice([]interface{}{
+					klog.KObjSlice([]any{
 						&kmeta{Name: "pod-1", Namespace: "kube-system"},
 						&kmeta{Name: "pod-2", Namespace: "kube-system"},
 					}))

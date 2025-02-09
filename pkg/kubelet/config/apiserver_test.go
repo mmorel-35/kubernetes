@@ -61,7 +61,7 @@ func TestNewSourceApiserver_UpdatesAndMultiplePods(t *testing.T) {
 		watchResp: fakeWatch,
 	}
 
-	ch := make(chan interface{})
+	ch := make(chan any)
 
 	newSourceApiserverFromLW(lw, ch)
 
@@ -144,7 +144,7 @@ func TestNewSourceApiserver_TwoNamespacesSameName(t *testing.T) {
 		watchResp: fakeWatch,
 	}
 
-	ch := make(chan interface{})
+	ch := make(chan any)
 
 	newSourceApiserverFromLW(lw, ch)
 
@@ -178,7 +178,7 @@ func TestNewSourceApiserverInitialEmptySendsEmptyPodUpdate(t *testing.T) {
 		watchResp: fakeWatch,
 	}
 
-	ch := make(chan interface{})
+	ch := make(chan any)
 
 	newSourceApiserverFromLW(lw, ch)
 

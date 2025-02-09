@@ -211,7 +211,7 @@ values:
 		if !ok || err != nil || len(items) != 1 {
 			t.Fatalf("expected one item, got %v %v %v", items, ok, err)
 		}
-		obj := unstructured.Unstructured{Object: items[0].(map[string]interface{})}
+		obj := unstructured.Unstructured{Object: items[0].(map[string]any)}
 		if obj.GetName() != "mytest" {
 			t.Fatalf("expected mytest, got %s", obj.GetName())
 		}
@@ -528,13 +528,13 @@ status:
 }
 
 func decodeYAML(data []byte) (*unstructured.Unstructured, error) {
-	retval := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	retval := &unstructured.Unstructured{Object: map[string]any{}}
 	// ensure this isn't JSON
 	if json.Unmarshal(data, &retval.Object) == nil {
 		return nil, fmt.Errorf("data is JSON, not YAML: %s", string(data))
 	}
 	// ensure it is YAML
-	retval.Object = map[string]interface{}{}
+	retval.Object = map[string]any{}
 	if err := yaml.Unmarshal(data, &retval.Object); err != nil {
 		return nil, fmt.Errorf("error decoding YAML: %v\noriginal YAML: %s", err, string(data))
 	}

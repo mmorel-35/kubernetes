@@ -42,7 +42,7 @@ type LRUExpireCache struct {
 
 	maxSize      int
 	evictionList list.List
-	entries      map[interface{}]*list.Element
+	entries      map[any]*list.Element
 }
 
 // NewLRUExpireCache creates an expiring cache with the given size
@@ -59,18 +59,18 @@ func NewLRUExpireCacheWithClock(maxSize int, clock Clock) *LRUExpireCache {
 	return &LRUExpireCache{
 		clock:   clock,
 		maxSize: maxSize,
-		entries: map[interface{}]*list.Element{},
+		entries: map[any]*list.Element{},
 	}
 }
 
 type cacheEntry struct {
-	key        interface{}
-	value      interface{}
+	key        any
+	value      any
 	expireTime time.Time
 }
 
 // Add adds the value to the cache at key with the specified maximum duration.
-func (c *LRUExpireCache) Add(key interface{}, value interface{}, ttl time.Duration) {
+func (c *LRUExpireCache) Add(key any, value any, ttl time.Duration) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
@@ -102,7 +102,7 @@ func (c *LRUExpireCache) Add(key interface{}, value interface{}, ttl time.Durati
 
 // Get returns the value at the specified key from the cache if it exists and is not
 // expired, or returns false.
-func (c *LRUExpireCache) Get(key interface{}) (interface{}, bool) {
+func (c *LRUExpireCache) Get(key any) (any, bool) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
@@ -123,7 +123,7 @@ func (c *LRUExpireCache) Get(key interface{}) (interface{}, bool) {
 }
 
 // Remove removes the specified key from the cache if it exists
-func (c *LRUExpireCache) Remove(key interface{}) {
+func (c *LRUExpireCache) Remove(key any) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
@@ -155,13 +155,13 @@ func (c *LRUExpireCache) RemoveAll(predicate func(key any) bool) {
 // might return "not found".
 //
 // Keys are returned ordered from least recently used to most recently used.
-func (c *LRUExpireCache) Keys() []interface{} {
+func (c *LRUExpireCache) Keys() []any {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
 	now := c.clock.Now()
 
-	val := make([]interface{}, 0, c.evictionList.Len())
+	val := make([]any, 0, c.evictionList.Len())
 	for element := c.evictionList.Back(); element != nil; element = element.Prev() {
 		// Only return unexpired keys
 		if !now.After(element.Value.(*cacheEntry).expireTime) {

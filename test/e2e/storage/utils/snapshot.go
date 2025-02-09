@@ -63,7 +63,7 @@ func WaitForSnapshotReady(ctx context.Context, c dynamic.Interface, ns string, s
 			framework.Logf("VolumeSnapshot %s found but is not ready.", snapshotName)
 			return false
 		}
-		value := status.(map[string]interface{})
+		value := status.(map[string]any)
 		if value["readyToUse"] == true {
 			framework.Logf("VolumeSnapshot %s found and is ready", snapshotName)
 			return true
@@ -87,7 +87,7 @@ func GetSnapshotContentFromSnapshot(ctx context.Context, dc dynamic.Interface, s
 
 	vs, err := dc.Resource(SnapshotGVR).Namespace(snapshot.GetNamespace()).Get(ctx, snapshot.GetName(), metav1.GetOptions{})
 
-	snapshotStatus := vs.Object["status"].(map[string]interface{})
+	snapshotStatus := vs.Object["status"].(map[string]any)
 	snapshotContentName := snapshotStatus["boundVolumeSnapshotContentName"].(string)
 	framework.Logf("received snapshotStatus %v", snapshotStatus)
 	framework.Logf("snapshotContentName %s", snapshotContentName)
@@ -132,10 +132,10 @@ func GenerateSnapshotClassSpec(
 	ns string,
 ) *unstructured.Unstructured {
 	snapshotClass := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "VolumeSnapshotClass",
 			"apiVersion": SnapshotAPIVersion,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				// Name must be unique, so let's base it on namespace name and use GenerateName
 				"name": names.SimpleNameGenerator.GenerateName(ns),
 			},

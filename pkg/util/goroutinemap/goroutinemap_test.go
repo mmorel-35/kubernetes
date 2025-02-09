@@ -96,7 +96,7 @@ func Test_NewGoRoutineMap_Positive_SecondOpAfterFirstCompletes(t *testing.T) {
 	// Arrange
 	grm := NewGoRoutineMap(false /* exponentialBackOffOnError */)
 	operationName := "operation-name"
-	operation1DoneCh := make(chan interface{}, 0 /* bufferSize */)
+	operation1DoneCh := make(chan any, 0 /* bufferSize */)
 	operation1 := generateCallbackFunc(operation1DoneCh)
 	err1 := grm.Run(operationName, operation1)
 	if err1 != nil {
@@ -128,7 +128,7 @@ func Test_NewGoRoutineMap_Positive_SecondOpAfterFirstCompletesWithExpBackoff(t *
 	// Arrange
 	grm := NewGoRoutineMap(true /* exponentialBackOffOnError */)
 	operationName := "operation-name"
-	operation1DoneCh := make(chan interface{}, 0 /* bufferSize */)
+	operation1DoneCh := make(chan any, 0 /* bufferSize */)
 	operation1 := generateCallbackFunc(operation1DoneCh)
 	err1 := grm.Run(operationName, operation1)
 	if err1 != nil {
@@ -220,7 +220,7 @@ func Test_NewGoRoutineMap_Negative_SecondOpBeforeFirstCompletes(t *testing.T) {
 	// Arrange
 	grm := NewGoRoutineMap(false /* exponentialBackOffOnError */)
 	operationName := "operation-name"
-	operation1DoneCh := make(chan interface{}, 0 /* bufferSize */)
+	operation1DoneCh := make(chan any, 0 /* bufferSize */)
 	operation1 := generateWaitFunc(operation1DoneCh)
 	err1 := grm.Run(operationName, operation1)
 	if err1 != nil {
@@ -244,7 +244,7 @@ func Test_NewGoRoutineMap_Negative_SecondOpBeforeFirstCompletesWithExpBackoff(t 
 	// Arrange
 	grm := NewGoRoutineMap(true /* exponentialBackOffOnError */)
 	operationName := "operation-name"
-	operation1DoneCh := make(chan interface{}, 0 /* bufferSize */)
+	operation1DoneCh := make(chan any, 0 /* bufferSize */)
 	operation1 := generateWaitFunc(operation1DoneCh)
 	err1 := grm.Run(operationName, operation1)
 	if err1 != nil {
@@ -268,7 +268,7 @@ func Test_NewGoRoutineMap_Positive_ThirdOpAfterFirstCompletes(t *testing.T) {
 	// Arrange
 	grm := NewGoRoutineMap(false /* exponentialBackOffOnError */)
 	operationName := "operation-name"
-	operation1DoneCh := make(chan interface{}, 0 /* bufferSize */)
+	operation1DoneCh := make(chan any, 0 /* bufferSize */)
 	operation1 := generateWaitFunc(operation1DoneCh)
 	err1 := grm.Run(operationName, operation1)
 	if err1 != nil {
@@ -312,7 +312,7 @@ func Test_NewGoRoutineMap_Positive_ThirdOpAfterFirstCompletesWithExpBackoff(t *t
 	// Arrange
 	grm := NewGoRoutineMap(true /* exponentialBackOffOnError */)
 	operationName := "operation-name"
-	operation1DoneCh := make(chan interface{}, 0 /* bufferSize */)
+	operation1DoneCh := make(chan any, 0 /* bufferSize */)
 	operation1 := generateWaitFunc(operation1DoneCh)
 	err1 := grm.Run(operationName, operation1)
 	if err1 != nil {
@@ -358,7 +358,7 @@ func Test_NewGoRoutineMap_Positive_WaitEmpty(t *testing.T) {
 	grm := NewGoRoutineMap(false /* exponentialBackOffOnError */)
 
 	// Act
-	waitDoneCh := make(chan interface{}, 1)
+	waitDoneCh := make(chan any, 1)
 	go func() {
 		grm.Wait()
 		waitDoneCh <- true
@@ -377,7 +377,7 @@ func Test_NewGoRoutineMap_Positive_WaitEmptyWithExpBackoff(t *testing.T) {
 	grm := NewGoRoutineMap(true /* exponentialBackOffOnError */)
 
 	// Act
-	waitDoneCh := make(chan interface{}, 1)
+	waitDoneCh := make(chan any, 1)
 	go func() {
 		grm.Wait()
 		waitDoneCh <- true
@@ -395,7 +395,7 @@ func Test_NewGoRoutineMap_Positive_Wait(t *testing.T) {
 	// Arrange
 	grm := NewGoRoutineMap(false /* exponentialBackOffOnError */)
 	operationName := "operation-name"
-	operation1DoneCh := make(chan interface{}, 0 /* bufferSize */)
+	operation1DoneCh := make(chan any, 0 /* bufferSize */)
 	operation1 := generateWaitFunc(operation1DoneCh)
 	err := grm.Run(operationName, operation1)
 	if err != nil {
@@ -403,7 +403,7 @@ func Test_NewGoRoutineMap_Positive_Wait(t *testing.T) {
 	}
 
 	// Act
-	waitDoneCh := make(chan interface{}, 1)
+	waitDoneCh := make(chan any, 1)
 	go func() {
 		grm.Wait()
 		waitDoneCh <- true
@@ -424,7 +424,7 @@ func Test_NewGoRoutineMap_Positive_WaitWithExpBackoff(t *testing.T) {
 	// Arrange
 	grm := NewGoRoutineMap(true /* exponentialBackOffOnError */)
 	operationName := "operation-name"
-	operation1DoneCh := make(chan interface{}, 0 /* bufferSize */)
+	operation1DoneCh := make(chan any, 0 /* bufferSize */)
 	operation1 := generateWaitFunc(operation1DoneCh)
 	err := grm.Run(operationName, operation1)
 	if err != nil {
@@ -432,7 +432,7 @@ func Test_NewGoRoutineMap_Positive_WaitWithExpBackoff(t *testing.T) {
 	}
 
 	// Act
-	waitDoneCh := make(chan interface{}, 1)
+	waitDoneCh := make(chan any, 1)
 	go func() {
 		grm.Wait()
 		waitDoneCh <- true
@@ -452,7 +452,7 @@ func Test_NewGoRoutineMap_WaitForCompletionWithExpBackoff(t *testing.T) {
 	grm := NewGoRoutineMap(true /* exponentialBackOffOnError */)
 	operationName := "operation-err"
 
-	operation1DoneCh := make(chan interface{}, 0 /* bufferSize */)
+	operation1DoneCh := make(chan any, 0 /* bufferSize */)
 	operation1 := generateErrorFunc(operation1DoneCh)
 	err := grm.Run(operationName, operation1)
 	if err != nil {
@@ -460,7 +460,7 @@ func Test_NewGoRoutineMap_WaitForCompletionWithExpBackoff(t *testing.T) {
 	}
 
 	// Act
-	waitDoneCh := make(chan interface{}, 1)
+	waitDoneCh := make(chan any, 1)
 	go func() {
 		grm.WaitForCompletion()
 		waitDoneCh <- true
@@ -476,21 +476,21 @@ func Test_NewGoRoutineMap_WaitForCompletionWithExpBackoff(t *testing.T) {
 	}
 }
 
-func generateCallbackFunc(done chan<- interface{}) func() error {
+func generateCallbackFunc(done chan<- any) func() error {
 	return func() error {
 		done <- true
 		return nil
 	}
 }
 
-func generateErrorFunc(done <-chan interface{}) func() error {
+func generateErrorFunc(done <-chan any) func() error {
 	return func() error {
 		<-done
 		return fmt.Errorf("Generic error")
 	}
 }
 
-func generateWaitFunc(done <-chan interface{}) func() error {
+func generateWaitFunc(done <-chan any) func() error {
 	return func() error {
 		<-done
 		return nil
@@ -517,7 +517,7 @@ func retryWithExponentialBackOff(initialDuration time.Duration, fn wait.Conditio
 	return wait.ExponentialBackoff(backoff, fn)
 }
 
-func waitChannelWithTimeout(ch <-chan interface{}, timeout time.Duration) error {
+func waitChannelWithTimeout(ch <-chan any, timeout time.Duration) error {
 	timer := time.NewTimer(timeout)
 	defer timer.Stop()
 

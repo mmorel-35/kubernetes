@@ -188,7 +188,7 @@ type cacheEntry struct {
 }
 
 // cacheKeyFunc extracts AuthEntry.MatchKey as the cache key function for the plugin provider.
-func cacheKeyFunc(obj interface{}) (string, error) {
+func cacheKeyFunc(obj any) (string, error) {
 	key := obj.(*cacheEntry).key
 	return key, nil
 }
@@ -227,7 +227,7 @@ func (p *pluginProvider) Provide(image string) credentialprovider.DockerConfig {
 	// foo.bar.registry
 	// foo.bar.registry/image1
 	// foo.bar.registry/image2
-	res, err, _ := p.group.Do(image, func() (interface{}, error) {
+	res, err, _ := p.group.Do(image, func() (any, error) {
 		return p.plugin.ExecPlugin(context.Background(), image)
 	})
 

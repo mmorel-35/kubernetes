@@ -535,7 +535,7 @@ func testHandlerConversion(t *testing.T, enableWatchCache bool) {
 
 	// Create and delete a marker object to get a starting resource version
 	{
-		u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+		u := &unstructured.Unstructured{Object: map[string]any{}}
 		u.SetGroupVersionKind(schema.GroupVersionKind{Group: "stable.example.com", Version: "v1beta1", Kind: "MultiVersion"})
 		u.SetName("marker")
 		if item, err := crdInfo.storages["v1beta1"].CustomResource.Create(ctx, u, validateFunc, &metav1.CreateOptions{}); err != nil {
@@ -551,7 +551,7 @@ func testHandlerConversion(t *testing.T, enableWatchCache bool) {
 	// Create and get every version, expect returned result to match creation GVK
 	for _, version := range crd.Spec.Versions {
 		expectGVK := schema.GroupVersionKind{Group: "stable.example.com", Version: version.Name, Kind: "MultiVersion"}
-		u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+		u := &unstructured.Unstructured{Object: map[string]any{}}
 		u.SetGroupVersionKind(expectGVK)
 		u.SetName("my-" + version.Name)
 		unstructured.SetNestedField(u.Object, int64(1), "spec", "num")

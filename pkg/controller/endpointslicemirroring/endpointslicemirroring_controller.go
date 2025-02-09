@@ -102,13 +102,13 @@ func NewController(ctx context.Context, endpointsInformer coreinformers.Endpoint
 	}
 
 	endpointsInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			c.onEndpointsAdd(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			c.onEndpointsUpdate(logger, oldObj, newObj)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			c.onEndpointsDelete(logger, obj)
 		},
 	})
@@ -117,7 +117,7 @@ func NewController(ctx context.Context, endpointsInformer coreinformers.Endpoint
 
 	endpointSliceInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: c.onEndpointSliceAdd,
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			c.onEndpointSliceUpdate(logger, oldObj, newObj)
 		},
 		DeleteFunc: c.onEndpointSliceDelete,
@@ -344,7 +344,7 @@ func (c *Controller) syncEndpoints(logger klog.Logger, key string) error {
 }
 
 // queueEndpoints queues the Endpoints resource for processing.
-func (c *Controller) queueEndpoints(obj interface{}) {
+func (c *Controller) queueEndpoints(obj any) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("Couldn't get key for object %+v (type %T): %v", obj, obj, err))
@@ -370,7 +370,7 @@ func (c *Controller) shouldMirror(endpoints *v1.Endpoints) bool {
 }
 
 // onServiceAdd queues a sync for the relevant Endpoints resource.
-func (c *Controller) onServiceAdd(obj interface{}) {
+func (c *Controller) onServiceAdd(obj any) {
 	service := obj.(*v1.Service)
 	if service == nil {
 		utilruntime.HandleError(fmt.Errorf("onServiceAdd() expected type v1.Service, got %T", obj))
@@ -382,7 +382,7 @@ func (c *Controller) onServiceAdd(obj interface{}) {
 }
 
 // onServiceUpdate queues a sync for the relevant Endpoints resource.
-func (c *Controller) onServiceUpdate(prevObj, obj interface{}) {
+func (c *Controller) onServiceUpdate(prevObj, obj any) {
 	service := obj.(*v1.Service)
 	prevService := prevObj.(*v1.Service)
 	if service == nil || prevService == nil {
@@ -395,7 +395,7 @@ func (c *Controller) onServiceUpdate(prevObj, obj interface{}) {
 }
 
 // onServiceDelete queues a sync for the relevant Endpoints resource.
-func (c *Controller) onServiceDelete(obj interface{}) {
+func (c *Controller) onServiceDelete(obj any) {
 	service := getServiceFromDeleteAction(obj)
 	if service == nil {
 		utilruntime.HandleError(fmt.Errorf("onServiceDelete() expected type v1.Service, got %T", obj))
@@ -407,7 +407,7 @@ func (c *Controller) onServiceDelete(obj interface{}) {
 }
 
 // onEndpointsAdd queues a sync for the relevant Endpoints resource.
-func (c *Controller) onEndpointsAdd(logger klog.Logger, obj interface{}) {
+func (c *Controller) onEndpointsAdd(logger klog.Logger, obj any) {
 	endpoints := obj.(*v1.Endpoints)
 	if endpoints == nil {
 		utilruntime.HandleError(fmt.Errorf("onEndpointsAdd() expected type v1.Endpoints, got %T", obj))
@@ -421,7 +421,7 @@ func (c *Controller) onEndpointsAdd(logger klog.Logger, obj interface{}) {
 }
 
 // onEndpointsUpdate queues a sync for the relevant Endpoints resource.
-func (c *Controller) onEndpointsUpdate(logger klog.Logger, prevObj, obj interface{}) {
+func (c *Controller) onEndpointsUpdate(logger klog.Logger, prevObj, obj any) {
 	endpoints := obj.(*v1.Endpoints)
 	prevEndpoints := prevObj.(*v1.Endpoints)
 	if endpoints == nil || prevEndpoints == nil {
@@ -436,7 +436,7 @@ func (c *Controller) onEndpointsUpdate(logger klog.Logger, prevObj, obj interfac
 }
 
 // onEndpointsDelete queues a sync for the relevant Endpoints resource.
-func (c *Controller) onEndpointsDelete(logger klog.Logger, obj interface{}) {
+func (c *Controller) onEndpointsDelete(logger klog.Logger, obj any) {
 	endpoints := getEndpointsFromDeleteAction(obj)
 	if endpoints == nil {
 		utilruntime.HandleError(fmt.Errorf("onEndpointsDelete() expected type v1.Endpoints, got %T", obj))
@@ -452,7 +452,7 @@ func (c *Controller) onEndpointsDelete(logger klog.Logger, obj interface{}) {
 // onEndpointSliceAdd queues a sync for the relevant Endpoints resource for a
 // sync if the EndpointSlice resource version does not match the expected
 // version in the endpointSliceTracker.
-func (c *Controller) onEndpointSliceAdd(obj interface{}) {
+func (c *Controller) onEndpointSliceAdd(obj any) {
 	endpointSlice := obj.(*discovery.EndpointSlice)
 	if endpointSlice == nil {
 		utilruntime.HandleError(fmt.Errorf("onEndpointSliceAdd() expected type discovery.EndpointSlice, got %T", obj))
@@ -467,7 +467,7 @@ func (c *Controller) onEndpointSliceAdd(obj interface{}) {
 // sync if the EndpointSlice resource version does not match the expected
 // version in the endpointSliceTracker or the managed-by value of the
 // EndpointSlice has changed from or to this controller.
-func (c *Controller) onEndpointSliceUpdate(logger klog.Logger, prevObj, obj interface{}) {
+func (c *Controller) onEndpointSliceUpdate(logger klog.Logger, prevObj, obj any) {
 	endpointSlice := obj.(*discovery.EndpointSlice)
 	prevEndpointSlice := prevObj.(*discovery.EndpointSlice)
 	if endpointSlice == nil || prevEndpointSlice == nil {
@@ -493,7 +493,7 @@ func (c *Controller) onEndpointSliceUpdate(logger klog.Logger, prevObj, obj inte
 // onEndpointSliceDelete queues a sync for the relevant Endpoints resource for a
 // sync if the EndpointSlice resource version does not match the expected
 // version in the endpointSliceTracker.
-func (c *Controller) onEndpointSliceDelete(obj interface{}) {
+func (c *Controller) onEndpointSliceDelete(obj any) {
 	endpointSlice := getEndpointSliceFromDeleteAction(obj)
 	if endpointSlice == nil {
 		utilruntime.HandleError(fmt.Errorf("onEndpointSliceDelete() expected type discovery.EndpointSlice, got %T", obj))

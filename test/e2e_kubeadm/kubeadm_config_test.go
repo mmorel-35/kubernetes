@@ -85,7 +85,7 @@ var _ = Describe("kubeadm-config ConfigMap", func() {
 	})
 })
 
-func getClusterConfiguration(c clientset.Interface) map[interface{}]interface{} {
+func getClusterConfiguration(c clientset.Interface) map[any]any {
 	cm := GetConfigMap(c, kubeSystemNamespace, kubeadmConfigName)
 
 	gomega.Expect(cm.Data).To(gomega.HaveKey(kubeadmConfigClusterConfigurationConfigMapKey))
@@ -93,8 +93,8 @@ func getClusterConfiguration(c clientset.Interface) map[interface{}]interface{} 
 	return unmarshalYaml(cm.Data[kubeadmConfigClusterConfigurationConfigMapKey])
 }
 
-func unmarshalYaml(data string) map[interface{}]interface{} {
-	m := make(map[interface{}]interface{})
+func unmarshalYaml(data string) map[any]any {
+	m := make(map[any]any)
 	err := yaml.Unmarshal([]byte(data), &m)
 	if err != nil {
 		framework.Failf("error parsing %s ConfigMap: %v", kubeadmConfigName, err)

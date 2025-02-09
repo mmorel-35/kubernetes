@@ -20,24 +20,24 @@ package v1alpha3
 
 // DeviceClassListerExpansion allows custom methods to be added to
 // DeviceClassLister.
-type DeviceClassListerExpansion interface{}
+type DeviceClassListerExpansion any
 
 // ResourceClaimListerExpansion allows custom methods to be added to
 // ResourceClaimLister.
-type ResourceClaimListerExpansion interface{}
+type ResourceClaimListerExpansion any
 
 // ResourceClaimNamespaceListerExpansion allows custom methods to be added to
 // ResourceClaimNamespaceLister.
-type ResourceClaimNamespaceListerExpansion interface{}
+type ResourceClaimNamespaceListerExpansion any
 
 // ResourceClaimTemplateListerExpansion allows custom methods to be added to
 // ResourceClaimTemplateLister.
-type ResourceClaimTemplateListerExpansion interface{}
+type ResourceClaimTemplateListerExpansion any
 
 // ResourceClaimTemplateNamespaceListerExpansion allows custom methods to be added to
 // ResourceClaimTemplateNamespaceLister.
-type ResourceClaimTemplateNamespaceListerExpansion interface{}
+type ResourceClaimTemplateNamespaceListerExpansion any
 
 // ResourceSliceListerExpansion allows custom methods to be added to
 // ResourceSliceLister.
-type ResourceSliceListerExpansion interface{}
+type ResourceSliceListerExpansion any

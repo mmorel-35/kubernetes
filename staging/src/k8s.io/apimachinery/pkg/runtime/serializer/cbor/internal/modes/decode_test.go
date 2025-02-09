@@ -48,8 +48,8 @@ func TestDecode(t *testing.T) {
 		name          string
 		modes         []cbor.DecMode // most tests should run for all modes
 		in            []byte
-		into          interface{} // prototype for concrete destination type. if nil, decode into empty interface value.
-		want          interface{}
+		into          any // prototype for concrete destination type. if nil, decode into empty interface value.
+		want          any
 		assertOnError func(t *testing.T, e error)
 	}
 
@@ -73,7 +73,7 @@ func TestDecode(t *testing.T) {
 						t.Run(fmt.Sprintf("%s/mode=%s", test.name, modeName), func(t *testing.T) {
 							var dst reflect.Value
 							if test.into == nil {
-								var i interface{}
+								var i any
 								dst = reflect.ValueOf(&i)
 							} else {
 								dst = reflect.New(reflect.TypeOf(test.into))
@@ -94,7 +94,7 @@ func TestDecode(t *testing.T) {
 
 	group(t, "unsigned integer", []test{
 		{
-			name:          "unsigned integer decodes to interface{} as int64",
+			name:          "unsigned integer decodes to any as int64",
 			in:            hex("0a"), // 10
 			want:          int64(10),
 			assertOnError: assertNilError,
@@ -192,7 +192,7 @@ func TestDecode(t *testing.T) {
 			assertOnError: assertNilError,
 		},
 		{
-			name:          "byte string with expected encoding tag into interface{} converts",
+			name:          "byte string with expected encoding tag into any converts",
 			in:            hex("d64401020304"), // 22(h'01020304')
 			want:          "AQIDBA==",
 			assertOnError: assertNilError,
@@ -242,9 +242,9 @@ func TestDecode(t *testing.T) {
 		{
 			name: "nested indefinite-length array",
 			in:   hex("9f9f8080ff9f8080ffff"), // [_ [_ [] []] [_ [][]]]
-			want: []interface{}{
-				[]interface{}{[]interface{}{}, []interface{}{}},
-				[]interface{}{[]interface{}{}, []interface{}{}},
+			want: []any{
+				[]any{[]any{}, []any{}},
+				[]any{[]any{}, []any{}},
 			},
 			assertOnError: assertNilError,
 		},
@@ -261,7 +261,7 @@ func TestDecode(t *testing.T) {
 		{
 			name:          "reject duplicate negative int keys into map",
 			in:            hex("a220012002"), // {-1: 1, -1: 2}
-			into:          map[int64]interface{}{},
+			into:          map[int64]any{},
 			assertOnError: assertIdenticalError(&cbor.DupMapKeyError{Key: int64(-1), Index: 1}),
 		},
 		{
@@ -274,7 +274,7 @@ func TestDecode(t *testing.T) {
 		{
 			name:          "reject duplicate positive int keys into map",
 			in:            hex("a201010102"), // {1: 1, 1: 2}
-			into:          map[int64]interface{}{},
+			into:          map[int64]any{},
 			assertOnError: assertIdenticalError(&cbor.DupMapKeyError{Key: int64(1), Index: 1}),
 		},
 		{
@@ -288,13 +288,13 @@ func TestDecode(t *testing.T) {
 		{
 			name:          "reject duplicate text string keys into map",
 			in:            hex("a2614101614102"), // {"A": 1, "A": 2}
-			into:          map[string]interface{}{},
+			into:          map[string]any{},
 			assertOnError: assertIdenticalError(&cbor.DupMapKeyError{Key: string("A"), Index: 1}),
 		},
 		{
 			name:          "reject duplicate byte string keys into map",
 			in:            hex("a2414101414102"), // {'A': 1, 'A': 2}
-			into:          map[string]interface{}{},
+			into:          map[string]any{},
 			assertOnError: assertIdenticalError(&cbor.DupMapKeyError{Key: string("A"), Index: 1}),
 		},
 		{
@@ -308,7 +308,7 @@ func TestDecode(t *testing.T) {
 		{
 			name:          "reject duplicate byte string and text string keys into map",
 			in:            hex("a2414101614102"), // {'A': 1, "A": 2}
-			into:          map[string]interface{}{},
+			into:          map[string]any{},
 			assertOnError: assertIdenticalError(&cbor.DupMapKeyError{Key: string("A"), Index: 1}),
 		},
 		{
@@ -330,7 +330,7 @@ func TestDecode(t *testing.T) {
 		{
 			name:          "reject two identical indefinite-length byte string keys split into chunks differently into map",
 			in:            hex("a25f426865436c6c6fff015f416844656c6c6fff02"), // {(_ 'he', 'llo'): 1, (_ 'h', 'ello'): 2}
-			into:          map[string]interface{}{},
+			into:          map[string]any{},
 			assertOnError: assertIdenticalError(&cbor.DupMapKeyError{Key: string("hello"), Index: 1}),
 		},
 		{
@@ -345,7 +345,7 @@ func TestDecode(t *testing.T) {
 			name:          "reject two identical indefinite-length text string keys split into chunks differently into map",
 			modes:         []cbor.DecMode{modes.DecodeLax},
 			in:            hex("a27f626865636c6c6fff017f616864656c6c6fff02"), // {(_ "he", "llo"): 1, (_ "h", "ello"): 2}
-			into:          map[string]interface{}{},
+			into:          map[string]any{},
 			assertOnError: assertIdenticalError(&cbor.DupMapKeyError{Key: string("hello"), Index: 1}),
 		},
 		{
@@ -444,9 +444,9 @@ func TestDecode(t *testing.T) {
 		{
 			name: "nested indefinite-length map",
 			in:   hex("bf6141bf616101616202ff6142bf616901616a02ffff"), // {_ "A": {_ "a": 1, "b": 2}, "B": {_ "i": 1, "j": 2}}
-			want: map[string]interface{}{
-				"A": map[string]interface{}{"a": int64(1), "b": int64(2)},
-				"B": map[string]interface{}{"i": int64(1), "j": int64(2)},
+			want: map[string]any{
+				"A": map[string]any{"a": int64(1), "b": int64(2)},
+				"B": map[string]any{"i": int64(1), "j": int64(2)},
 			},
 			assertOnError: assertNilError,
 		},
@@ -462,19 +462,19 @@ func TestDecode(t *testing.T) {
 		{
 			name:          "map with byte string key",
 			in:            hex("a143abcdef187b"), // {h'abcdef': 123}
-			want:          map[string]interface{}{"\xab\xcd\xef": int64(123)},
+			want:          map[string]any{"\xab\xcd\xef": int64(123)},
 			assertOnError: assertNilError,
 		},
 		{
 			name:          "map with text string key",
 			in:            hex("a143414243187b"), // {"ABC": 123}
-			want:          map[string]interface{}{"ABC": int64(123)},
+			want:          map[string]any{"ABC": int64(123)},
 			assertOnError: assertNilError,
 		},
 		{
 			name:          "map with mixed string key types",
 			in:            hex("a243abcdef187b43414243187c"), // {h'abcdef': 123, "ABC": 124}
-			want:          map[string]interface{}{"\xab\xcd\xef": int64(123), "ABC": int64(124)},
+			want:          map[string]any{"\xab\xcd\xef": int64(123), "ABC": int64(124)},
 			assertOnError: assertNilError,
 		},
 	})
@@ -809,13 +809,13 @@ func TestDecode(t *testing.T) {
 			{
 				name:          "decimal fraction",
 				in:            hex("c48221196ab3"), // 4([-2, 27315])
-				want:          []interface{}{int64(-2), int64(27315)},
+				want:          []any{int64(-2), int64(27315)},
 				assertOnError: assertNilError,
 			},
 			{
 				name:          "bigfloat",
 				in:            hex("c5822003"), // 5([-1, 3])
-				want:          []interface{}{int64(-1), int64(3)},
+				want:          []any{int64(-1), int64(3)},
 				assertOnError: assertNilError,
 			},
 		})

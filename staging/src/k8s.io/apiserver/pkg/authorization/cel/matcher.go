@@ -57,7 +57,7 @@ func (c *CELMatcher) Eval(ctx context.Context, r *authorizationv1.SubjectAccessR
 		}
 	}()
 
-	va := map[string]interface{}{
+	va := map[string]any{
 		"request": convertObjectToUnstructured(&r.Spec, c.UsesFieldSelector, c.UsesLabelSelector),
 	}
 	for _, compilationResult := range c.CompilationResults {

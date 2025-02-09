@@ -49,7 +49,7 @@ type testInformer struct {
 	cache.SharedIndexInformer
 
 	lock          sync.Mutex
-	registrations map[interface{}]struct{}
+	registrations map[any]struct{}
 }
 
 func (t *testInformer) AddEventHandler(handler cache.ResourceEventHandler) (cache.ResourceEventHandlerRegistration, error) {
@@ -62,7 +62,7 @@ func (t *testInformer) AddEventHandler(handler cache.ResourceEventHandler) (cach
 		t.lock.Lock()
 		defer t.lock.Unlock()
 		if t.registrations == nil {
-			t.registrations = make(map[interface{}]struct{})
+			t.registrations = make(map[any]struct{})
 		}
 		t.registrations[res] = struct{}{}
 	}()
@@ -175,8 +175,8 @@ func TestReconcile(t *testing.T) {
 
 	// Add object to informer
 	initialObject := &unstructured.Unstructured{}
-	initialObject.SetUnstructuredContent(map[string]interface{}{
-		"metadata": map[string]interface{}{
+	initialObject.SetUnstructuredContent(map[string]any{
+		"metadata": map[string]any{
 			"name":            "object1",
 			"resourceVersion": "1",
 		},
@@ -214,8 +214,8 @@ func TestReconcile(t *testing.T) {
 
 	// Updated object
 	updatedObject := &unstructured.Unstructured{}
-	updatedObject.SetUnstructuredContent(map[string]interface{}{
-		"metadata": map[string]interface{}{
+	updatedObject.SetUnstructuredContent(map[string]any{
+		"metadata": map[string]any{
 			"name":            "object1",
 			"resourceVersion": "2",
 		},
@@ -311,8 +311,8 @@ func TestIgnoredUpdate(t *testing.T) {
 
 	// Add object to informer
 	initialObject := &unstructured.Unstructured{}
-	initialObject.SetUnstructuredContent(map[string]interface{}{
-		"metadata": map[string]interface{}{
+	initialObject.SetUnstructuredContent(map[string]any{
+		"metadata": map[string]any{
 			"name":            "object1",
 			"resourceVersion": "1",
 		},
@@ -397,8 +397,8 @@ func TestReconcileRetry(t *testing.T) {
 
 	// Add object to informer
 	initialObject := &unstructured.Unstructured{}
-	initialObject.SetUnstructuredContent(map[string]interface{}{
-		"metadata": map[string]interface{}{
+	initialObject.SetUnstructuredContent(map[string]any{
+		"metadata": map[string]any{
 			"name":            "object1",
 			"resourceVersion": "1",
 		},
@@ -438,8 +438,8 @@ func TestInformerList(t *testing.T) {
 	require.True(t, cache.WaitForCacheSync(testContext.Done(), myController.Informer().HasSynced))
 
 	object1 := &unstructured.Unstructured{}
-	object1.SetUnstructuredContent(map[string]interface{}{
-		"metadata": map[string]interface{}{
+	object1.SetUnstructuredContent(map[string]any{
+		"metadata": map[string]any{
 			"name":            "object1",
 			"resourceVersion": "object1",
 		},
@@ -447,8 +447,8 @@ func TestInformerList(t *testing.T) {
 	object1.SetGroupVersionKind(fakeGVK)
 
 	object1v2 := &unstructured.Unstructured{}
-	object1v2.SetUnstructuredContent(map[string]interface{}{
-		"metadata": map[string]interface{}{
+	object1v2.SetUnstructuredContent(map[string]any{
+		"metadata": map[string]any{
 			"name":            "object1",
 			"resourceVersion": "object1v2",
 		},
@@ -456,8 +456,8 @@ func TestInformerList(t *testing.T) {
 	object1v2.SetGroupVersionKind(fakeGVK)
 
 	object2 := &unstructured.Unstructured{}
-	object2.SetUnstructuredContent(map[string]interface{}{
-		"metadata": map[string]interface{}{
+	object2.SetUnstructuredContent(map[string]any{
+		"metadata": map[string]any{
 			"name":            "object2",
 			"resourceVersion": "object2",
 		},
@@ -465,8 +465,8 @@ func TestInformerList(t *testing.T) {
 	object2.SetGroupVersionKind(fakeGVK)
 
 	object3 := &unstructured.Unstructured{}
-	object3.SetUnstructuredContent(map[string]interface{}{
-		"metadata": map[string]interface{}{
+	object3.SetUnstructuredContent(map[string]any{
+		"metadata": map[string]any{
 			"name":            "object3",
 			"resourceVersion": "object3",
 		},
@@ -474,8 +474,8 @@ func TestInformerList(t *testing.T) {
 	object3.SetGroupVersionKind(fakeGVK)
 
 	namespacedObject1 := &unstructured.Unstructured{}
-	namespacedObject1.SetUnstructuredContent(map[string]interface{}{
-		"metadata": map[string]interface{}{
+	namespacedObject1.SetUnstructuredContent(map[string]any{
+		"metadata": map[string]any{
 			"name":            "namespacedObject1",
 			"namespace":       "test",
 			"resourceVersion": "namespacedObject1",
@@ -484,8 +484,8 @@ func TestInformerList(t *testing.T) {
 	namespacedObject1.SetGroupVersionKind(fakeGVK)
 
 	namespacedObject2 := &unstructured.Unstructured{}
-	namespacedObject2.SetUnstructuredContent(map[string]interface{}{
-		"metadata": map[string]interface{}{
+	namespacedObject2.SetUnstructuredContent(map[string]any{
+		"metadata": map[string]any{
 			"name":            "namespacedObject2",
 			"namespace":       "test",
 			"resourceVersion": "namespacedObject2",

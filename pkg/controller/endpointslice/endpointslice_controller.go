@@ -121,7 +121,7 @@ func NewController(ctx context.Context, podInformer coreinformers.PodInformer,
 
 	serviceInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: c.onServiceUpdate,
-		UpdateFunc: func(old, cur interface{}) {
+		UpdateFunc: func(old, cur any) {
 			c.onServiceUpdate(cur)
 		},
 		DeleteFunc: c.onServiceDelete,
@@ -143,7 +143,7 @@ func NewController(ctx context.Context, podInformer coreinformers.PodInformer,
 	logger := klog.FromContext(ctx)
 	endpointSliceInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: c.onEndpointSliceAdd,
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			c.onEndpointSliceUpdate(logger, oldObj, newObj)
 		},
 		DeleteFunc: c.onEndpointSliceDelete,
@@ -164,13 +164,13 @@ func NewController(ctx context.Context, podInformer coreinformers.PodInformer,
 
 	if utilfeature.DefaultFeatureGate.Enabled(features.TopologyAwareHints) {
 		nodeInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-			AddFunc: func(_ interface{}) {
+			AddFunc: func(_ any) {
 				c.addNode()
 			},
-			UpdateFunc: func(oldObj, newObj interface{}) {
+			UpdateFunc: func(oldObj, newObj any) {
 				c.updateNode(oldObj, newObj)
 			},
-			DeleteFunc: func(_ interface{}) {
+			DeleteFunc: func(_ any) {
 				c.deleteNode()
 			},
 		})
@@ -437,7 +437,7 @@ func (c *Controller) syncService(logger klog.Logger, key string) error {
 }
 
 // onServiceUpdate updates the Service Selector in the cache and queues the Service for processing.
-func (c *Controller) onServiceUpdate(obj interface{}) {
+func (c *Controller) onServiceUpdate(obj any) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("Couldn't get key for object %+v: %v", obj, err))
@@ -448,7 +448,7 @@ func (c *Controller) onServiceUpdate(obj interface{}) {
 }
 
 // onServiceDelete removes the Service Selector from the cache and queues the Service for processing.
-func (c *Controller) onServiceDelete(obj interface{}) {
+func (c *Controller) onServiceDelete(obj any) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("Couldn't get key for object %+v: %v", obj, err))
@@ -461,7 +461,7 @@ func (c *Controller) onServiceDelete(obj interface{}) {
 // onEndpointSliceAdd queues a sync for the relevant Service for a sync if the
 // EndpointSlice resource version does not match the expected version in the
 // endpointSliceTracker.
-func (c *Controller) onEndpointSliceAdd(obj interface{}) {
+func (c *Controller) onEndpointSliceAdd(obj any) {
 	endpointSlice := obj.(*discovery.EndpointSlice)
 	if endpointSlice == nil {
 		utilruntime.HandleError(fmt.Errorf("Invalid EndpointSlice provided to onEndpointSliceAdd()"))
@@ -476,7 +476,7 @@ func (c *Controller) onEndpointSliceAdd(obj interface{}) {
 // the EndpointSlice resource version does not match the expected version in the
 // endpointSliceTracker or the managed-by value of the EndpointSlice has changed
 // from or to this controller.
-func (c *Controller) onEndpointSliceUpdate(logger klog.Logger, prevObj, obj interface{}) {
+func (c *Controller) onEndpointSliceUpdate(logger klog.Logger, prevObj, obj any) {
 	prevEndpointSlice := prevObj.(*discovery.EndpointSlice)
 	endpointSlice := obj.(*discovery.EndpointSlice)
 	if endpointSlice == nil || prevEndpointSlice == nil {
@@ -502,7 +502,7 @@ func (c *Controller) onEndpointSliceUpdate(logger klog.Logger, prevObj, obj inte
 // onEndpointSliceDelete queues a sync for the relevant Service for a sync if the
 // EndpointSlice resource version does not match the expected version in the
 // endpointSliceTracker.
-func (c *Controller) onEndpointSliceDelete(obj interface{}) {
+func (c *Controller) onEndpointSliceDelete(obj any) {
 	endpointSlice := getEndpointSliceFromDeleteAction(obj)
 	if endpointSlice != nil && c.reconciler.ManagedByController(endpointSlice) && c.endpointSliceTracker.Has(endpointSlice) {
 		// This returns false if we didn't expect the EndpointSlice to be
@@ -531,7 +531,7 @@ func (c *Controller) queueServiceForEndpointSlice(endpointSlice *discovery.Endpo
 	c.serviceQueue.AddAfter(key, delay)
 }
 
-func (c *Controller) addPod(obj interface{}) {
+func (c *Controller) addPod(obj any) {
 	pod := obj.(*v1.Pod)
 	services, err := endpointsliceutil.GetPodServiceMemberships(c.serviceLister, pod)
 	if err != nil {
@@ -543,7 +543,7 @@ func (c *Controller) addPod(obj interface{}) {
 	}
 }
 
-func (c *Controller) updatePod(old, cur interface{}) {
+func (c *Controller) updatePod(old, cur any) {
 	services := endpointsliceutil.GetServicesToUpdateOnPodChange(c.serviceLister, old, cur)
 	for key := range services {
 		c.serviceQueue.AddAfter(key, c.endpointUpdatesBatchPeriod)
@@ -552,7 +552,7 @@ func (c *Controller) updatePod(old, cur interface{}) {
 
 // When a pod is deleted, enqueue the services the pod used to be a member of
 // obj could be an *v1.Pod, or a DeletionFinalStateUnknown marker item.
-func (c *Controller) deletePod(obj interface{}) {
+func (c *Controller) deletePod(obj any) {
 	pod := endpointsliceutil.GetPodFromDeleteAction(obj)
 	if pod != nil {
 		c.addPod(pod)
@@ -563,7 +563,7 @@ func (c *Controller) addNode() {
 	c.topologyQueue.Add(topologyQueueItemKey)
 }
 
-func (c *Controller) updateNode(old, cur interface{}) {
+func (c *Controller) updateNode(old, cur any) {
 	oldNode := old.(*v1.Node)
 	curNode := cur.(*v1.Node)
 
@@ -623,7 +623,7 @@ func dropEndpointSlicesPendingDeletion(endpointSlices []*discovery.EndpointSlice
 }
 
 // getEndpointSliceFromDeleteAction parses an EndpointSlice from a delete action.
-func getEndpointSliceFromDeleteAction(obj interface{}) *discovery.EndpointSlice {
+func getEndpointSliceFromDeleteAction(obj any) *discovery.EndpointSlice {
 	if endpointSlice, ok := obj.(*discovery.EndpointSlice); ok {
 		// Enqueue all the services that the pod used to be a member of.
 		// This is the same thing we do when we add a pod.

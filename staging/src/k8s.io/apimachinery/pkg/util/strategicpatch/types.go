@@ -169,7 +169,7 @@ func (item *sliceItem) VisitKind(schema *openapi.Kind) {
 	subschema.Accept(item)
 }
 
-func parsePatchMetadata(extensions map[string]interface{}) (string, []string, error) {
+func parsePatchMetadata(extensions map[string]any) (string, []string, error) {
 	ps, foundPS := extensions[patchStrategyOpenapiextensionKey]
 	var patchStrategies []string
 	var mergeKey, patchStrategy string

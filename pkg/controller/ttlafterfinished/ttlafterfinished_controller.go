@@ -87,10 +87,10 @@ func New(ctx context.Context, jobInformer batchinformers.JobInformer, client cli
 
 	logger := klog.FromContext(ctx)
 	jobInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			tc.addJob(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			tc.updateJob(logger, oldObj, newObj)
 		},
 	})
@@ -123,7 +123,7 @@ func (tc *Controller) Run(ctx context.Context, workers int) {
 	<-ctx.Done()
 }
 
-func (tc *Controller) addJob(logger klog.Logger, obj interface{}) {
+func (tc *Controller) addJob(logger klog.Logger, obj any) {
 	job := obj.(*batch.Job)
 	logger.V(4).Info("Adding job", "job", klog.KObj(job))
 
@@ -133,7 +133,7 @@ func (tc *Controller) addJob(logger klog.Logger, obj interface{}) {
 
 }
 
-func (tc *Controller) updateJob(logger klog.Logger, old, cur interface{}) {
+func (tc *Controller) updateJob(logger klog.Logger, old, cur any) {
 	job := cur.(*batch.Job)
 	logger.V(4).Info("Updating job", "job", klog.KObj(job))
 

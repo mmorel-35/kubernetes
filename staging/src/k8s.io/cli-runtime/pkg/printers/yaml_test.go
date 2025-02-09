@@ -28,6 +28,6 @@ func TestYAMLPrinter(t *testing.T) {
 	testPrinter(t, NewTypeSetter(scheme.Scheme).ToPrinter(&YAMLPrinter{}), yamlUnmarshal)
 }
 
-func yamlUnmarshal(data []byte, v interface{}) error {
+func yamlUnmarshal(data []byte, v any) error {
 	return yaml.Unmarshal(data, v)
 }

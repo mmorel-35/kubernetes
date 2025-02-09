@@ -552,15 +552,15 @@ func getPatch(set *apps.StatefulSet) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	var raw map[string]interface{}
+	var raw map[string]any
 	err = json.Unmarshal(data, &raw)
 	if err != nil {
 		return nil, err
 	}
-	objCopy := make(map[string]interface{})
-	specCopy := make(map[string]interface{})
-	spec := raw["spec"].(map[string]interface{})
-	template := spec["template"].(map[string]interface{})
+	objCopy := make(map[string]any)
+	specCopy := make(map[string]any)
+	spec := raw["spec"].(map[string]any)
+	template := spec["template"].(map[string]any)
 	specCopy["template"] = template
 	template["$patch"] = "replace"
 	objCopy["spec"] = specCopy

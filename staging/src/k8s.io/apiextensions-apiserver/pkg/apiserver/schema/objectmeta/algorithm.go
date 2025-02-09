@@ -44,7 +44,7 @@ type CoerceOptions struct {
 // If opts.ReturnUnknownFieldPaths is true, it will return the paths of any fields that are not a part of the
 // schema that are dropped when unmarshaling.
 // If opts.DropInvalidFields is true, fields of wrong type will be dropped.
-func CoerceWithOptions(pth *field.Path, obj interface{}, s *structuralschema.Structural, isResourceRoot bool, opts CoerceOptions) (*field.Error, []string) {
+func CoerceWithOptions(pth *field.Path, obj any, s *structuralschema.Structural, isResourceRoot bool, opts CoerceOptions) (*field.Error, []string) {
 	if isResourceRoot {
 		if s == nil {
 			s = &structuralschema.Structural{}
@@ -65,7 +65,7 @@ func CoerceWithOptions(pth *field.Path, obj interface{}, s *structuralschema.Str
 }
 
 // Coerce calls CoerceWithOptions without returning unknown field paths.
-func Coerce(pth *field.Path, obj interface{}, s *structuralschema.Structural, isResourceRoot, dropInvalidFields bool) *field.Error {
+func Coerce(pth *field.Path, obj any, s *structuralschema.Structural, isResourceRoot, dropInvalidFields bool) *field.Error {
 	fieldErr, _ := CoerceWithOptions(pth, obj, s, isResourceRoot, CoerceOptions{DropInvalidFields: dropInvalidFields})
 	return fieldErr
 }
@@ -75,7 +75,7 @@ type coercer struct {
 	ReturnUnknownFieldPaths bool
 }
 
-func (c *coercer) coerce(pth *field.Path, x interface{}, s *structuralschema.Structural, opts *structuralschema.UnknownFieldPathOptions) *field.Error {
+func (c *coercer) coerce(pth *field.Path, x any, s *structuralschema.Structural, opts *structuralschema.UnknownFieldPathOptions) *field.Error {
 	if s == nil {
 		return nil
 	}
@@ -84,7 +84,7 @@ func (c *coercer) coerce(pth *field.Path, x interface{}, s *structuralschema.Str
 		opts.ParentPath = opts.ParentPath[:origPathLen]
 	}()
 	switch x := x.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		for k, v := range x {
 			if s.XEmbeddedResource {
 				switch k {
@@ -131,7 +131,7 @@ func (c *coercer) coerce(pth *field.Path, x interface{}, s *structuralschema.Str
 				opts.ParentPath = opts.ParentPath[:origPathLen]
 			}
 		}
-	case []interface{}:
+	case []any:
 		for i, v := range x {
 			opts.AppendIndex(i)
 			if err := c.coerce(pth.Index(i), v, s.Items, opts); err != nil {

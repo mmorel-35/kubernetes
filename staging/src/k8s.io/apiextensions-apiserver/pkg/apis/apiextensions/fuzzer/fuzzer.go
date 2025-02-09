@@ -31,8 +31,8 @@ import (
 var swaggerMetadataDescriptions = metav1.ObjectMeta{}.SwaggerDoc()
 
 // Funcs returns the fuzzer functions for the apiextensions apis.
-func Funcs(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+func Funcs(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(obj *apiextensions.CustomResourceDefinitionSpec, c fuzz.Continue) {
 			c.FuzzNoCustom(obj)
 
@@ -112,7 +112,7 @@ func Funcs(codecs runtimeserializer.CodecFactory) []interface{} {
 			}
 		},
 		func(obj *apiextensions.JSONSchemaProps, c fuzz.Continue) {
-			// we cannot use c.FuzzNoCustom because of the interface{} fields. So let's loop with reflection.
+			// we cannot use c.FuzzNoCustom because of the any fields. So let's loop with reflection.
 			vobj := reflect.ValueOf(obj).Elem()
 			tobj := reflect.TypeOf(obj).Elem()
 			for i := 0; i < tobj.NumField(); i++ {

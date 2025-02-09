@@ -147,28 +147,28 @@ func NewController(
 	metrics.RegisterMetrics()
 
 	if _, err := podInformer.Informer().AddEventHandlerWithOptions(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			ec.enqueuePod(logger, obj, false)
 		},
-		UpdateFunc: func(old, updated interface{}) {
+		UpdateFunc: func(old, updated any) {
 			ec.enqueuePod(logger, updated, false)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			ec.enqueuePod(logger, obj, true)
 		},
 	}, cache.HandlerOptions{Logger: &logger}); err != nil {
 		return nil, err
 	}
 	if _, err := claimInformer.Informer().AddEventHandlerWithOptions(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			logger.V(6).Info("new claim", "claimDump", obj)
 			ec.enqueueResourceClaim(logger, nil, obj)
 		},
-		UpdateFunc: func(old, updated interface{}) {
+		UpdateFunc: func(old, updated any) {
 			logger.V(6).Info("updated claim", "claimDump", updated)
 			ec.enqueueResourceClaim(logger, old, updated)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			logger.V(6).Info("deleted claim", "claimDump", obj)
 			ec.enqueueResourceClaim(logger, obj, nil)
 		},
@@ -204,7 +204,7 @@ func NewController(
 	return ec, nil
 }
 
-func (ec *Controller) enqueuePod(logger klog.Logger, obj interface{}, deleted bool) {
+func (ec *Controller) enqueuePod(logger klog.Logger, obj any, deleted bool) {
 	if d, ok := obj.(cache.DeletedFinalStateUnknown); ok {
 		obj = d.Obj
 	}
@@ -331,7 +331,7 @@ func (ec *Controller) podNeedsWork(pod *v1.Pod) (bool, string) {
 	return false, "nothing to do"
 }
 
-func (ec *Controller) enqueueResourceClaim(logger klog.Logger, oldObj, newObj interface{}) {
+func (ec *Controller) enqueueResourceClaim(logger klog.Logger, oldObj, newObj any) {
 	deleted := newObj != nil
 	if d, ok := oldObj.(cache.DeletedFinalStateUnknown); ok {
 		oldObj = d.Obj
@@ -928,7 +928,7 @@ func owningPod(claim *resourceapi.ResourceClaim) (string, types.UID) {
 
 // podResourceClaimIndexFunc is an index function that returns ResourceClaim keys (=
 // namespace/name) for ResourceClaim or ResourceClaimTemplates in a given pod.
-func podResourceClaimIndexFunc(obj interface{}) ([]string, error) {
+func podResourceClaimIndexFunc(obj any) ([]string, error) {
 	pod, ok := obj.(*v1.Pod)
 	if !ok {
 		return []string{}, nil
@@ -956,7 +956,7 @@ func isPodDone(pod *v1.Pod) bool {
 
 // claimPodOwnerIndexFunc is an index function that returns the pod UIDs of
 // all pods which own the resource claim. Should only be one, though.
-func claimPodOwnerIndexFunc(obj interface{}) ([]string, error) {
+func claimPodOwnerIndexFunc(obj any) ([]string, error) {
 	claim, ok := obj.(*resourceapi.ResourceClaim)
 	if !ok {
 		return nil, nil

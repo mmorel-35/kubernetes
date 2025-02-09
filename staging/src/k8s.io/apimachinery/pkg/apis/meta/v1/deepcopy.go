@@ -28,7 +28,7 @@ func (in *TableRow) DeepCopy() *TableRow {
 	out := new(TableRow)
 
 	if in.Cells != nil {
-		out.Cells = make([]interface{}, len(in.Cells))
+		out.Cells = make([]any, len(in.Cells))
 		for i := range in.Cells {
 			out.Cells[i] = runtime.DeepCopyJSONValue(in.Cells[i])
 		}

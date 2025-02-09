@@ -104,13 +104,13 @@ func newPlugin(iss string, conn *grpc.ClientConn, allowSigningWithNonOIDCKeys bo
 
 // GenerateToken creates a service account token with the provided claims by
 // calling out to the external signer binary.
-func (p *Plugin) GenerateToken(ctx context.Context, claims *jwt.Claims, privateClaims interface{}) (string, error) {
+func (p *Plugin) GenerateToken(ctx context.Context, claims *jwt.Claims, privateClaims any) (string, error) {
 	jwt, err := p.signAndAssembleJWT(ctx, claims, privateClaims)
 	externaljwtmetrics.RecordTokenGenAttempt(err)
 	return jwt, err
 }
 
-func (p *Plugin) signAndAssembleJWT(ctx context.Context, claims *jwt.Claims, privateClaims interface{}) (string, error) {
+func (p *Plugin) signAndAssembleJWT(ctx context.Context, claims *jwt.Claims, privateClaims any) (string, error) {
 	payload, err := mergeClaims(p.iss, claims, privateClaims)
 	if err != nil {
 		return "", fmt.Errorf("while merging claims: %w", err)
@@ -196,7 +196,7 @@ func (p *Plugin) validateJWTHeader(ctx context.Context, response *externaljwtv1a
 	return nil
 }
 
-func mergeClaims(iss string, claims *jwt.Claims, privateClaims interface{}) ([]byte, error) {
+func mergeClaims(iss string, claims *jwt.Claims, privateClaims any) ([]byte, error) {
 	var out []byte
 	signer := payloadGrabber(func(payload []byte) { out = payload })
 	_, err := serviceaccount.GenerateToken(signer, iss, claims, privateClaims)

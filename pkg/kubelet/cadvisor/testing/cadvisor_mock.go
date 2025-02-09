@@ -75,7 +75,7 @@ type MockInterface_ContainerFsInfo_Call struct {
 
 // ContainerFsInfo is a helper method to define mock.On call
 //   - _a0 context.Context
-func (_e *MockInterface_Expecter) ContainerFsInfo(_a0 interface{}) *MockInterface_ContainerFsInfo_Call {
+func (_e *MockInterface_Expecter) ContainerFsInfo(_a0 any) *MockInterface_ContainerFsInfo_Call {
 	return &MockInterface_ContainerFsInfo_Call{Call: _e.mock.On("ContainerFsInfo", _a0)}
 }
 
@@ -134,7 +134,7 @@ type MockInterface_ContainerInfoV2_Call struct {
 // ContainerInfoV2 is a helper method to define mock.On call
 //   - name string
 //   - options v2.RequestOptions
-func (_e *MockInterface_Expecter) ContainerInfoV2(name interface{}, options interface{}) *MockInterface_ContainerInfoV2_Call {
+func (_e *MockInterface_Expecter) ContainerInfoV2(name any, options any) *MockInterface_ContainerInfoV2_Call {
 	return &MockInterface_ContainerInfoV2_Call{Call: _e.mock.On("ContainerInfoV2", name, options)}
 }
 
@@ -190,7 +190,7 @@ type MockInterface_GetDirFsInfo_Call struct {
 
 // GetDirFsInfo is a helper method to define mock.On call
 //   - path string
-func (_e *MockInterface_Expecter) GetDirFsInfo(path interface{}) *MockInterface_GetDirFsInfo_Call {
+func (_e *MockInterface_Expecter) GetDirFsInfo(path any) *MockInterface_GetDirFsInfo_Call {
 	return &MockInterface_GetDirFsInfo_Call{Call: _e.mock.On("GetDirFsInfo", path)}
 }
 
@@ -249,7 +249,7 @@ type MockInterface_GetRequestedContainersInfo_Call struct {
 // GetRequestedContainersInfo is a helper method to define mock.On call
 //   - containerName string
 //   - options v2.RequestOptions
-func (_e *MockInterface_Expecter) GetRequestedContainersInfo(containerName interface{}, options interface{}) *MockInterface_GetRequestedContainersInfo_Call {
+func (_e *MockInterface_Expecter) GetRequestedContainersInfo(containerName any, options any) *MockInterface_GetRequestedContainersInfo_Call {
 	return &MockInterface_GetRequestedContainersInfo_Call{Call: _e.mock.On("GetRequestedContainersInfo", containerName, options)}
 }
 
@@ -305,7 +305,7 @@ type MockInterface_ImagesFsInfo_Call struct {
 
 // ImagesFsInfo is a helper method to define mock.On call
 //   - _a0 context.Context
-func (_e *MockInterface_Expecter) ImagesFsInfo(_a0 interface{}) *MockInterface_ImagesFsInfo_Call {
+func (_e *MockInterface_Expecter) ImagesFsInfo(_a0 any) *MockInterface_ImagesFsInfo_Call {
 	return &MockInterface_ImagesFsInfo_Call{Call: _e.mock.On("ImagesFsInfo", _a0)}
 }
 

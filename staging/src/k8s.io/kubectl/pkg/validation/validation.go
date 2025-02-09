@@ -59,17 +59,17 @@ func (v *schemaValidation) ValidateBytes(data []byte) error {
 	return utilerrors.NewAggregate(v.validateResource(obj, gvk))
 }
 
-func (v *schemaValidation) validateList(object interface{}) []error {
-	fields, ok := object.(map[string]interface{})
+func (v *schemaValidation) validateList(object any) []error {
+	fields, ok := object.(map[string]any)
 	if !ok || fields == nil {
 		return []error{errors.New("invalid object to validate")}
 	}
 
 	allErrors := []error{}
-	if _, ok := fields["items"].([]interface{}); !ok {
+	if _, ok := fields["items"].([]any); !ok {
 		return []error{errors.New("invalid object to validate")}
 	}
-	for _, item := range fields["items"].([]interface{}) {
+	for _, item := range fields["items"].([]any) {
 		if gvk, errs := getObjectKind(item); errs != nil {
 			allErrors = append(allErrors, errs...)
 		} else {
@@ -79,7 +79,7 @@ func (v *schemaValidation) validateList(object interface{}) []error {
 	return allErrors
 }
 
-func (v *schemaValidation) validateResource(obj interface{}, gvk schema.GroupVersionKind) []error {
+func (v *schemaValidation) validateResource(obj any, gvk schema.GroupVersionKind) []error {
 	// This lazy-loads the OpenAPI V2 specifications, caching the specs.
 	resources, err := v.resourcesGetter.OpenAPISchema()
 	if err != nil {
@@ -94,8 +94,8 @@ func (v *schemaValidation) validateResource(obj interface{}, gvk schema.GroupVer
 	return validation.ValidateModel(obj, resource, gvk.Kind)
 }
 
-func parse(data []byte) (interface{}, error) {
-	var obj interface{}
+func parse(data []byte) (any, error) {
+	var obj any
 	out, err := yaml.ToJSON(data)
 	if err != nil {
 		return nil, err
@@ -106,9 +106,9 @@ func parse(data []byte) (interface{}, error) {
 	return obj, nil
 }
 
-func getObjectKind(object interface{}) (schema.GroupVersionKind, []error) {
+func getObjectKind(object any) (schema.GroupVersionKind, []error) {
 	var listErrors []error
-	fields, ok := object.(map[string]interface{})
+	fields, ok := object.(map[string]any)
 	if !ok || fields == nil {
 		listErrors = append(listErrors, errors.New("invalid object to validate"))
 		return schema.GroupVersionKind{}, listErrors

@@ -21215,7 +21215,7 @@ func collectResourcePaths(t *testing.T, skipRecurseList sets.String, tp reflect.
 	case reflect.Map, reflect.Slice:
 		paths.Insert(collectResourcePaths(t, skipRecurseList, tp.Elem(), path.Key("*")).List()...)
 	case reflect.Interface:
-		t.Fatalf("unexpected interface{} field %s", path.String())
+		t.Fatalf("unexpected any field %s", path.String())
 	default:
 		// if we hit a primitive type, we're at a leaf
 		paths.Insert(path.String())

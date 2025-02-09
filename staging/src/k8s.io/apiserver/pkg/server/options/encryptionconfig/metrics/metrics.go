@@ -89,7 +89,7 @@ var hashPool *sync.Pool
 func RegisterMetrics() {
 	registerMetrics.Do(func() {
 		hashPool = &sync.Pool{
-			New: func() interface{} {
+			New: func() any {
 				return sha256.New()
 			},
 		}

@@ -27,47 +27,47 @@ import (
 func TestValidateEmbeddedResource(t *testing.T) {
 	tests := []struct {
 		name   string
-		object map[string]interface{}
+		object map[string]any
 		errors []validationMatch
 	}{
-		{name: "empty", object: map[string]interface{}{}, errors: []validationMatch{
+		{name: "empty", object: map[string]any{}, errors: []validationMatch{
 			required("apiVersion"),
 			required("kind"),
 		}},
-		{name: "version and kind", object: map[string]interface{}{
+		{name: "version and kind", object: map[string]any{
 			"apiVersion": "foo/v1",
 			"kind":       "Foo",
 		}},
-		{name: "invalid kind", object: map[string]interface{}{
+		{name: "invalid kind", object: map[string]any{
 			"apiVersion": "foo/v1",
 			"kind":       "foo.bar-com",
 		}, errors: []validationMatch{
 			invalid("kind"),
 		}},
-		{name: "no name", object: map[string]interface{}{
+		{name: "no name", object: map[string]any{
 			"apiVersion": "foo/v1",
 			"kind":       "Foo",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace": "kube-system",
 			},
 		}},
-		{name: "no namespace", object: map[string]interface{}{
+		{name: "no namespace", object: map[string]any{
 			"apiVersion": "foo/v1",
 			"kind":       "Foo",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "foo",
 			},
 		}},
-		{name: "invalid", object: map[string]interface{}{
+		{name: "invalid", object: map[string]any{
 			"apiVersion": "foo/v1",
 			"kind":       "Foo",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      "..",
 				"namespace": "$$$",
-				"labels": map[string]interface{}{
+				"labels": map[string]any{
 					"#": "#",
 				},
-				"annotations": map[string]interface{}{
+				"annotations": map[string]any{
 					"#": "#",
 				},
 			},
@@ -180,7 +180,7 @@ func TestValidate(t *testing.T) {
 				},
 			}
 
-			var obj map[string]interface{}
+			var obj map[string]any
 			if err := json.Unmarshal([]byte(tt.object), &obj); err != nil {
 				t.Fatal(err)
 			}

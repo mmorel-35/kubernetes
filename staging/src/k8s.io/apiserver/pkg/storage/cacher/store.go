@@ -61,19 +61,19 @@ const (
 )
 
 type storeIndexer interface {
-	Add(obj interface{}) error
-	Update(obj interface{}) error
-	Delete(obj interface{}) error
-	List() []interface{}
+	Add(obj any) error
+	Update(obj any) error
+	Delete(obj any) error
+	List() []any
 	ListKeys() []string
-	Get(obj interface{}) (item interface{}, exists bool, err error)
-	GetByKey(key string) (item interface{}, exists bool, err error)
-	Replace([]interface{}, string) error
-	ByIndex(indexName, indexedValue string) ([]interface{}, error)
+	Get(obj any) (item any, exists bool, err error)
+	GetByKey(key string) (item any, exists bool, err error)
+	Replace([]any, string) error
+	ByIndex(indexName, indexedValue string) ([]any, error)
 }
 
 type orderedLister interface {
-	ListPrefix(prefix, continueKey string, limit int) (items []interface{}, hasMore bool)
+	ListPrefix(prefix, continueKey string, limit int) (items []any, hasMore bool)
 }
 
 func newStoreIndexer(indexers *cache.Indexers) storeIndexer {
@@ -95,7 +95,7 @@ type storeElement struct {
 	Fields fields.Set
 }
 
-func storeElementKey(obj interface{}) (string, error) {
+func storeElementKey(obj any) (string, error) {
 	elem, ok := obj.(*storeElement)
 	if !ok {
 		return "", fmt.Errorf("not a storeElement: %v", obj)
@@ -103,7 +103,7 @@ func storeElementKey(obj interface{}) (string, error) {
 	return elem.Key, nil
 }
 
-func storeElementObject(obj interface{}) (runtime.Object, error) {
+func storeElementObject(obj any) (runtime.Object, error) {
 	elem, ok := obj.(*storeElement)
 	if !ok {
 		return nil, fmt.Errorf("not a storeElement: %v", obj)
@@ -112,7 +112,7 @@ func storeElementObject(obj interface{}) (runtime.Object, error) {
 }
 
 func storeElementIndexFunc(objIndexFunc cache.IndexFunc) cache.IndexFunc {
-	return func(obj interface{}) (strings []string, e error) {
+	return func(obj any) (strings []string, e error) {
 		seo, err := storeElementObject(obj)
 		if err != nil {
 			return nil, err

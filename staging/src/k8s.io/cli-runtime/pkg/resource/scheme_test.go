@@ -58,13 +58,13 @@ func TestDynamicCodecDecode(t *testing.T) {
 			name:      "example.com/v1 Status",
 			data:      []byte(`{"apiVersion":"example.com/v1","kind":"Status"}`),
 			expectGVK: gvk("example.com", "v1", "Status"),
-			expectObj: &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "example.com/v1", "kind": "Status"}},
+			expectObj: &unstructured.Unstructured{Object: map[string]any{"apiVersion": "example.com/v1", "kind": "Status"}},
 		},
 		{
 			name:      "example.com/v1 Foo",
 			data:      []byte(`{"apiVersion":"example.com/v1","kind":"Foo"}`),
 			expectGVK: gvk("example.com", "v1", "Foo"),
-			expectObj: &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "example.com/v1", "kind": "Foo"}},
+			expectObj: &unstructured.Unstructured{Object: map[string]any{"apiVersion": "example.com/v1", "kind": "Foo"}},
 		},
 	}
 

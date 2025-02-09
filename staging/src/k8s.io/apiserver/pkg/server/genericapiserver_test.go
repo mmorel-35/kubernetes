@@ -94,18 +94,18 @@ func buildTestOpenAPIDefinition() kubeopenapi.OpenAPIDefinition {
 			},
 			VendorExtensible: spec.VendorExtensible{
 				Extensions: spec.Extensions{
-					"x-kubernetes-group-version-kind": []interface{}{
-						map[string]interface{}{
+					"x-kubernetes-group-version-kind": []any{
+						map[string]any{
 							"group":   "",
 							"version": "v1",
 							"kind":    "Getter",
 						},
-						map[string]interface{}{
+						map[string]any{
 							"group":   "batch",
 							"version": "v1",
 							"kind":    "Getter",
 						},
-						map[string]interface{}{
+						map[string]any{
 							"group":   "extensions",
 							"version": "v1",
 							"kind":    "Getter",
@@ -691,7 +691,7 @@ func TestGracefulShutdown(t *testing.T) {
 
 func TestWarningWithRequestTimeout(t *testing.T) {
 	type result struct {
-		err        interface{}
+		err        any
 		stackTrace string
 	}
 	clientDoneCh, resultCh := make(chan struct{}), make(chan result, 1)

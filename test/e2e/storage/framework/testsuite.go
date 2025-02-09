@@ -46,7 +46,7 @@ type TestSuite interface {
 // This function actually register tests inside testsuite
 func RegisterTests(suite TestSuite, driver TestDriver, pattern TestPattern) {
 	tsInfo := suite.GetTestSuiteInfo()
-	var args []interface{}
+	var args []any
 	args = append(args, fmt.Sprintf("[Testpattern: %s]", pattern.Name))
 	args = append(args, pattern.TestTags...)
 	args = append(args, tsInfo.Name)
@@ -80,7 +80,7 @@ func DefineTestSuites(driver TestDriver, tsInits []func() TestSuite) {
 // TestSuiteInfo represents a set of parameters for TestSuite
 type TestSuiteInfo struct {
 	Name               string              // name of the TestSuite
-	TestTags           []interface{}       // additional parameters for framework.It, like framework.WithDisruptive()
+	TestTags           []any               // additional parameters for framework.It, like framework.WithDisruptive()
 	TestPatterns       []TestPattern       // Slice of TestPattern for the TestSuite
 	SupportedSizeRange e2evolume.SizeRange // Size range supported by the test suite
 }

@@ -27,7 +27,7 @@ import (
 
 // MakeCSR generates a PEM-encoded CSR using the supplied private key, subject, and SANs.
 // All key types that are implemented via crypto.Signer are supported (This includes *rsa.PrivateKey and *ecdsa.PrivateKey.)
-func MakeCSR(privateKey interface{}, subject *pkix.Name, dnsSANs []string, ipSANs []net.IP) (csr []byte, err error) {
+func MakeCSR(privateKey any, subject *pkix.Name, dnsSANs []string, ipSANs []net.IP) (csr []byte, err error) {
 	template := &x509.CertificateRequest{
 		Subject:     *subject,
 		DNSNames:    dnsSANs,
@@ -41,7 +41,7 @@ func MakeCSR(privateKey interface{}, subject *pkix.Name, dnsSANs []string, ipSAN
 // key and certificate request as a template. All key types that are
 // implemented via crypto.Signer are supported (This includes *rsa.PrivateKey
 // and *ecdsa.PrivateKey.)
-func MakeCSRFromTemplate(privateKey interface{}, template *x509.CertificateRequest) ([]byte, error) {
+func MakeCSRFromTemplate(privateKey any, template *x509.CertificateRequest) ([]byte, error) {
 	t := *template
 	t.SignatureAlgorithm = sigType(privateKey)
 
@@ -58,7 +58,7 @@ func MakeCSRFromTemplate(privateKey interface{}, template *x509.CertificateReque
 	return pem.EncodeToMemory(csrPemBlock), nil
 }
 
-func sigType(privateKey interface{}) x509.SignatureAlgorithm {
+func sigType(privateKey any) x509.SignatureAlgorithm {
 	// Customize the signature for RSA keys, depending on the key size
 	if privateKey, ok := privateKey.(*rsa.PrivateKey); ok {
 		keySize := privateKey.N.BitLen()

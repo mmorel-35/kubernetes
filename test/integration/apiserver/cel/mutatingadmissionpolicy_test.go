@@ -1149,20 +1149,20 @@ func Test_MutatingAdmissionPolicy_CustomResources(t *testing.T) {
 	}
 
 	v1Resource := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "awesome.bears.com" + "/" + "v1",
 			"kind":       "Panda",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "v1-bears",
 			},
 		},
 	}
 
 	v2Resource := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "awesome.bears.com" + "/" + "v2",
 			"kind":       "Panda",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "v2-bears",
 			},
 		},

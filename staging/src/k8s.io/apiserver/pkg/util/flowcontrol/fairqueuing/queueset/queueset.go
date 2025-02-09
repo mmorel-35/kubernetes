@@ -48,7 +48,7 @@ type queueSetFactory struct {
 // - whose Set method is invoked with the queueSet locked, and
 // - whose Get method is invoked with the queueSet not locked.
 // The parameters are the same as for `promise.NewWriteOnce`.
-type promiseFactory func(initial interface{}, doneCtx context.Context, doneVal interface{}) promise.WriteOnce
+type promiseFactory func(initial any, doneCtx context.Context, doneVal any) promise.WriteOnce
 
 // promiseFactoryFactory returns the promiseFactory to use for the given queueSet
 type promiseFactoryFactory func(*queueSet) promiseFactory
@@ -305,7 +305,7 @@ const (
 // quantity per FlowSchema.
 // The queueSet's promiseFactory is invoked once if the returned Request is non-nil,
 // not invoked if the Request is nil.
-func (qs *queueSet) StartRequest(ctx context.Context, workEstimate *fqrequest.WorkEstimate, hashValue uint64, flowDistinguisher, fsName string, descr1, descr2 interface{}, queueNoteFn fq.QueueNoteFn) (fq.Request, bool) {
+func (qs *queueSet) StartRequest(ctx context.Context, workEstimate *fqrequest.WorkEstimate, hashValue uint64, flowDistinguisher, fsName string, descr1, descr2 any, queueNoteFn fq.QueueNoteFn) (fq.Request, bool) {
 	qs.lockAndSyncTime(ctx)
 	defer qs.lock.Unlock()
 	var req *request
@@ -549,7 +549,7 @@ func (qs *queueSet) getVirtualTimeRatioLocked() float64 {
 // returns the enqueud request on a successful enqueue
 // returns nil in the case that there is no available concurrency or
 // the queuelengthlimit has been reached
-func (qs *queueSet) shuffleShardAndRejectOrEnqueueLocked(ctx context.Context, workEstimate *fqrequest.WorkEstimate, hashValue uint64, flowDistinguisher, fsName string, descr1, descr2 interface{}, queueNoteFn fq.QueueNoteFn) *request {
+func (qs *queueSet) shuffleShardAndRejectOrEnqueueLocked(ctx context.Context, workEstimate *fqrequest.WorkEstimate, hashValue uint64, flowDistinguisher, fsName string, descr1, descr2 any, queueNoteFn fq.QueueNoteFn) *request {
 	// Start with the shuffle sharding, to pick a queue.
 	queueIdx := qs.shuffleShardLocked(hashValue, descr1, descr2)
 	queue := qs.queues[queueIdx]
@@ -580,7 +580,7 @@ func (qs *queueSet) shuffleShardAndRejectOrEnqueueLocked(ctx context.Context, wo
 
 // shuffleShardLocked uses shuffle sharding to select a queue index
 // using the given hashValue and the shuffle sharding parameters of the queueSet.
-func (qs *queueSet) shuffleShardLocked(hashValue uint64, descr1, descr2 interface{}) int {
+func (qs *queueSet) shuffleShardLocked(hashValue uint64, descr1, descr2 any) int {
 	var backHand [8]int
 	// Deal into a data structure, so that the order of visit below is not necessarily the order of the deal.
 	// This removes bias in the case of flows with overlapping hands.
@@ -656,7 +656,7 @@ func (qs *queueSet) dispatchAsMuchAsPossibleLocked() {
 	}
 }
 
-func (qs *queueSet) dispatchSansQueueLocked(ctx context.Context, workEstimate *fqrequest.WorkEstimate, flowDistinguisher, fsName string, descr1, descr2 interface{}) *request {
+func (qs *queueSet) dispatchSansQueueLocked(ctx context.Context, workEstimate *fqrequest.WorkEstimate, flowDistinguisher, fsName string, descr1, descr2 any) *request {
 	// does not call metrics.SetDispatchMetrics because there is no queuing and thus no interesting virtual world
 	now := qs.clock.Now()
 	req := &request{

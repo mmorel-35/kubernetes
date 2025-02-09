@@ -396,7 +396,7 @@ func NodeNameTriggerFunc(obj runtime.Object) string {
 }
 
 // NodeNameIndexFunc return value spec.nodename of given object.
-func NodeNameIndexFunc(obj interface{}) ([]string, error) {
+func NodeNameIndexFunc(obj any) ([]string, error) {
 	pod, ok := obj.(*api.Pod)
 	if !ok {
 		return nil, fmt.Errorf("not a pod")
@@ -405,7 +405,7 @@ func NodeNameIndexFunc(obj interface{}) ([]string, error) {
 }
 
 // NamespaceIndexFunc return value name of given object.
-func NamespaceIndexFunc(obj interface{}) ([]string, error) {
+func NamespaceIndexFunc(obj any) ([]string, error) {
 	pod, ok := obj.(*api.Pod)
 	if !ok {
 		return nil, fmt.Errorf("not a pod")

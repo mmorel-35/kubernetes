@@ -474,7 +474,7 @@ func validatePatchApplication(t *testing.T, req *http.Request, patchType types.P
 		t.Fatal(err)
 	}
 
-	patchMap := map[string]interface{}{}
+	patchMap := map[string]any{}
 	if err := json.Unmarshal(patch, &patchMap); err != nil {
 		t.Fatal(err)
 	}
@@ -490,11 +490,11 @@ func validatePatchApplication(t *testing.T, req *http.Request, patchType types.P
 	}
 }
 
-func walkMapPath(t *testing.T, start map[string]interface{}, path []string) map[string]interface{} {
+func walkMapPath(t *testing.T, start map[string]any, path []string) map[string]any {
 	finish := start
 	for i := 0; i < len(path); i++ {
 		var ok bool
-		finish, ok = finish[path[i]].(map[string]interface{})
+		finish, ok = finish[path[i]].(map[string]any)
 		if !ok {
 			t.Fatalf("key:%s of path:%v not found in map:%v", path[i], path, start)
 		}
@@ -965,10 +965,10 @@ func TestApplyPruneObjectsWithAllowlist(t *testing.T) {
 
 	// Create another ReplicationController that can be pruned
 	rc2 := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "ReplicationController",
 			"apiVersion": "v1",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      "test-rc2",
 				"namespace": "test",
 				"uid":       "uid-rc2",
@@ -982,10 +982,10 @@ func TestApplyPruneObjectsWithAllowlist(t *testing.T) {
 
 	// Create a ConfigMap that can be pruned
 	cm := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "ConfigMap",
 			"apiVersion": "v1",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      "test-cm",
 				"namespace": "test",
 				"uid":       "uid-cm",
@@ -999,10 +999,10 @@ func TestApplyPruneObjectsWithAllowlist(t *testing.T) {
 
 	// Create Namespace that can be pruned
 	ns := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "Namespace",
 			"apiVersion": "v1",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "test-apply",
 				"uid":  "uid-ns",
 			},
@@ -1015,10 +1015,10 @@ func TestApplyPruneObjectsWithAllowlist(t *testing.T) {
 
 	// Create a ConfigMap without a UID. Resources without a UID will not be pruned.
 	cmNoUID := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "ConfigMap",
 			"apiVersion": "v1",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      "test-cm-nouid",
 				"namespace": "test",
 			},
@@ -1031,10 +1031,10 @@ func TestApplyPruneObjectsWithAllowlist(t *testing.T) {
 
 	// Create a ConfigMap without a last applied annotation. Resources without a last applied annotation will not be pruned.
 	cmNoLastApplied := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "ConfigMap",
 			"apiVersion": "v1",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      "test-cm-nolastapplied",
 				"namespace": "test",
 				"uid":       "uid-cm-nolastapplied",
@@ -1760,7 +1760,7 @@ func TestApplyNULLPreservation(t *testing.T) {
 									t.Fatal(err)
 								}
 
-								patchMap := map[string]interface{}{}
+								patchMap := map[string]any{}
 								if err := json.Unmarshal(patch, &patchMap); err != nil {
 									t.Fatal(err)
 								}
@@ -2056,7 +2056,7 @@ func checkPatchString(t *testing.T, req *http.Request) {
 		t.Fatal(err)
 	}
 
-	patchMap := map[string]interface{}{}
+	patchMap := map[string]any{}
 	if err := json.Unmarshal(patch, &patchMap); err != nil {
 		t.Fatal(err)
 	}
@@ -2129,7 +2129,7 @@ func TestForceApply(t *testing.T) {
 								counts["getList"]++
 								rcObj := readUnstructuredFromFile(t, filenameRC)
 								list := &unstructured.UnstructuredList{
-									Object: map[string]interface{}{
+									Object: map[string]any{
 										"apiVersion": "v1",
 										"kind":       "ReplicationControllerList",
 									},

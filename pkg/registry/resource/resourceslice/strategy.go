@@ -106,7 +106,7 @@ func Indexers() *cache.Indexers {
 	}
 }
 
-func nodeNameIndexFunc(obj interface{}) ([]string, error) {
+func nodeNameIndexFunc(obj any) ([]string, error) {
 	slice, ok := obj.(*resource.ResourceSlice)
 	if !ok {
 		return nil, fmt.Errorf("not a ResourceSlice")

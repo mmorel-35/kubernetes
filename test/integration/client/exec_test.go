@@ -547,7 +547,7 @@ var objectMetaSansResourceVersionComparer = cmp.Comparer(func(a, b metav1.Object
 })
 
 type oldNew struct {
-	old, new interface{}
+	old, new any
 }
 
 var oldNewComparer = cmp.Comparer(func(a, b oldNew) bool {
@@ -557,24 +557,24 @@ var oldNewComparer = cmp.Comparer(func(a, b oldNew) bool {
 
 type informerSpy struct {
 	mu      sync.Mutex
-	adds    []interface{}
+	adds    []any
 	updates []oldNew
-	deletes []interface{}
+	deletes []any
 }
 
-func (is *informerSpy) OnAdd(obj interface{}, isInInitialList bool) {
+func (is *informerSpy) OnAdd(obj any, isInInitialList bool) {
 	is.mu.Lock()
 	defer is.mu.Unlock()
 	is.adds = append(is.adds, obj)
 }
 
-func (is *informerSpy) OnUpdate(old, new interface{}) {
+func (is *informerSpy) OnUpdate(old, new any) {
 	is.mu.Lock()
 	defer is.mu.Unlock()
 	is.updates = append(is.updates, oldNew{old: old, new: new})
 }
 
-func (is *informerSpy) OnDelete(obj interface{}) {
+func (is *informerSpy) OnDelete(obj any) {
 	is.mu.Lock()
 	defer is.mu.Unlock()
 	is.deletes = append(is.deletes, obj)
@@ -583,9 +583,9 @@ func (is *informerSpy) OnDelete(obj interface{}) {
 func (is *informerSpy) clear() {
 	is.mu.Lock()
 	defer is.mu.Unlock()
-	is.adds = []interface{}{}
+	is.adds = []any{}
 	is.updates = []oldNew{}
-	is.deletes = []interface{}{}
+	is.deletes = []any{}
 }
 
 // waitForEvents waits for adds, updates, and deletes to be populated with at least one event.
@@ -973,17 +973,17 @@ func createUpdateDeleteConfigMap(ctx context.Context, t *testing.T, cms v1.Confi
 	return created, updated, deleted
 }
 
-func assertInformerEvents(t *testing.T, informerSpy *informerSpy, created, updated, deleted interface{}) {
+func assertInformerEvents(t *testing.T, informerSpy *informerSpy, created, updated, deleted any) {
 	t.Helper()
 
 	// Validate that the informer was called correctly.
-	if diff := cmp.Diff([]interface{}{created}, informerSpy.adds, objectMetaSansResourceVersionComparer); diff != "" {
+	if diff := cmp.Diff([]any{created}, informerSpy.adds, objectMetaSansResourceVersionComparer); diff != "" {
 		t.Errorf("unexpected add event(s), -want, +got:\n%s", diff)
 	}
 	if diff := cmp.Diff([]oldNew{{created, updated}}, informerSpy.updates, oldNewComparer); diff != "" {
 		t.Errorf("unexpected update event(s), -want, +got:\n%s", diff)
 	}
-	if diff := cmp.Diff([]interface{}{deleted}, informerSpy.deletes, objectMetaSansResourceVersionComparer); diff != "" {
+	if diff := cmp.Diff([]any{deleted}, informerSpy.deletes, objectMetaSansResourceVersionComparer); diff != "" {
 		t.Errorf("unexpected deleted event(s), -want, +got:\n%s", diff)
 	}
 

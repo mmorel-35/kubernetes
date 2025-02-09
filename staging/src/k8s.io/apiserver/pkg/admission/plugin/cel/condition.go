@@ -62,7 +62,7 @@ func NewCondition(compilationResults []CompilationResult) ConditionEvaluator {
 	}
 }
 
-func convertObjectToUnstructured(obj interface{}) (*unstructured.Unstructured, error) {
+func convertObjectToUnstructured(obj any) (*unstructured.Unstructured, error) {
 	if obj == nil || reflect.ValueOf(obj).IsNil() {
 		return &unstructured.Unstructured{Object: nil}, nil
 	}
@@ -73,7 +73,7 @@ func convertObjectToUnstructured(obj interface{}) (*unstructured.Unstructured, e
 	return &unstructured.Unstructured{Object: ret}, nil
 }
 
-func objectToResolveVal(r runtime.Object) (interface{}, error) {
+func objectToResolveVal(r runtime.Object) (any, error) {
 	if r == nil || reflect.ValueOf(r).IsNil() {
 		return nil, nil
 	}

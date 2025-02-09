@@ -164,7 +164,7 @@ func assertFunctionPanicsWithMessage(t *testing.T, f func(), fName, errMessage s
 	}
 }
 
-func didFunctionPanic(f func()) (didPanic bool, panicMessage interface{}) {
+func didFunctionPanic(f func()) (didPanic bool, panicMessage any) {
 	didPanic = true
 
 	defer func() {

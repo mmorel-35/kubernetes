@@ -283,7 +283,7 @@ func (f FieldsV1) MarshalJSON() ([]byte, error) {
 		return []byte("null"), nil
 	}
 	if f.getContentType() == fieldsV1InvalidOrValidCBORObject {
-		var u map[string]interface{}
+		var u map[string]any
 		if err := cbor.Unmarshal(f.Raw, &u); err != nil {
 			return nil, fmt.Errorf("metav1.FieldsV1 cbor invalid: %w", err)
 		}
@@ -311,7 +311,7 @@ func (f FieldsV1) MarshalCBOR() ([]byte, error) {
 		return cbor.Marshal(nil)
 	}
 	if f.getContentType() == fieldsV1InvalidOrValidJSONObject {
-		var u map[string]interface{}
+		var u map[string]any
 		if err := utiljson.Unmarshal(f.Raw, &u); err != nil {
 			return nil, fmt.Errorf("metav1.FieldsV1 json invalid: %w", err)
 		}

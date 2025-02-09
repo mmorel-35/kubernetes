@@ -91,13 +91,13 @@ func NewClusterTrustBundlePublisher(
 	p.ctbListerSynced = p.ctbInformer.HasSynced
 
 	_, err := p.ctbInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			p.queue.Add("")
 		},
-		UpdateFunc: func(_, _ interface{}) {
+		UpdateFunc: func(_, _ any) {
 			p.queue.Add("")
 		},
-		DeleteFunc: func(_ interface{}) {
+		DeleteFunc: func(_ any) {
 			p.queue.Add("")
 		},
 	})

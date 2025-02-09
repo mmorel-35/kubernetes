@@ -28,19 +28,19 @@ import (
 	"k8s.io/kubernetes/test/e2e/storage/utils"
 )
 
-func getVolumeGroupSnapshot(labels map[string]interface{}, ns, snapshotClassName string) *unstructured.Unstructured {
+func getVolumeGroupSnapshot(labels map[string]any, ns, snapshotClassName string) *unstructured.Unstructured {
 	snapshot := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "VolumeGroupSnapshot",
 			"apiVersion": utils.VolumeGroupSnapshotAPIVersion,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"generateName": "group-snapshot-",
 				"namespace":    ns,
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"volumeGroupSnapshotClassName": snapshotClassName,
-				"source": map[string]interface{}{
-					"selector": map[string]interface{}{
+				"source": map[string]any{
+					"selector": map[string]any{
 						"matchLabels": labels,
 					},
 				},
@@ -87,7 +87,7 @@ func CreateVolumeGroupSnapshot(ctx context.Context, sDriver VoulmeGroupSnapshott
 
 	ginkgo.By("creating a dynamic VolumeGroupSnapshot")
 	// Prepare a dynamically provisioned group volume snapshot with certain data
-	volumeGroupSnapshot := getVolumeGroupSnapshot(map[string]interface{}{
+	volumeGroupSnapshot := getVolumeGroupSnapshot(map[string]any{
 		"group": groupName,
 	}, pvcNamespace, gsclass.GetName())
 
@@ -102,7 +102,7 @@ func CreateVolumeGroupSnapshot(ctx context.Context, sDriver VoulmeGroupSnapshott
 	status := volumeGroupSnapshot.Object["status"]
 	err = framework.Gomega().Expect(status).NotTo(gomega.BeNil())
 	framework.ExpectNoError(err, "Failed to get status of volume group snapshot")
-	vgscName := status.(map[string]interface{})["boundVolumeGroupSnapshotContentName"].(string)
+	vgscName := status.(map[string]any)["boundVolumeGroupSnapshotContentName"].(string)
 	err = framework.Gomega().Expect(vgscName).NotTo(gomega.BeNil())
 	framework.ExpectNoError(err, "Failed to get content name of volume group snapshot")
 	vgsc, err := dc.Resource(utils.VolumeGroupSnapshotContentGVR).Get(ctx, vgscName, metav1.GetOptions{})

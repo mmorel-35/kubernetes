@@ -66,7 +66,7 @@ type Scheme struct {
 
 	// defaulterFuncs is a map to funcs to be called with an object to provide defaulting
 	// the provided object must be a pointer.
-	defaulterFuncs map[reflect.Type]func(interface{})
+	defaulterFuncs map[reflect.Type]func(any)
 
 	// converter stores all registered conversion functions. It also has
 	// default converting behavior.
@@ -95,7 +95,7 @@ func NewScheme() *Scheme {
 		unversionedTypes:          map[reflect.Type]schema.GroupVersionKind{},
 		unversionedKinds:          map[string]reflect.Type{},
 		fieldLabelConversionFuncs: map[schema.GroupVersionKind]FieldLabelConversionFunc{},
-		defaulterFuncs:            map[reflect.Type]func(interface{}){},
+		defaulterFuncs:            map[reflect.Type]func(any){},
 		versionPriority:           map[string][]string{},
 		schemeName:                naming.GetNameFromCallsite(internalPackages...),
 	}
@@ -182,7 +182,7 @@ func (s *Scheme) AddKnownTypeWithName(gvk schema.GroupVersionKind, obj Object) {
 
 	// if the type implements DeepCopyInto(<obj>), register a self-conversion
 	if m := reflect.ValueOf(obj).MethodByName("DeepCopyInto"); m.IsValid() && m.Type().NumIn() == 1 && m.Type().NumOut() == 0 && m.Type().In(0) == reflect.TypeOf(obj) {
-		if err := s.AddGeneratedConversionFunc(obj, obj, func(a, b interface{}, scope conversion.Scope) error {
+		if err := s.AddGeneratedConversionFunc(obj, obj, func(a, b any, scope conversion.Scope) error {
 			// copy a to b
 			reflect.ValueOf(a).MethodByName("DeepCopyInto").Call([]reflect.Value{reflect.ValueOf(b)})
 			// clear TypeMeta to match legacy reflective conversion
@@ -306,21 +306,21 @@ func (s *Scheme) New(kind schema.GroupVersionKind) (Object, error) {
 // AddIgnoredConversionType identifies a pair of types that should be skipped by
 // conversion (because the data inside them is explicitly dropped during
 // conversion).
-func (s *Scheme) AddIgnoredConversionType(from, to interface{}) error {
+func (s *Scheme) AddIgnoredConversionType(from, to any) error {
 	return s.converter.RegisterIgnoredConversion(from, to)
 }
 
 // AddConversionFunc registers a function that converts between a and b by passing objects of those
 // types to the provided function. The function *must* accept objects of a and b - this machinery will not enforce
 // any other guarantee.
-func (s *Scheme) AddConversionFunc(a, b interface{}, fn conversion.ConversionFunc) error {
+func (s *Scheme) AddConversionFunc(a, b any, fn conversion.ConversionFunc) error {
 	return s.converter.RegisterUntypedConversionFunc(a, b, fn)
 }
 
 // AddGeneratedConversionFunc registers a function that converts between a and b by passing objects of those
 // types to the provided function. The function *must* accept objects of a and b - this machinery will not enforce
 // any other guarantee.
-func (s *Scheme) AddGeneratedConversionFunc(a, b interface{}, fn conversion.ConversionFunc) error {
+func (s *Scheme) AddGeneratedConversionFunc(a, b any, fn conversion.ConversionFunc) error {
 	return s.converter.RegisterGeneratedUntypedConversionFunc(a, b, fn)
 }
 
@@ -336,7 +336,7 @@ func (s *Scheme) AddFieldLabelConversionFunc(gvk schema.GroupVersionKind, conver
 // when Default() is called. The function will never be called unless the
 // defaulted object matches srcType. If this function is invoked twice with the
 // same srcType, the fn passed to the later call will be used instead.
-func (s *Scheme) AddTypeDefaultingFunc(srcType Object, fn func(interface{})) {
+func (s *Scheme) AddTypeDefaultingFunc(srcType Object, fn func(any)) {
 	s.defaulterFuncs[reflect.TypeOf(srcType)] = fn
 }
 
@@ -353,7 +353,7 @@ func (s *Scheme) Default(src Object) {
 // a to test conversion of types that are nested within registered types). The
 // context interface is passed to the convertor. Convert also supports Unstructured
 // types and will convert them intelligently.
-func (s *Scheme) Convert(in, out interface{}, context interface{}) error {
+func (s *Scheme) Convert(in, out any, context any) error {
 	unstructuredIn, okIn := in.(Unstructured)
 	unstructuredOut, okOut := out.(Unstructured)
 	switch {
@@ -543,7 +543,7 @@ func (s *Scheme) unstructuredToTyped(in Unstructured) (Object, error) {
 }
 
 // generateConvertMeta constructs the meta value we pass to Convert.
-func (s *Scheme) generateConvertMeta(in interface{}) *conversion.Meta {
+func (s *Scheme) generateConvertMeta(in any) *conversion.Meta {
 	return s.converter.DefaultMeta(reflect.TypeOf(in))
 }
 

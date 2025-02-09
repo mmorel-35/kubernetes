@@ -28,20 +28,20 @@ func TestValidateListSetsAndMaps(t *testing.T) {
 	tests := []struct {
 		name   string
 		schema *schema.Structural
-		obj    map[string]interface{}
+		obj    map[string]any
 		errors []validationMatch
 	}{
 		{name: "nil"},
-		{name: "no schema", obj: make(map[string]interface{})},
+		{name: "no schema", obj: make(map[string]any)},
 		{name: "no object", schema: &schema.Structural{}},
 		{name: "list without schema",
-			obj: map[string]interface{}{
-				"array": []interface{}{"a", "b", "a"},
+			obj: map[string]any{
+				"array": []any{"a", "b", "a"},
 			},
 		},
 		{name: "list without items",
-			obj: map[string]interface{}{
-				"array": []interface{}{"a", "b", "a"},
+			obj: map[string]any{
+				"array": []any{"a", "b", "a"},
 			},
 			schema: &schema.Structural{
 				Generic: schema.Generic{
@@ -58,8 +58,8 @@ func TestValidateListSetsAndMaps(t *testing.T) {
 		},
 
 		{name: "set list with one item",
-			obj: map[string]interface{}{
-				"array": []interface{}{"a"},
+			obj: map[string]any{
+				"array": []any{"a"},
 			},
 			schema: &schema.Structural{
 				Generic: schema.Generic{
@@ -78,8 +78,8 @@ func TestValidateListSetsAndMaps(t *testing.T) {
 			},
 		},
 		{name: "set list with two equal items",
-			obj: map[string]interface{}{
-				"array": []interface{}{"a", "a"},
+			obj: map[string]any{
+				"array": []any{"a", "a"},
 			},
 			schema: &schema.Structural{
 				Generic: schema.Generic{
@@ -101,8 +101,8 @@ func TestValidateListSetsAndMaps(t *testing.T) {
 			},
 		},
 		{name: "set list with two different items",
-			obj: map[string]interface{}{
-				"array": []interface{}{"a", "b"},
+			obj: map[string]any{
+				"array": []any{"a", "b"},
 			},
 			schema: &schema.Structural{
 				Generic: schema.Generic{
@@ -121,8 +121,8 @@ func TestValidateListSetsAndMaps(t *testing.T) {
 			},
 		},
 		{name: "set list with multiple duplicated items",
-			obj: map[string]interface{}{
-				"array": []interface{}{"a", "a", "b", "c", "d", "c"},
+			obj: map[string]any{
+				"array": []any{"a", "a", "b", "c", "d", "c"},
 			},
 			schema: &schema.Structural{
 				Generic: schema.Generic{
@@ -146,8 +146,8 @@ func TestValidateListSetsAndMaps(t *testing.T) {
 		},
 
 		{name: "normal list with items",
-			obj: map[string]interface{}{
-				"array": []interface{}{"a", "b", "a"},
+			obj: map[string]any{
+				"array": []any{"a", "b", "a"},
 			},
 			schema: &schema.Structural{
 				Generic: schema.Generic{
@@ -168,8 +168,8 @@ func TestValidateListSetsAndMaps(t *testing.T) {
 			},
 		},
 		{name: "set list with items",
-			obj: map[string]interface{}{
-				"array": []interface{}{"a", "b", "a"},
+			obj: map[string]any{
+				"array": []any{"a", "b", "a"},
 			},
 			schema: &schema.Structural{
 				Generic: schema.Generic{
@@ -196,8 +196,8 @@ func TestValidateListSetsAndMaps(t *testing.T) {
 			},
 		},
 		{name: "set list with items under additionalProperties",
-			obj: map[string]interface{}{
-				"array": []interface{}{"a", "b", "a"},
+			obj: map[string]any{
+				"array": []any{"a", "b", "a"},
 			},
 			schema: &schema.Structural{
 				Generic: schema.Generic{
@@ -224,10 +224,10 @@ func TestValidateListSetsAndMaps(t *testing.T) {
 			},
 		},
 		{name: "set list with items under items",
-			obj: map[string]interface{}{
-				"array": []interface{}{
-					[]interface{}{"a", "b", "a"},
-					[]interface{}{"b", "b", "a"},
+			obj: map[string]any{
+				"array": []any{
+					[]any{"a", "b", "a"},
+					[]any{"b", "b", "a"},
 				},
 			},
 			schema: &schema.Structural{
@@ -262,9 +262,9 @@ func TestValidateListSetsAndMaps(t *testing.T) {
 		},
 
 		{name: "nested set lists",
-			obj: map[string]interface{}{
-				"array": []interface{}{
-					"a", "b", "a", []interface{}{"b", "b", "a"},
+			obj: map[string]any{
+				"array": []any{
+					"a", "b", "a", []any{"b", "b", "a"},
 				},
 			},
 			schema: &schema.Structural{
@@ -297,18 +297,18 @@ func TestValidateListSetsAndMaps(t *testing.T) {
 		},
 
 		{name: "set list with compound map items",
-			obj: map[string]interface{}{
-				"strings":             []interface{}{"a", "b", "a"},
-				"integers":            []interface{}{int64(1), int64(2), int64(1)},
-				"booleans":            []interface{}{false, true, true},
-				"float64":             []interface{}{float64(1.0), float64(2.0), float64(2.0)},
-				"nil":                 []interface{}{"a", nil, nil},
-				"empty maps":          []interface{}{map[string]interface{}{"a": "b"}, map[string]interface{}{}, map[string]interface{}{}},
-				"map values":          []interface{}{map[string]interface{}{"a": "b"}, map[string]interface{}{"a": "c"}, map[string]interface{}{"a": "b"}},
-				"nil values":          []interface{}{map[string]interface{}{"a": nil}, map[string]interface{}{"b": "c", "a": nil}},
-				"array":               []interface{}{[]interface{}{}, []interface{}{"a"}, []interface{}{"b"}, []interface{}{"a"}},
-				"nil array":           []interface{}{[]interface{}{}, []interface{}{nil}, []interface{}{nil, nil}, []interface{}{nil}, []interface{}{"a"}},
-				"multiple duplicates": []interface{}{map[string]interface{}{"a": "b"}, map[string]interface{}{"a": "c"}, map[string]interface{}{"a": "b"}, map[string]interface{}{"a": "c"}, map[string]interface{}{"a": "c"}},
+			obj: map[string]any{
+				"strings":             []any{"a", "b", "a"},
+				"integers":            []any{int64(1), int64(2), int64(1)},
+				"booleans":            []any{false, true, true},
+				"float64":             []any{float64(1.0), float64(2.0), float64(2.0)},
+				"nil":                 []any{"a", nil, nil},
+				"empty maps":          []any{map[string]any{"a": "b"}, map[string]any{}, map[string]any{}},
+				"map values":          []any{map[string]any{"a": "b"}, map[string]any{"a": "c"}, map[string]any{"a": "b"}},
+				"nil values":          []any{map[string]any{"a": nil}, map[string]any{"b": "c", "a": nil}},
+				"array":               []any{[]any{}, []any{"a"}, []any{"b"}, []any{"a"}},
+				"nil array":           []any{[]any{}, []any{nil}, []any{nil, nil}, []any{nil}, []any{"a"}},
+				"multiple duplicates": []any{map[string]any{"a": "b"}, map[string]any{"a": "c"}, map[string]any{"a": "b"}, map[string]any{"a": "c"}, map[string]any{"a": "c"}},
 			},
 			schema: &schema.Structural{
 				Generic: schema.Generic{
@@ -515,8 +515,8 @@ func TestValidateListSetsAndMaps(t *testing.T) {
 			},
 		},
 		{name: "set list with compound array items",
-			obj: map[string]interface{}{
-				"array": []interface{}{[]interface{}{}, []interface{}{"a"}, []interface{}{"a"}},
+			obj: map[string]any{
+				"array": []any{[]any{}, []any{"a"}, []any{"a"}},
 			},
 			schema: &schema.Structural{
 				Generic: schema.Generic{
@@ -544,28 +544,28 @@ func TestValidateListSetsAndMaps(t *testing.T) {
 		},
 
 		{name: "map list with compound map items",
-			obj: map[string]interface{}{
-				"strings":                []interface{}{"a"},
-				"integers":               []interface{}{int64(1)},
-				"booleans":               []interface{}{false},
-				"float64":                []interface{}{float64(1.0)},
-				"nil":                    []interface{}{nil},
-				"array":                  []interface{}{[]interface{}{"a"}},
-				"one key":                []interface{}{map[string]interface{}{"a": "0", "c": "2"}, map[string]interface{}{"a": "1", "c": "1"}, map[string]interface{}{"a": "1", "c": "2"}, map[string]interface{}{}},
-				"two keys":               []interface{}{map[string]interface{}{"a": "1", "b": "1", "c": "1"}, map[string]interface{}{"a": "1", "b": "2", "c": "2"}, map[string]interface{}{"a": "1", "b": "2", "c": "3"}, map[string]interface{}{}},
-				"undefined key":          []interface{}{map[string]interface{}{"a": "1", "b": "1", "c": "1"}, map[string]interface{}{"a": "1", "c": "2"}, map[string]interface{}{"a": "1", "c": "3"}, map[string]interface{}{}},
-				"compound key":           []interface{}{map[string]interface{}{"a": []interface{}{}, "c": "1"}, map[string]interface{}{"a": nil, "c": "1"}, map[string]interface{}{"a": []interface{}{"a"}, "c": "1"}, map[string]interface{}{"a": []interface{}{"a", int64(42)}, "c": "2"}, map[string]interface{}{"a": []interface{}{"a", int64(42)}, "c": []interface{}{"3"}}},
-				"nil key":                []interface{}{map[string]interface{}{"a": []interface{}{}, "c": "1"}, map[string]interface{}{"a": nil, "c": "1"}, map[string]interface{}{"c": "1"}, map[string]interface{}{"a": nil}},
-				"nil item":               []interface{}{nil, map[string]interface{}{"a": "0", "c": "1"}, map[string]interface{}{"a": nil}, map[string]interface{}{"c": "1"}},
-				"nil item multiple keys": []interface{}{nil, map[string]interface{}{"b": "0", "c": "1"}, map[string]interface{}{"a": nil}, map[string]interface{}{"c": "1"}},
-				"multiple duplicates": []interface{}{
-					map[string]interface{}{"a": []interface{}{}, "c": "1"},
-					map[string]interface{}{"a": nil, "c": "1"},
-					map[string]interface{}{"a": []interface{}{"a"}, "c": "1"},
-					map[string]interface{}{"a": []interface{}{"a", int64(42)}, "c": "2"},
-					map[string]interface{}{"a": []interface{}{"a", int64(42)}, "c": []interface{}{"3"}},
-					map[string]interface{}{"a": []interface{}{"a"}, "c": "1", "d": "1"},
-					map[string]interface{}{"a": []interface{}{"a"}, "c": "1", "d": "2"},
+			obj: map[string]any{
+				"strings":                []any{"a"},
+				"integers":               []any{int64(1)},
+				"booleans":               []any{false},
+				"float64":                []any{float64(1.0)},
+				"nil":                    []any{nil},
+				"array":                  []any{[]any{"a"}},
+				"one key":                []any{map[string]any{"a": "0", "c": "2"}, map[string]any{"a": "1", "c": "1"}, map[string]any{"a": "1", "c": "2"}, map[string]any{}},
+				"two keys":               []any{map[string]any{"a": "1", "b": "1", "c": "1"}, map[string]any{"a": "1", "b": "2", "c": "2"}, map[string]any{"a": "1", "b": "2", "c": "3"}, map[string]any{}},
+				"undefined key":          []any{map[string]any{"a": "1", "b": "1", "c": "1"}, map[string]any{"a": "1", "c": "2"}, map[string]any{"a": "1", "c": "3"}, map[string]any{}},
+				"compound key":           []any{map[string]any{"a": []any{}, "c": "1"}, map[string]any{"a": nil, "c": "1"}, map[string]any{"a": []any{"a"}, "c": "1"}, map[string]any{"a": []any{"a", int64(42)}, "c": "2"}, map[string]any{"a": []any{"a", int64(42)}, "c": []any{"3"}}},
+				"nil key":                []any{map[string]any{"a": []any{}, "c": "1"}, map[string]any{"a": nil, "c": "1"}, map[string]any{"c": "1"}, map[string]any{"a": nil}},
+				"nil item":               []any{nil, map[string]any{"a": "0", "c": "1"}, map[string]any{"a": nil}, map[string]any{"c": "1"}},
+				"nil item multiple keys": []any{nil, map[string]any{"b": "0", "c": "1"}, map[string]any{"a": nil}, map[string]any{"c": "1"}},
+				"multiple duplicates": []any{
+					map[string]any{"a": []any{}, "c": "1"},
+					map[string]any{"a": nil, "c": "1"},
+					map[string]any{"a": []any{"a"}, "c": "1"},
+					map[string]any{"a": []any{"a", int64(42)}, "c": "2"},
+					map[string]any{"a": []any{"a", int64(42)}, "c": []any{"3"}},
+					map[string]any{"a": []any{"a"}, "c": "1", "d": "1"},
+					map[string]any{"a": []any{"a"}, "c": "1", "d": "2"},
 				},
 			},
 			schema: &schema.Structural{

@@ -152,7 +152,7 @@ func (s *Server) Start(ctx context.Context) error {
 }
 
 func (s *Server) HandleValidate(w http.ResponseWriter, r *http.Request) {
-	defer utilruntime.HandleCrash(func(_ interface{}) {
+	defer utilruntime.HandleCrash(func(_ any) {
 		// Assume the crash happened before the response was written.
 		http.Error(w, "internal server error", http.StatusInternalServerError)
 	})

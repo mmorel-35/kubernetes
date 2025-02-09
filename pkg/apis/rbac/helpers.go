@@ -86,7 +86,7 @@ func (r PolicyRule) String() string {
 // CompactString exposes a compact string representation for use in escalation error messages
 func (r PolicyRule) CompactString() string {
 	formatStringParts := []string{}
-	formatArgs := []interface{}{}
+	formatArgs := []any{}
 	if len(r.APIGroups) > 0 {
 		formatStringParts = append(formatStringParts, "APIGroups:%q")
 		formatArgs = append(formatArgs, r.APIGroups)

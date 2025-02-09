@@ -104,7 +104,7 @@ func getReadOnlyFromSpec(spec *volume.Spec) (bool, error) {
 }
 
 // log prepends log string with `kubernetes.io/csi`
-func log(msg string, parts ...interface{}) string {
+func log(msg string, parts ...any) string {
 	return fmt.Sprintf(fmt.Sprintf("%s: %s", CSIPluginName, msg), parts...)
 }
 

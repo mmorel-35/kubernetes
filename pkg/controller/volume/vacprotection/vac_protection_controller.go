@@ -113,15 +113,15 @@ func NewVACProtectionController(logger klog.Logger,
 	}
 
 	_, _ = vacInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			c.vacAddedUpdated(logger, obj)
 		},
-		UpdateFunc: func(old, new interface{}) {
+		UpdateFunc: func(old, new any) {
 			c.vacAddedUpdated(logger, new)
 		},
 	})
 
-	err := pvInformer.Informer().AddIndexers(cache.Indexers{vacNameKeyIndex: func(obj interface{}) ([]string, error) {
+	err := pvInformer.Informer().AddIndexers(cache.Indexers{vacNameKeyIndex: func(obj any) ([]string, error) {
 		pv, ok := obj.(*v1.PersistentVolume)
 		if !ok {
 			return []string{}, nil
@@ -149,7 +149,7 @@ func NewVACProtectionController(logger klog.Logger,
 		return pvcs, nil
 	}
 
-	err = pvcInformer.Informer().AddIndexers(cache.Indexers{vacNameKeyIndex: func(obj interface{}) ([]string, error) {
+	err = pvcInformer.Informer().AddIndexers(cache.Indexers{vacNameKeyIndex: func(obj any) ([]string, error) {
 		pvc, ok := obj.(*v1.PersistentVolumeClaim)
 		if !ok {
 			return []string{}, nil
@@ -178,19 +178,19 @@ func NewVACProtectionController(logger klog.Logger,
 	}
 
 	_, _ = pvcInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		UpdateFunc: func(old, new interface{}) {
+		UpdateFunc: func(old, new any) {
 			c.pvcUpdated(logger, old, new)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			c.pvcDeleted(logger, obj)
 		},
 	})
 
 	_, _ = pvInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		UpdateFunc: func(old, new interface{}) {
+		UpdateFunc: func(old, new any) {
 			c.pvUpdated(logger, old, new)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			c.pvDeleted(logger, obj)
 		},
 	})
@@ -326,7 +326,7 @@ func (c *Controller) isBeingUsed(ctx context.Context, vac *storagev1beta1.Volume
 }
 
 // pvAddedUpdated reacts to vac added/updated events
-func (c *Controller) vacAddedUpdated(logger klog.Logger, obj interface{}) {
+func (c *Controller) vacAddedUpdated(logger klog.Logger, obj any) {
 	vac, ok := obj.(*storagev1beta1.VolumeAttributesClass)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("VAC informer returned non-VAC object: %#v", obj))
@@ -340,7 +340,7 @@ func (c *Controller) vacAddedUpdated(logger klog.Logger, obj interface{}) {
 }
 
 // pvcDeleted reacts to pvc deleted events
-func (c *Controller) pvcDeleted(logger klog.Logger, obj interface{}) {
+func (c *Controller) pvcDeleted(logger klog.Logger, obj any) {
 	pvc, ok := obj.(*v1.PersistentVolumeClaim)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("PVC informer returned non-PVC object: %#v", obj))
@@ -354,7 +354,7 @@ func (c *Controller) pvcDeleted(logger klog.Logger, obj interface{}) {
 }
 
 // pvcUpdated reacts to pvc updated events
-func (c *Controller) pvcUpdated(logger klog.Logger, old, new interface{}) {
+func (c *Controller) pvcUpdated(logger klog.Logger, old, new any) {
 	oldPVC, ok := old.(*v1.PersistentVolumeClaim)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("PVC informer returned non-PVC object: %#v", old))
@@ -375,7 +375,7 @@ func (c *Controller) pvcUpdated(logger klog.Logger, old, new interface{}) {
 }
 
 // pvUpdated reacts to pv updated events
-func (c *Controller) pvUpdated(logger klog.Logger, old, new interface{}) {
+func (c *Controller) pvUpdated(logger klog.Logger, old, new any) {
 	oldPV, ok := old.(*v1.PersistentVolume)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("PV informer returned non-PV object: %#v", old))
@@ -395,7 +395,7 @@ func (c *Controller) pvUpdated(logger klog.Logger, old, new interface{}) {
 }
 
 // pvDeleted reacts to pv deleted events
-func (c *Controller) pvDeleted(logger klog.Logger, obj interface{}) {
+func (c *Controller) pvDeleted(logger klog.Logger, obj any) {
 	pv, ok := obj.(*v1.PersistentVolume)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("PV informer returned non-PV object: %#v", obj))

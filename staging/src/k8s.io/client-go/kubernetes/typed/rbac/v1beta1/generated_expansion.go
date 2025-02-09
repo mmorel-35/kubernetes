@@ -18,10 +18,10 @@ limitations under the License.
 
 package v1beta1
 
-type ClusterRoleExpansion interface{}
+type ClusterRoleExpansion any
 
-type ClusterRoleBindingExpansion interface{}
+type ClusterRoleBindingExpansion any
 
-type RoleExpansion interface{}
+type RoleExpansion any
 
-type RoleBindingExpansion interface{}
+type RoleBindingExpansion any

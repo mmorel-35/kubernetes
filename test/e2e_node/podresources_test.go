@@ -1340,7 +1340,7 @@ func getPodResourcesMetrics(ctx context.Context) (e2emetrics.KubeletMetrics, err
 	return e2emetrics.GrabKubeletMetricsWithoutProxy(ctx, nodeNameOrIP()+":10255", "/metrics")
 }
 
-func timelessSampleAtLeast(lower interface{}) types.GomegaMatcher {
+func timelessSampleAtLeast(lower any) types.GomegaMatcher {
 	return gstruct.PointTo(gstruct.MatchAllFields(gstruct.Fields{
 		// We already check Metric when matching the Id
 		"Metric":    gstruct.Ignore(),

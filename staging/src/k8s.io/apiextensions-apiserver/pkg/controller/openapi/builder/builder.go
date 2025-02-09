@@ -304,7 +304,7 @@ func (b *builder) descriptionFor(path, operationVerb string) string {
 //	action can be one of: GET, PUT, PATCH, POST, DELETE;
 //	verb can be one of: list, read, replace, patch, create, delete, deletecollection;
 //	sample is the sample Go type for response type.
-func (b *builder) buildRoute(root, path, httpMethod, actionVerb, operationVerb string, sample interface{}) *restful.RouteBuilder {
+func (b *builder) buildRoute(root, path, httpMethod, actionVerb, operationVerb string, sample any) *restful.RouteBuilder {
 	var namespaced string
 	if b.namespaced {
 		namespaced = "Namespaced"
@@ -397,8 +397,8 @@ func (b *builder) buildKubeNative(crd *apiextensionsv1.CustomResourceDefinition,
 		addTypeMetaProperties(ret, opts.V2)
 		addEmbeddedProperties(ret, opts)
 	}
-	ret.AddExtension(endpoints.RouteMetaGVK, []interface{}{
-		map[string]interface{}{
+	ret.AddExtension(endpoints.RouteMetaGVK, []any{
+		map[string]any{
 			"group":   b.group,
 			"version": b.version,
 			"kind":    b.kind,

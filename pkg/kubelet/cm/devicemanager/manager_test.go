@@ -270,11 +270,11 @@ func TestDevicePluginReRegistrationProbeMode(t *testing.T) {
 }
 
 func setupDeviceManager(t *testing.T, devs []*pluginapi.Device, callback monitorCallback, socketName string,
-	topology []cadvisorapi.Node) (Manager, <-chan interface{}) {
+	topology []cadvisorapi.Node) (Manager, <-chan any) {
 	topologyStore := topologymanager.NewFakeManager()
 	m, err := newManagerImpl(socketName, topology, topologyStore)
 	require.NoError(t, err)
-	updateChan := make(chan interface{})
+	updateChan := make(chan any)
 
 	w := newWrappedManagerImpl(socketName, m)
 	if callback != nil {
@@ -284,7 +284,7 @@ func setupDeviceManager(t *testing.T, devs []*pluginapi.Device, callback monitor
 	originalCallback := w.callback
 	w.callback = func(resourceName string, devices []pluginapi.Device) {
 		originalCallback(resourceName, devices)
-		updateChan <- new(interface{})
+		updateChan <- new(any)
 	}
 	activePods := func() []*v1.Pod {
 		return []*v1.Pod{}
@@ -322,13 +322,13 @@ func runPluginManager(pluginManager pluginmanager.PluginManager) {
 	go pluginManager.Run(sourcesReady, wait.NeverStop)
 }
 
-func setup(t *testing.T, devs []*pluginapi.Device, callback monitorCallback, socketName string, pluginSocketName string) (Manager, <-chan interface{}, *plugin.Stub) {
+func setup(t *testing.T, devs []*pluginapi.Device, callback monitorCallback, socketName string, pluginSocketName string) (Manager, <-chan any, *plugin.Stub) {
 	m, updateChan := setupDeviceManager(t, devs, callback, socketName, nil)
 	p := setupDevicePlugin(t, devs, pluginSocketName)
 	return m, updateChan, p
 }
 
-func setupInProbeMode(t *testing.T, devs []*pluginapi.Device, callback monitorCallback, socketName string, pluginSocketName string) (Manager, <-chan interface{}, *plugin.Stub, pluginmanager.PluginManager) {
+func setupInProbeMode(t *testing.T, devs []*pluginapi.Device, callback monitorCallback, socketName string, pluginSocketName string) (Manager, <-chan any, *plugin.Stub, pluginmanager.PluginManager) {
 	m, updateChan := setupDeviceManager(t, devs, callback, socketName, nil)
 	p := setupDevicePlugin(t, devs, pluginSocketName)
 	pm := setupPluginManager(t, pluginSocketName, m)

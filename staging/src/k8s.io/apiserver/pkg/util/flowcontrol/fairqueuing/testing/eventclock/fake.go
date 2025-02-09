@@ -261,11 +261,11 @@ func (ewh eventWaiterHeap) Less(i, j int) bool { return ewh[i].targetTime.Before
 
 func (ewh eventWaiterHeap) Swap(i, j int) { ewh[i], ewh[j] = ewh[j], ewh[i] }
 
-func (ewh *eventWaiterHeap) Push(x interface{}) {
+func (ewh *eventWaiterHeap) Push(x any) {
 	*ewh = append(*ewh, x.(eventWaiter))
 }
 
-func (ewh *eventWaiterHeap) Pop() interface{} {
+func (ewh *eventWaiterHeap) Pop() any {
 	old := *ewh
 	n := len(old)
 	x := old[n-1]

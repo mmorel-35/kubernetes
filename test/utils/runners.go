@@ -167,11 +167,11 @@ type RCConfig struct {
 	Silent bool
 
 	// If set this function will be used to print log lines instead of klog.
-	LogFunc func(fmt string, args ...interface{})
+	LogFunc func(fmt string, args ...any)
 	// If set those functions will be used to gather data from Nodes - in integration tests where no
 	// kubelets are running those variables should be nil.
-	NodeDumpFunc      func(ctx context.Context, c clientset.Interface, nodeNames []string, logFunc func(fmt string, args ...interface{}))
-	ContainerDumpFunc func(ctx context.Context, c clientset.Interface, ns string, logFunc func(ftm string, args ...interface{}))
+	NodeDumpFunc      func(ctx context.Context, c clientset.Interface, nodeNames []string, logFunc func(fmt string, args ...any))
+	ContainerDumpFunc func(ctx context.Context, c clientset.Interface, ns string, logFunc func(ftm string, args ...any))
 
 	// Names of the secrets and configmaps to mount.
 	SecretNames    []string
@@ -186,7 +186,7 @@ type RCConfig struct {
 	SecurityContext *v1.SecurityContext
 }
 
-func (rc *RCConfig) RCConfigLog(fmt string, args ...interface{}) {
+func (rc *RCConfig) RCConfigLog(fmt string, args ...any) {
 	if rc.LogFunc != nil {
 		rc.LogFunc(fmt, args...)
 	}
@@ -723,7 +723,7 @@ func (config *RCConfig) start(ctx context.Context) error {
 // Optionally waits for pods to start running (if waitForRunning == true).
 // The number of replicas must be non-zero.
 func StartPods(c clientset.Interface, replicas int, namespace string, podNamePrefix string,
-	pod v1.Pod, waitForRunning bool, logFunc func(fmt string, args ...interface{})) error {
+	pod v1.Pod, waitForRunning bool, logFunc func(fmt string, args ...any)) error {
 	// no pod to start
 	if replicas < 1 {
 		panic("StartPods: number of replicas must be non-zero")

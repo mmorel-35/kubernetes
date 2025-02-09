@@ -22,20 +22,20 @@ import (
 	"time"
 )
 
-func testHeapObjectKeyFunc(obj interface{}) (string, error) {
+func testHeapObjectKeyFunc(obj any) (string, error) {
 	return obj.(testHeapObject).name, nil
 }
 
 type testHeapObject struct {
 	name string
-	val  interface{}
+	val  any
 }
 
-func mkHeapObj(name string, val interface{}) testHeapObject {
+func mkHeapObj(name string, val any) testHeapObject {
 	return testHeapObject{name: name, val: val}
 }
 
-func compareInts(val1 interface{}, val2 interface{}) bool {
+func compareInts(val1 any, val2 any) bool {
 	first := val1.(testHeapObject).val.(int)
 	second := val2.(testHeapObject).val.(int)
 	return first < second
@@ -112,7 +112,7 @@ func TestHeap_BulkAdd(t *testing.T) {
 	const amount = 500
 	// Insert items in the heap in opposite orders in a go routine.
 	go func() {
-		l := []interface{}{}
+		l := []any{}
 		for i := amount; i > 0; i-- {
 			l = append(l, mkHeapObj(string([]rune{'a', rune(i)}), i))
 		}
@@ -376,7 +376,7 @@ func TestHeapAddAfterClose(t *testing.T) {
 	if err := h.AddIfNotPresent(mkHeapObj("test", 1)); err == nil || err.Error() != closedMsg {
 		t.Errorf("expected heap closed error")
 	}
-	if err := h.BulkAdd([]interface{}{mkHeapObj("test", 1)}); err == nil || err.Error() != closedMsg {
+	if err := h.BulkAdd([]any{mkHeapObj("test", 1)}); err == nil || err.Error() != closedMsg {
 		t.Errorf("expected heap closed error")
 	}
 }

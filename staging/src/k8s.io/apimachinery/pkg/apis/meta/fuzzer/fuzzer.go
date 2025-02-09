@@ -36,8 +36,8 @@ import (
 	"k8s.io/apimachinery/pkg/util/sets"
 )
 
-func genericFuzzerFuncs(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+func genericFuzzerFuncs(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(q *resource.Quantity, c fuzz.Continue) {
 			*q = *resource.NewQuantity(c.Int63n(1000), resource.DecimalExponent)
 		},
@@ -172,9 +172,9 @@ func randomLabelKey(c fuzz.Continue) string {
 	return prefixPart + namePart
 }
 
-func v1FuzzerFuncs(codecs runtimeserializer.CodecFactory) []interface{} {
+func v1FuzzerFuncs(codecs runtimeserializer.CodecFactory) []any {
 
-	return []interface{}{
+	return []any{
 		func(j *metav1.TypeMeta, c fuzz.Continue) {
 			// We have to customize the randomization of TypeMetas because their
 			// APIVersion and Kind must remain blank in memory.
@@ -285,8 +285,8 @@ func v1FuzzerFuncs(codecs runtimeserializer.CodecFactory) []interface{} {
 	}
 }
 
-func v1beta1FuzzerFuncs(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+func v1beta1FuzzerFuncs(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(r *metav1beta1.TableOptions, c fuzz.Continue) {
 			c.FuzzNoCustom(r)
 			// NoHeaders is not serialized to the wire but is allowed within the versioned
@@ -301,7 +301,7 @@ func v1beta1FuzzerFuncs(codecs runtimeserializer.CodecFactory) []interface{} {
 			}
 			n := c.Intn(10)
 			if n > 0 {
-				r.Cells = make([]interface{}, n)
+				r.Cells = make([]any, n)
 			}
 			for i := range r.Cells {
 				t := c.Intn(6)
@@ -313,13 +313,13 @@ func v1beta1FuzzerFuncs(codecs runtimeserializer.CodecFactory) []interface{} {
 				case 2:
 					r.Cells[i] = c.RandBool()
 				case 3:
-					x := map[string]interface{}{}
+					x := map[string]any{}
 					for j := c.Intn(10) + 1; j >= 0; j-- {
 						x[c.RandString()] = c.RandString()
 					}
 					r.Cells[i] = x
 				case 4:
-					x := make([]interface{}, c.Intn(10))
+					x := make([]any, c.Intn(10))
 					for i := range x {
 						x[i] = c.Int63()
 					}

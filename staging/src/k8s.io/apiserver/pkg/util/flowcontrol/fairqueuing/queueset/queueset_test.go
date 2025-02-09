@@ -1173,7 +1173,7 @@ func TestContextCancel(t *testing.T) {
 
 func countingPromiseFactoryFactory(activeCounter counter.GoRoutineCounter) promiseFactoryFactory {
 	return func(qs *queueSet) promiseFactory {
-		return func(initial interface{}, doneCtx context.Context, doneVal interface{}) promise.WriteOnce {
+		return func(initial any, doneCtx context.Context, doneVal any) promise.WriteOnce {
 			return testpromise.NewCountingWriteOnce(activeCounter, &qs.lock, initial, doneCtx.Done(), doneVal)
 		}
 	}
@@ -1214,7 +1214,7 @@ func TestTotalRequestsExecutingWithPanic(t *testing.T) {
 	}
 
 	panicErrExpected := errors.New("apiserver panic'd")
-	var panicErrGot interface{}
+	var panicErrGot any
 	func() {
 		defer func() {
 			panicErrGot = recover()

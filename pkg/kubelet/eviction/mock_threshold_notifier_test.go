@@ -138,7 +138,7 @@ type MockThresholdNotifier_UpdateThreshold_Call struct {
 
 // UpdateThreshold is a helper method to define mock.On call
 //   - summary *v1alpha1.Summary
-func (_e *MockThresholdNotifier_Expecter) UpdateThreshold(summary interface{}) *MockThresholdNotifier_UpdateThreshold_Call {
+func (_e *MockThresholdNotifier_Expecter) UpdateThreshold(summary any) *MockThresholdNotifier_UpdateThreshold_Call {
 	return &MockThresholdNotifier_UpdateThreshold_Call{Call: _e.mock.On("UpdateThreshold", summary)}
 }
 

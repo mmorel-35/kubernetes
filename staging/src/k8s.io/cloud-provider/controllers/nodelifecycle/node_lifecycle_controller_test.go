@@ -1084,7 +1084,7 @@ func syncNodeStore(ctx context.Context, nodeinformer coreinformers.NodeInformer,
 	if err != nil {
 		return err
 	}
-	newElems := make([]interface{}, 0, len(nodes.Items))
+	newElems := make([]any, 0, len(nodes.Items))
 	for i := range nodes.Items {
 		newElems = append(newElems, &nodes.Items[i])
 	}

@@ -47,7 +47,7 @@ func NewNamespaced[T runtime.Object](parent ResourceIndexer[T], namespace string
 // List lists all resources in the indexer matching the given selector.
 func (l ResourceIndexer[T]) List(selector labels.Selector) (ret []T, err error) {
 	// ListAllByNamespace reverts to ListAll on empty namespaces
-	err = cache.ListAllByNamespace(l.indexer, l.namespace, selector, func(m interface{}) {
+	err = cache.ListAllByNamespace(l.indexer, l.namespace, selector, func(m any) {
 		ret = append(ret, m.(T))
 	})
 	return ret, err

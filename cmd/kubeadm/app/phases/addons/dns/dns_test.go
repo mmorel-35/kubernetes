@@ -45,7 +45,7 @@ func TestCompileManifests(t *testing.T) {
 	var tests = []struct {
 		name     string
 		manifest string
-		data     interface{}
+		data     any
 	}{
 		{
 			name:     "CoreDNSDeployment manifest",
@@ -128,7 +128,7 @@ func TestDeploymentsHaveSystemClusterCriticalPriorityClassName(t *testing.T) {
 	testCases := []struct {
 		name     string
 		manifest string
-		data     interface{}
+		data     any
 	}{
 		{
 			name:     "CoreDNSDeployment",

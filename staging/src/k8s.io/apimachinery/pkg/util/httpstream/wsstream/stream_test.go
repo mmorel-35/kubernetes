@@ -168,7 +168,7 @@ func TestStreamSurvivesPanic(t *testing.T) {
 	r := NewReader(errs, false, NewDefaultReaderProtocols())
 
 	// do not call runtime.HandleCrash() in handler. Otherwise, the tests are interrupted.
-	r.handleCrash = func(additionalHandlers ...func(interface{})) { recover() }
+	r.handleCrash = func(additionalHandlers ...func(any)) { recover() }
 
 	data, err := readWebSocket(r, t, nil)
 	if !reflect.DeepEqual(data, []byte(input)) {

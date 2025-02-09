@@ -393,8 +393,8 @@ func TestPatchPodStatus(t *testing.T) {
 func Test_As_Pod(t *testing.T) {
 	tests := []struct {
 		name       string
-		oldObj     interface{}
-		newObj     interface{}
+		oldObj     any
+		newObj     any
 		wantOldObj *v1.Pod
 		wantNewObj *v1.Pod
 		wantErr    bool
@@ -448,8 +448,8 @@ func Test_As_Pod(t *testing.T) {
 func Test_As_Node(t *testing.T) {
 	tests := []struct {
 		name       string
-		oldObj     interface{}
-		newObj     interface{}
+		oldObj     any
+		newObj     any
 		wantOldObj *v1.Node
 		wantNewObj *v1.Node
 		wantErr    bool
@@ -497,8 +497,8 @@ func Test_As_Node(t *testing.T) {
 func Test_As_KMetadata(t *testing.T) {
 	tests := []struct {
 		name    string
-		oldObj  interface{}
-		newObj  interface{}
+		oldObj  any
+		newObj  any
 		wantErr bool
 	}{
 		{

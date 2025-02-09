@@ -122,8 +122,8 @@ var _ = SIGDescribe("DisruptionController", func() {
 
 		ginkgo.By("patching the pdb")
 		patchedPDB := patchPDBOrDie(ctx, cs, dc, ns, defaultName, func(old *policyv1.PodDisruptionBudget) (bytes []byte, err error) {
-			newBytes, err := json.Marshal(map[string]interface{}{
-				"spec": map[string]interface{}{
+			newBytes, err := json.Marshal(map[string]any{
+				"spec": map[string]any{
 					"minAvailable": "3%",
 				},
 			})
@@ -286,7 +286,7 @@ var _ = SIGDescribe("DisruptionController", func() {
 		// tests with exclusive set to true relies on HostPort to make sure
 		// only one pod from the replicaset is assigned to each node. This
 		// requires these tests to be run serially.
-		args := []interface{}{fmt.Sprintf("evictions: %s => %s", c.description, expectation)}
+		args := []any{fmt.Sprintf("evictions: %s => %s", c.description, expectation)}
 		if c.exclusive {
 			args = append(args, framework.WithSerial())
 		}

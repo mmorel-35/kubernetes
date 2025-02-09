@@ -29,7 +29,7 @@ func NewInt(items ...int) Int {
 	return Int(New[int](items...))
 }
 
-// IntKeySet creates a Int from a keys of a map[int](? extends interface{}).
+// IntKeySet creates a Int from a keys of a map[int](? extends any).
 // If the value passed in is not actually a map, this will panic.
 func IntKeySet[T any](theMap map[int]T) Int {
 	return Int(KeySet(theMap))

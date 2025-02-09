@@ -57,9 +57,9 @@ func (NoDoubleKeySchema) ValidateBytes(data []byte) error {
 func validateNoDuplicateKeys(data []byte, path ...string) error {
 	r := ejson.NewDecoder(bytes.NewReader(data))
 	// This is Go being unfriendly. The 'path ...string' comes in as a
-	// []string, and SeekTo takes ...interface{}, so we can't just pass
+	// []string, and SeekTo takes ...any, so we can't just pass
 	// the path straight in, we have to copy it.  *sigh*
-	ifacePath := []interface{}{}
+	ifacePath := []any{}
 	for ix := range path {
 		ifacePath = append(ifacePath, path[ix])
 	}

@@ -370,7 +370,7 @@ type cleanupData struct {
 	resource schema.GroupVersionResource
 }
 
-func keyStringer(i interface{}) string {
+func keyStringer(i any) string {
 	base := "\n\t"
 	switch key := i.(type) {
 	case string:
@@ -448,13 +448,13 @@ func getFromEtcd(decoder runtime.Decoder, keys clientv3.KV, path string) (*metaO
 	return &obj, nil
 }
 
-func diffMaps(a, b interface{}) ([]string, []string) {
+func diffMaps(a, b any) ([]string, []string) {
 	inA := diffMapKeys(a, b, keyStringer)
 	inB := diffMapKeys(b, a, keyStringer)
 	return inA, inB
 }
 
-func diffMapKeys(a, b interface{}, stringer func(interface{}) string) []string {
+func diffMapKeys(a, b any, stringer func(any) string) []string {
 	av := reflect.ValueOf(a)
 	bv := reflect.ValueOf(b)
 	ret := []string{}

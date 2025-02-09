@@ -584,11 +584,11 @@ func TestOperationExecutor_UnmountDeviceConcurrently_VolumeMode_Block(t *testing
 }
 
 type fakeOperationGenerator struct {
-	ch   chan interface{}
-	quit chan interface{}
+	ch   chan any
+	quit chan any
 }
 
-func newFakeOperationGenerator(ch chan interface{}, quit chan interface{}) OperationGenerator {
+func newFakeOperationGenerator(ch chan any, quit chan any) OperationGenerator {
 	return &fakeOperationGenerator{
 		ch:   ch,
 		quit: quit,
@@ -799,7 +799,7 @@ func getTestPodWithGCEPD(podName, pdName string) *v1.Pod {
 	}
 }
 
-func isOperationRunSerially(ch <-chan interface{}, quit chan<- interface{}) bool {
+func isOperationRunSerially(ch <-chan any, quit chan<- any) bool {
 	defer close(quit)
 	numOperationsStarted := 0
 loop:
@@ -817,7 +817,7 @@ loop:
 	return true
 }
 
-func isOperationRunConcurrently(ch <-chan interface{}, quit chan<- interface{}, numOperationsToRun int) bool {
+func isOperationRunConcurrently(ch <-chan any, quit chan<- any, numOperationsToRun int) bool {
 	defer close(quit)
 	numOperationsStarted := 0
 loop:
@@ -835,14 +835,14 @@ loop:
 	return false
 }
 
-func setup() (chan interface{}, chan interface{}, OperationExecutor) {
-	ch, quit := make(chan interface{}), make(chan interface{})
+func setup() (chan any, chan any, OperationExecutor) {
+	ch, quit := make(chan any), make(chan any)
 	return ch, quit, NewOperationExecutor(newFakeOperationGenerator(ch, quit))
 }
 
 // This function starts by writing to ch and blocks on the quit channel
 // until it is closed by the currently running test
-func startOperationAndBlock(ch chan<- interface{}, quit <-chan interface{}) {
+func startOperationAndBlock(ch chan<- any, quit <-chan any) {
 	ch <- nil
 	<-quit
 }

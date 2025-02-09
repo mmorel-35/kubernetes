@@ -21,7 +21,7 @@ limitations under the License.
 // with a bit less boilerplate.
 //
 // Informer/Lister classes are thin wrappers providing a type-safe interface
-// over regular interface{}-based Informers/Listers
+// over regular any-based Informers/Listers
 //
 // Controller[T] provides a reusable way to reconcile objects out of an informer
 // using the tried and true controller design pattern found all over k8s

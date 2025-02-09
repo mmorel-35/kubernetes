@@ -138,7 +138,7 @@ func (s sortableWatchCacheEvents) Swap(i, j int) {
 // The items returned in the interval will be sorted by Key.
 func newCacheIntervalFromStore(resourceVersion uint64, store storeIndexer, key string, matchesSingle bool) (*watchCacheInterval, error) {
 	buffer := &watchCacheIntervalBuffer{}
-	var allItems []interface{}
+	var allItems []any
 	if matchesSingle {
 		item, exists, err := store.GetByKey(key)
 		if err != nil {

@@ -44,16 +44,16 @@ func TestNamePrinter(t *testing.T) {
 			"pod/foo\n"},
 		"List": {
 			&unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind":       "List",
 					"apiVersion": "v1",
 				},
 				Items: []unstructured.Unstructured{
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"kind":       "Pod",
 							"apiVersion": "v1",
-							"metadata": map[string]interface{}{
+							"metadata": map[string]any{
 								"name": "bar",
 							},
 						},

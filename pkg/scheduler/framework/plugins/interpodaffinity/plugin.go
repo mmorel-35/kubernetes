@@ -147,7 +147,7 @@ func GetNamespaceLabelsSnapshot(logger klog.Logger, ns string, nsLister listersv
 	return
 }
 
-func (pl *InterPodAffinity) isSchedulableAfterPodChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *InterPodAffinity) isSchedulableAfterPodChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	originalPod, modifiedPod, err := util.As[*v1.Pod](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, err
@@ -210,7 +210,7 @@ func (pl *InterPodAffinity) isSchedulableAfterPodChange(logger klog.Logger, pod 
 	return framework.Queue, nil
 }
 
-func (pl *InterPodAffinity) isSchedulableAfterNodeChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *InterPodAffinity) isSchedulableAfterNodeChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	originalNode, modifiedNode, err := util.As[*v1.Node](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, err

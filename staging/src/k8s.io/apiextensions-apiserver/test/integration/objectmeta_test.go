@@ -63,7 +63,7 @@ func TestPostInvalidObjectMeta(t *testing.T) {
 	obj := fixtures.NewNoxuInstance("default", "foo")
 	unstructured.SetNestedField(obj.UnstructuredContent(), int64(42), "metadata", "unknown")
 	unstructured.SetNestedField(obj.UnstructuredContent(), nil, "metadata", "generation")
-	unstructured.SetNestedField(obj.UnstructuredContent(), map[string]interface{}{"foo": int64(42), "bar": "abc"}, "metadata", "labels")
+	unstructured.SetNestedField(obj.UnstructuredContent(), map[string]any{"foo": int64(42), "bar": "abc"}, "metadata", "labels")
 	_, err = instantiateCustomResource(t, obj, noxuResourceClient, noxuDefinition)
 	if err == nil {
 		t.Fatalf("unexpected non-error, expected invalid labels to be rejected: %v", err)
@@ -76,7 +76,7 @@ func TestPostInvalidObjectMeta(t *testing.T) {
 		t.Fatalf("expected 'cannot be handled' error message, got: %v", status.Status().Message)
 	}
 
-	unstructured.SetNestedField(obj.UnstructuredContent(), map[string]interface{}{"bar": "abc"}, "metadata", "labels")
+	unstructured.SetNestedField(obj.UnstructuredContent(), map[string]any{"bar": "abc"}, "metadata", "labels")
 	obj, err = instantiateCustomResource(t, obj, noxuResourceClient, noxuDefinition)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -165,11 +165,11 @@ func TestInvalidObjectMetaInStorage(t *testing.T) {
 	unstructured.SetNestedField(original.UnstructuredContent(), int64(42), "metadata", "unknown")
 	unstructured.SetNestedField(original.UnstructuredContent(), nil, "metadata", "generation")
 
-	unstructured.SetNestedField(original.UnstructuredContent(), map[string]interface{}{"foo": int64(42), "bar": "abc"}, "metadata", "annotations")
-	unstructured.SetNestedField(original.UnstructuredContent(), map[string]interface{}{"invalid": "x y"}, "metadata", "labels")
+	unstructured.SetNestedField(original.UnstructuredContent(), map[string]any{"foo": int64(42), "bar": "abc"}, "metadata", "annotations")
+	unstructured.SetNestedField(original.UnstructuredContent(), map[string]any{"invalid": "x y"}, "metadata", "labels")
 	unstructured.SetNestedField(original.UnstructuredContent(), int64(42), "embedded", "metadata", "unknown")
-	unstructured.SetNestedField(original.UnstructuredContent(), map[string]interface{}{"foo": int64(42), "bar": "abc"}, "embedded", "metadata", "annotations")
-	unstructured.SetNestedField(original.UnstructuredContent(), map[string]interface{}{"invalid": "x y"}, "embedded", "metadata", "labels")
+	unstructured.SetNestedField(original.UnstructuredContent(), map[string]any{"foo": int64(42), "bar": "abc"}, "embedded", "metadata", "annotations")
+	unstructured.SetNestedField(original.UnstructuredContent(), map[string]any{"invalid": "x y"}, "embedded", "metadata", "labels")
 	unstructured.SetNestedField(original.UnstructuredContent(), "Foo", "embedded", "kind")
 	unstructured.SetNestedField(original.UnstructuredContent(), "foo/v1", "embedded", "apiVersion")
 
@@ -461,7 +461,7 @@ func TestEmbeddedResources(t *testing.T) {
 
 	t.Logf("Checking that everything unknown inside ObjectMeta is gone")
 	delete(foo.Object, "metadata")
-	var expected map[string]interface{}
+	var expected map[string]any
 	if err := yaml.Unmarshal([]byte(expectedEmbeddedResourceInstance), &expected); err != nil {
 		t.Fatal(err)
 	}

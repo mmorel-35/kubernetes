@@ -160,7 +160,7 @@ var _ = utils.SIGDescribe("CSI Mock volume attach", func() {
 				NewDriverName: "csi-mock-" + f.UniqueName,
 				CanAttach:     &canAttach,
 			}
-			err = utils.CreateFromManifests(ctx, f, driverNamespace, func(item interface{}) error {
+			err = utils.CreateFromManifests(ctx, f, driverNamespace, func(item any) error {
 				return utils.PatchCSIDeployment(f, o, item)
 			}, "test/e2e/testing-manifests/storage-csi/mock/csi-mock-driverinfo.yaml")
 			if err != nil {

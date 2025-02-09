@@ -943,6 +943,6 @@ func testPodSuccessOrFail(ctx context.Context, c clientset.Interface, t *framewo
 	return nil
 }
 
-func conditionType(condition interface{}) string {
+func conditionType(condition any) string {
 	return string(condition.(v1.PersistentVolumeClaimCondition).Type)
 }

@@ -80,7 +80,7 @@ func observeEventAfterAction(ctx context.Context, c clientset.Interface, ns stri
 		&v1.Event{},
 		0,
 		cache.ResourceEventHandlerFuncs{
-			AddFunc: func(obj interface{}) {
+			AddFunc: func(obj any) {
 				e, ok := obj.(*v1.Event)
 				if !ok {
 					framework.Failf("Expected *v1.Event, got %T %v", obj, obj)

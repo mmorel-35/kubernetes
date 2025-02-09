@@ -145,7 +145,7 @@ func BuildGenericConfig(
 		lastErr = fmt.Errorf("failed to create real external clientset: %w", err)
 		return
 	}
-	trim := func(obj interface{}) (interface{}, error) {
+	trim := func(obj any) (any, error) {
 		if accessor, err := meta.Accessor(obj); err == nil && accessor.GetManagedFields() != nil {
 			accessor.SetManagedFields(nil)
 		}
@@ -373,7 +373,7 @@ func CreateConfig(
 
 	if len(opts.Authentication.ServiceAccounts.KeyFiles) > 0 {
 		// Load and set the public keys.
-		var pubKeys []interface{}
+		var pubKeys []any
 		for _, f := range opts.Authentication.ServiceAccounts.KeyFiles {
 			keys, err := keyutil.PublicKeysFromFile(f)
 			if err != nil {

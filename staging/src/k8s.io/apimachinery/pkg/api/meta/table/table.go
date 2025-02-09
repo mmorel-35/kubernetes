@@ -27,7 +27,7 @@ import (
 
 // MetaToTableRow converts a list or object into one or more table rows. The provided rowFn is invoked for
 // each accessed item, with name and age being passed to each.
-func MetaToTableRow(obj runtime.Object, rowFn func(obj runtime.Object, m metav1.Object, name, age string) ([]interface{}, error)) ([]metav1.TableRow, error) {
+func MetaToTableRow(obj runtime.Object, rowFn func(obj runtime.Object, m metav1.Object, name, age string) ([]any, error)) ([]metav1.TableRow, error) {
 	if meta.IsListType(obj) {
 		rows := make([]metav1.TableRow, 0, 16)
 		err := meta.EachListItem(obj, func(obj runtime.Object) error {

@@ -119,7 +119,7 @@ X2i8uIp/C/ASqiIGUeeKQtX0/IR3qCXyThP/dbCiHrF3v1cuhBOHY8CLVg==
 //  3. URLSafe Base64-encoding the sha bytes
 const ecdsaKeyID = "SoABiieYuNx4UdqYvZRVeuC6SihxgLrhLy9peHMHpTc"
 
-func getPrivateKey(data string) interface{} {
+func getPrivateKey(data string) any {
 	key, err := keyutil.ParsePrivateKeyPEM([]byte(data))
 	if err != nil {
 		panic(fmt.Errorf("unexpected error parsing private key: %v", err))
@@ -127,7 +127,7 @@ func getPrivateKey(data string) interface{} {
 	return key
 }
 
-func getPublicKey(data string) interface{} {
+func getPublicKey(data string) any {
 	keys, err := keyutil.ParsePublicKeysPEM([]byte(data))
 	if err != nil {
 		panic(fmt.Errorf("unexpected error parsing public key: %v", err))
@@ -238,7 +238,7 @@ func TestTokenGenerateAndValidate(t *testing.T) {
 
 	testCases := map[string]struct {
 		Client clientset.Interface
-		Keys   []interface{}
+		Keys   []any
 		Token  string
 
 		ExpectedErr      bool
@@ -250,28 +250,28 @@ func TestTokenGenerateAndValidate(t *testing.T) {
 		"no keys": {
 			Token:       rsaToken,
 			Client:      nil,
-			Keys:        []interface{}{},
+			Keys:        []any{},
 			ExpectedErr: true,
 			ExpectedOK:  false,
 		},
 		"invalid keys (rsa)": {
 			Token:       rsaToken,
 			Client:      nil,
-			Keys:        []interface{}{getPublicKey(otherPublicKey), getPublicKey(ecdsaPublicKey)},
+			Keys:        []any{getPublicKey(otherPublicKey), getPublicKey(ecdsaPublicKey)},
 			ExpectedErr: true,
 			ExpectedOK:  false,
 		},
 		"invalid keys (ecdsa)": {
 			Token:       ecdsaToken,
 			Client:      nil,
-			Keys:        []interface{}{getPublicKey(otherPublicKey), getPublicKey(rsaPublicKey)},
+			Keys:        []any{getPublicKey(otherPublicKey), getPublicKey(rsaPublicKey)},
 			ExpectedErr: true,
 			ExpectedOK:  false,
 		},
 		"valid key (rsa)": {
 			Token:            rsaToken,
 			Client:           nil,
-			Keys:             []interface{}{getPublicKey(rsaPublicKey)},
+			Keys:             []any{getPublicKey(rsaPublicKey)},
 			ExpectedErr:      false,
 			ExpectedOK:       true,
 			ExpectedUserName: expectedUserName,
@@ -281,14 +281,14 @@ func TestTokenGenerateAndValidate(t *testing.T) {
 		"valid key, invalid issuer (rsa)": {
 			Token:       badIssuerToken,
 			Client:      nil,
-			Keys:        []interface{}{getPublicKey(rsaPublicKey)},
+			Keys:        []any{getPublicKey(rsaPublicKey)},
 			ExpectedErr: false,
 			ExpectedOK:  false,
 		},
 		"valid key, different issuer (rsa)": {
 			Token:            differentIssuerToken,
 			Client:           nil,
-			Keys:             []interface{}{getPublicKey(rsaPublicKey)},
+			Keys:             []any{getPublicKey(rsaPublicKey)},
 			ExpectedErr:      false,
 			ExpectedOK:       true,
 			ExpectedUserName: expectedUserName,
@@ -298,7 +298,7 @@ func TestTokenGenerateAndValidate(t *testing.T) {
 		"valid key (ecdsa)": {
 			Token:            ecdsaToken,
 			Client:           nil,
-			Keys:             []interface{}{getPublicKey(ecdsaPublicKey)},
+			Keys:             []any{getPublicKey(ecdsaPublicKey)},
 			ExpectedErr:      false,
 			ExpectedOK:       true,
 			ExpectedUserName: expectedUserName,
@@ -308,7 +308,7 @@ func TestTokenGenerateAndValidate(t *testing.T) {
 		"rotated keys (rsa)": {
 			Token:            rsaToken,
 			Client:           nil,
-			Keys:             []interface{}{getPublicKey(otherPublicKey), getPublicKey(ecdsaPublicKey), getPublicKey(rsaPublicKey)},
+			Keys:             []any{getPublicKey(otherPublicKey), getPublicKey(ecdsaPublicKey), getPublicKey(rsaPublicKey)},
 			ExpectedErr:      false,
 			ExpectedOK:       true,
 			ExpectedUserName: expectedUserName,
@@ -318,7 +318,7 @@ func TestTokenGenerateAndValidate(t *testing.T) {
 		"rotated keys (ecdsa)": {
 			Token:            ecdsaToken,
 			Client:           nil,
-			Keys:             []interface{}{getPublicKey(otherPublicKey), getPublicKey(rsaPublicKey), getPublicKey(ecdsaPublicKey)},
+			Keys:             []any{getPublicKey(otherPublicKey), getPublicKey(rsaPublicKey), getPublicKey(ecdsaPublicKey)},
 			ExpectedErr:      false,
 			ExpectedOK:       true,
 			ExpectedUserName: expectedUserName,
@@ -328,7 +328,7 @@ func TestTokenGenerateAndValidate(t *testing.T) {
 		"valid lookup": {
 			Token:            rsaToken,
 			Client:           fake.NewSimpleClientset(serviceAccount, rsaSecret, ecdsaSecret),
-			Keys:             []interface{}{getPublicKey(rsaPublicKey)},
+			Keys:             []any{getPublicKey(rsaPublicKey)},
 			ExpectedErr:      false,
 			ExpectedOK:       true,
 			ExpectedUserName: expectedUserName,
@@ -338,27 +338,27 @@ func TestTokenGenerateAndValidate(t *testing.T) {
 		"invalid secret lookup": {
 			Token:       rsaToken,
 			Client:      fake.NewSimpleClientset(serviceAccount),
-			Keys:        []interface{}{getPublicKey(rsaPublicKey)},
+			Keys:        []any{getPublicKey(rsaPublicKey)},
 			ExpectedErr: true,
 			ExpectedOK:  false,
 		},
 		"invalid serviceaccount lookup": {
 			Token:       rsaToken,
 			Client:      fake.NewSimpleClientset(rsaSecret, ecdsaSecret),
-			Keys:        []interface{}{getPublicKey(rsaPublicKey)},
+			Keys:        []any{getPublicKey(rsaPublicKey)},
 			ExpectedErr: true,
 			ExpectedOK:  false,
 		},
 		"secret is marked as invalid": {
 			Token:       invalidAutoSecretToken,
 			Client:      fake.NewSimpleClientset(serviceAccount, invalidAutoSecret),
-			Keys:        []interface{}{getPublicKey(rsaPublicKey)},
+			Keys:        []any{getPublicKey(rsaPublicKey)},
 			ExpectedErr: true,
 		},
 		"malformed iss": {
 			Token:       ecdsaTokenMalformedIss,
 			Client:      nil,
-			Keys:        []interface{}{getPublicKey(ecdsaPublicKey)},
+			Keys:        []any{getPublicKey(ecdsaPublicKey)},
 			ExpectedErr: false,
 			ExpectedOK:  false,
 		},
@@ -368,16 +368,16 @@ func TestTokenGenerateAndValidate(t *testing.T) {
 		auds := authenticator.Audiences{"api"}
 		getter := serviceaccountcontroller.NewGetterFromClient(
 			tc.Client,
-			v1listers.NewSecretLister(newIndexer(func(namespace, name string) (interface{}, error) {
+			v1listers.NewSecretLister(newIndexer(func(namespace, name string) (any, error) {
 				return tc.Client.CoreV1().Secrets(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 			})),
-			v1listers.NewServiceAccountLister(newIndexer(func(namespace, name string) (interface{}, error) {
+			v1listers.NewServiceAccountLister(newIndexer(func(namespace, name string) (any, error) {
 				return tc.Client.CoreV1().ServiceAccounts(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 			})),
-			v1listers.NewPodLister(newIndexer(func(namespace, name string) (interface{}, error) {
+			v1listers.NewPodLister(newIndexer(func(namespace, name string) (any, error) {
 				return tc.Client.CoreV1().Pods(namespace).Get(context.TODO(), name, metav1.GetOptions{})
 			})),
-			v1listers.NewNodeLister(newIndexer(func(_, name string) (interface{}, error) {
+			v1listers.NewNodeLister(newIndexer(func(_, name string) (any, error) {
 				return tc.Client.CoreV1().Nodes().Get(context.TODO(), name, metav1.GetOptions{})
 			})),
 		)
@@ -475,16 +475,16 @@ func checkJSONWebSignatureHasKeyID(t *testing.T, jwsString string, expectedKeyID
 	}
 }
 
-func newIndexer(get func(namespace, name string) (interface{}, error)) cache.Indexer {
+func newIndexer(get func(namespace, name string) (any, error)) cache.Indexer {
 	return &fakeIndexer{get: get}
 }
 
 type fakeIndexer struct {
 	cache.Indexer
-	get func(namespace, name string) (interface{}, error)
+	get func(namespace, name string) (any, error)
 }
 
-func (f *fakeIndexer) GetByKey(key string) (interface{}, bool, error) {
+func (f *fakeIndexer) GetByKey(key string) (any, bool, error) {
 	parts := strings.SplitN(key, "/", 2)
 	namespace := parts[0]
 	name := ""
@@ -551,7 +551,7 @@ func TestStaticPublicKeysGetter(t *testing.T) {
 
 	testcases := []struct {
 		Name       string
-		Keys       []interface{}
+		Keys       []any
 		ExpectErr  bool
 		ExpectKeys []serviceaccount.PublicKey
 	}{
@@ -562,7 +562,7 @@ func TestStaticPublicKeysGetter(t *testing.T) {
 		},
 		{
 			Name: "simple",
-			Keys: []interface{}{ecPublic, rsaPublic},
+			Keys: []any{ecPublic, rsaPublic},
 			ExpectKeys: []serviceaccount.PublicKey{
 				{KeyID: "SoABiieYuNx4UdqYvZRVeuC6SihxgLrhLy9peHMHpTc", PublicKey: ecPublic},
 				{KeyID: "JHJehTTTZlsspKHT-GaJxK7Kd1NQgZJu3fyK6K_QDYU", PublicKey: rsaPublic},
@@ -570,14 +570,14 @@ func TestStaticPublicKeysGetter(t *testing.T) {
 		},
 		{
 			Name: "private --> public",
-			Keys: []interface{}{ecPrivate},
+			Keys: []any{ecPrivate},
 			ExpectKeys: []serviceaccount.PublicKey{
 				{KeyID: "SoABiieYuNx4UdqYvZRVeuC6SihxgLrhLy9peHMHpTc", PublicKey: ecPublic},
 			},
 		},
 		{
 			Name:      "invalid",
-			Keys:      []interface{}{"bogus"},
+			Keys:      []any{"bogus"},
 			ExpectErr: true,
 		},
 	}

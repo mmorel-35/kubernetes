@@ -33,7 +33,7 @@ var _ metav1.ListInterface = &UnstructuredList{}
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +k8s:deepcopy-gen=true
 type UnstructuredList struct {
-	Object map[string]interface{}
+	Object map[string]any
 
 	// Items is a list of unstructured objects.
 	Items []Unstructured `json:"items"`
@@ -73,15 +73,15 @@ func (u *UnstructuredList) NewEmptyInstance() runtime.Unstructured {
 
 // UnstructuredContent returns a map contain an overlay of the Items field onto
 // the Object field. Items always overwrites overlay.
-func (u *UnstructuredList) UnstructuredContent() map[string]interface{} {
-	out := make(map[string]interface{}, len(u.Object)+1)
+func (u *UnstructuredList) UnstructuredContent() map[string]any {
+	out := make(map[string]any, len(u.Object)+1)
 
 	// shallow copy every property
 	for k, v := range u.Object {
 		out[k] = v
 	}
 
-	items := make([]interface{}, len(u.Items))
+	items := make([]any, len(u.Items))
 	for i, item := range u.Items {
 		items[i] = item.UnstructuredContent()
 	}
@@ -92,20 +92,20 @@ func (u *UnstructuredList) UnstructuredContent() map[string]interface{} {
 // SetUnstructuredContent obeys the conventions of List and keeps Items and the items
 // array in sync. If items is not an array of objects in the incoming map, then any
 // mismatched item will be removed.
-func (obj *UnstructuredList) SetUnstructuredContent(content map[string]interface{}) {
+func (obj *UnstructuredList) SetUnstructuredContent(content map[string]any) {
 	obj.Object = content
 	if content == nil {
 		obj.Items = nil
 		return
 	}
-	items, ok := obj.Object["items"].([]interface{})
+	items, ok := obj.Object["items"].([]any)
 	if !ok || items == nil {
-		items = []interface{}{}
+		items = []any{}
 	}
 	unstructuredItems := make([]Unstructured, 0, len(items))
-	newItems := make([]interface{}, 0, len(items))
+	newItems := make([]any, 0, len(items))
 	for _, item := range items {
-		o, ok := item.(map[string]interface{})
+		o, ok := item.(map[string]any)
 		if !ok {
 			continue
 		}
@@ -211,9 +211,9 @@ func (u *UnstructuredList) GroupVersionKind() schema.GroupVersionKind {
 	return gvk
 }
 
-func (u *UnstructuredList) setNestedField(value interface{}, fields ...string) {
+func (u *UnstructuredList) setNestedField(value any, fields ...string) {
 	if u.Object == nil {
-		u.Object = make(map[string]interface{})
+		u.Object = make(map[string]any)
 	}
 	SetNestedField(u.Object, value, fields...)
 }

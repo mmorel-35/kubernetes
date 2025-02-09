@@ -61,8 +61,8 @@ func TestUpdatePodInCache(t *testing.T) {
 
 	tests := []struct {
 		name   string
-		oldObj interface{}
-		newObj interface{}
+		oldObj any
+		newObj any
 	}{
 		{
 			name:   "pod updated with the same UID",

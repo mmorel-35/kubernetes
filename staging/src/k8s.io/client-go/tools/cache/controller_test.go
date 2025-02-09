@@ -62,7 +62,7 @@ func Example() {
 
 		// Let's implement a simple controller that just deletes
 		// everything that comes in.
-		Process: func(obj interface{}, isInInitialList bool) error {
+		Process: func(obj any, isInInitialList bool) error {
 			// Obj is from the Pop method of the Queue we make above.
 			newest := obj.(Deltas).Newest()
 
@@ -139,10 +139,10 @@ func ExampleNewInformer() {
 		&v1.Pod{},
 		time.Millisecond*100,
 		ResourceEventHandlerDetailedFuncs{
-			AddFunc: func(obj interface{}, isInInitialList bool) {
+			AddFunc: func(obj any, isInInitialList bool) {
 				source.Delete(obj.(runtime.Object))
 			},
-			DeleteFunc: func(obj interface{}) {
+			DeleteFunc: func(obj any) {
 				key, err := DeletionHandlingMetaNamespaceKeyFunc(obj)
 				if err != nil {
 					key = "oops something went wrong with the key"
@@ -196,7 +196,7 @@ func TestHammerController(t *testing.T) {
 	// map of key to operations done on the key
 	outputSet := map[string][]string{}
 
-	recordFunc := func(eventType string, obj interface{}) {
+	recordFunc := func(eventType string, obj any) {
 		key, err := DeletionHandlingMetaNamespaceKeyFunc(obj)
 		if err != nil {
 			t.Errorf("something wrong with key: %v", err)
@@ -215,9 +215,9 @@ func TestHammerController(t *testing.T) {
 		&v1.Pod{},
 		time.Millisecond*100,
 		ResourceEventHandlerDetailedFuncs{
-			AddFunc:    func(obj interface{}, isInInitialList bool) { recordFunc("add", obj) },
-			UpdateFunc: func(oldObj, newObj interface{}) { recordFunc("update", newObj) },
-			DeleteFunc: func(obj interface{}) { recordFunc("delete", obj) },
+			AddFunc:    func(obj any, isInInitialList bool) { recordFunc("add", obj) },
+			UpdateFunc: func(oldObj, newObj any) { recordFunc("update", newObj) },
+			DeleteFunc: func(obj any) { recordFunc("delete", obj) },
 		},
 	)
 
@@ -376,7 +376,7 @@ func TestUpdate(t *testing.T) {
 		&v1.Pod{},
 		0,
 		ResourceEventHandlerFuncs{
-			UpdateFunc: func(oldObj, newObj interface{}) {
+			UpdateFunc: func(oldObj, newObj any) {
 				o, n := oldObj.(*v1.Pod), newObj.(*v1.Pod)
 				from, to := o.Labels["check"], n.Labels["check"]
 				if !allowedTransitions[pair{from, to}] {
@@ -386,7 +386,7 @@ func TestUpdate(t *testing.T) {
 					source.Delete(n)
 				}
 			},
-			DeleteFunc: func(obj interface{}) {
+			DeleteFunc: func(obj any) {
 				testDoneWG.Done()
 			},
 		},
@@ -428,7 +428,7 @@ func TestPanicPropagated(t *testing.T) {
 		&v1.Pod{},
 		time.Millisecond*100,
 		ResourceEventHandlerDetailedFuncs{
-			AddFunc: func(obj interface{}, isInInitialList bool) {
+			AddFunc: func(obj any, isInInitialList bool) {
 				// Create a panic.
 				panic("Just panic.")
 			},
@@ -440,7 +440,7 @@ func TestPanicPropagated(t *testing.T) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	propagated := make(chan interface{})
+	propagated := make(chan any)
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
@@ -495,14 +495,14 @@ func TestTransformingInformer(t *testing.T) {
 
 	type event struct {
 		eventType watch.EventType
-		previous  interface{}
-		current   interface{}
+		previous  any
+		current   any
 	}
 	events := make(chan event, 10)
-	recordEvent := func(eventType watch.EventType, previous, current interface{}) {
+	recordEvent := func(eventType watch.EventType, previous, current any) {
 		events <- event{eventType: eventType, previous: previous, current: current}
 	}
-	verifyEvent := func(eventType watch.EventType, previous, current interface{}) {
+	verifyEvent := func(eventType watch.EventType, previous, current any) {
 		select {
 		case event := <-events:
 			if event.eventType != eventType {
@@ -519,7 +519,7 @@ func TestTransformingInformer(t *testing.T) {
 		}
 	}
 
-	podTransformer := func(obj interface{}) (interface{}, error) {
+	podTransformer := func(obj any) (any, error) {
 		pod, ok := obj.(*v1.Pod)
 		if !ok {
 			return nil, fmt.Errorf("unexpected object type: %T", obj)
@@ -539,14 +539,14 @@ func TestTransformingInformer(t *testing.T) {
 		&v1.Pod{},
 		0,
 		ResourceEventHandlerDetailedFuncs{
-			AddFunc:    func(obj interface{}, isInInitialList bool) { recordEvent(watch.Added, nil, obj) },
-			UpdateFunc: func(oldObj, newObj interface{}) { recordEvent(watch.Modified, oldObj, newObj) },
-			DeleteFunc: func(obj interface{}) { recordEvent(watch.Deleted, obj, nil) },
+			AddFunc:    func(obj any, isInInitialList bool) { recordEvent(watch.Added, nil, obj) },
+			UpdateFunc: func(oldObj, newObj any) { recordEvent(watch.Modified, oldObj, newObj) },
+			DeleteFunc: func(obj any) { recordEvent(watch.Deleted, obj, nil) },
 		},
 		podTransformer,
 	)
 
-	verifyStore := func(expectedItems []interface{}) {
+	verifyStore := func(expectedItems []any) {
 		items := store.List()
 		if len(items) != len(expectedItems) {
 			t.Errorf("unexpected items %v, expected %v", items, expectedItems)
@@ -570,11 +570,11 @@ func TestTransformingInformer(t *testing.T) {
 	go controller.RunWithContext(ctx)
 
 	verifyEvent(watch.Added, nil, expectedPod("pod1", "2"))
-	verifyStore([]interface{}{expectedPod("pod1", "2")})
+	verifyStore([]any{expectedPod("pod1", "2")})
 
 	source.Add(makePod("pod2", "1"))
 	verifyEvent(watch.Added, nil, expectedPod("pod2", "1"))
-	verifyStore([]interface{}{expectedPod("pod1", "2"), expectedPod("pod2", "1")})
+	verifyStore([]any{expectedPod("pod1", "2"), expectedPod("pod2", "1")})
 
 	source.Add(makePod("pod3", "1"))
 	verifyEvent(watch.Added, nil, expectedPod("pod3", "1"))
@@ -584,7 +584,7 @@ func TestTransformingInformer(t *testing.T) {
 
 	source.Delete(makePod("pod1", "2"))
 	verifyEvent(watch.Deleted, expectedPod("pod1", "2"), nil)
-	verifyStore([]interface{}{expectedPod("pod2", "2"), expectedPod("pod3", "1")})
+	verifyStore([]any{expectedPod("pod2", "2"), expectedPod("pod3", "1")})
 }
 
 func TestTransformingInformerRace(t *testing.T) {
@@ -614,7 +614,7 @@ func TestTransformingInformerRace(t *testing.T) {
 	}
 
 	badTransform := atomic.Bool{}
-	podTransformer := func(obj interface{}) (interface{}, error) {
+	podTransformer := func(obj any) (any, error) {
 		pod, ok := obj.(*v1.Pod)
 		if !ok {
 			return nil, fmt.Errorf("unexpected object type: %T", obj)
@@ -634,7 +634,7 @@ func TestTransformingInformerRace(t *testing.T) {
 
 	type event struct{}
 	events := make(chan event, numObjs)
-	recordEvent := func(eventType watch.EventType, previous, current interface{}) {
+	recordEvent := func(eventType watch.EventType, previous, current any) {
 		select {
 		case events <- event{}:
 		case <-testCtx.Done():
@@ -651,9 +651,9 @@ func TestTransformingInformerRace(t *testing.T) {
 		&v1.Pod{},
 		5*time.Millisecond,
 		ResourceEventHandlerDetailedFuncs{
-			AddFunc:    func(obj interface{}, isInInitialList bool) { recordEvent(watch.Added, nil, obj) },
-			UpdateFunc: func(oldObj, newObj interface{}) { recordEvent(watch.Modified, oldObj, newObj) },
-			DeleteFunc: func(obj interface{}) { recordEvent(watch.Deleted, obj, nil) },
+			AddFunc:    func(obj any, isInInitialList bool) { recordEvent(watch.Added, nil, obj) },
+			UpdateFunc: func(oldObj, newObj any) { recordEvent(watch.Modified, oldObj, newObj) },
+			DeleteFunc: func(obj any) { recordEvent(watch.Deleted, obj, nil) },
 		},
 		podTransformer,
 	)

@@ -55,13 +55,13 @@ func TestCapManagersManagerMergesEntries(t *testing.T) {
 		})
 
 	podWithLabels := func(labels ...string) runtime.Object {
-		labelMap := map[string]interface{}{}
+		labelMap := map[string]any{}
 		for _, key := range labels {
 			labelMap[key] = "true"
 		}
 		obj := &unstructured.Unstructured{
-			Object: map[string]interface{}{
-				"metadata": map[string]interface{}{
+			Object: map[string]any{
+				"metadata": map[string]any{
 					"labels": labelMap,
 				},
 			},
@@ -285,7 +285,7 @@ func expectManagesField(t *testing.T, f managedfieldstest.TestFieldManager, m st
 	t.Fatalf("exected to find manager name %v, but got: %#v", m, f.ManagedFields())
 }
 
-func mustMarshal(i interface{}) string {
+func mustMarshal(i any) string {
 	b, err := json.MarshalIndent(i, "", "  ")
 	if err != nil {
 		panic(fmt.Sprintf("error marshalling %v to json: %v", i, err))

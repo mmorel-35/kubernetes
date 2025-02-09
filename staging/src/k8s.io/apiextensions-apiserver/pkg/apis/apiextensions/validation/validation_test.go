@@ -2112,7 +2112,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"foo": "abc",
 										"bar": int64(42.0),
 									}),
@@ -2124,7 +2124,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"foo": "abc",
 									}),
 								},
@@ -2135,7 +2135,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"foo": int64(42),
 									}),
 								},
@@ -2151,7 +2151,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Pattern: "b",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"good": "a",
 										"bad":  "a",
 									}),
@@ -2161,7 +2161,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 									Properties: map[string]apiextensions.JSONSchemaProps{
 										"preserveUnknownFields": {
 											Type: "object",
-											Default: jsonPtr(map[string]interface{}{
+											Default: jsonPtr(map[string]any{
 												"foo": "abc",
 												// this is under x-kubernetes-preserve-unknown-fields
 												"bar": int64(42.0),
@@ -2174,7 +2174,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 													Type: "string",
 												},
 											},
-											Default: jsonPtr(map[string]interface{}{
+											Default: jsonPtr(map[string]any{
 												"foo": "abc",
 												"bar": int64(42.0),
 											}),
@@ -2191,11 +2191,11 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"foo":        "abc",
 										"apiVersion": "foo/v1",
 										"kind":       "v1",
-										"metadata": map[string]interface{}{
+										"metadata": map[string]any{
 											"name": "foo",
 										},
 									}),
@@ -2209,11 +2209,11 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"foo":        "abc",
 										"apiVersion": "foo/v1",
 										"kind":       "v1",
-										"metadata": map[string]interface{}{
+										"metadata": map[string]any{
 											"name": "foo",
 										},
 										"bar": int64(42),
@@ -2228,11 +2228,11 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"foo":        "abc",
 										"apiVersion": "foo/v1",
 										"kind":       "v1",
-										"metadata": map[string]interface{}{
+										"metadata": map[string]any{
 											"name": "foo",
 											// allow: unknown fields under metadata are not rejected during CRD validation, but only pruned in storage creation
 											"unspecified": "bar",
@@ -2328,7 +2328,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 										"metadata": {
 											Type: "object",
 											// forbidden: no default for top-level metadata
-											Default: jsonPtr(map[string]interface{}{
+											Default: jsonPtr(map[string]any{
 												"name": "foo",
 											}),
 										},
@@ -2338,7 +2338,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Properties: map[string]apiextensions.JSONSchemaProps{
 												"metadata": {
 													Type: "object",
-													Default: jsonPtr(map[string]interface{}{
+													Default: jsonPtr(map[string]any{
 														"name": "foo",
 														// allow: unknown fields under metadata are not rejected during CRD validation, but only pruned in storage creation
 														"unknown": int64(42),
@@ -2418,8 +2418,8 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 												},
 												"metadata": {
 													Type: "object",
-													Default: jsonPtr(map[string]interface{}{
-														"labels": map[string]interface{}{
+													Default: jsonPtr(map[string]any{
+														"labels": map[string]any{
 															// invalid: non-validating nested field in ObjectMeta
 															"bar": "x y",
 														},
@@ -2582,7 +2582,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 								"metadata": {
 									Type: "object",
 									// forbidden: no default for top-level metadata
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"name": "foo",
 									}),
 								},
@@ -2630,7 +2630,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 									Properties: map[string]apiextensions.JSONSchemaProps{
 										"metadata": {
 											Type: "object",
-											Default: jsonPtr(map[string]interface{}{
+											Default: jsonPtr(map[string]any{
 												"name": "foo",
 											}),
 										},
@@ -2658,7 +2658,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 												},
 											},
 											// allowed: unknown fields outside metadata
-											Default: jsonPtr(map[string]interface{}{
+											Default: jsonPtr(map[string]any{
 												"unknown": int64(42),
 											}),
 										},
@@ -2672,10 +2672,10 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 										},
 									},
 									XEmbeddedResource: true,
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"apiVersion": "v1",
 										"kind":       "Pod",
-										"metadata": map[string]interface{}{
+										"metadata": map[string]any{
 											"name":    "foo",
 											"unknown": int64(42),
 										},
@@ -2694,11 +2694,11 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											},
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
 											"apiVersion": "v1",
 											"kind":       "Pod",
-											"metadata": map[string]interface{}{
+											"metadata": map[string]any{
 												"name":    "foo",
 												"unknown": int64(42),
 											},
@@ -2714,10 +2714,10 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"apiVersion": "v1",
 										"kind":       "Pod",
-										"metadata": map[string]interface{}{
+										"metadata": map[string]any{
 											"name": "foo",
 											// allowed: unspecified field in ObjectMeta
 											"unknown": int64(42),
@@ -2739,11 +2739,11 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											},
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
 											"apiVersion": "v1",
 											"kind":       "Pod",
-											"metadata": map[string]interface{}{
+											"metadata": map[string]any{
 												"name": "foo",
 												// allowed: unspecified field in ObjectMeta
 												"unknown": int64(42),
@@ -2761,10 +2761,10 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 									XEmbeddedResource:      true,
 									XPreserveUnknownFields: pointer.BoolPtr(true),
 									Properties:             map[string]apiextensions.JSONSchemaProps{},
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"apiVersion": "v1",
 										"kind":       "Pod",
-										"metadata": map[string]interface{}{
+										"metadata": map[string]any{
 											"name": "foo",
 											// allowed: unspecified field in ObjectMeta
 											"unknown": int64(42),
@@ -2783,11 +2783,11 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Properties:             map[string]apiextensions.JSONSchemaProps{},
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
 											"apiVersion": "v1",
 											"kind":       "Pod",
-											"metadata": map[string]interface{}{
+											"metadata": map[string]any{
 												"name": "foo",
 												// allowed: unspecified field in ObjectMeta
 												"unknown": int64(42),
@@ -2807,11 +2807,11 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Properties:             map[string]apiextensions.JSONSchemaProps{},
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
 											"apiVersion": "v1",
 											"kind":       "Pod",
-											"metadata": map[string]interface{}{
+											"metadata": map[string]any{
 												"name": "foo",
 												// allowed: unspecified field in ObjectMeta
 												"unknown": int64(42),
@@ -2868,7 +2868,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										// invalid: wrong type
 										"apiVersion": int64(42),
 									}),
@@ -2881,7 +2881,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										// invalid: wrong type
 										"kind": int64(42),
 									}),
@@ -2894,8 +2894,8 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"metadata": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"metadata": map[string]any{
 											// invalid: wrong type
 											"name": int64(42),
 										},
@@ -2909,9 +2909,9 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"metadata": map[string]interface{}{
-											"labels": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"metadata": map[string]any{
+											"labels": map[string]any{
 												// invalid: wrong type
 												"foo": int64(42),
 											},
@@ -2926,8 +2926,8 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"metadata": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"metadata": map[string]any{
 											// invalid: wrong type
 											"annotations": int64(42),
 										},
@@ -2941,7 +2941,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										// invalid: wrong type
 										"metadata": int64(42),
 									}),
@@ -2960,8 +2960,8 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											},
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
 											// invalid: wrong type
 											"apiVersion": int64(42),
 										},
@@ -2980,8 +2980,8 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											},
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
 											// invalid: wrong type
 											"kind": int64(42),
 										},
@@ -3000,9 +3000,9 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											},
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
-											"metadata": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
+											"metadata": map[string]any{
 												"name": int64(42),
 											},
 										},
@@ -3021,10 +3021,10 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											},
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
-											"metadata": map[string]interface{}{
-												"labels": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
+											"metadata": map[string]any{
+												"labels": map[string]any{
 													// invalid: wrong type
 													"foo": int64(42),
 												},
@@ -3045,9 +3045,9 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											},
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
-											"metadata": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
+											"metadata": map[string]any{
 												// invalid: wrong type
 												"annotations": int64(42),
 											},
@@ -3067,8 +3067,8 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											},
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
 											"metadata": int64(42),
 										},
 									}),
@@ -3099,7 +3099,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 														},
 													},
 													// invalid
-													Default: jsonPtr(map[string]interface{}{
+													Default: jsonPtr(map[string]any{
 														"foo": "x y",
 													}),
 												},
@@ -3115,7 +3115,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"apiVersion": "foo/v1",
 										// invalid: wrongly typed
 										"kind": "%",
@@ -3129,10 +3129,10 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"apiVersion": "foo/v1",
 										"kind":       "Foo",
-										"metadata": map[string]interface{}{
+										"metadata": map[string]any{
 											// invalid: wrongly typed
 											"name": "%",
 										},
@@ -3146,11 +3146,11 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											Type: "string",
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"apiVersion": "foo/v1",
 										"kind":       "Foo",
-										"metadata": map[string]interface{}{
-											"labels": map[string]interface{}{
+										"metadata": map[string]any{
+											"labels": map[string]any{
 												// invalid: wrongly typed
 												"foo": "x y",
 											},
@@ -3170,8 +3170,8 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											},
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
 											"apiVersion": "foo/v1",
 											// invalid: wrongly typed
 											"kind": "%",
@@ -3191,11 +3191,11 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											},
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
 											"apiVersion": "foo/v1",
 											"kind":       "Foo",
-											"metadata": map[string]interface{}{
+											"metadata": map[string]any{
 												// invalid: wrongly typed
 												"name": "%",
 											},
@@ -3215,12 +3215,12 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 											},
 										},
 									},
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
 											"apiVersion": "foo/v1",
 											"kind":       "Foo",
-											"metadata": map[string]interface{}{
-												"labels": map[string]interface{}{
+											"metadata": map[string]any{
+												"labels": map[string]any{
 													// invalid: wrongly typed
 													"foo": "x y",
 												},
@@ -3263,7 +3263,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 														},
 													},
 													// valid
-													Default: jsonPtr(map[string]interface{}{
+													Default: jsonPtr(map[string]any{
 														"foo": "foo",
 													}),
 												},
@@ -3293,9 +3293,9 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 												},
 											},
 											// valid
-											Default: jsonPtr(map[string]interface{}{
+											Default: jsonPtr(map[string]any{
 												"name": "foo",
-												"labels": map[string]interface{}{
+												"labels": map[string]any{
 													"foo": "foo",
 												},
 											}),
@@ -3334,12 +3334,12 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 										},
 									},
 									// valid
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"apiVersion": "foo/v1",
 										"kind":       "Foo",
-										"metadata": map[string]interface{}{
+										"metadata": map[string]any{
 											"name": "foo",
-											"labels": map[string]interface{}{
+											"labels": map[string]any{
 												"foo": "foo",
 											},
 										},
@@ -3382,13 +3382,13 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 										},
 									},
 									// valid
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
 											"apiVersion": "foo/v1",
 											"kind":       "Foo",
-											"metadata": map[string]interface{}{
+											"metadata": map[string]any{
 												"name": "foo",
-												"labels": map[string]interface{}{
+												"labels": map[string]any{
 													"foo": "foo",
 												},
 											},
@@ -3431,7 +3431,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 														},
 													},
 													// invalid
-													Default: jsonPtr(map[string]interface{}{
+													Default: jsonPtr(map[string]any{
 														"foo": "bar",
 													}),
 												},
@@ -3461,7 +3461,7 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 												},
 											},
 											// invalid name
-											Default: jsonPtr(map[string]interface{}{
+											Default: jsonPtr(map[string]any{
 												"name": "bar",
 											}),
 										},
@@ -3489,9 +3489,9 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 												},
 											},
 											// invalid labels
-											Default: jsonPtr(map[string]interface{}{
+											Default: jsonPtr(map[string]any{
 												"name": "foo",
-												"labels": map[string]interface{}{
+												"labels": map[string]any{
 													"foo": "bar",
 												},
 											}),
@@ -3530,10 +3530,10 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 										},
 									},
 									// invalid
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"apiVersion": "foo/v1",
 										"kind":       "Foo",
-										"metadata": map[string]interface{}{
+										"metadata": map[string]any{
 											"name": "bar",
 										},
 									}),
@@ -3570,12 +3570,12 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 										},
 									},
 									// invalid
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"apiVersion": "foo/v1",
 										"kind":       "Foo",
-										"metadata": map[string]interface{}{
+										"metadata": map[string]any{
 											"name": "foo",
-											"labels": map[string]interface{}{
+											"labels": map[string]any{
 												"foo": "bar",
 											},
 										},
@@ -3613,10 +3613,10 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 										},
 									},
 									// invalid
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"apiVersion": "bar/v1",
 										"kind":       "Foo",
-										"metadata": map[string]interface{}{
+										"metadata": map[string]any{
 											"name": "foo",
 										},
 									}),
@@ -3653,10 +3653,10 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 										},
 									},
 									// invalid
-									Default: jsonPtr(map[string]interface{}{
+									Default: jsonPtr(map[string]any{
 										"apiVersion": "foo/v1",
 										"kind":       "Bar",
-										"metadata": map[string]interface{}{
+										"metadata": map[string]any{
 											"name": "foo",
 										},
 									}),
@@ -3698,13 +3698,13 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 										},
 									},
 									// invalid
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
 											"apiVersion": "foo/v1",
 											"kind":       "Foo",
-											"metadata": map[string]interface{}{
+											"metadata": map[string]any{
 												"name": "bar",
-												"labels": map[string]interface{}{
+												"labels": map[string]any{
 													"foo": "foo",
 												},
 											},
@@ -3748,13 +3748,13 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 										},
 									},
 									// invalid
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
 											"apiVersion": "foo/v1",
 											"kind":       "Foo",
-											"metadata": map[string]interface{}{
+											"metadata": map[string]any{
 												"name": "foo",
-												"labels": map[string]interface{}{
+												"labels": map[string]any{
 													"foo": "bar",
 												},
 											},
@@ -3798,13 +3798,13 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 										},
 									},
 									// invalid
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
 											"apiVersion": "bar/v1",
 											"kind":       "Foo",
-											"metadata": map[string]interface{}{
+											"metadata": map[string]any{
 												"name": "foo",
-												"labels": map[string]interface{}{
+												"labels": map[string]any{
 													"foo": "foo",
 												},
 											},
@@ -3848,13 +3848,13 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 										},
 									},
 									// invalid
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
 											"apiVersion": "foo/v1",
 											"kind":       "Bar",
-											"metadata": map[string]interface{}{
+											"metadata": map[string]any{
 												"name": "foo",
-												"labels": map[string]interface{}{
+												"labels": map[string]any{
 													"foo": "foo",
 												},
 											},
@@ -3876,8 +3876,8 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 										},
 									},
 									// invalid: kind and apiVersion are missing
-									Default: jsonPtr(map[string]interface{}{
-										"metadata": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"metadata": map[string]any{
 											"name": "bar",
 										},
 									}),
@@ -3901,9 +3901,9 @@ func TestValidateCustomResourceDefinition(t *testing.T) {
 										},
 									},
 									// invalid: kind and apiVersion are missing
-									Default: jsonPtr(map[string]interface{}{
-										"embedded": map[string]interface{}{
-											"metadata": map[string]interface{}{
+									Default: jsonPtr(map[string]any{
+										"embedded": map[string]any{
+											"metadata": map[string]any{
 												"name": "bar",
 											},
 										},
@@ -9431,7 +9431,7 @@ func TestValidateCustomResourceDefinitionValidation(t *testing.T) {
 									Rule: "self.field1 < self.field2",
 								},
 							},
-							Default: jsonPtr(map[string]interface{}{"field1": 1, "field2": 2}),
+							Default: jsonPtr(map[string]any{"field1": 1, "field2": 2}),
 						},
 					},
 				},
@@ -9491,7 +9491,7 @@ func TestValidateCustomResourceDefinitionValidation(t *testing.T) {
 									Rule: "self.field1 < self.field2",
 								},
 							},
-							Default: jsonPtr(map[string]interface{}{"field1": 2, "field2": 1}),
+							Default: jsonPtr(map[string]any{"field1": 2, "field2": 1}),
 						},
 					},
 				},
@@ -11162,12 +11162,12 @@ func int64Ptr(f int64) *int64 {
 	return &f
 }
 
-func jsonPtr(x interface{}) *apiextensions.JSON {
+func jsonPtr(x any) *apiextensions.JSON {
 	ret := apiextensions.JSON(x)
 	return &ret
 }
 
-func jsonSlice(l ...interface{}) []apiextensions.JSON {
+func jsonSlice(l ...any) []apiextensions.JSON {
 	if len(l) == 0 {
 		return nil
 	}

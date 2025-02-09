@@ -113,7 +113,7 @@ func testAPIServiceWrite(t *testing.T, cfg *rest.Config, shouldBlock bool) {
 func testCRWrite(t *testing.T, cfg *rest.Config, shouldBlock bool) {
 	dynamicClient := dynamic.NewForConfigOrDie(cfg)
 	crclient := dynamicClient.Resource(schema.GroupVersionResource{Group: "cr.bar.com", Version: "v1", Resource: "foos"}).Namespace("default")
-	_, err := crclient.Create(context.TODO(), &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "cr.bar.com/v1", "kind": "Foo", "metadata": map[string]interface{}{"generateName": "test-"}}}, metav1.CreateOptions{})
+	_, err := crclient.Create(context.TODO(), &unstructured.Unstructured{Object: map[string]any{"apiVersion": "cr.bar.com/v1", "kind": "Foo", "metadata": map[string]any{"generateName": "test-"}}}, metav1.CreateOptions{})
 	assertBlocking("writes to CR", t, err, shouldBlock)
 }
 

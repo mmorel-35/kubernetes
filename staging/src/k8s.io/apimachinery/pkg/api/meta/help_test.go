@@ -161,17 +161,17 @@ func fakeUnstructuredList(numItems int) runtime.Unstructured {
 
 	for i := range out.Items {
 		out.Items[i] = unstructured.Unstructured{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"apiVersion": "v1",
 				"kind":       "Pod",
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"creationTimestamp": nil,
 					"name":              strconv.Itoa(i),
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"hostname": "example.com",
 				},
-				"status": map[string]interface{}{},
+				"status": map[string]any{},
 			},
 		}
 	}

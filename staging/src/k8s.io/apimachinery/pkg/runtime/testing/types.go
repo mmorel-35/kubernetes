@@ -219,10 +219,10 @@ func (obj *ExternalTestType2) GetObjectKind() schema.ObjectKind { return schema.
 
 // +k8s:deepcopy-gen=false
 type Unstructured struct {
-	// Object is a JSON compatible map with string, float, int, bool, []interface{}, or
-	// map[string]interface{}
+	// Object is a JSON compatible map with string, float, int, bool, []any, or
+	// map[string]any
 	// children.
-	Object map[string]interface{}
+	Object map[string]any
 }
 
 var _ runtime.Unstructured = &Unstructured{}
@@ -245,12 +245,12 @@ func (obj *Unstructured) EachListItem(fn func(runtime.Object) error) error {
 	if !ok {
 		return fmt.Errorf("content is not a list")
 	}
-	items, ok := field.([]interface{})
+	items, ok := field.([]any)
 	if !ok {
 		return nil
 	}
 	for _, item := range items {
-		child, ok := item.(map[string]interface{})
+		child, ok := item.(map[string]any)
 		if !ok {
 			return fmt.Errorf("items member is not an object")
 		}
@@ -274,14 +274,14 @@ func (obj *Unstructured) NewEmptyInstance() runtime.Unstructured {
 	return out
 }
 
-func (obj *Unstructured) UnstructuredContent() map[string]interface{} {
+func (obj *Unstructured) UnstructuredContent() map[string]any {
 	if obj.Object == nil {
-		return make(map[string]interface{})
+		return make(map[string]any)
 	}
 	return obj.Object
 }
 
-func (obj *Unstructured) SetUnstructuredContent(content map[string]interface{}) {
+func (obj *Unstructured) SetUnstructuredContent(content map[string]any) {
 	obj.Object = content
 }
 
@@ -329,7 +329,7 @@ func (u *Unstructured) GroupVersionKind() schema.GroupVersionKind {
 
 func (u *Unstructured) SetGroupVersionKind(gvk schema.GroupVersionKind) {
 	if u.Object == nil {
-		u.Object = make(map[string]interface{})
+		u.Object = make(map[string]any)
 	}
 	u.Object["apiVersion"] = gvk.GroupVersion().String()
 	u.Object["kind"] = gvk.Kind

@@ -20,12 +20,12 @@ package v1alpha1
 
 // FischerListerExpansion allows custom methods to be added to
 // FischerLister.
-type FischerListerExpansion interface{}
+type FischerListerExpansion any
 
 // FlunderListerExpansion allows custom methods to be added to
 // FlunderLister.
-type FlunderListerExpansion interface{}
+type FlunderListerExpansion any
 
 // FlunderNamespaceListerExpansion allows custom methods to be added to
 // FlunderNamespaceLister.
-type FlunderNamespaceListerExpansion interface{}
+type FlunderNamespaceListerExpansion any

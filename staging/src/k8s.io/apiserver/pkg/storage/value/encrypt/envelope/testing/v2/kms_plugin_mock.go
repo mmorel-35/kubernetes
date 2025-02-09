@@ -64,7 +64,7 @@ type Base64Plugin struct {
 func NewBase64Plugin(t testing.TB, socketPath string) *Base64Plugin {
 	server := grpc.NewServer(
 		grpc.UnaryInterceptor(
-			func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+			func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 				if val := metadata.ValueFromIncomingContext(ctx, ":authority"); len(val) != 1 || val[0] != "localhost" {
 					t.Errorf("wanted localhost authority, got: %v", val)
 				}

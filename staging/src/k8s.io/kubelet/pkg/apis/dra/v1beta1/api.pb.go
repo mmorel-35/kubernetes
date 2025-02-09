@@ -615,7 +615,7 @@ func RegisterDRAPluginServer(s *grpc.Server, srv DRAPluginServer) {
 	s.RegisterService(&_DRAPlugin_serviceDesc, srv)
 }
 
-func _DRAPlugin_NodePrepareResources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DRAPlugin_NodePrepareResources_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(NodePrepareResourcesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -627,13 +627,13 @@ func _DRAPlugin_NodePrepareResources_Handler(srv interface{}, ctx context.Contex
 		Server:     srv,
 		FullMethod: "/k8s.io.kubelet.pkg.apis.dra.v1beta1.DRAPlugin/NodePrepareResources",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(DRAPluginServer).NodePrepareResources(ctx, req.(*NodePrepareResourcesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DRAPlugin_NodeUnprepareResources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DRAPlugin_NodeUnprepareResources_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(NodeUnprepareResourcesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -645,7 +645,7 @@ func _DRAPlugin_NodeUnprepareResources_Handler(srv interface{}, ctx context.Cont
 		Server:     srv,
 		FullMethod: "/k8s.io.kubelet.pkg.apis.dra.v1beta1.DRAPlugin/NodeUnprepareResources",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(DRAPluginServer).NodeUnprepareResources(ctx, req.(*NodeUnprepareResourcesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
@@ -1307,7 +1307,7 @@ func (this *Claim) String() string {
 	}, "")
 	return s
 }
-func valueToStringApi(v interface{}) string {
+func valueToStringApi(v any) string {
 	rv := reflect.ValueOf(v)
 	if rv.IsNil() {
 		return "nil"

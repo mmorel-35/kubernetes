@@ -228,7 +228,7 @@ func getCSR(req *http.Request) (*certapi.CertificateSigningRequest, error) {
 	return csr, nil
 }
 
-func mustMarshal(obj interface{}) []byte {
+func mustMarshal(obj any) []byte {
 	data, err := json.Marshal(obj)
 	if err != nil {
 		panic(err)

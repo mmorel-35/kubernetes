@@ -67,7 +67,7 @@ func TestDataConsistencyChecker(t *testing.T) {
 			name:                      "data consistency check works with unstructured data (dynamic client)",
 			lastSyncedResourceVersion: "2",
 			listResponse: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "vTest",
 					"kind":       "rTestList",
 				},
@@ -270,10 +270,10 @@ func makePod(name, rv string) *v1.Pod {
 
 func makeUnstructuredObject(version, kind, name string) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": version,
 			"kind":       kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": name,
 			},
 		},

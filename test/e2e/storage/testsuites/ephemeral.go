@@ -188,7 +188,7 @@ func (p *ephemeralTestSuite) DefineTests(driver storageframework.TestDriver, pat
 		ginkgo.DeferCleanup(cleanup)
 
 		l.testCase.ReadOnly = true
-		l.testCase.RunningPodCheck = func(ctx context.Context, pod *v1.Pod) interface{} {
+		l.testCase.RunningPodCheck = func(ctx context.Context, pod *v1.Pod) any {
 			command := "mount | grep /mnt/test | grep ro,"
 			if framework.NodeOSDistroIs("windows") {
 				// attempt to create a dummy file and expect for it not to be created
@@ -206,7 +206,7 @@ func (p *ephemeralTestSuite) DefineTests(driver storageframework.TestDriver, pat
 		ginkgo.DeferCleanup(cleanup)
 
 		l.testCase.ReadOnly = false
-		l.testCase.RunningPodCheck = func(ctx context.Context, pod *v1.Pod) interface{} {
+		l.testCase.RunningPodCheck = func(ctx context.Context, pod *v1.Pod) any {
 			command := "mount | grep /mnt/test | grep rw,"
 			if framework.NodeOSDistroIs("windows") {
 				// attempt to create a dummy file and expect for it to be created
@@ -235,7 +235,7 @@ func (p *ephemeralTestSuite) DefineTests(driver storageframework.TestDriver, pat
 		}
 
 		l.testCase.ReadOnly = false
-		l.testCase.RunningPodCheck = func(ctx context.Context, pod *v1.Pod) interface{} {
+		l.testCase.RunningPodCheck = func(ctx context.Context, pod *v1.Pod) any {
 			podName := pod.Name
 			framework.Logf("Running volume expansion checks %s", podName)
 
@@ -295,7 +295,7 @@ func (p *ephemeralTestSuite) DefineTests(driver storageframework.TestDriver, pat
 			_, shared, readOnly = eDriver.GetVolume(l.config, 0)
 		}
 
-		l.testCase.RunningPodCheck = func(ctx context.Context, pod *v1.Pod) interface{} {
+		l.testCase.RunningPodCheck = func(ctx context.Context, pod *v1.Pod) any {
 			// Create another pod with the same inline volume attributes.
 			pod2 := StartInPodWithInlineVolume(ctx, f.ClientSet, f.Namespace.Name, "inline-volume-tester2", e2epod.InfiniteSleepCommand,
 				[]v1.VolumeSource{pod.Spec.Volumes[0].VolumeSource},
@@ -367,7 +367,7 @@ type EphemeralTest struct {
 	// RunningPodCheck is invoked while a pod using an inline volume is running.
 	// It can execute additional checks on the pod and its volume(s). Any data
 	// returned by it is passed to StoppedPodCheck.
-	RunningPodCheck func(ctx context.Context, pod *v1.Pod) interface{}
+	RunningPodCheck func(ctx context.Context, pod *v1.Pod) any
 
 	// StoppedPodCheck is invoked after ensuring that the pod is gone.
 	// It is passed the data gather by RunningPodCheck or nil if that
@@ -375,7 +375,7 @@ type EphemeralTest struct {
 	// like for example verifying that the ephemeral volume was really
 	// removed. How to do such a check is driver-specific and not
 	// covered by the generic storage test suite.
-	StoppedPodCheck func(ctx context.Context, nodeName string, runningPodData interface{})
+	StoppedPodCheck func(ctx context.Context, nodeName string, runningPodData any)
 
 	// NumInlineVolumes sets the number of ephemeral inline volumes per pod.
 	// Unset (= zero) is the same as one.
@@ -429,7 +429,7 @@ func (t EphemeralTest) TestEphemeral(ctx context.Context) {
 	actualNodeName := runningPod.Spec.NodeName
 
 	// Run the checker of the running pod.
-	var runningPodData interface{}
+	var runningPodData any
 	if t.RunningPodCheck != nil {
 		runningPodData = t.RunningPodCheck(ctx, pod)
 	}

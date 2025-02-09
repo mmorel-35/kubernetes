@@ -56,7 +56,7 @@ func SecretHash(sec *v1.Secret) (string, error) {
 // Data, Kind, and Name are taken into account.
 func encodeConfigMap(cm *v1.ConfigMap) (string, error) {
 	// json.Marshal sorts the keys in a stable order in the encoding
-	m := map[string]interface{}{
+	m := map[string]any{
 		"kind": "ConfigMap",
 		"name": cm.Name,
 		"data": cm.Data,
@@ -77,7 +77,7 @@ func encodeConfigMap(cm *v1.ConfigMap) (string, error) {
 // encodeSecret encodes a Secret.
 // Data, Kind, Name, and Type are taken into account.
 func encodeSecret(sec *v1.Secret) (string, error) {
-	m := map[string]interface{}{
+	m := map[string]any{
 		"kind": "Secret",
 		"type": sec.Type,
 		"name": sec.Name,

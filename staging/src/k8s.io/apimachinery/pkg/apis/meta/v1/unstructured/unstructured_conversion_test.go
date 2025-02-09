@@ -52,14 +52,14 @@ func TestObjectToUnstructuredConversion(t *testing.T) {
 			name:            "convert versioned empty object to unstructured should work",
 			objectToConvert: &testapigroupv1.Carp{},
 			expectedConvertedUnstructured: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Carp",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"creationTimestamp": nil,
 					},
-					"spec":   map[string]interface{}{},
-					"status": map[string]interface{}{},
+					"spec":   map[string]any{},
+					"status": map[string]any{},
 				},
 			},
 		},
@@ -74,17 +74,17 @@ func TestObjectToUnstructuredConversion(t *testing.T) {
 				},
 			},
 			expectedConvertedUnstructured: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Carp",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"creationTimestamp": nil,
 						"name":              "noxu",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"hostname": "example.com",
 					},
-					"status": map[string]interface{}{},
+					"status": map[string]any{},
 				},
 			},
 		},
@@ -120,7 +120,7 @@ func TestUnstructuredToObjectConversion(t *testing.T) {
 		{
 			name: "convert empty unstructured w/o gvk to versioned object should fail",
 			unstructuredToConvert: &unstructured.Unstructured{
-				Object: map[string]interface{}{},
+				Object: map[string]any{},
 			},
 			convertingObject: &testapigroupv1.Carp{},
 			expectedErrFunc: func(err error) bool {
@@ -130,7 +130,7 @@ func TestUnstructuredToObjectConversion(t *testing.T) {
 		{
 			name: "convert empty versioned unstructured to versioned object should work",
 			unstructuredToConvert: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Carp",
 				},
@@ -141,7 +141,7 @@ func TestUnstructuredToObjectConversion(t *testing.T) {
 		{
 			name: "convert empty unstructured w/o gvk to versioned object should fail",
 			unstructuredToConvert: &unstructured.Unstructured{
-				Object: map[string]interface{}{},
+				Object: map[string]any{},
 			},
 			convertingObject: &testapigroupv1.Carp{},
 			expectedErrFunc: func(err error) bool {
@@ -151,17 +151,17 @@ func TestUnstructuredToObjectConversion(t *testing.T) {
 		{
 			name: "convert valid versioned unstructured to versioned object should work",
 			unstructuredToConvert: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Carp",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"creationTimestamp": nil,
 						"name":              "noxu",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"hostname": "example.com",
 					},
-					"status": map[string]interface{}{},
+					"status": map[string]any{},
 				},
 			},
 			convertingObject: &testapigroupv1.Carp{},
@@ -177,17 +177,17 @@ func TestUnstructuredToObjectConversion(t *testing.T) {
 		{
 			name: "convert valid versioned unstructured to hub-versioned object should work",
 			unstructuredToConvert: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Carp",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"creationTimestamp": nil,
 						"name":              "noxu",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"hostname": "example.com",
 					},
-					"status": map[string]interface{}{},
+					"status": map[string]any{},
 				},
 			},
 			convertingObject: &testapigroup.Carp{},
@@ -203,17 +203,17 @@ func TestUnstructuredToObjectConversion(t *testing.T) {
 		{
 			name: "convert unexisting-versioned unstructured to hub-versioned object should fail",
 			unstructuredToConvert: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v9",
 					"kind":       "Carp",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"creationTimestamp": nil,
 						"name":              "noxu",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"hostname": "example.com",
 					},
-					"status": map[string]interface{}{},
+					"status": map[string]any{},
 				},
 			},
 			convertingObject: &testapigroup.Carp{},
@@ -228,17 +228,17 @@ func TestUnstructuredToObjectConversion(t *testing.T) {
 		{
 			name: "convert valid versioned unstructured to object w/ a mismatching kind should fail",
 			unstructuredToConvert: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Carp",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"creationTimestamp": nil,
 						"name":              "noxu",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"hostname": "example.com",
 					},
-					"status": map[string]interface{}{},
+					"status": map[string]any{},
 				},
 			},
 			convertingObject: &metav1.CreateOptions{},
@@ -286,7 +286,7 @@ func TestUnstructuredToGVConversion(t *testing.T) {
 		{
 			name: "convert versioned unstructured to valid external version should work",
 			unstructuredToConvert: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Carp",
 				},
@@ -302,7 +302,7 @@ func TestUnstructuredToGVConversion(t *testing.T) {
 		{
 			name: "convert hub-versioned unstructured to hub version should work",
 			unstructuredToConvert: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "__internal",
 					"kind":       "Carp",
 				},
@@ -313,7 +313,7 @@ func TestUnstructuredToGVConversion(t *testing.T) {
 		{
 			name: "convert empty unstructured w/o gvk to versioned should fail",
 			unstructuredToConvert: &unstructured.Unstructured{
-				Object: map[string]interface{}{},
+				Object: map[string]any{},
 			},
 			targetGV: schema.GroupVersion{Group: "", Version: "v1"},
 			expectedErrFunc: func(err error) bool {
@@ -324,7 +324,7 @@ func TestUnstructuredToGVConversion(t *testing.T) {
 		{
 			name: "convert versioned unstructured to mismatching external version should fail",
 			unstructuredToConvert: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Carp",
 				},
@@ -339,7 +339,7 @@ func TestUnstructuredToGVConversion(t *testing.T) {
 		{
 			name: "convert versioned unstructured to mismatching internal version should fail",
 			unstructuredToConvert: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Carp",
 				},
@@ -354,17 +354,17 @@ func TestUnstructuredToGVConversion(t *testing.T) {
 		{
 			name: "convert valid versioned unstructured to its own version should work",
 			unstructuredToConvert: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Carp",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"creationTimestamp": nil,
 						"name":              "noxu",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"hostname": "example.com",
 					},
-					"status": map[string]interface{}{},
+					"status": map[string]any{},
 				},
 			},
 			targetGV: schema.GroupVersion{Group: "", Version: "v1"},
@@ -384,17 +384,17 @@ func TestUnstructuredToGVConversion(t *testing.T) {
 		{
 			name: "convert valid versioned unstructured to hub-version should work ignoring type meta",
 			unstructuredToConvert: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Carp",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"creationTimestamp": nil,
 						"name":              "noxu",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"hostname": "example.com",
 					},
-					"status": map[string]interface{}{},
+					"status": map[string]any{},
 				},
 			},
 			targetGV: schema.GroupVersion{Group: "", Version: "__internal"},
@@ -410,17 +410,17 @@ func TestUnstructuredToGVConversion(t *testing.T) {
 		{
 			name: "convert valid versioned unstructured to unexisting version should fail",
 			unstructuredToConvert: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Carp",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"creationTimestamp": nil,
 						"name":              "noxu",
 					},
-					"spec": map[string]interface{}{
+					"spec": map[string]any{
 						"hostname": "example.com",
 					},
-					"status": map[string]interface{}{},
+					"status": map[string]any{},
 				},
 			},
 			targetGV: schema.GroupVersion{Group: "", Version: "v9"},
@@ -457,7 +457,7 @@ func TestUnstructuredToUnstructuredConversion(t *testing.T) {
 	// just copy/pastes
 	scheme, _ := test.TestScheme()
 	inUnstructured := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "v1",
 			"kind":       "Carp",
 		},

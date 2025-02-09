@@ -109,20 +109,20 @@ func TestConvertToGVK(t *testing.T) {
 		},
 		"no conversion for Unstructured object whose gvk matches the desired gvk": {
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "mygroup.k8s.io/v1",
 					"kind":       "Flunder",
-					"data": map[string]interface{}{
+					"data": map[string]any{
 						"Key": "Value",
 					},
 				},
 			},
 			gvk: schema.GroupVersionKind{Group: "mygroup.k8s.io", Version: "v1", Kind: "Flunder"},
 			expectedObj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "mygroup.k8s.io/v1",
 					"kind":       "Flunder",
-					"data": map[string]interface{}{
+					"data": map[string]any{
 						"Key": "Value",
 					},
 				},
@@ -148,7 +148,7 @@ func TestConvertToGVK(t *testing.T) {
 func TestRuntimeSchemeConvert(t *testing.T) {
 	scheme := initiateScheme(t)
 	obj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"foo": "bar",
 		},
 	}
@@ -174,7 +174,7 @@ func TestConvertVersionedAttributes(t *testing.T) {
 	}
 	u := func(data string) *unstructured.Unstructured {
 		t.Helper()
-		m := map[string]interface{}{}
+		m := map[string]any{}
 		if err := json.Unmarshal([]byte(data), &m); err != nil {
 			t.Fatal(err)
 		}

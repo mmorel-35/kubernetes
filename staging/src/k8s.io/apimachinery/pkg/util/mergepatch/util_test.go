@@ -23,8 +23,8 @@ import (
 
 func TestHasConflicts(t *testing.T) {
 	testCases := []struct {
-		A   interface{}
-		B   interface{}
+		A   any
+		B   any
 		Ret bool
 	}{
 		{A: "hello", B: "hello", Ret: false},
@@ -38,62 +38,62 @@ func TestHasConflicts(t *testing.T) {
 		{A: false, B: false, Ret: false},
 		{A: float64(3), B: float64(3), Ret: false},
 
-		{A: "hello", B: []interface{}{}, Ret: true},
-		{A: []interface{}{int64(1)}, B: []interface{}{}, Ret: true},
-		{A: []interface{}{}, B: []interface{}{}, Ret: false},
-		{A: []interface{}{int64(1)}, B: []interface{}{int64(1)}, Ret: false},
-		{A: map[string]interface{}{}, B: []interface{}{int64(1)}, Ret: true},
+		{A: "hello", B: []any{}, Ret: true},
+		{A: []any{int64(1)}, B: []any{}, Ret: true},
+		{A: []any{}, B: []any{}, Ret: false},
+		{A: []any{int64(1)}, B: []any{int64(1)}, Ret: false},
+		{A: map[string]any{}, B: []any{int64(1)}, Ret: true},
 
-		{A: map[string]interface{}{}, B: map[string]interface{}{"a": int64(1)}, Ret: false},
-		{A: map[string]interface{}{"a": int64(1)}, B: map[string]interface{}{"a": int64(1)}, Ret: false},
-		{A: map[string]interface{}{"a": int64(1)}, B: map[string]interface{}{"a": int64(2)}, Ret: true},
-		{A: map[string]interface{}{"a": int64(1)}, B: map[string]interface{}{"b": int64(2)}, Ret: false},
+		{A: map[string]any{}, B: map[string]any{"a": int64(1)}, Ret: false},
+		{A: map[string]any{"a": int64(1)}, B: map[string]any{"a": int64(1)}, Ret: false},
+		{A: map[string]any{"a": int64(1)}, B: map[string]any{"a": int64(2)}, Ret: true},
+		{A: map[string]any{"a": int64(1)}, B: map[string]any{"b": int64(2)}, Ret: false},
 
 		{
-			A:   map[string]interface{}{"a": []interface{}{int64(1)}},
-			B:   map[string]interface{}{"a": []interface{}{int64(1)}},
+			A:   map[string]any{"a": []any{int64(1)}},
+			B:   map[string]any{"a": []any{int64(1)}},
 			Ret: false,
 		},
 		{
-			A:   map[string]interface{}{"a": []interface{}{int64(1)}},
-			B:   map[string]interface{}{"a": []interface{}{}},
+			A:   map[string]any{"a": []any{int64(1)}},
+			B:   map[string]any{"a": []any{}},
 			Ret: true,
 		},
 		{
-			A:   map[string]interface{}{"a": []interface{}{int64(1)}},
-			B:   map[string]interface{}{"a": int64(1)},
+			A:   map[string]any{"a": []any{int64(1)}},
+			B:   map[string]any{"a": int64(1)},
 			Ret: true,
 		},
 
 		// Maps and lists with multiple entries.
 		{
-			A:   map[string]interface{}{"a": int64(1), "b": int64(2)},
-			B:   map[string]interface{}{"a": int64(1), "b": int64(0)},
+			A:   map[string]any{"a": int64(1), "b": int64(2)},
+			B:   map[string]any{"a": int64(1), "b": int64(0)},
 			Ret: true,
 		},
 		{
-			A:   map[string]interface{}{"a": int64(1), "b": int64(2)},
-			B:   map[string]interface{}{"a": int64(1), "b": int64(2)},
+			A:   map[string]any{"a": int64(1), "b": int64(2)},
+			B:   map[string]any{"a": int64(1), "b": int64(2)},
 			Ret: false,
 		},
 		{
-			A:   map[string]interface{}{"a": int64(1), "b": int64(2)},
-			B:   map[string]interface{}{"a": int64(1), "b": int64(0), "c": int64(3)},
+			A:   map[string]any{"a": int64(1), "b": int64(2)},
+			B:   map[string]any{"a": int64(1), "b": int64(0), "c": int64(3)},
 			Ret: true,
 		},
 		{
-			A:   map[string]interface{}{"a": int64(1), "b": int64(2)},
-			B:   map[string]interface{}{"a": int64(1), "b": int64(2), "c": int64(3)},
+			A:   map[string]any{"a": int64(1), "b": int64(2)},
+			B:   map[string]any{"a": int64(1), "b": int64(2), "c": int64(3)},
 			Ret: false,
 		},
 		{
-			A:   map[string]interface{}{"a": []interface{}{int64(1), int64(2)}},
-			B:   map[string]interface{}{"a": []interface{}{int64(1), int64(0)}},
+			A:   map[string]any{"a": []any{int64(1), int64(2)}},
+			B:   map[string]any{"a": []any{int64(1), int64(0)}},
 			Ret: true,
 		},
 		{
-			A:   map[string]interface{}{"a": []interface{}{int64(1), int64(2)}},
-			B:   map[string]interface{}{"a": []interface{}{int64(1), int64(2)}},
+			A:   map[string]any{"a": []any{int64(1), int64(2)}},
+			B:   map[string]any{"a": []any{int64(1), int64(2)}},
 			Ret: false,
 		},
 

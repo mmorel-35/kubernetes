@@ -104,7 +104,7 @@ var semantic = conversion.EqualitiesOrDie(
 	},
 )
 
-func runTest(t *testing.T, source interface{}) {
+func runTest(t *testing.T, source any) {
 	name := reflect.TypeOf(source).Elem().Name()
 	TestObjectFuzzer.Fuzz(source)
 
@@ -135,7 +135,7 @@ func runTest(t *testing.T, source interface{}) {
 }
 
 func TestTypes(t *testing.T) {
-	table := []interface{}{
+	table := []any{
 		&runtimetesting.TestType1{},
 		&runtimetesting.ExternalInternalSame{},
 	}

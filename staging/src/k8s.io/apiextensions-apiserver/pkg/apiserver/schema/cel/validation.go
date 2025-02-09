@@ -73,7 +73,7 @@ type Validator struct {
 	// celActivationFactory produces a Activations, which resolve identifiers
 	// (e.g. self and oldSelf) to CEL values. One activation must be produced
 	// for each of the cases when oldSelf is optional and non-optional.
-	celActivationFactory func(sts *schema.Structural, obj, oldObj interface{}) (activation interpreter.Activation, optionalOldSelfActivation interpreter.Activation)
+	celActivationFactory func(sts *schema.Structural, obj, oldObj any) (activation interpreter.Activation, optionalOldSelfActivation interpreter.Activation)
 }
 
 // NewValidator returns compiles all the CEL programs defined in x-kubernetes-validations extensions
@@ -202,7 +202,7 @@ func WithRatcheting(correlation *common.CorrelatedObject) Option {
 // If the validation rules exceed the costBudget, subsequent evaluations will be skipped, the list of errs returned will not be empty, and a negative remainingBudget will be returned.
 // Most callers can ignore the returned remainingBudget value unless another validate call is going to be made
 // context is passed for supporting context cancellation during cel validation
-func (s *Validator) Validate(ctx context.Context, fldPath *field.Path, _ *schema.Structural, obj, oldObj interface{}, costBudget int64, opts ...Option) (errs field.ErrorList, remainingBudget int64) {
+func (s *Validator) Validate(ctx context.Context, fldPath *field.Path, _ *schema.Structural, obj, oldObj any, costBudget int64, opts ...Option) (errs field.ErrorList, remainingBudget int64) {
 	opt := options{}
 	for _, o := range opts {
 		o(&opt)
@@ -301,7 +301,7 @@ func nestedToStructural(nested *schema.NestedValueValidation) *schema.Structural
 	return structuralConversion
 }
 
-func (s *Validator) validate(ctx context.Context, fldPath *field.Path, obj, oldObj interface{}, correlation ratchetingOptions, costBudget int64) (errs field.ErrorList, remainingBudget int64) {
+func (s *Validator) validate(ctx context.Context, fldPath *field.Path, obj, oldObj any, correlation ratchetingOptions, costBudget int64) (errs field.ErrorList, remainingBudget int64) {
 	t := time.Now()
 	defer func() {
 		metrics.Metrics.ObserveEvaluation(time.Since(t))
@@ -332,14 +332,14 @@ func (s *Validator) validate(ctx context.Context, fldPath *field.Path, obj, oldO
 	}
 
 	switch obj := obj.(type) {
-	case []interface{}:
-		oldArray, _ := oldObj.([]interface{})
+	case []any:
+		oldArray, _ := oldObj.([]any)
 		var arrayErrs field.ErrorList
 		arrayErrs, remainingBudget = s.validateArray(ctx, fldPath, obj, oldArray, correlation, remainingBudget)
 		errs = append(errs, arrayErrs...)
 		return errs, remainingBudget
-	case map[string]interface{}:
-		oldMap, _ := oldObj.(map[string]interface{})
+	case map[string]any:
+		oldMap, _ := oldObj.(map[string]any)
 		var mapErrs field.ErrorList
 		mapErrs, remainingBudget = s.validateMap(ctx, fldPath, obj, oldMap, correlation, remainingBudget)
 		errs = append(errs, mapErrs...)
@@ -349,7 +349,7 @@ func (s *Validator) validate(ctx context.Context, fldPath *field.Path, obj, oldO
 	return errs, remainingBudget
 }
 
-func (s *Validator) validateExpressions(ctx context.Context, fldPath *field.Path, obj, oldObj interface{}, correlation ratchetingOptions, costBudget int64) (errs field.ErrorList, remainingBudget int64) {
+func (s *Validator) validateExpressions(ctx context.Context, fldPath *field.Path, obj, oldObj any, correlation ratchetingOptions, costBudget int64) (errs field.ErrorList, remainingBudget int64) {
 	sts := s.Schema
 
 	// guard against oldObj being a non-nil interface with a nil value
@@ -663,7 +663,7 @@ func ValidFieldPath(jsonPath string, schema *schema.Structural, options ...Valid
 	return validFieldPath, schema, nil
 }
 
-func fieldErrorForReason(fldPath *field.Path, value interface{}, detail string, reason *apiextensions.FieldValueErrorReason) *field.Error {
+func fieldErrorForReason(fldPath *field.Path, value any, detail string, reason *apiextensions.FieldValueErrorReason) *field.Error {
 	if reason == nil {
 		return field.Invalid(fldPath, value, detail)
 	}
@@ -761,7 +761,7 @@ type validationActivation struct {
 	hasOldSelf    bool
 }
 
-func validationActivationWithOldSelf(sts *schema.Structural, obj, oldObj interface{}) (activation interpreter.Activation, optionalOldSelfActivation interpreter.Activation) {
+func validationActivationWithOldSelf(sts *schema.Structural, obj, oldObj any) (activation interpreter.Activation, optionalOldSelfActivation interpreter.Activation) {
 	va := &validationActivation{
 		self: UnstructuredToVal(obj, sts),
 	}
@@ -781,14 +781,14 @@ func validationActivationWithOldSelf(sts *schema.Structural, obj, oldObj interfa
 	return va, optionalVA
 }
 
-func validationActivationWithoutOldSelf(sts *schema.Structural, obj, _ interface{}) (interpreter.Activation, interpreter.Activation) {
+func validationActivationWithoutOldSelf(sts *schema.Structural, obj, _ any) (interpreter.Activation, interpreter.Activation) {
 	res := &validationActivation{
 		self: UnstructuredToVal(obj, sts),
 	}
 	return res, res
 }
 
-func (a *validationActivation) ResolveName(name string) (interface{}, bool) {
+func (a *validationActivation) ResolveName(name string) (any, bool) {
 	switch name {
 	case ScopedVarName:
 		return a.self, true
@@ -803,7 +803,7 @@ func (a *validationActivation) Parent() interpreter.Activation {
 	return nil
 }
 
-func (s *Validator) validateMap(ctx context.Context, fldPath *field.Path, obj, oldObj map[string]interface{}, correlation ratchetingOptions, costBudget int64) (errs field.ErrorList, remainingBudget int64) {
+func (s *Validator) validateMap(ctx context.Context, fldPath *field.Path, obj, oldObj map[string]any, correlation ratchetingOptions, costBudget int64) (errs field.ErrorList, remainingBudget int64) {
 	remainingBudget = costBudget
 	if remainingBudget < 0 {
 		return errs, remainingBudget
@@ -816,7 +816,7 @@ func (s *Validator) validateMap(ctx context.Context, fldPath *field.Path, obj, o
 
 	if s.AdditionalProperties != nil {
 		for k, v := range obj {
-			var oldV interface{}
+			var oldV any
 			if correlatable {
 				oldV = oldObj[k] // +k8s:verify-mutation:reason=clone
 			}
@@ -833,7 +833,7 @@ func (s *Validator) validateMap(ctx context.Context, fldPath *field.Path, obj, o
 		for k, v := range obj {
 			sub, ok := s.Properties[k]
 			if ok {
-				var oldV interface{}
+				var oldV any
 				if correlatable {
 					oldV = oldObj[k] // +k8s:verify-mutation:reason=clone
 				}
@@ -851,7 +851,7 @@ func (s *Validator) validateMap(ctx context.Context, fldPath *field.Path, obj, o
 	return errs, remainingBudget
 }
 
-func (s *Validator) validateArray(ctx context.Context, fldPath *field.Path, obj, oldObj []interface{}, correlation ratchetingOptions, costBudget int64) (errs field.ErrorList, remainingBudget int64) {
+func (s *Validator) validateArray(ctx context.Context, fldPath *field.Path, obj, oldObj []any, correlation ratchetingOptions, costBudget int64) (errs field.ErrorList, remainingBudget int64) {
 	remainingBudget = costBudget
 	if remainingBudget < 0 {
 		return errs, remainingBudget

@@ -161,7 +161,7 @@ not their metadata (e.g. the Data of a ConfigMap, but nothing in ObjectMeta).
 `
 	cases := []struct {
 		typeName string
-		obj      interface{}
+		obj      any
 		expect   int
 	}{
 		{"ConfigMap", v1.ConfigMap{}, 5},

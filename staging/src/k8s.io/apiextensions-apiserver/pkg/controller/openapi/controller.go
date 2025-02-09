@@ -267,19 +267,19 @@ func (c *Controller) updateSpecLocked() {
 	c.openAPIService.UpdateSpecLazy(cache)
 }
 
-func (c *Controller) addCustomResourceDefinition(obj interface{}) {
+func (c *Controller) addCustomResourceDefinition(obj any) {
 	castObj := obj.(*apiextensionsv1.CustomResourceDefinition)
 	klog.V(4).Infof("Adding customresourcedefinition %s", castObj.Name)
 	c.enqueue(castObj)
 }
 
-func (c *Controller) updateCustomResourceDefinition(oldObj, newObj interface{}) {
+func (c *Controller) updateCustomResourceDefinition(oldObj, newObj any) {
 	castNewObj := newObj.(*apiextensionsv1.CustomResourceDefinition)
 	klog.V(4).Infof("Updating customresourcedefinition %s", castNewObj.Name)
 	c.enqueue(castNewObj)
 }
 
-func (c *Controller) deleteCustomResourceDefinition(obj interface{}) {
+func (c *Controller) deleteCustomResourceDefinition(obj any) {
 	castObj, ok := obj.(*apiextensionsv1.CustomResourceDefinition)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)

@@ -883,7 +883,7 @@ func line() string {
 // This makes the test-helpers testable.
 type testingTInterface interface {
 	Helper()
-	Errorf(format string, args ...interface{})
+	Errorf(format string, args ...any)
 }
 
 type fakeTestingT struct {
@@ -892,7 +892,7 @@ type fakeTestingT struct {
 
 func (f fakeTestingT) Helper() {}
 
-func (f fakeTestingT) Errorf(format string, args ...interface{}) {}
+func (f fakeTestingT) Errorf(format string, args ...any) {}
 
 func verifyEquiv(t testingTInterface, call string, tc *svcTestCase, got *api.Service) bool {
 	t.Helper()

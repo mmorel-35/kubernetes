@@ -397,7 +397,7 @@ func getSummaryTestPods(f *framework.Framework, numRestarts int32, names ...stri
 }
 
 // Mapping function for gstruct.MatchAllElements
-func summaryObjectID(element interface{}) string {
+func summaryObjectID(element any) string {
 	switch el := element.(type) {
 	case kubeletstatsv1alpha1.PodStats:
 		return fmt.Sprintf("%s::%s", el.PodRef.Namespace, el.PodRef.Name)
@@ -418,13 +418,13 @@ func ptrMatchAllFields(fields gstruct.Fields) types.GomegaMatcher {
 	return gstruct.PointTo(gstruct.MatchAllFields(fields))
 }
 
-func bounded(lower, upper interface{}) types.GomegaMatcher {
+func bounded(lower, upper any) types.GomegaMatcher {
 	return gstruct.PointTo(gomega.And(
 		gomega.BeNumerically(">=", lower),
 		gomega.BeNumerically("<=", upper)))
 }
 
-func swapExpectation(upper interface{}) types.GomegaMatcher {
+func swapExpectation(upper any) types.GomegaMatcher {
 	// Size after which we consider memory to be "unlimited". This is not
 	// MaxInt64 due to rounding by the kernel.
 	const maxMemorySize = uint64(1 << 62)

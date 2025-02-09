@@ -29,7 +29,7 @@ func TestWriteOnceSet(t *testing.T) {
 	cval := &oldTime
 	ctx, cancel := context.WithCancel(context.Background())
 	wr := NewWriteOnce(nil, ctx, cval)
-	gots := make(chan interface{})
+	gots := make(chan any)
 	goGetExpectNotYet(t, wr, gots, "Set")
 	now := time.Now()
 	aval := &now
@@ -54,7 +54,7 @@ func TestWriteOnceCancel(t *testing.T) {
 	cval := &oldTime
 	ctx, cancel := context.WithCancel(context.Background())
 	wr := NewWriteOnce(nil, ctx, cval)
-	gots := make(chan interface{})
+	gots := make(chan any)
 	goGetExpectNotYet(t, wr, gots, "cancel")
 	cancel()
 	expectGotValue(t, gots, cval)
@@ -74,7 +74,7 @@ func TestWriteOnceInitial(t *testing.T) {
 	now := time.Now()
 	aval := &now
 	wr := NewWriteOnce(aval, ctx, cval)
-	gots := make(chan interface{})
+	gots := make(chan any)
 	goGetAndExpect(t, wr, gots, aval)
 	later := time.Now()
 	bval := &later
@@ -87,7 +87,7 @@ func TestWriteOnceInitial(t *testing.T) {
 	goGetAndExpect(t, wr, gots, aval)
 }
 
-func goGetExpectNotYet(t *testing.T, wr WriteOnce, gots chan interface{}, trigger string) {
+func goGetExpectNotYet(t *testing.T, wr WriteOnce, gots chan any, trigger string) {
 	go func() {
 		gots <- wr.Get()
 	}()
@@ -99,14 +99,14 @@ func goGetExpectNotYet(t *testing.T, wr WriteOnce, gots chan interface{}, trigge
 	}
 }
 
-func goGetAndExpect(t *testing.T, wr WriteOnce, gots chan interface{}, expected interface{}) {
+func goGetAndExpect(t *testing.T, wr WriteOnce, gots chan any, expected any) {
 	go func() {
 		gots <- wr.Get()
 	}()
 	expectGotValue(t, gots, expected)
 }
 
-func expectGotValue(t *testing.T, gots <-chan interface{}, expected interface{}) {
+func expectGotValue(t *testing.T, gots <-chan any, expected any) {
 	select {
 	case gotVal := <-gots:
 		t.Logf("Got %v", gotVal)

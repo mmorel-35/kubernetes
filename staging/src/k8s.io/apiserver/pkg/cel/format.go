@@ -41,7 +41,7 @@ type Format struct {
 	MaxRegexSize int
 }
 
-func (d Format) ConvertToNative(typeDesc reflect.Type) (interface{}, error) {
+func (d Format) ConvertToNative(typeDesc reflect.Type) (any, error) {
 	return nil, fmt.Errorf("type conversion error from 'Format' to '%v'", typeDesc)
 }
 
@@ -68,6 +68,6 @@ func (d Format) Type() ref.Type {
 	return FormatType
 }
 
-func (d Format) Value() interface{} {
+func (d Format) Value() any {
 	return d
 }

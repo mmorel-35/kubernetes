@@ -353,7 +353,7 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 		isCreater = true
 	}
 
-	var versionedList interface{}
+	var versionedList any
 	if isLister {
 		list := lister.NewList()
 		listGVKs, _, err := a.group.Typer.ObjectKinds(list)
@@ -385,7 +385,7 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 	}
 
 	var versionedDeleteOptions runtime.Object
-	var versionedDeleterObject interface{}
+	var versionedDeleterObject any
 	deleteReturnsDeletedObject := false
 	if isGracefulDeleter {
 		versionedDeleteOptions, err = a.group.Creater.New(optionsExternalVersion.WithKind("DeleteOptions"))
@@ -427,7 +427,7 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 		isGetter = true
 	}
 
-	var versionedWatchEvent interface{}
+	var versionedWatchEvent any
 	if isWatcher {
 		versionedWatchEventPtr, err := a.group.Creater.New(a.group.GroupVersion.WithKind("WatchEvent"))
 		if err != nil {
@@ -1127,7 +1127,7 @@ func (a *APIInstaller) registerResourceHandlers(path string, storage rest.Storag
 }
 
 // indirectArbitraryPointer returns *ptrToObject for an arbitrary pointer
-func indirectArbitraryPointer(ptrToObject interface{}) interface{} {
+func indirectArbitraryPointer(ptrToObject any) any {
 	return reflect.Indirect(reflect.ValueOf(ptrToObject)).Interface()
 }
 
@@ -1150,7 +1150,7 @@ func addParams(route *restful.RouteBuilder, params []*restful.Parameter) {
 // Go JSON behavior for omitting a field) become query parameters. The name of the query parameter is
 // the JSON field name. If a description struct tag is set on the field, that description is used on the
 // query parameter. In essence, it converts a standard JSON top level object into a query param schema.
-func AddObjectParams(ws *restful.WebService, route *restful.RouteBuilder, obj interface{}, excludedNames ...string) error {
+func AddObjectParams(ws *restful.WebService, route *restful.RouteBuilder, obj any, excludedNames ...string) error {
 	sv, err := conversion.EnforcePtr(obj)
 	if err != nil {
 		return err
@@ -1241,7 +1241,7 @@ func (defaultStorageMetadata) ProducesMIMETypes(verb string) []string {
 	return nil
 }
 
-func (defaultStorageMetadata) ProducesObject(verb string) interface{} {
+func (defaultStorageMetadata) ProducesObject(verb string) any {
 	return nil
 }
 

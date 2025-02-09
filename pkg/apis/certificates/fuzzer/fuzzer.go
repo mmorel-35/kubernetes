@@ -28,8 +28,8 @@ import (
 )
 
 // Funcs returns the fuzzer functions for the certificates api group.
-var Funcs = func(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+var Funcs = func(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(obj *certificates.CertificateSigningRequestSpec, c fuzz.Continue) {
 			c.FuzzNoCustom(obj) // fuzz self without calling this function again
 			obj.Usages = []certificates.KeyUsage{certificates.UsageKeyEncipherment}

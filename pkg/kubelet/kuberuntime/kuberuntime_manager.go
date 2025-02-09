@@ -293,7 +293,7 @@ func NewKubeGenericRuntimeManager(
 	kubeRuntimeManager.podStateProvider = podStateProvider
 
 	kubeRuntimeManager.versionCache = cache.NewObjectCache(
-		func() (interface{}, error) {
+		func() (any, error) {
 			return kubeRuntimeManager.getTypedVersion(ctx)
 		},
 		versionCacheTTL,

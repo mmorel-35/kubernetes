@@ -28,8 +28,8 @@ import (
 
 func TestTranscodeRawTypes(t *testing.T) {
 	for _, tc := range []struct {
-		In  interface{}
-		Out interface{}
+		In  any
+		Out any
 	}{
 		{
 			In:  nil,

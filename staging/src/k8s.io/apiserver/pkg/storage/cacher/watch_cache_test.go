@@ -251,7 +251,7 @@ func TestWatchCacheBasic(t *testing.T) {
 	}
 
 	// Test Replace.
-	store.Replace([]interface{}{
+	store.Replace([]any{
 		makeTestPod("pod4", 7),
 		makeTestPod("pod5", 8),
 	}, "8")
@@ -401,7 +401,7 @@ func TestMarker(t *testing.T) {
 	defer store.Stop()
 
 	// First thing that is called when propagated from storage is Replace.
-	store.Replace([]interface{}{
+	store.Replace([]any{
 		makeTestPod("pod1", 5),
 		makeTestPod("pod2", 9),
 	}, "9")
@@ -435,7 +435,7 @@ func TestMarker(t *testing.T) {
 func TestWaitUntilFreshAndList(t *testing.T) {
 	ctx := context.Background()
 	store := newTestWatchCache(3, DefaultEventFreshDuration, &cache.Indexers{
-		"l:label": func(obj interface{}) ([]string, error) {
+		"l:label": func(obj any) ([]string, error) {
 			pod, ok := obj.(*v1.Pod)
 			if !ok {
 				return nil, fmt.Errorf("not a pod %#v", obj)
@@ -445,7 +445,7 @@ func TestWaitUntilFreshAndList(t *testing.T) {
 			}
 			return nil, nil
 		},
-		"f:spec.nodeName": func(obj interface{}) ([]string, error) {
+		"f:spec.nodeName": func(obj any) ([]string, error) {
 			pod, ok := obj.(*v1.Pod)
 			if !ok {
 				return nil, fmt.Errorf("not a pod %#v", obj)

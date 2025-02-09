@@ -18,6 +18,6 @@ limitations under the License.
 
 package v1beta3
 
-type FlowSchemaExpansion interface{}
+type FlowSchemaExpansion any
 
-type PriorityLevelConfigurationExpansion interface{}
+type PriorityLevelConfigurationExpansion any

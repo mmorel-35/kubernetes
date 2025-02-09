@@ -27,15 +27,15 @@ import (
 
 func TestUnstructuredList(t *testing.T) {
 	list := &UnstructuredList{
-		Object: map[string]interface{}{"kind": "List", "apiVersion": "v1"},
+		Object: map[string]any{"kind": "List", "apiVersion": "v1"},
 		Items: []Unstructured{
-			{Object: map[string]interface{}{"kind": "Pod", "apiVersion": "v1", "metadata": map[string]interface{}{"name": "test"}}},
+			{Object: map[string]any{"kind": "Pod", "apiVersion": "v1", "metadata": map[string]any{"name": "test"}}},
 		},
 	}
 	content := list.UnstructuredContent()
-	items := content["items"].([]interface{})
+	items := content["items"].([]any)
 	require.Len(t, items, 1)
-	val, found, err := NestedFieldCopy(items[0].(map[string]interface{}), "metadata", "name")
+	val, found, err := NestedFieldCopy(items[0].(map[string]any), "metadata", "name")
 	require.True(t, found)
 	require.NoError(t, err)
 	assert.Equal(t, "test", val)
@@ -59,7 +59,7 @@ func TestNilDeletionTimestamp(t *testing.T) {
 	u.SetDeletionTimestamp(&now)
 	assert.Equal(t, now.Unix(), u.GetDeletionTimestamp().Unix())
 	u.SetDeletionTimestamp(nil)
-	metadata := u.Object["metadata"].(map[string]interface{})
+	metadata := u.Object["metadata"].(map[string]any)
 	_, ok = metadata["deletionTimestamp"]
 	assert.False(t, ok)
 }
@@ -70,7 +70,7 @@ func TestEmptyCreationTimestampIsOmitted(t *testing.T) {
 
 	// set an initial creationTimestamp and ensure the field exists
 	u.SetCreationTimestamp(now)
-	metadata := u.Object["metadata"].(map[string]interface{})
+	metadata := u.Object["metadata"].(map[string]any)
 	_, exists := metadata["creationTimestamp"]
 	if !exists {
 		t.Fatalf("unexpected missing creationTimestamp")
@@ -78,7 +78,7 @@ func TestEmptyCreationTimestampIsOmitted(t *testing.T) {
 
 	// set an empty timestamp and ensure the field no longer exists
 	u.SetCreationTimestamp(metav1.Time{})
-	metadata = u.Object["metadata"].(map[string]interface{})
+	metadata = u.Object["metadata"].(map[string]any)
 	creationTimestamp, exists := metadata["creationTimestamp"]
 	if exists {
 		t.Errorf("unexpected creation timestamp field: %q", creationTimestamp)

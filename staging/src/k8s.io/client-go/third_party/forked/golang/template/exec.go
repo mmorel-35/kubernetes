@@ -1,6 +1,6 @@
-//This package is copied from Go library text/template.
-//The original private functions indirect and printableValue
-//are exported as public functions.
+// This package is copied from Go library text/template.
+// The original private functions indirect and printableValue
+// are exported as public functions.
 package template
 
 import (
@@ -30,7 +30,7 @@ func Indirect(v reflect.Value) (rv reflect.Value, isNil bool) {
 
 // PrintableValue returns the, possibly indirected, interface value inside v that
 // is best for a call to formatted printer.
-func PrintableValue(v reflect.Value) (interface{}, bool) {
+func PrintableValue(v reflect.Value) (any, bool) {
 	if v.Kind() == reflect.Pointer {
 		v, _ = Indirect(v) // fmt.Fprint handles nil.
 	}

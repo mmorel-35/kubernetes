@@ -42,7 +42,7 @@ const (
 type TimedValue struct {
 	Value string
 	// UID could be anything that helps identify the value
-	UID       interface{}
+	UID       any
 	AddedAt   time.Time
 	ProcessAt time.Time
 }
@@ -63,12 +63,12 @@ func (h TimedQueue) Less(i, j int) bool { return h[i].ProcessAt.Before(h[j].Proc
 func (h TimedQueue) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
 
 // Push a new TimedValue on to the queue.
-func (h *TimedQueue) Push(x interface{}) {
+func (h *TimedQueue) Push(x any) {
 	*h = append(*h, x.(*TimedValue))
 }
 
 // Pop the lowest ProcessAt item.
-func (h *TimedQueue) Pop() interface{} {
+func (h *TimedQueue) Pop() any {
 	old := *h
 	n := len(old)
 	x := old[n-1]
@@ -258,7 +258,7 @@ func (q *RateLimitedTimedQueue) Try(logger klog.Logger, fn ActionFunc) {
 // Add value to the queue to be processed. Won't add the same
 // value(comparison by value) a second time if it was already added
 // and not removed.
-func (q *RateLimitedTimedQueue) Add(value string, uid interface{}) bool {
+func (q *RateLimitedTimedQueue) Add(value string, uid any) bool {
 	now := now()
 	return q.queue.Add(TimedValue{
 		Value:     value,

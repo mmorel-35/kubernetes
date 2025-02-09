@@ -279,8 +279,8 @@ var _ = SIGDescribe("Namespaces", framework.WithSerial(), func() {
 		namespaceName = ns.ObjectMeta.Name
 
 		ginkgo.By("patching the Namespace")
-		nspatch, err := json.Marshal(map[string]interface{}{
-			"metadata": map[string]interface{}{
+		nspatch, err := json.Marshal(map[string]any{
+			"metadata": map[string]any{
 				"labels": map[string]string{"testLabel": "testValue"},
 			},
 		})

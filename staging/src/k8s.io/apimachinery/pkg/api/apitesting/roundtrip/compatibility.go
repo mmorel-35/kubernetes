@@ -89,7 +89,7 @@ type CompatibilityTestOptions struct {
 // s and i are string and integer values relevant to the object being populated
 // (for example, the json key or protobuf tag containing the object)
 // that can be used when filling the object to make the object content identifiable
-type FillFunc func(s string, i int, obj interface{})
+type FillFunc func(s string, i int, obj any)
 
 func NewCompatibilityTestOptions(scheme *runtime.Scheme) *CompatibilityTestOptions {
 	return &CompatibilityTestOptions{Scheme: scheme}

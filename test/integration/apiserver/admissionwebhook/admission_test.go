@@ -1317,7 +1317,7 @@ func newV1beta1WebhookHandler(t *testing.T, holder *holder, phase string, conver
 		}
 
 		if len(review.Request.Object.Raw) > 0 {
-			u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+			u := &unstructured.Unstructured{Object: map[string]any{}}
 			if err := json.Unmarshal(review.Request.Object.Raw, u); err != nil {
 				t.Errorf("Fail to deserialize object: %s with error: %v", string(review.Request.Object.Raw), err)
 				http.Error(w, err.Error(), 400)
@@ -1326,7 +1326,7 @@ func newV1beta1WebhookHandler(t *testing.T, holder *holder, phase string, conver
 			review.Request.Object.Object = u
 		}
 		if len(review.Request.OldObject.Raw) > 0 {
-			u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+			u := &unstructured.Unstructured{Object: map[string]any{}}
 			if err := json.Unmarshal(review.Request.OldObject.Raw, u); err != nil {
 				t.Errorf("Fail to deserialize object: %s with error: %v", string(review.Request.OldObject.Raw), err)
 				http.Error(w, err.Error(), 400)
@@ -1336,7 +1336,7 @@ func newV1beta1WebhookHandler(t *testing.T, holder *holder, phase string, conver
 		}
 
 		if len(review.Request.Options.Raw) > 0 {
-			u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+			u := &unstructured.Unstructured{Object: map[string]any{}}
 			if err := json.Unmarshal(review.Request.Options.Raw, u); err != nil {
 				t.Errorf("Fail to deserialize options object: %s for admission request %#+v with error: %v", string(review.Request.Options.Raw), review.Request, err)
 				http.Error(w, err.Error(), 400)
@@ -1416,7 +1416,7 @@ func newV1WebhookHandler(t *testing.T, holder *holder, phase string, converted b
 		}
 
 		if len(review.Request.Object.Raw) > 0 {
-			u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+			u := &unstructured.Unstructured{Object: map[string]any{}}
 			if err := json.Unmarshal(review.Request.Object.Raw, u); err != nil {
 				t.Errorf("Fail to deserialize object: %s with error: %v", string(review.Request.Object.Raw), err)
 				http.Error(w, err.Error(), 400)
@@ -1425,7 +1425,7 @@ func newV1WebhookHandler(t *testing.T, holder *holder, phase string, converted b
 			review.Request.Object.Object = u
 		}
 		if len(review.Request.OldObject.Raw) > 0 {
-			u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+			u := &unstructured.Unstructured{Object: map[string]any{}}
 			if err := json.Unmarshal(review.Request.OldObject.Raw, u); err != nil {
 				t.Errorf("Fail to deserialize object: %s with error: %v", string(review.Request.OldObject.Raw), err)
 				http.Error(w, err.Error(), 400)
@@ -1435,7 +1435,7 @@ func newV1WebhookHandler(t *testing.T, holder *holder, phase string, converted b
 		}
 
 		if len(review.Request.Options.Raw) > 0 {
-			u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+			u := &unstructured.Unstructured{Object: map[string]any{}}
 			if err := json.Unmarshal(review.Request.Options.Raw, u); err != nil {
 				t.Errorf("Fail to deserialize options object: %s for admission request %#+v with error: %v", string(review.Request.Options.Raw), review.Request, err)
 				http.Error(w, err.Error(), 400)
@@ -1512,7 +1512,7 @@ func getStubObj(gvr schema.GroupVersionResource, resource metav1.APIResource) (*
 		return nil, fmt.Errorf("no stub data for %#v", gvr)
 	}
 
-	stubObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	stubObj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := json.Unmarshal([]byte(stub), &stubObj.Object); err != nil {
 		return nil, fmt.Errorf("error unmarshaling stub for %#v: %v", gvr, err)
 	}

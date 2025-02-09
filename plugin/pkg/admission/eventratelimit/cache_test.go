@@ -28,7 +28,7 @@ func TestSingleCache(t *testing.T) {
 	cache := singleCache{
 		rateLimiter: rateLimiter,
 	}
-	cases := []interface{}{nil, "key1", "key2"}
+	cases := []any{nil, "key1", "key2"}
 	for _, tc := range cases {
 		actual := cache.get(tc)
 		if e, a := rateLimiter, actual; e != a {

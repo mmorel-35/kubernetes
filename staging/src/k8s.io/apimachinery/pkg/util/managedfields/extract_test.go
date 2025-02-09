@@ -42,39 +42,39 @@ func TestExtractInto(t *testing.T) {
 		objType       typed.ParseableType
 		managedFields []metav1.ManagedFieldsEntry // written to object before test is run
 		fieldManager  string
-		expectedOut   interface{}
+		expectedOut   any
 		subresource   string
 	}{
 		{
 			name:    "unstructured, no matching manager",
-			obj:     &unstructured.Unstructured{Object: map[string]interface{}{"spec": map[string]interface{}{"replicas": 1}}},
+			obj:     &unstructured.Unstructured{Object: map[string]any{"spec": map[string]any{"replicas": 1}}},
 			objType: parser.Type("io.k8s.api.apps.v1.Deployment"),
 			managedFields: []metav1.ManagedFieldsEntry{
 				applyFieldsEntry("mgr999", `{ "f:spec": { "f:replicas": {}}}`, ""),
 			},
 			fieldManager: "mgr1",
-			expectedOut:  map[string]interface{}{},
+			expectedOut:  map[string]any{},
 		},
 		{
 			name:    "unstructured, one manager",
-			obj:     &unstructured.Unstructured{Object: map[string]interface{}{"spec": map[string]interface{}{"replicas": 1}}},
+			obj:     &unstructured.Unstructured{Object: map[string]any{"spec": map[string]any{"replicas": 1}}},
 			objType: parser.Type("io.k8s.api.apps.v1.Deployment"),
 			managedFields: []metav1.ManagedFieldsEntry{
 				applyFieldsEntry("mgr1", `{ "f:spec": { "f:replicas": {}}}`, ""),
 			},
 			fieldManager: "mgr1",
-			expectedOut:  map[string]interface{}{"spec": map[string]interface{}{"replicas": 1}},
+			expectedOut:  map[string]any{"spec": map[string]any{"replicas": 1}},
 		},
 		{
 			name:    "unstructured, multiple manager",
-			obj:     &unstructured.Unstructured{Object: map[string]interface{}{"spec": map[string]interface{}{"paused": true}}},
+			obj:     &unstructured.Unstructured{Object: map[string]any{"spec": map[string]any{"paused": true}}},
 			objType: parser.Type("io.k8s.api.apps.v1.Deployment"),
 			managedFields: []metav1.ManagedFieldsEntry{
 				applyFieldsEntry("mgr1", `{ "f:spec": { "f:replicas": {}}}`, ""),
 				applyFieldsEntry("mgr2", `{ "f:spec": { "f:paused": {}}}`, ""),
 			},
 			fieldManager: "mgr2",
-			expectedOut:  map[string]interface{}{"spec": map[string]interface{}{"paused": true}},
+			expectedOut:  map[string]any{"spec": map[string]any{"paused": true}},
 		},
 		{
 			name:    "structured, no matching manager",
@@ -84,7 +84,7 @@ func TestExtractInto(t *testing.T) {
 				applyFieldsEntry("mgr999", `{ "f:spec": { "f:replicas": {}}}`, ""),
 			},
 			fieldManager: "mgr1",
-			expectedOut:  map[string]interface{}{},
+			expectedOut:  map[string]any{},
 		},
 		{
 			name:    "structured, one manager",
@@ -94,7 +94,7 @@ func TestExtractInto(t *testing.T) {
 				applyFieldsEntry("mgr1", `{ "f:spec": { "f:replicas": {}}}`, ""),
 			},
 			fieldManager: "mgr1",
-			expectedOut:  map[string]interface{}{"spec": map[string]interface{}{"replicas": int64(1)}},
+			expectedOut:  map[string]any{"spec": map[string]any{"replicas": int64(1)}},
 		},
 		{
 			name:    "structured, multiple manager",
@@ -105,7 +105,7 @@ func TestExtractInto(t *testing.T) {
 				applyFieldsEntry("mgr2", `{ "f:spec": { "f:paused": {}}}`, ""),
 			},
 			fieldManager: "mgr2",
-			expectedOut:  map[string]interface{}{"spec": map[string]interface{}{"paused": true}},
+			expectedOut:  map[string]any{"spec": map[string]any{"paused": true}},
 		},
 		{
 			name:    "subresource",
@@ -115,13 +115,13 @@ func TestExtractInto(t *testing.T) {
 				applyFieldsEntry("mgr1", `{ "f:status": { "f:replicas": {}}}`, "status"),
 			},
 			fieldManager: "mgr1",
-			expectedOut:  map[string]interface{}{"status": map[string]interface{}{"replicas": int64(1)}},
+			expectedOut:  map[string]any{"status": map[string]any{"replicas": int64(1)}},
 			subresource:  "status",
 		},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			out := map[string]interface{}{}
+			out := map[string]any{}
 			accessor, err := meta.Accessor(tc.obj)
 			if err != nil {
 				t.Fatalf("Error accessing object: %v", err)

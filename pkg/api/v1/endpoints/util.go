@@ -200,7 +200,7 @@ func SortSubsets(subsets []v1.EndpointSubset) []v1.EndpointSubset {
 	return subsets
 }
 
-func hashObject(hasher hash.Hash, obj interface{}) []byte {
+func hashObject(hasher hash.Hash, obj any) []byte {
 	hashutil.DeepHashObject(hasher, obj)
 	return hasher.Sum(nil)
 }

@@ -66,7 +66,7 @@ func setupServer(t *testing.T, iss string, keys serviceaccount.PublicKeysGetter)
 	return s, jwksURI.String()
 }
 
-var defaultKeys = []interface{}{getPublicKey(rsaPublicKey), getPublicKey(ecdsaPublicKey)}
+var defaultKeys = []any{getPublicKey(rsaPublicKey), getPublicKey(ecdsaPublicKey)}
 
 // Configuration is an OIDC configuration, including most but not all required fields.
 // https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata
@@ -89,11 +89,11 @@ func (p *proxyKeyGetter) AddListener(listener serviceaccount.Listener) {
 }
 
 func TestServeConfiguration(t *testing.T) {
-	ecKeysGetter, err := serviceaccount.StaticPublicKeysGetter([]interface{}{getPublicKey(ecdsaPublicKey)})
+	ecKeysGetter, err := serviceaccount.StaticPublicKeysGetter([]any{getPublicKey(ecdsaPublicKey)})
 	if err != nil {
 		t.Fatal(err)
 	}
-	rsaKeysGetter, err := serviceaccount.StaticPublicKeysGetter([]interface{}{getPublicKey(rsaPublicKey)})
+	rsaKeysGetter, err := serviceaccount.StaticPublicKeysGetter([]any{getPublicKey(rsaPublicKey)})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -163,21 +163,21 @@ func TestServeKeys(t *testing.T) {
 	wantPubRSA := getPublicKey(rsaPublicKey).(*rsa.PublicKey)
 	wantPubECDSA := getPublicKey(ecdsaPublicKey).(*ecdsa.PublicKey)
 
-	alternateGetter, err := serviceaccount.StaticPublicKeysGetter([]interface{}{wantPubRSA})
+	alternateGetter, err := serviceaccount.StaticPublicKeysGetter([]any{wantPubRSA})
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	var serveKeysTests = []struct {
 		Name               string
-		Keys               []interface{}
+		Keys               []any
 		WantKeys           []jose.JSONWebKey
 		updatedKeysGetter  serviceaccount.PublicKeysGetter
 		WantKeysPostUpdate []jose.JSONWebKey
 	}{
 		{
 			Name: "configured public keys",
-			Keys: []interface{}{
+			Keys: []any{
 				getPublicKey(rsaPublicKey),
 				getPublicKey(ecdsaPublicKey),
 			},
@@ -204,7 +204,7 @@ func TestServeKeys(t *testing.T) {
 		},
 		{
 			Name: "only publishes public keys",
-			Keys: []interface{}{
+			Keys: []any{
 				getPrivateKey(rsaPrivateKey),
 				getPrivateKey(ecdsaPrivateKey),
 			},
@@ -231,7 +231,7 @@ func TestServeKeys(t *testing.T) {
 		},
 		{
 			Name: "configured public keys reacting to update",
-			Keys: []interface{}{
+			Keys: []any{
 				getPublicKey(rsaPublicKey),
 				getPublicKey(ecdsaPublicKey),
 			},
@@ -270,7 +270,7 @@ func TestServeKeys(t *testing.T) {
 		},
 		{
 			Name: "configured public keys reacting to update while excluding keys",
-			Keys: []interface{}{
+			Keys: []any{
 				getPublicKey(rsaPublicKey),
 				getPublicKey(ecdsaPublicKey),
 			},
@@ -426,7 +426,7 @@ func TestNewOpenIDMetadata(t *testing.T) {
 		issuerURL       string
 		jwksURI         string
 		externalAddress string
-		keys            []interface{}
+		keys            []any
 		wantConfig      string
 		wantKeyset      string
 		err             bool
@@ -461,7 +461,7 @@ func TestNewOpenIDMetadata(t *testing.T) {
 			name:       "response only contains public keys, even when private keys are provided",
 			issuerURL:  exampleIssuer,
 			jwksURI:    exampleIssuer + serviceaccount.JWKSPath,
-			keys:       []interface{}{getPrivateKey(rsaPrivateKey), getPrivateKey(ecdsaPrivateKey)},
+			keys:       []any{getPrivateKey(rsaPrivateKey), getPrivateKey(ecdsaPrivateKey)},
 			wantConfig: `{"issuer":"https://issuer.example.com","jwks_uri":"https://issuer.example.com/openid/v1/jwks","response_types_supported":["id_token"],"subject_types_supported":["public"],"id_token_signing_alg_values_supported":["ES256","RS256"]}`,
 			wantKeyset: `{"keys":[{"use":"sig","kty":"RSA","kid":"JHJehTTTZlsspKHT-GaJxK7Kd1NQgZJu3fyK6K_QDYU","alg":"RS256","n":"249XwEo9k4tM8fMxV7zxOhcrP-WvXn917koM5Qr2ZXs4vo26e4ytdlrV0bQ9SlcLpQVSYjIxNfhTZdDt-ecIzshKuv1gKIxbbLQMOuK1eA_4HALyEkFgmS_tleLJrhc65tKPMGD-pKQ_xhmzRuCG51RoiMgbQxaCyYxGfNLpLAZK9L0Tctv9a0mJmGIYnIOQM4kC1A1I1n3EsXMWmeJUj7OTh_AjjCnMnkgvKT2tpKxYQ59PgDgU8Ssc7RDSmSkLxnrv-OrN80j6xrw0OjEiB4Ycr0PqfzZcvy8efTtFQ_Jnc4Bp1zUtFXt7-QeevePtQ2EcyELXE0i63T1CujRMWw","e":"AQAB"},{"use":"sig","kty":"EC","kid":"SoABiieYuNx4UdqYvZRVeuC6SihxgLrhLy9peHMHpTc","crv":"P-256","alg":"ES256","x":"H6cuzP8XuD5wal6wf9M6xDljTOPLX2i8uIp_C_ASqiI","y":"BlHnikLV9PyEd6gl8k4T_3Wwoh6xd79XLoQTh2PAi1Y"}]}`,
 		},

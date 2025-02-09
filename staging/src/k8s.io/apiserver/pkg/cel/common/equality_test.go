@@ -33,10 +33,10 @@ type TestCase struct {
 	Name string
 
 	// Expected old value after traversal. If nil, then the traversal should fail.
-	OldValue interface{}
+	OldValue any
 
 	// Expected value after traversal. If nil, then the traversal should fail.
-	NewValue interface{}
+	NewValue any
 
 	// Whether OldValue and NewValue are considered to be equal.
 	// Defaults to reflect.DeepEqual comparison of the two. Can be overridden to
@@ -48,11 +48,11 @@ type TestCase struct {
 	Schema common.Schema
 
 	// Array of field names and indexes to traverse to get to the value
-	KeyPath []interface{}
+	KeyPath []any
 
 	// Root object to traverse from
-	RootObject    interface{}
-	RootOldObject interface{}
+	RootObject    any
+	RootOldObject any
 }
 
 func (c TestCase) Run() error {
@@ -112,9 +112,9 @@ func mustSchema(source string) *openapi.Schema {
 }
 
 // Creates an *unstructured by decoding the given YAML. Panics on error
-func mustUnstructured(source string) interface{} {
+func mustUnstructured(source string) any {
 	d := yaml.NewYAMLOrJSONDecoder(strings.NewReader(source), 4096)
-	var res interface{}
+	var res any
 	if err := d.Decode(&res); err != nil {
 		panic(err)
 	}
@@ -137,7 +137,7 @@ func TestCorrelation(t *testing.T) {
                 properties:
                   a: { type: string }
             `),
-			KeyPath:  []interface{}{"a"},
+			KeyPath:  []any{"a"},
 			NewValue: "b",
 			OldValue: "b",
 		},
@@ -149,7 +149,7 @@ func TestCorrelation(t *testing.T) {
                 items:
                   type: string
             `),
-			KeyPath: []interface{}{1},
+			KeyPath: []any{1},
 		},
 		{
 			Name: "Added Key Not In Old Object",
@@ -165,7 +165,7 @@ func TestCorrelation(t *testing.T) {
                   a: { type: string }
                   c: { type: string }
             `),
-			KeyPath: []interface{}{"c"},
+			KeyPath: []any{"c"},
 		},
 		{
 			Name: "Added Index Not In Old Object",
@@ -182,15 +182,15 @@ func TestCorrelation(t *testing.T) {
                 items:
                     type: string
             `),
-			KeyPath: []interface{}{2},
+			KeyPath: []any{2},
 		},
 		{
 			Name: "Changed Index In Old Object not correlatable",
-			RootObject: []interface{}{
+			RootObject: []any{
 				"a",
 				"b",
 			},
-			RootOldObject: []interface{}{
+			RootOldObject: []any{
 				"a",
 				"oldB",
 			},
@@ -198,15 +198,15 @@ func TestCorrelation(t *testing.T) {
                 items:
                     type: string
             `),
-			KeyPath: []interface{}{1},
+			KeyPath: []any{1},
 		},
 		{
 			Name: "Changed Index In Nested Old Object",
-			RootObject: []interface{}{
+			RootObject: []any{
 				"a",
 				"b",
 			},
-			RootOldObject: []interface{}{
+			RootOldObject: []any{
 				"a",
 				"oldB",
 			},
@@ -214,73 +214,73 @@ func TestCorrelation(t *testing.T) {
                 items:
                     type: string
             `),
-			KeyPath:  []interface{}{},
-			NewValue: []interface{}{"a", "b"},
-			OldValue: []interface{}{"a", "oldB"},
+			KeyPath:  []any{},
+			NewValue: []any{"a", "b"},
+			OldValue: []any{"a", "oldB"},
 		},
 		{
 			Name: "Changed Key In Old Object",
-			RootObject: map[string]interface{}{
+			RootObject: map[string]any{
 				"a": "b",
 			},
-			RootOldObject: map[string]interface{}{
+			RootOldObject: map[string]any{
 				"a": "oldB",
 			},
 			Schema: mustSchema(`
                 properties:
                   a: { type: string }
             `),
-			KeyPath:  []interface{}{"a"},
+			KeyPath:  []any{"a"},
 			NewValue: "b",
 			OldValue: "oldB",
 		},
 		{
 			Name: "Replaced Key In Old Object",
-			RootObject: map[string]interface{}{
+			RootObject: map[string]any{
 				"a": "b",
 			},
-			RootOldObject: map[string]interface{}{
+			RootOldObject: map[string]any{
 				"b": "a",
 			},
 			Schema: mustSchema(`
                 properties:
                   a: { type: string }
             `),
-			KeyPath:  []interface{}{},
-			NewValue: map[string]interface{}{"a": "b"},
-			OldValue: map[string]interface{}{"b": "a"},
+			KeyPath:  []any{},
+			NewValue: map[string]any{"a": "b"},
+			OldValue: map[string]any{"b": "a"},
 		},
 		{
 			Name: "Added Key In Old Object",
-			RootObject: map[string]interface{}{
+			RootObject: map[string]any{
 				"a": "b",
 			},
-			RootOldObject: map[string]interface{}{},
+			RootOldObject: map[string]any{},
 			Schema: mustSchema(`
                 properties:
                   a: { type: string }
             `),
-			KeyPath:  []interface{}{},
-			NewValue: map[string]interface{}{"a": "b"},
-			OldValue: map[string]interface{}{},
+			KeyPath:  []any{},
+			NewValue: map[string]any{"a": "b"},
+			OldValue: map[string]any{},
 		},
 		{
 			Name: "Changed list to map",
-			RootObject: map[string]interface{}{
+			RootObject: map[string]any{
 				"a": "b",
 			},
-			RootOldObject: []interface{}{"a", "b"},
+			RootOldObject: []any{"a", "b"},
 			Schema: mustSchema(`
                 properties:
                   a: { type: string }
             `),
-			KeyPath:  []interface{}{},
-			NewValue: map[string]interface{}{"a": "b"},
-			OldValue: []interface{}{"a", "b"},
+			KeyPath:  []any{},
+			NewValue: map[string]any{"a": "b"},
+			OldValue: []any{"a", "b"},
 		},
 		{
 			Name: "Changed string to map",
-			RootObject: map[string]interface{}{
+			RootObject: map[string]any{
 				"a": "b",
 			},
 			RootOldObject: "a string",
@@ -288,8 +288,8 @@ func TestCorrelation(t *testing.T) {
                 properties:
                   a: { type: string }
             `),
-			KeyPath:  []interface{}{},
-			NewValue: map[string]interface{}{"a": "b"},
+			KeyPath:  []any{},
+			NewValue: map[string]any{"a": "b"},
 			OldValue: "a string",
 		},
 		{
@@ -321,7 +321,7 @@ func TestCorrelation(t *testing.T) {
                     x-kubernetes-list-map-keys:
                       - bar
             `),
-			KeyPath:  []interface{}{"foo", 0, "val"},
+			KeyPath:  []any{"foo", 0, "val"},
 			NewValue: "newBazValue",
 			OldValue: "bazValue",
 		},
@@ -352,7 +352,7 @@ func TestCorrelation(t *testing.T) {
                           type: string
                     x-kubernetes-list-type: atomic
             `),
-			KeyPath: []interface{}{"foo", 0, "val"},
+			KeyPath: []any{"foo", 0, "val"},
 		},
 		{
 			Name: "Map used inside of map list type should correlate",
@@ -392,7 +392,7 @@ func TestCorrelation(t *testing.T) {
                     x-kubernetes-list-map-keys:
                       - key
             `),
-			KeyPath:  []interface{}{"foo", 0, "bar", "baz"},
+			KeyPath:  []any{"foo", 0, "bar", "baz"},
 			NewValue: "newValue",
 			OldValue: "oldValue",
 		},
@@ -431,9 +431,9 @@ func TestCorrelation(t *testing.T) {
                           baz:
                             type: string
             `),
-			KeyPath:  []interface{}{"foo", "bar"},
-			NewValue: map[string]interface{}{"baz": "newValue"},
-			OldValue: map[string]interface{}{"baz": "otherOldValue"},
+			KeyPath:  []any{"foo", "bar"},
+			NewValue: map[string]any{"baz": "newValue"},
+			OldValue: map[string]any{"baz": "otherOldValue"},
 		},
 		{
 			Name: "Nested map equal to old",
@@ -462,9 +462,9 @@ func TestCorrelation(t *testing.T) {
                           baz:
                             type: string
             `),
-			KeyPath:  []interface{}{"foo", "bar"},
-			NewValue: map[string]interface{}{"baz": "value"},
-			OldValue: map[string]interface{}{"baz": "value"},
+			KeyPath:  []any{"foo", "bar"},
+			NewValue: map[string]any{"baz": "value"},
+			OldValue: map[string]any{"baz": "value"},
 		},
 		{
 			Name: "Re-ordered list considered equal to old value due to map keys",
@@ -504,7 +504,7 @@ func TestCorrelation(t *testing.T) {
                     x-kubernetes-list-map-keys:
                       - key
             `),
-			KeyPath: []interface{}{"foo"},
+			KeyPath: []any{"foo"},
 			NewValue: mustUnstructured(`
                 - key: keyValue
                   bar:
@@ -546,7 +546,7 @@ func TestCorrelation(t *testing.T) {
                                 baz:
                                     type: string
             `),
-			KeyPath:  []interface{}{"foo", "bar", "baz"},
+			KeyPath:  []any{"foo", "bar", "baz"},
 			NewValue: "newValue",
 			OldValue: "otherOldValue",
 		},
@@ -577,7 +577,7 @@ func TestCorrelation(t *testing.T) {
                                     baz:
                                         type: string
             `),
-			KeyPath: []interface{}{"foo", "bar"},
+			KeyPath: []any{"foo", "bar"},
 			NewValue: mustUnstructured(`
                 baz: newValue
             `),
@@ -612,7 +612,7 @@ func TestCorrelation(t *testing.T) {
                                     baz:
                                         type: string
             `),
-			KeyPath: []interface{}{"foo"},
+			KeyPath: []any{"foo"},
 			NewValue: mustUnstructured(`
                 key: keyValue    
                 bar:
@@ -654,7 +654,7 @@ func TestCorrelation(t *testing.T) {
                 - key: key2
                   bar: value2
             `),
-			KeyPath: []interface{}{"foo"},
+			KeyPath: []any{"foo"},
 			NewValue: mustUnstructured(`
                 - key: key1
                   bar: value1
@@ -698,7 +698,7 @@ func TestCorrelation(t *testing.T) {
                 - key: key2
                   bar: value2
             `),
-			KeyPath: []interface{}{"foo"},
+			KeyPath: []any{"foo"},
 			NewValue: mustUnstructured(`
                 - key: key1
                   bar: value1
@@ -742,7 +742,7 @@ func TestCorrelation(t *testing.T) {
                 - key: key2
                   bar: value2
             `),
-			KeyPath:  []interface{}{"foo", 0, "key"},
+			KeyPath:  []any{"foo", 0, "key"},
 			NewValue: nil,
 		},
 	}

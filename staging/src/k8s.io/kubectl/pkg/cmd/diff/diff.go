@@ -469,7 +469,7 @@ func NewMasker(from, to runtime.Object) (*Masker, error) {
 }
 
 // dataFromUnstructured returns the underlying nested map in the data key.
-func (m Masker) dataFromUnstructured(u *unstructured.Unstructured) (map[string]interface{}, error) {
+func (m Masker) dataFromUnstructured(u *unstructured.Unstructured) (map[string]any, error) {
 	if u == nil {
 		return nil, nil
 	}

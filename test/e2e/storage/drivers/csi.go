@@ -289,7 +289,7 @@ func (h *hostpathCSIDriver) PrepareTest(ctx context.Context, f *framework.Framew
 		DriverContainerArguments: []string{"--feature-gates=VolumeAttributesClass=true"},
 	})
 
-	err = utils.CreateFromManifests(ctx, config.Framework, driverNamespace, func(item interface{}) error {
+	err = utils.CreateFromManifests(ctx, config.Framework, driverNamespace, func(item any) error {
 		for _, o := range patches {
 			if err := utils.PatchCSIDeployment(config.Framework, o, item); err != nil {
 				return err
@@ -372,11 +372,11 @@ type mockCSIDriver struct {
 type Hooks struct {
 	// Pre is called before invoking the mock driver's implementation of a method.
 	// If either a non-nil reply or error are returned, then those are returned to the caller.
-	Pre func(ctx context.Context, method string, request interface{}) (reply interface{}, err error)
+	Pre func(ctx context.Context, method string, request any) (reply any, err error)
 
 	// Post is called after invoking the mock driver's implementation of a method.
 	// What it returns is used as actual result.
-	Post func(ctx context.Context, method string, request, reply interface{}, err error) (finalReply interface{}, finalErr error)
+	Post func(ctx context.Context, method string, request, reply any, err error) (finalReply any, finalErr error)
 }
 
 // MockCSITestDriver provides additional functions specific to the CSI mock driver.
@@ -460,13 +460,13 @@ func (c *MockCSICalls) Add(call MockCSICall) {
 }
 
 // LogGRPC takes individual parameters from the mock CSI driver and adds them.
-func (c *MockCSICalls) LogGRPC(method string, request, reply interface{}, err error) {
+func (c *MockCSICalls) LogGRPC(method string, request, reply any, err error) {
 	// Encoding to JSON and decoding mirrors the traditional way of capturing calls.
 	// Probably could be simplified now...
 	logMessage := struct {
 		Method   string
-		Request  interface{}
-		Response interface{}
+		Request  any
+		Response any
 		// Error as string, for backward compatibility.
 		// "" on no error.
 		Error string
@@ -730,7 +730,7 @@ func (m *mockCSIDriver) PrepareTest(ctx context.Context, f *framework.Framework)
 		o.Features["csi-provisioner"] = append(o.Features["csi-provisioner"], fmt.Sprintf("%s=true", features.HonorPVReclaimPolicy))
 	}
 
-	err = utils.CreateFromManifests(ctx, f, m.driverNamespace, func(item interface{}) error {
+	err = utils.CreateFromManifests(ctx, f, m.driverNamespace, func(item any) error {
 		if err := utils.PatchCSIDeployment(config.Framework, o, item); err != nil {
 			return err
 		}
@@ -770,7 +770,7 @@ func (m *mockCSIDriver) PrepareTest(ctx context.Context, f *framework.Framework)
 	return config
 }
 
-func (m *mockCSIDriver) interceptGRPC(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+func (m *mockCSIDriver) interceptGRPC(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
 	defer func() {
 		// Always log the call and its final result,
 		// regardless whether the result was from the real
@@ -851,7 +851,7 @@ func InitGcePDCSIDriver() storageframework.TestDriver {
 	return &gcePDCSIDriver{
 		driverInfo: storageframework.DriverInfo{
 			Name:        GCEPDCSIDriverName,
-			TestTags:    []interface{}{framework.WithSerial()},
+			TestTags:    []any{framework.WithSerial()},
 			MaxFileSize: storageframework.FileSizeMedium,
 			SupportedSizeRange: e2evolume.SizeRange{
 				Min: "5Gi",

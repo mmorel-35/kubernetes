@@ -68,7 +68,7 @@ type PatchMetaFromStruct struct {
 	T reflect.Type
 }
 
-func NewPatchMetaFromStruct(dataStruct interface{}) (PatchMetaFromStruct, error) {
+func NewPatchMetaFromStruct(dataStruct any) (PatchMetaFromStruct, error) {
 	t, err := getTagStructType(dataStruct)
 	return PatchMetaFromStruct{T: t}, err
 }
@@ -127,7 +127,7 @@ func (s PatchMetaFromStruct) Name() string {
 	return s.T.Kind().String()
 }
 
-func getTagStructType(dataStruct interface{}) (reflect.Type, error) {
+func getTagStructType(dataStruct any) (reflect.Type, error) {
 	if dataStruct == nil {
 		return nil, mergepatch.ErrBadArgKind(struct{}{}, nil)
 	}
@@ -145,7 +145,7 @@ func getTagStructType(dataStruct interface{}) (reflect.Type, error) {
 	return t, nil
 }
 
-func GetTagStructTypeOrDie(dataStruct interface{}) reflect.Type {
+func GetTagStructTypeOrDie(dataStruct any) reflect.Type {
 	t, err := getTagStructType(dataStruct)
 	if err != nil {
 		panic(err)

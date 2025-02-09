@@ -195,7 +195,7 @@ func hostCheck() (int, int, int) {
 	return numaNodes, coreCount, threadsPerCore
 }
 
-func checkMetricValueGreaterThan(value interface{}) types.GomegaMatcher {
+func checkMetricValueGreaterThan(value any) types.GomegaMatcher {
 	return gstruct.PointTo(gstruct.MatchAllFields(gstruct.Fields{
 		// We already check Metric when matching the Id
 		"Metric":    gstruct.Ignore(),

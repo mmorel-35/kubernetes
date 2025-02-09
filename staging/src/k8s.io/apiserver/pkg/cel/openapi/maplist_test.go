@@ -27,10 +27,10 @@ func TestMapList(t *testing.T) {
 	for _, tc := range []struct {
 		name          string
 		sts           *spec.Schema
-		items         []interface{}
-		warmUpQueries []interface{}
-		query         interface{}
-		expected      interface{}
+		items         []any
+		warmUpQueries []any
+		query         any
+		expected      any
 	}{
 		{
 			name: "default list type",
@@ -38,7 +38,7 @@ func TestMapList(t *testing.T) {
 				SchemaProps: spec.SchemaProps{
 					Type: []string{"array"},
 				}},
-			query:    map[string]interface{}{},
+			query:    map[string]any{},
 			expected: nil,
 		},
 		{
@@ -47,7 +47,7 @@ func TestMapList(t *testing.T) {
 				SchemaProps: spec.SchemaProps{
 					Type: []string{"map"},
 				}},
-			query:    map[string]interface{}{},
+			query:    map[string]any{},
 			expected: nil,
 		},
 		{
@@ -56,10 +56,10 @@ func TestMapList(t *testing.T) {
 				SchemaProps: spec.SchemaProps{
 					Type: []string{"array"},
 				},
-				VendorExtensible: spec.VendorExtensible{Extensions: map[string]interface{}{
+				VendorExtensible: spec.VendorExtensible{Extensions: map[string]any{
 					extListType: listTypeSet,
 				}}},
-			query:    map[string]interface{}{},
+			query:    map[string]any{},
 			expected: nil,
 		},
 		{
@@ -68,7 +68,7 @@ func TestMapList(t *testing.T) {
 				SchemaProps: spec.SchemaProps{
 					Type: []string{"array"},
 				}},
-			query:    map[string]interface{}{},
+			query:    map[string]any{},
 			expected: nil,
 		},
 		{
@@ -77,25 +77,25 @@ func TestMapList(t *testing.T) {
 				SchemaProps: spec.SchemaProps{
 					Type: []string{"array"},
 				},
-				VendorExtensible: spec.VendorExtensible{Extensions: map[string]interface{}{
+				VendorExtensible: spec.VendorExtensible{Extensions: map[string]any{
 					extListType:    listTypeMap,
 					extListMapKeys: []any{"k"},
 				}}},
-			items: []interface{}{
-				map[string]interface{}{
+			items: []any{
+				map[string]any{
 					"k":  "a",
 					"v1": "a",
 				},
-				map[string]interface{}{
+				map[string]any{
 					"k":  "b",
 					"v1": "b",
 				},
 			},
-			query: map[string]interface{}{
+			query: map[string]any{
 				"k":  "b",
 				"v1": "B",
 			},
-			expected: map[string]interface{}{
+			expected: map[string]any{
 				"k":  "b",
 				"v1": "b",
 			},
@@ -106,8 +106,8 @@ func TestMapList(t *testing.T) {
 				SchemaProps: spec.SchemaProps{
 					Type: []string{"array"},
 				}},
-			items: []interface{}{
-				map[string]interface{}{
+			items: []any{
+				map[string]any{
 					"k":  "a",
 					"v1": "a",
 				},
@@ -121,18 +121,18 @@ func TestMapList(t *testing.T) {
 				SchemaProps: spec.SchemaProps{
 					Type: []string{"array"},
 				},
-				VendorExtensible: spec.VendorExtensible{Extensions: map[string]interface{}{
+				VendorExtensible: spec.VendorExtensible{Extensions: map[string]any{
 					extListType:    listTypeMap,
 					extListMapKeys: []any{"k"},
 				}}},
-			items: []interface{}{
-				map[string]interface{}{
+			items: []any{
+				map[string]any{
 					"k":  "a",
 					"v1": "a",
 				},
 			},
-			query: map[string]interface{}{
-				"k": map[string]interface{}{
+			query: map[string]any{
+				"k": map[string]any{
 					"keys": "must",
 					"be":   "scalars",
 				},
@@ -146,22 +146,22 @@ func TestMapList(t *testing.T) {
 				SchemaProps: spec.SchemaProps{
 					Type: []string{"array"},
 				},
-				VendorExtensible: spec.VendorExtensible{Extensions: map[string]interface{}{
+				VendorExtensible: spec.VendorExtensible{Extensions: map[string]any{
 					extListType:    listTypeMap,
 					extListMapKeys: []any{"k"},
 				}}},
-			items: []interface{}{
-				map[string]interface{}{
+			items: []any{
+				map[string]any{
 					"k":  "a",
 					"v1": "a",
 				},
 				5,
 			},
-			query: map[string]interface{}{
+			query: map[string]any{
 				"k":  "a",
 				"v1": "A",
 			},
-			expected: map[string]interface{}{
+			expected: map[string]any{
 				"k":  "a",
 				"v1": "a",
 			},
@@ -172,25 +172,25 @@ func TestMapList(t *testing.T) {
 				SchemaProps: spec.SchemaProps{
 					Type: []string{"array"},
 				},
-				VendorExtensible: spec.VendorExtensible{Extensions: map[string]interface{}{
+				VendorExtensible: spec.VendorExtensible{Extensions: map[string]any{
 					extListType:    listTypeMap,
 					extListMapKeys: []any{"k"},
 				}}},
-			items: []interface{}{
-				map[string]interface{}{
+			items: []any{
+				map[string]any{
 					"k":  "a",
 					"v1": "a",
 				},
-				map[string]interface{}{
+				map[string]any{
 					"k":  "a",
 					"v1": "b",
 				},
 			},
-			query: map[string]interface{}{
+			query: map[string]any{
 				"k":  "a",
 				"v1": "A",
 			},
-			expected: map[string]interface{}{
+			expected: map[string]any{
 				"k":  "a",
 				"v1": "a",
 			},
@@ -201,38 +201,38 @@ func TestMapList(t *testing.T) {
 				SchemaProps: spec.SchemaProps{
 					Type: []string{"array"},
 				},
-				VendorExtensible: spec.VendorExtensible{Extensions: map[string]interface{}{
+				VendorExtensible: spec.VendorExtensible{Extensions: map[string]any{
 					extListType:    listTypeMap,
 					extListMapKeys: []any{"k1", "k2"},
 				}}},
-			items: []interface{}{
-				map[string]interface{}{
+			items: []any{
+				map[string]any{
 					"k1": "a",
 					"k2": "b",
 					"v1": "a",
 				},
-				map[string]interface{}{
+				map[string]any{
 					"k1": "a",
 					"k2": "b",
 					"v1": "b",
 				},
-				map[string]interface{}{
+				map[string]any{
 					"k1": "x",
 					"k2": "y",
 					"v1": "z",
 				},
 			},
-			warmUpQueries: []interface{}{
-				map[string]interface{}{
+			warmUpQueries: []any{
+				map[string]any{
 					"k1": "x",
 					"k2": "y",
 				},
 			},
-			query: map[string]interface{}{
+			query: map[string]any{
 				"k1": "a",
 				"k2": "b",
 			},
-			expected: map[string]interface{}{
+			expected: map[string]any{
 				"k1": "a",
 				"k2": "b",
 				"v1": "a",
@@ -259,19 +259,19 @@ func TestMapList(t *testing.T) {
 							}},
 					},
 				},
-				VendorExtensible: spec.VendorExtensible{Extensions: map[string]interface{}{
+				VendorExtensible: spec.VendorExtensible{Extensions: map[string]any{
 					extListType:    listTypeMap,
 					extListMapKeys: []any{"kb", "kf", "ki", "ks"},
 				}}},
-			items: []interface{}{
-				map[string]interface{}{
+			items: []any{
+				map[string]any{
 					"kb": nil,
 					"kf": float64(2.0),
 					"ki": int64(42),
 					"ks": "hello",
 					"v1": "a",
 				},
-				map[string]interface{}{
+				map[string]any{
 					"kb": false,
 					"kf": float64(2.0),
 					"ki": int64(42),
@@ -279,14 +279,14 @@ func TestMapList(t *testing.T) {
 					"v1": "b",
 				},
 			},
-			query: map[string]interface{}{
+			query: map[string]any{
 				"kb": false,
 				"kf": float64(2.0),
 				"ki": int64(42),
 				"ks": "hello",
 				"v1": "B",
 			},
-			expected: map[string]interface{}{
+			expected: map[string]any{
 				"kb": false,
 				"kf": float64(2.0),
 				"ki": int64(42),

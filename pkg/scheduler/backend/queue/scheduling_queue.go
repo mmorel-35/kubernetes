@@ -117,7 +117,7 @@ type SchedulingQueue interface {
 	// Important Note: preCheck shouldn't include anything that depends on the in-tree plugins' logic.
 	// (e.g., filter Pods based on added/updated Node's capacity, etc.)
 	// We know currently some do, but we'll eventually remove them in favor of the scheduling queue hint.
-	MoveAllToActiveOrBackoffQueue(logger klog.Logger, event framework.ClusterEvent, oldObj, newObj interface{}, preCheck PreEnqueueCheck)
+	MoveAllToActiveOrBackoffQueue(logger klog.Logger, event framework.ClusterEvent, oldObj, newObj any, preCheck PreEnqueueCheck)
 	AssignedPodAdded(logger klog.Logger, pod *v1.Pod)
 	AssignedPodUpdated(logger klog.Logger, oldPod, newPod *v1.Pod, event framework.ClusterEvent)
 
@@ -207,9 +207,9 @@ type QueueingHintFunction struct {
 type clusterEvent struct {
 	event framework.ClusterEvent
 	// oldObj is the object that involved this event.
-	oldObj interface{}
+	oldObj any
 	// newObj is the object that involved this event.
-	newObj interface{}
+	newObj any
 }
 
 type priorityQueueOptions struct {
@@ -405,7 +405,7 @@ func (p *PriorityQueue) isEventOfInterest(logger klog.Logger, event framework.Cl
 // the scheduling queue is supposed to enqueue this Pod to activeQ/backoffQ depending on the remaining backoff time of the Pod.
 // If all QueueingHintFns returns Skip, the scheduling queue enqueues the Pod back to unschedulable Pod pool
 // because no plugin changes the scheduling result via the event.
-func (p *PriorityQueue) isPodWorthRequeuing(logger klog.Logger, pInfo *framework.QueuedPodInfo, event framework.ClusterEvent, oldObj, newObj interface{}) queueingStrategy {
+func (p *PriorityQueue) isPodWorthRequeuing(logger klog.Logger, pInfo *framework.QueuedPodInfo, event framework.ClusterEvent, oldObj, newObj any) queueingStrategy {
 	rejectorPlugins := pInfo.UnschedulablePlugins.Union(pInfo.PendingPlugins)
 	if rejectorPlugins.Len() == 0 {
 		logger.V(6).Info("Worth requeuing because no failed plugins", "pod", klog.KObj(pInfo.Pod))
@@ -1033,7 +1033,7 @@ func (p *PriorityQueue) AssignedPodUpdated(logger klog.Logger, oldPod, newPod *v
 // This function adds all pods and then signals the condition variable to ensure that
 // if Pop() is waiting for an item, it receives the signal after all the pods are in the
 // queue and the head is the highest priority pod.
-func (p *PriorityQueue) moveAllToActiveOrBackoffQueue(logger klog.Logger, event framework.ClusterEvent, oldObj, newObj interface{}, preCheck PreEnqueueCheck) {
+func (p *PriorityQueue) moveAllToActiveOrBackoffQueue(logger klog.Logger, event framework.ClusterEvent, oldObj, newObj any, preCheck PreEnqueueCheck) {
 	if !p.isEventOfInterest(logger, event) {
 		// No plugin is interested in this event.
 		// Return early before iterating all pods in unschedulablePods for preCheck.
@@ -1053,7 +1053,7 @@ func (p *PriorityQueue) moveAllToActiveOrBackoffQueue(logger klog.Logger, event 
 // This function adds all pods and then signals the condition variable to ensure that
 // if Pop() is waiting for an item, it receives the signal after all the pods are in the
 // queue and the head is the highest priority pod.
-func (p *PriorityQueue) MoveAllToActiveOrBackoffQueue(logger klog.Logger, event framework.ClusterEvent, oldObj, newObj interface{}, preCheck PreEnqueueCheck) {
+func (p *PriorityQueue) MoveAllToActiveOrBackoffQueue(logger klog.Logger, event framework.ClusterEvent, oldObj, newObj any, preCheck PreEnqueueCheck) {
 	p.lock.Lock()
 	defer p.lock.Unlock()
 	p.moveAllToActiveOrBackoffQueue(logger, event, oldObj, newObj, preCheck)
@@ -1091,7 +1091,7 @@ func (p *PriorityQueue) requeuePodViaQueueingHint(logger klog.Logger, pInfo *fra
 }
 
 // NOTE: this function assumes lock has been acquired in caller
-func (p *PriorityQueue) movePodsToActiveOrBackoffQueue(logger klog.Logger, podInfoList []*framework.QueuedPodInfo, event framework.ClusterEvent, oldObj, newObj interface{}) {
+func (p *PriorityQueue) movePodsToActiveOrBackoffQueue(logger klog.Logger, podInfoList []*framework.QueuedPodInfo, event framework.ClusterEvent, oldObj, newObj any) {
 	if !p.isEventOfInterest(logger, event) {
 		// No plugin is interested in this event.
 		return

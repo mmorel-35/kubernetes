@@ -82,7 +82,7 @@ func (g *genGroup) GenerateType(c *generator.Context, t *types.Type, w io.Writer
 		apiPath = `"/api"`
 	}
 	schemePackage := path.Join(g.clientsetPackage, "scheme")
-	m := map[string]interface{}{
+	m := map[string]any{
 		"version":                            g.version,
 		"groupName":                          groupName,
 		"GroupGoName":                        g.groupGoName,
@@ -111,7 +111,7 @@ func (g *genGroup) GenerateType(c *generator.Context, t *types.Type, w io.Writer
 		if err != nil {
 			return err
 		}
-		wrapper := map[string]interface{}{
+		wrapper := map[string]any{
 			"type":        t,
 			"GroupGoName": g.groupGoName,
 			"Version":     namer.IC(g.version),

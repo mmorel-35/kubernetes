@@ -35,7 +35,7 @@ type DaemonSetListerExpansion interface {
 
 // DaemonSetNamespaceListerExpansion allows custom methods to be added to
 // DaemonSetNamespaceLister.
-type DaemonSetNamespaceListerExpansion interface{}
+type DaemonSetNamespaceListerExpansion any
 
 // GetPodDaemonSets returns a list of DaemonSets that potentially match a pod.
 // Only the one specified in the Pod's ControllerRef will actually manage it.

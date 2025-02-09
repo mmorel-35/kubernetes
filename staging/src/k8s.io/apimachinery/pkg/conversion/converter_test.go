@@ -49,7 +49,7 @@ func TestConverter_MismatchedTypes(t *testing.T) {
 	}
 	if err := c.RegisterUntypedConversionFunc(
 		(*[]string)(nil), (*int)(nil),
-		func(a, b interface{}, s Scope) error {
+		func(a, b any, s Scope) error {
 			return convertFn(a.(*[]string), b.(*int), s)
 		},
 	); err != nil {
@@ -84,7 +84,7 @@ func TestConverter_CallsRegisteredFunctions(t *testing.T) {
 	}
 	if err := c.RegisterUntypedConversionFunc(
 		(*A)(nil), (*B)(nil),
-		func(a, b interface{}, s Scope) error {
+		func(a, b any, s Scope) error {
 			return convertFn1(a.(*A), b.(*B), s)
 		},
 	); err != nil {
@@ -97,7 +97,7 @@ func TestConverter_CallsRegisteredFunctions(t *testing.T) {
 	}
 	if err := c.RegisterUntypedConversionFunc(
 		(*B)(nil), (*A)(nil),
-		func(a, b interface{}, s Scope) error {
+		func(a, b any, s Scope) error {
 			return convertFn2(a.(*B), b.(*A), s)
 		},
 	); err != nil {
@@ -135,7 +135,7 @@ func TestConverter_CallsRegisteredFunctions(t *testing.T) {
 	}
 	if err := c.RegisterUntypedConversionFunc(
 		(*A)(nil), (*C)(nil),
-		func(a, b interface{}, s Scope) error {
+		func(a, b any, s Scope) error {
 			return convertFn3(a.(*A), b.(*C), s)
 		},
 	); err != nil {
@@ -158,7 +158,7 @@ func TestConverter_IgnoredConversion(t *testing.T) {
 	}
 	if err := c.RegisterUntypedConversionFunc(
 		(*A)(nil), (*B)(nil),
-		func(a, b interface{}, s Scope) error {
+		func(a, b any, s Scope) error {
 			return convertFn(a.(*A), b.(*B), s)
 		},
 	); err != nil {
@@ -186,7 +186,7 @@ func TestConverter_GeneratedConversionOverridden(t *testing.T) {
 	}
 	if err := c.RegisterUntypedConversionFunc(
 		(*A)(nil), (*B)(nil),
-		func(a, b interface{}, s Scope) error {
+		func(a, b any, s Scope) error {
 			return convertFn1(a.(*A), b.(*B), s)
 		},
 	); err != nil {
@@ -197,7 +197,7 @@ func TestConverter_GeneratedConversionOverridden(t *testing.T) {
 	}
 	if err := c.RegisterGeneratedUntypedConversionFunc(
 		(*A)(nil), (*B)(nil),
-		func(a, b interface{}, s Scope) error {
+		func(a, b any, s Scope) error {
 			return convertFn2(a.(*A), b.(*B), s)
 		},
 	); err != nil {
@@ -220,7 +220,7 @@ func TestConverter_WithConversionOverridden(t *testing.T) {
 	}
 	if err := c.RegisterUntypedConversionFunc(
 		(*A)(nil), (*B)(nil),
-		func(a, b interface{}, s Scope) error {
+		func(a, b any, s Scope) error {
 			return convertFn1(a.(*A), b.(*B), s)
 		},
 	); err != nil {
@@ -231,7 +231,7 @@ func TestConverter_WithConversionOverridden(t *testing.T) {
 	}
 	if err := c.RegisterGeneratedUntypedConversionFunc(
 		(*A)(nil), (*B)(nil),
-		func(a, b interface{}, s Scope) error {
+		func(a, b any, s Scope) error {
 			return convertFn2(a.(*A), b.(*B), s)
 		},
 	); err != nil {
@@ -241,7 +241,7 @@ func TestConverter_WithConversionOverridden(t *testing.T) {
 	ext := NewConversionFuncs()
 	ext.AddUntyped(
 		(*A)(nil), (*B)(nil),
-		func(a, b interface{}, s Scope) error {
+		func(a, b any, s Scope) error {
 			return nil
 		},
 	)
@@ -272,7 +272,7 @@ func TestConverter_meta(t *testing.T) {
 	}
 	if err := c.RegisterUntypedConversionFunc(
 		(*Foo)(nil), (*Bar)(nil),
-		func(a, b interface{}, s Scope) error {
+		func(a, b any, s Scope) error {
 			return convertFn1(a.(*Foo), b.(*Bar), s)
 		},
 	); err != nil {

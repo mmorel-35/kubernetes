@@ -197,13 +197,13 @@ func NewAttachDetachController(
 		adc.intreeToCSITranslator)
 
 	podInformer.Informer().AddEventHandler(kcache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			adc.podAdd(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			adc.podUpdate(logger, oldObj, newObj)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			adc.podDelete(logger, obj)
 		},
 	})
@@ -215,22 +215,22 @@ func NewAttachDetachController(
 	}
 
 	nodeInformer.Informer().AddEventHandler(kcache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			adc.nodeAdd(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			adc.nodeUpdate(logger, oldObj, newObj)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			adc.nodeDelete(logger, obj)
 		},
 	})
 
 	pvcInformer.Informer().AddEventHandler(kcache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			adc.enqueuePVC(obj)
 		},
-		UpdateFunc: func(old, new interface{}) {
+		UpdateFunc: func(old, new any) {
 			adc.enqueuePVC(new)
 		},
 	})
@@ -485,7 +485,7 @@ func (adc *attachDetachController) populateDesiredStateOfWorld(logger klog.Logge
 	return nil
 }
 
-func (adc *attachDetachController) podAdd(logger klog.Logger, obj interface{}) {
+func (adc *attachDetachController) podAdd(logger klog.Logger, obj any) {
 	pod, ok := obj.(*v1.Pod)
 	if pod == nil || !ok {
 		return
@@ -509,7 +509,7 @@ func (adc *attachDetachController) GetDesiredStateOfWorld() cache.DesiredStateOf
 	return adc.desiredStateOfWorld
 }
 
-func (adc *attachDetachController) podUpdate(logger klog.Logger, oldObj, newObj interface{}) {
+func (adc *attachDetachController) podUpdate(logger klog.Logger, oldObj, newObj any) {
 	pod, ok := newObj.(*v1.Pod)
 	if pod == nil || !ok {
 		return
@@ -528,7 +528,7 @@ func (adc *attachDetachController) podUpdate(logger klog.Logger, oldObj, newObj 
 		adc.desiredStateOfWorld, &adc.volumePluginMgr, adc.pvcLister, adc.pvLister, adc.csiMigratedPluginManager, adc.intreeToCSITranslator)
 }
 
-func (adc *attachDetachController) podDelete(logger klog.Logger, obj interface{}) {
+func (adc *attachDetachController) podDelete(logger klog.Logger, obj any) {
 	pod, ok := obj.(*v1.Pod)
 	if pod == nil || !ok {
 		return
@@ -538,7 +538,7 @@ func (adc *attachDetachController) podDelete(logger klog.Logger, obj interface{}
 		adc.desiredStateOfWorld, &adc.volumePluginMgr, adc.pvcLister, adc.pvLister, adc.csiMigratedPluginManager, adc.intreeToCSITranslator)
 }
 
-func (adc *attachDetachController) nodeAdd(logger klog.Logger, obj interface{}) {
+func (adc *attachDetachController) nodeAdd(logger klog.Logger, obj any) {
 	node, ok := obj.(*v1.Node)
 	// TODO: investigate if nodeName is empty then if we can return
 	// kubernetes/kubernetes/issues/37777
@@ -554,7 +554,7 @@ func (adc *attachDetachController) nodeAdd(logger klog.Logger, obj interface{}) 
 	adc.actualStateOfWorld.SetNodeStatusUpdateNeeded(logger, nodeName)
 }
 
-func (adc *attachDetachController) nodeUpdate(logger klog.Logger, oldObj, newObj interface{}) {
+func (adc *attachDetachController) nodeUpdate(logger klog.Logger, oldObj, newObj any) {
 	node, ok := newObj.(*v1.Node)
 	// TODO: investigate if nodeName is empty then if we can return
 	if node == nil || !ok {
@@ -566,7 +566,7 @@ func (adc *attachDetachController) nodeUpdate(logger klog.Logger, oldObj, newObj
 	adc.processVolumesInUse(logger, nodeName, node.Status.VolumesInUse)
 }
 
-func (adc *attachDetachController) nodeDelete(logger klog.Logger, obj interface{}) {
+func (adc *attachDetachController) nodeDelete(logger klog.Logger, obj any) {
 	node, ok := obj.(*v1.Node)
 	if node == nil || !ok {
 		return
@@ -581,7 +581,7 @@ func (adc *attachDetachController) nodeDelete(logger klog.Logger, obj interface{
 	adc.processVolumesInUse(logger, nodeName, node.Status.VolumesInUse)
 }
 
-func (adc *attachDetachController) enqueuePVC(obj interface{}) {
+func (adc *attachDetachController) enqueuePVC(obj any) {
 	key, err := kcache.DeletionHandlingMetaNamespaceKeyFunc(obj)
 	if err != nil {
 		runtime.HandleError(fmt.Errorf("Couldn't get key for object %+v: %v", obj, err))

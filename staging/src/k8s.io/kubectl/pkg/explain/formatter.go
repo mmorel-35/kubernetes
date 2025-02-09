@@ -38,7 +38,7 @@ func (f Formatter) Indent(indent int) *Formatter {
 
 // Write writes a string with the indentation set for the
 // Formatter. This is not wrapping text.
-func (f *Formatter) Write(str string, a ...interface{}) error {
+func (f *Formatter) Write(str string, a ...any) error {
 	// Don't indent empty lines
 	if str == "" {
 		_, err := io.WriteString(f.Writer, "\n")
@@ -59,7 +59,7 @@ func (f *Formatter) Write(str string, a ...interface{}) error {
 
 // WriteWrapped writes a string with the indentation set for the
 // Formatter, and wraps as needed.
-func (f *Formatter) WriteWrapped(str string, a ...interface{}) error {
+func (f *Formatter) WriteWrapped(str string, a ...any) error {
 	if f.Wrap == 0 {
 		return f.Write(str, a...)
 	}

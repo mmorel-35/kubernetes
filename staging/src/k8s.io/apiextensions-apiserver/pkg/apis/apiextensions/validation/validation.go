@@ -1014,7 +1014,7 @@ func ValidateCustomResourceDefinitionOpenAPISchema(schema *apiextensions.JSONSch
 	//
 	// In other words:
 	// - properties are for structs,
-	// - additionalProperties are for map[string]interface{}
+	// - additionalProperties are for map[string]any
 	//
 	// Note: when patternProperties is added to OpenAPI some day, this will have to be
 	//       restricted like additionalProperties.

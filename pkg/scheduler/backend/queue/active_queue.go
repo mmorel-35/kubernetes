@@ -45,11 +45,11 @@ type activeQueuer interface {
 	len() int
 	has(pInfo *framework.QueuedPodInfo) bool
 
-	listInFlightEvents() []interface{}
+	listInFlightEvents() []any
 	listInFlightPods() []*v1.Pod
 	clusterEventsForPod(logger klog.Logger, pInfo *framework.QueuedPodInfo) ([]*clusterEvent, error)
 	addEventsIfPodInFlight(oldPod, newPod *v1.Pod, events []framework.ClusterEvent) bool
-	addEventIfAnyInFlight(oldObj, newObj interface{}, event framework.ClusterEvent) bool
+	addEventIfAnyInFlight(oldObj, newObj any, event framework.ClusterEvent) bool
 
 	schedulingCycle() int64
 	done(pod types.UID)
@@ -257,10 +257,10 @@ func (aq *activeQueue) has(pInfo *framework.QueuedPodInfo) bool {
 }
 
 // listInFlightEvents returns all inFlightEvents.
-func (aq *activeQueue) listInFlightEvents() []interface{} {
+func (aq *activeQueue) listInFlightEvents() []any {
 	aq.lock.RLock()
 	defer aq.lock.RUnlock()
-	var values []interface{}
+	var values []any
 	for event := aq.inFlightEvents.Front(); event != nil; event = event.Next() {
 		values = append(values, event.Value)
 	}
@@ -326,7 +326,7 @@ func (aq *activeQueue) addEventsIfPodInFlight(oldPod, newPod *v1.Pod, events []f
 
 // addEventIfAnyInFlight adds clusterEvent to inFlightEvents if any pod is in inFlightPods.
 // It returns true if pushed the event to the inFlightEvents.
-func (aq *activeQueue) addEventIfAnyInFlight(oldObj, newObj interface{}, event framework.ClusterEvent) bool {
+func (aq *activeQueue) addEventIfAnyInFlight(oldObj, newObj any, event framework.ClusterEvent) bool {
 	aq.lock.Lock()
 	defer aq.lock.Unlock()
 

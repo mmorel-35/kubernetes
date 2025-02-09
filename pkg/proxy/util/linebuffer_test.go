@@ -25,27 +25,27 @@ import (
 func TestLineBufferWrite(t *testing.T) {
 	testCases := []struct {
 		name     string
-		input    []interface{}
+		input    []any
 		expected string
 	}{
 		{
 			name:     "none",
-			input:    []interface{}{},
+			input:    []any{},
 			expected: "\n",
 		},
 		{
 			name:     "one string",
-			input:    []interface{}{"test1"},
+			input:    []any{"test1"},
 			expected: "test1\n",
 		},
 		{
 			name:     "one slice",
-			input:    []interface{}{[]string{"test1", "test2"}},
+			input:    []any{[]string{"test1", "test2"}},
 			expected: "test1 test2\n",
 		},
 		{
 			name:     "mixed",
-			input:    []interface{}{"s1", "s2", []string{"s3", "s4"}, "", "s5", []string{}, []string{"s6"}, "s7"},
+			input:    []any{"s1", "s2", []string{"s3", "s4"}, "", "s5", []string{}, []string{"s6"}, "s7"},
 			expected: "s1 s2 s3 s4  s5  s6 s7\n",
 		},
 	}

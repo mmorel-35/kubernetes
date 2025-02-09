@@ -93,7 +93,7 @@ func (pl *CSILimits) EventsToRegister(_ context.Context) ([]framework.ClusterEve
 	}, nil
 }
 
-func (pl *CSILimits) isSchedulableAfterPodDeleted(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *CSILimits) isSchedulableAfterPodDeleted(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	deletedPod, _, err := util.As[*v1.Pod](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, fmt.Errorf("unexpected objects in isSchedulableAfterPodDeleted: %w", err)
@@ -117,7 +117,7 @@ func (pl *CSILimits) isSchedulableAfterPodDeleted(logger klog.Logger, pod *v1.Po
 	return framework.QueueSkip, nil
 }
 
-func (pl *CSILimits) isSchedulableAfterPVCAdded(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *CSILimits) isSchedulableAfterPVCAdded(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	_, addedPvc, err := util.As[*v1.PersistentVolumeClaim](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, fmt.Errorf("unexpected objects in isSchedulableAfterPVCAdded: %w", err)

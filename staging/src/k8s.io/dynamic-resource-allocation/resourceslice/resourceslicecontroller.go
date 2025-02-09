@@ -315,7 +315,7 @@ func (c *Controller) initInformer(ctx context.Context) error {
 		selector[resourceapi.ResourceSliceSelectorNodeName] = c.owner.Name
 	}
 	informer := resourceinformers.NewFilteredResourceSliceInformer(c.kubeClient, resyncPeriod, cache.Indexers{
-		poolNameIndex: func(obj interface{}) ([]string, error) {
+		poolNameIndex: func(obj any) ([]string, error) {
 			slice, ok := obj.(*resourceapi.ResourceSlice)
 			if !ok {
 				return []string{}, nil

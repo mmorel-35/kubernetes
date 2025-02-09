@@ -28,42 +28,42 @@ import (
 func TestAPIExportPermissionClaimCELValidation(t *testing.T) {
 	testCases := []struct {
 		name         string
-		current, old map[string]interface{}
+		current, old map[string]any
 		wantErrs     []string
 	}{
 		{
 			name:    "nothing is set",
-			current: map[string]interface{}{},
+			current: map[string]any{},
 			wantErrs: []string{
 				"openAPIV3Schema.properties.spec.properties.permissionClaims.items: Invalid value: \"object\": either \"all\" or \"resourceSelector\" must be set",
 			},
 		},
 		{
 			name: "all is true",
-			current: map[string]interface{}{
+			current: map[string]any{
 				"all": true,
 			},
 		},
 		{
 			name: "all is true, resourceSelector is nil",
-			current: map[string]interface{}{
+			current: map[string]any{
 				"all":              true,
 				"resourceSelector": nil,
 			},
 		},
 		{
 			name: "all is true, resourceSelector is empty",
-			current: map[string]interface{}{
+			current: map[string]any{
 				"all":              true,
-				"resourceSelector": []interface{}{},
+				"resourceSelector": []any{},
 			},
 		},
 		{
 			name: "all is true and resourceSelector is set",
-			current: map[string]interface{}{
+			current: map[string]any{
 				"all": true,
-				"resourceSelector": []interface{}{
-					map[string]interface{}{"namespace": "foo"},
+				"resourceSelector": []any{
+					map[string]any{"namespace": "foo"},
 				},
 			},
 			wantErrs: []string{
@@ -72,7 +72,7 @@ func TestAPIExportPermissionClaimCELValidation(t *testing.T) {
 		},
 		{
 			name: "all is unset and resourceSelector is nil",
-			current: map[string]interface{}{
+			current: map[string]any{
 				"resourceSelector": nil,
 			},
 			wantErrs: []string{
@@ -81,8 +81,8 @@ func TestAPIExportPermissionClaimCELValidation(t *testing.T) {
 		},
 		{
 			name: "all is unset and resourceSelector is empty",
-			current: map[string]interface{}{
-				"resourceSelector": []interface{}{},
+			current: map[string]any{
+				"resourceSelector": []any{},
 			},
 			wantErrs: []string{
 				"openAPIV3Schema.properties.spec.properties.permissionClaims.items: Invalid value: \"object\": either \"all\" or \"resourceSelector\" must be set",
@@ -90,15 +90,15 @@ func TestAPIExportPermissionClaimCELValidation(t *testing.T) {
 		},
 		{
 			name: "resourceSelector is set",
-			current: map[string]interface{}{
-				"resourceSelector": []interface{}{
-					map[string]interface{}{"namespace": "foo"},
+			current: map[string]any{
+				"resourceSelector": []any{
+					map[string]any{"namespace": "foo"},
 				},
 			},
 		},
 		{
 			name: "all is false and resourceSelector is nil",
-			current: map[string]interface{}{
+			current: map[string]any{
 				"all":              false,
 				"resourceSelector": nil,
 			},
@@ -108,9 +108,9 @@ func TestAPIExportPermissionClaimCELValidation(t *testing.T) {
 		},
 		{
 			name: "empty resource selector",
-			current: map[string]interface{}{
+			current: map[string]any{
 				"all":              false,
-				"resourceSelector": []interface{}{},
+				"resourceSelector": []any{},
 			},
 			wantErrs: []string{
 				"openAPIV3Schema.properties.spec.properties.permissionClaims.items: Invalid value: \"object\": either \"all\" or \"resourceSelector\" must be set",
@@ -118,7 +118,7 @@ func TestAPIExportPermissionClaimCELValidation(t *testing.T) {
 		},
 		{
 			name: "logicalcluster fine with non-empty identityHash",
-			current: map[string]interface{}{
+			current: map[string]any{
 				"group":        "core.kcp.io",
 				"resource":     "logicalclusters",
 				"identityHash": "abc",
@@ -156,12 +156,12 @@ func TestAPIExportPermissionClaimCELValidation(t *testing.T) {
 func TestResourceSelectorCELValidation(t *testing.T) {
 	testCases := []struct {
 		name         string
-		current, old map[string]interface{}
+		current, old map[string]any
 		wantErrs     []string
 	}{
 		{
 			name: "none is set",
-			current: map[string]interface{}{
+			current: map[string]any{
 				"name":      nil,
 				"namespace": nil,
 			},
@@ -171,21 +171,21 @@ func TestResourceSelectorCELValidation(t *testing.T) {
 		},
 		{
 			name: "namespace is set",
-			current: map[string]interface{}{
+			current: map[string]any{
 				"name":      nil,
 				"namespace": "foo",
 			},
 		},
 		{
 			name: "name is set",
-			current: map[string]interface{}{
+			current: map[string]any{
 				"name":      "foo",
 				"namespace": nil,
 			},
 		},
 		{
 			name: "both name and namespace are set",
-			current: map[string]interface{}{
+			current: map[string]any{
 				"name":      "foo",
 				"namespace": "bar",
 			},

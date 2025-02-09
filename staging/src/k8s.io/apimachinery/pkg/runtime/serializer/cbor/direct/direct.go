@@ -31,7 +31,7 @@ import (
 // encoding/json.Marshaler, or encoding/json.Unmarshaler, a non-nil error will be returned unless
 // the value also implements the corresponding CBOR interfaces. This limitation will ultimately be
 // removed in favor of automatic transcoding to CBOR.
-func Marshal(src interface{}) ([]byte, error) {
+func Marshal(src any) ([]byte, error) {
 	if err := modes.RejectCustomMarshalers(src); err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func Marshal(src interface{}) ([]byte, error) {
 // encoding/json.Marshaler, or encoding/json.Unmarshaler, a non-nil error will be returned unless
 // the value also implements the corresponding CBOR interfaces. This limitation will ultimately be
 // removed in favor of automatic transcoding to CBOR.
-func Unmarshal(src []byte, dst interface{}) error {
+func Unmarshal(src []byte, dst any) error {
 	if err := modes.RejectCustomMarshalers(dst); err != nil {
 		return err
 	}

@@ -82,10 +82,10 @@ var (
 	}
 
 	fakeParams *unstructured.Unstructured = &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": paramsGVK.GroupVersion().String(),
 			"kind":       paramsGVK.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":            "replicas-test.example.com",
 				"namespace":       "default",
 				"resourceVersion": "1",
@@ -158,10 +158,10 @@ func newParam(name, namespace string, labels map[string]string) *unstructured.Un
 		namespace = metav1.NamespaceDefault
 	}
 	res := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": paramsGVK.GroupVersion().String(),
 			"kind":       paramsGVK.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":            name,
 				"namespace":       namespace,
 				"resourceVersion": "1",
@@ -174,10 +174,10 @@ func newParam(name, namespace string, labels map[string]string) *unstructured.Un
 
 func newClusterScopedParam(name string, labels map[string]string) *unstructured.Unstructured {
 	res := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": clusterScopedParamsGVK.GroupVersion().String(),
 			"kind":       clusterScopedParamsGVK.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":            name,
 				"resourceVersion": "1",
 			},
@@ -569,10 +569,10 @@ func TestDefinitionDoesntMatch(t *testing.T) {
 	// Should pass validation with no error.
 
 	nonMatchingParams := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": paramsGVK.GroupVersion().String(),
 			"kind":       paramsGVK.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":            "oddlength",
 				"resourceVersion": "1",
 			},
@@ -588,10 +588,10 @@ func TestDefinitionDoesntMatch(t *testing.T) {
 	// Validate a matching input.
 	// Should match and be denied.
 	matchingParams := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": paramsGVK.GroupVersion().String(),
 			"kind":       paramsGVK.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":            "evenlength",
 				"resourceVersion": "1",
 			},
@@ -618,10 +618,10 @@ func TestReconfigureBinding(t *testing.T) {
 	numCompiles := 0
 
 	fakeParams2 := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": paramsGVK.GroupVersion().String(),
 			"kind":       paramsGVK.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "replicas-test2.example.com",
 				// fake object tracker does not populate missing namespace
 				"namespace":       "default",

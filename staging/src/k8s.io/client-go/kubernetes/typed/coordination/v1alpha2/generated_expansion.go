@@ -18,4 +18,4 @@ limitations under the License.
 
 package v1alpha2
 
-type LeaseCandidateExpansion interface{}
+type LeaseCandidateExpansion any

@@ -207,12 +207,12 @@ func TestDefault(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var in interface{}
+			var in any
 			if err := json.Unmarshal([]byte(tt.json), &in); err != nil {
 				t.Fatal(err)
 			}
 
-			var expected interface{}
+			var expected any
 			if err := json.Unmarshal([]byte(tt.expected), &expected); err != nil {
 				t.Fatal(err)
 			}

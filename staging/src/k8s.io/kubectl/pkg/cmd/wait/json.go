@@ -107,12 +107,12 @@ func verifyParsedJSONPath(results [][]reflect.Value) error {
 // JSONPath parser with the expected value given by the value
 //
 // Since this is coming from an unstructured this can only ever be a primitive,
-// map[string]interface{}, or []interface{}.
+// map[string]any, or []any.
 // We do not support the last two and rely on fmt to handle conversion to string
 // and compare the result with user input
 func compareResults(r reflect.Value, expectedVal string) (bool, error) {
 	switch r.Interface().(type) {
-	case map[string]interface{}, []interface{}:
+	case map[string]any, []any:
 		return false, errors.New("jsonpath leads to a nested object or list which is not supported")
 	}
 	s := fmt.Sprintf("%v", r.Interface())

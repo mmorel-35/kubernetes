@@ -126,7 +126,7 @@ func (c *ServiceAccountsController) Run(ctx context.Context, workers int) {
 }
 
 // serviceAccountDeleted reacts to a ServiceAccount deletion by recreating a default ServiceAccount in the namespace if needed
-func (c *ServiceAccountsController) serviceAccountDeleted(obj interface{}) {
+func (c *ServiceAccountsController) serviceAccountDeleted(obj any) {
 	sa, ok := obj.(*v1.ServiceAccount)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
@@ -144,13 +144,13 @@ func (c *ServiceAccountsController) serviceAccountDeleted(obj interface{}) {
 }
 
 // namespaceAdded reacts to a Namespace creation by creating a default ServiceAccount object
-func (c *ServiceAccountsController) namespaceAdded(obj interface{}) {
+func (c *ServiceAccountsController) namespaceAdded(obj any) {
 	namespace := obj.(*v1.Namespace)
 	c.queue.Add(namespace.Name)
 }
 
 // namespaceUpdated reacts to a Namespace update (or re-list) by creating a default ServiceAccount in the namespace if needed
-func (c *ServiceAccountsController) namespaceUpdated(oldObj interface{}, newObj interface{}) {
+func (c *ServiceAccountsController) namespaceUpdated(oldObj any, newObj any) {
 	newNamespace := newObj.(*v1.Namespace)
 	c.queue.Add(newNamespace.Name)
 }

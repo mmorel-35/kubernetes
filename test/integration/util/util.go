@@ -177,10 +177,10 @@ func StartFakePVController(ctx context.Context, clientSet clientset.Interface, i
 	}
 
 	pvInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			syncPV(obj.(*v1.PersistentVolume))
 		},
-		UpdateFunc: func(_, obj interface{}) {
+		UpdateFunc: func(_, obj any) {
 			syncPV(obj.(*v1.PersistentVolume))
 		},
 	})
@@ -371,8 +371,8 @@ func RemovePodFinalizers(ctx context.Context, cs clientset.Interface, t *testing
 		} else if pod != nil && len(pod.Finalizers) > 0 {
 			// Use Patch to remove finalizer, instead of Update, to avoid transient
 			// conflicts.
-			patchBytes, _ := json.Marshal(map[string]interface{}{
-				"metadata": map[string]interface{}{
+			patchBytes, _ := json.Marshal(map[string]any{
+				"metadata": map[string]any{
 					"$deleteFromPrimitiveList/finalizers": pod.Finalizers,
 				},
 			})
@@ -726,7 +726,7 @@ func InitTestDisablePreemption(t *testing.T, nsPrefix string) *TestContext {
 // WaitForReflection waits till the passFunc confirms that the object it expects
 // to see is in the store. Used to observe reflected events.
 func WaitForReflection(ctx context.Context, t *testing.T, nodeLister corelisters.NodeLister, key string,
-	passFunc func(n interface{}) bool) error {
+	passFunc func(n any) bool) error {
 	var nodes []*v1.Node
 	err := wait.PollUntilContextTimeout(ctx, time.Millisecond*100, wait.ForeverTestTimeout, false, func(context.Context) (bool, error) {
 		n, err := nodeLister.Get(key)

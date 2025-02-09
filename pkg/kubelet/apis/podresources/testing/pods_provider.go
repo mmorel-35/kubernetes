@@ -75,7 +75,7 @@ type MockPodsProvider_GetPodByName_Call struct {
 // GetPodByName is a helper method to define mock.On call
 //   - namespace string
 //   - name string
-func (_e *MockPodsProvider_Expecter) GetPodByName(namespace interface{}, name interface{}) *MockPodsProvider_GetPodByName_Call {
+func (_e *MockPodsProvider_Expecter) GetPodByName(namespace any, name any) *MockPodsProvider_GetPodByName_Call {
 	return &MockPodsProvider_GetPodByName_Call{Call: _e.mock.On("GetPodByName", namespace, name)}
 }
 

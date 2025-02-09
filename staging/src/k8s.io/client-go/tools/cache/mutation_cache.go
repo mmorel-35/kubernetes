@@ -37,9 +37,9 @@ import (
 // Implementations must be thread-safe.
 // TODO find a way to layer this into an informer/lister
 type MutationCache interface {
-	GetByKey(key string) (interface{}, bool, error)
-	ByIndex(indexName, indexKey string) ([]interface{}, error)
-	Mutation(interface{})
+	GetByKey(key string) (any, bool, error)
+	ByIndex(indexName, indexKey string) ([]any, error)
+	Mutation(any)
 }
 
 // ResourceVersionComparator is able to compare object versions.
@@ -90,7 +90,7 @@ type mutationCache struct {
 // GetByKey is never guaranteed to return back the value set in Mutation.  It could be paged out, it could
 // be older than another copy, the backingCache may be more recent or, you might have written twice into the same key.
 // You get a value that was valid at some snapshot of time and will always return the newer of backingCache and mutationCache.
-func (c *mutationCache) GetByKey(key string) (interface{}, bool, error) {
+func (c *mutationCache) GetByKey(key string) (any, bool, error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 
@@ -118,7 +118,7 @@ func (c *mutationCache) GetByKey(key string) (interface{}, bool, error) {
 
 // ByIndex returns the newer objects that match the provided index and indexer key.
 // Will return an error if no indexer was provided.
-func (c *mutationCache) ByIndex(name string, indexKey string) ([]interface{}, error) {
+func (c *mutationCache) ByIndex(name string, indexKey string) ([]any, error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	if c.indexer == nil {
@@ -128,7 +128,7 @@ func (c *mutationCache) ByIndex(name string, indexKey string) ([]interface{}, er
 	if err != nil {
 		return nil, err
 	}
-	var items []interface{}
+	var items []any
 	keySet := sets.NewString()
 	for _, key := range keys {
 		keySet.Insert(key)
@@ -199,7 +199,7 @@ func (c *mutationCache) newerObject(key string, backing runtime.Object) runtime.
 // which one.  This doesn't affect correctness, since the GetByKey guaranteed of "later of these two caches" is
 // preserved, but you may not get the version of the object you want.  The object you get is only guaranteed to
 // "one that was valid at some point in time", not "the one that I want".
-func (c *mutationCache) Mutation(obj interface{}) {
+func (c *mutationCache) Mutation(obj any) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 

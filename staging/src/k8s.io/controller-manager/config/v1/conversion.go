@@ -33,22 +33,22 @@ const ResourceLockLeases = "leases"
 // RegisterConversions adds conversion functions to the given scheme.
 // Public to allow building arbitrary schemes.
 func RegisterConversions(s *runtime.Scheme) error {
-	if err := s.AddGeneratedConversionFunc((*ControllerLeaderConfiguration)(nil), (*config.ControllerLeaderConfiguration)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*ControllerLeaderConfiguration)(nil), (*config.ControllerLeaderConfiguration)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convert_v1_ControllerLeaderConfiguration_To_config_ControllerLeaderConfiguration(a.(*ControllerLeaderConfiguration), b.(*config.ControllerLeaderConfiguration), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*config.ControllerLeaderConfiguration)(nil), (*ControllerLeaderConfiguration)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*config.ControllerLeaderConfiguration)(nil), (*ControllerLeaderConfiguration)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convert_config_ControllerLeaderConfiguration_To_v1_ControllerLeaderConfiguration(a.(*config.ControllerLeaderConfiguration), b.(*ControllerLeaderConfiguration), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*LeaderMigrationConfiguration)(nil), (*config.LeaderMigrationConfiguration)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*LeaderMigrationConfiguration)(nil), (*config.LeaderMigrationConfiguration)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convert_v1_LeaderMigrationConfiguration_To_config_LeaderMigrationConfiguration(a.(*LeaderMigrationConfiguration), b.(*config.LeaderMigrationConfiguration), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*config.LeaderMigrationConfiguration)(nil), (*LeaderMigrationConfiguration)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*config.LeaderMigrationConfiguration)(nil), (*LeaderMigrationConfiguration)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convert_config_LeaderMigrationConfiguration_To_v1_LeaderMigrationConfiguration(a.(*config.LeaderMigrationConfiguration), b.(*LeaderMigrationConfiguration), scope)
 	}); err != nil {
 		return err

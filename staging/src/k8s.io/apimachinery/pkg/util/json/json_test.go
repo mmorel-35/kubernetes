@@ -33,7 +33,7 @@ import (
 func TestEvaluateTypes(t *testing.T) {
 	testCases := []struct {
 		In   string
-		Data interface{}
+		Data any
 		Out  string
 		Err  bool
 	}{
@@ -214,7 +214,7 @@ func TestEvaluateTypes(t *testing.T) {
 		// Arrays
 		{
 			In:   `[]`,
-			Data: []interface{}{},
+			Data: []any{},
 			Out:  `[]`,
 		},
 		{
@@ -234,7 +234,7 @@ func TestEvaluateTypes(t *testing.T) {
 				`[null,true,1,1.0,1.5]`,
 				`{"boolkey":true,"floatkey":1.0,"intkey":1,"nullkey":null}`,
 			}, ",") + `]`,
-			Data: []interface{}{
+			Data: []any{
 				nil,
 				true,
 				false,
@@ -247,8 +247,8 @@ func TestEvaluateTypes(t *testing.T) {
 				string("0"),
 				string("A"),
 				string("Iñtërnâtiônàlizætiøn"),
-				[]interface{}{nil, true, int64(1), float64(1.0), float64(1.5)},
-				map[string]interface{}{"nullkey": nil, "boolkey": true, "intkey": int64(1), "floatkey": float64(1.0)},
+				[]any{nil, true, int64(1), float64(1.0), float64(1.5)},
+				map[string]any{"nullkey": nil, "boolkey": true, "intkey": int64(1), "floatkey": float64(1.0)},
 			},
 			Out: `[` + strings.Join([]string{
 				`null`,
@@ -271,12 +271,12 @@ func TestEvaluateTypes(t *testing.T) {
 		// Maps
 		{
 			In:   `{}`,
-			Data: map[string]interface{}{},
+			Data: map[string]any{},
 			Out:  `{}`,
 		},
 		{
 			In:   `{"boolkey":true,"floatkey":1.0,"intkey":1,"nullkey":null}`,
-			Data: map[string]interface{}{"nullkey": nil, "boolkey": true, "intkey": int64(1), "floatkey": float64(1.0)},
+			Data: map[string]any{"nullkey": nil, "boolkey": true, "intkey": int64(1), "floatkey": float64(1.0)},
 			Out:  `{"boolkey":true,"floatkey":1,"intkey":1,"nullkey":null}`, // gets alphabetized by Marshal
 		},
 	}
@@ -286,7 +286,7 @@ func TestEvaluateTypes(t *testing.T) {
 			// decode the input as a map item
 			inputJSON := fmt.Sprintf(`{"data":%s}`, tc.In)
 			expectedJSON := fmt.Sprintf(`{"data":%s}`, tc.Out)
-			m := map[string]interface{}{}
+			m := map[string]any{}
 			err := Unmarshal([]byte(inputJSON), &m)
 			if tc.Err && err != nil {
 				// Expected error
@@ -320,7 +320,7 @@ func TestEvaluateTypes(t *testing.T) {
 			// decode the input as an array item
 			inputJSON := fmt.Sprintf(`[0,%s]`, tc.In)
 			expectedJSON := fmt.Sprintf(`[0,%s]`, tc.Out)
-			m := []interface{}{}
+			m := []any{}
 			err := Unmarshal([]byte(inputJSON), &m)
 			if tc.Err && err != nil {
 				// Expected error
@@ -354,7 +354,7 @@ func TestEvaluateTypes(t *testing.T) {
 			// decode the input as a standalone object
 			inputJSON := tc.In
 			expectedJSON := tc.Out
-			var m interface{}
+			var m any
 			err := Unmarshal([]byte(inputJSON), &m)
 			if tc.Err && err != nil {
 				// Expected error
@@ -385,7 +385,7 @@ func TestEvaluateTypes(t *testing.T) {
 
 func TestUnmarshalNil(t *testing.T) {
 	{
-		var v *interface{}
+		var v *any
 		err := Unmarshal([]byte(`0`), v)
 		goerr := gojson.Unmarshal([]byte(`0`), v)
 		if err == nil || goerr == nil || err.Error() != goerr.Error() {
@@ -396,7 +396,7 @@ func TestUnmarshalNil(t *testing.T) {
 	}
 
 	{
-		var v *[]interface{}
+		var v *[]any
 		err := Unmarshal([]byte(`[]`), v)
 		goerr := gojson.Unmarshal([]byte(`[]`), v)
 		if err == nil || goerr == nil || err.Error() != goerr.Error() {
@@ -407,7 +407,7 @@ func TestUnmarshalNil(t *testing.T) {
 	}
 
 	{
-		var v *map[string]interface{}
+		var v *map[string]any
 		err := Unmarshal([]byte(`{}`), v)
 		goerr := gojson.Unmarshal([]byte(`{}`), v)
 		if err == nil || goerr == nil || err.Error() != goerr.Error() {

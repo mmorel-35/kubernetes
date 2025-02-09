@@ -132,7 +132,7 @@ func createTestController(ctx context.Context, cs clientset.Interface, observedD
 		&v1.Pod{},
 		0,
 		cache.ResourceEventHandlerFuncs{
-			DeleteFunc: func(oldObj interface{}) {
+			DeleteFunc: func(oldObj any) {
 				if delPod, ok := oldObj.(*v1.Pod); ok {
 					observedDeletions <- delPod.Name
 				} else {

@@ -43,8 +43,8 @@ func TestOpenAPIDefinitionsToProtoModels(t *testing.T) {
 					},
 					VendorExtensible: spec.VendorExtensible{
 						Extensions: spec.Extensions{
-							"x-kubernetes-group-version-kind": []interface{}{
-								map[string]interface{}{
+							"x-kubernetes-group-version-kind": []any{
+								map[string]any{
 									"group":   "testgroup.k8s.io",
 									"version": "v1",
 									"kind":    "Foo",
@@ -59,9 +59,9 @@ func TestOpenAPIDefinitionsToProtoModels(t *testing.T) {
 	expectedSchema := &proto.Arbitrary{
 		BaseSchema: proto.BaseSchema{
 			Description: "Description of Foos",
-			Extensions: map[string]interface{}{
-				"x-kubernetes-group-version-kind": []interface{}{
-					map[interface{}]interface{}{
+			Extensions: map[string]any{
+				"x-kubernetes-group-version-kind": []any{
+					map[any]any{
 						"group":   "testgroup.k8s.io",
 						"version": "v1",
 						"kind":    "Foo",

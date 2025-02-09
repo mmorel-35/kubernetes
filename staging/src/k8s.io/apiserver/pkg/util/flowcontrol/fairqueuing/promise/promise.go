@@ -24,10 +24,10 @@ import (
 // promise implements the WriteOnce interface.
 type promise struct {
 	doneCtx context.Context
-	doneVal interface{}
+	doneVal any
 	setCh   chan struct{}
 	onceler sync.Once
-	value   interface{}
+	value   any
 }
 
 var _ WriteOnce = &promise{}
@@ -39,7 +39,7 @@ var _ WriteOnce = &promise{}
 // If a `Get` is waiting soon after the channel associated with the
 // `doneCtx` becomes selectable (which never happens for the nil
 // channel) then `Set(doneVal)` effectively happens at that time.
-func NewWriteOnce(initial interface{}, doneCtx context.Context, doneVal interface{}) WriteOnce {
+func NewWriteOnce(initial any, doneCtx context.Context, doneVal any) WriteOnce {
 	p := &promise{
 		doneCtx: doneCtx,
 		doneVal: doneVal,
@@ -51,7 +51,7 @@ func NewWriteOnce(initial interface{}, doneCtx context.Context, doneVal interfac
 	return p
 }
 
-func (p *promise) Get() interface{} {
+func (p *promise) Get() any {
 	select {
 	case <-p.setCh:
 	case <-p.doneCtx.Done():
@@ -60,7 +60,7 @@ func (p *promise) Get() interface{} {
 	return p.value
 }
 
-func (p *promise) Set(value interface{}) bool {
+func (p *promise) Set(value any) bool {
 	var ans bool
 	p.onceler.Do(func() {
 		p.value = value

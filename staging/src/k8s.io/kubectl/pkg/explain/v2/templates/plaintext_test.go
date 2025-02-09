@@ -44,16 +44,16 @@ var (
 	//go:embed batch.k8s.io_v1.json
 	batchJSON string
 
-	apiExtensionsV1OpenAPI map[string]interface{} = func() map[string]interface{} {
-		var res map[string]interface{}
+	apiExtensionsV1OpenAPI map[string]any = func() map[string]any {
+		var res map[string]any
 		utilruntime.Must(json.Unmarshal([]byte(apiextensionsJSON), &res))
 		return res
 	}()
 
-	apiExtensionsV1OpenAPIWithoutListVerb map[string]interface{} = func() map[string]interface{} {
-		var res map[string]interface{}
+	apiExtensionsV1OpenAPIWithoutListVerb map[string]any = func() map[string]any {
+		var res map[string]any
 		utilruntime.Must(json.Unmarshal([]byte(apiextensionsJSON), &res))
-		paths := res["paths"].(map[string]interface{})
+		paths := res["paths"].(map[string]any)
 		delete(paths, "/apis/apiextensions.k8s.io/v1/customresourcedefinitions")
 		return res
 	}()
@@ -64,16 +64,16 @@ var (
 		return res
 	}()
 
-	batchV1OpenAPI map[string]interface{} = func() map[string]interface{} {
-		var res map[string]interface{}
+	batchV1OpenAPI map[string]any = func() map[string]any {
+		var res map[string]any
 		utilruntime.Must(json.Unmarshal([]byte(batchJSON), &res))
 		return res
 	}()
 
-	batchV1OpenAPIWithoutListVerb map[string]interface{} = func() map[string]interface{} {
-		var res map[string]interface{}
+	batchV1OpenAPIWithoutListVerb map[string]any = func() map[string]any {
+		var res map[string]any
 		utilruntime.Must(json.Unmarshal([]byte(batchJSON), &res))
-		paths := res["paths"].(map[string]interface{})
+		paths := res["paths"].(map[string]any)
 		delete(paths, "/apis/batch/v1/jobs")
 		delete(paths, "/apis/batch/v1/namespaces/{namespace}/jobs")
 

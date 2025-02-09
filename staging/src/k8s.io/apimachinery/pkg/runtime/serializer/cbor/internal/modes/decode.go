@@ -73,16 +73,16 @@ var Decode cbor.DecMode = func() cbor.DecMode {
 		// TODO: IntDecConvertSignedOrFail errors on overflow, JSON will try to fall back to float64.
 		IntDec: cbor.IntDecConvertSignedOrFail,
 
-		// Disable producing map[cbor.ByteString]interface{}, which is not acceptable for
-		// decodes into interface{}.
+		// Disable producing map[cbor.ByteString]any, which is not acceptable for
+		// decodes into any.
 		MapKeyByteString: cbor.MapKeyByteStringForbidden,
 
 		// Error on map keys that don't map to a field in the destination struct.
 		ExtraReturnErrors: cbor.ExtraDecErrorUnknownField,
 
-		// Decode maps into concrete type map[string]interface{} when the destination is an
-		// interface{}.
-		DefaultMapType: reflect.TypeOf(map[string]interface{}(nil)),
+		// Decode maps into concrete type map[string]any when the destination is an
+		// any.
+		DefaultMapType: reflect.TypeOf(map[string]any(nil)),
 
 		// A CBOR text string whose content is not a valid UTF-8 sequence is well-formed but
 		// invalid according to the CBOR spec. Reject invalid inputs. Encoders are
@@ -94,7 +94,7 @@ var Decode cbor.DecMode = func() cbor.DecMode {
 		// Never make a case-insensitive match between a map key and a struct field.
 		FieldNameMatching: cbor.FieldNameMatchingCaseSensitive,
 
-		// Produce string concrete values when decoding a CBOR byte string into interface{}.
+		// Produce string concrete values when decoding a CBOR byte string into any.
 		DefaultByteStringType: reflect.TypeOf(""),
 
 		// Allow CBOR byte strings to be decoded into string destination values. If a byte
@@ -107,11 +107,11 @@ var Decode cbor.DecMode = func() cbor.DecMode {
 		// Allow CBOR byte strings to match struct fields when appearing as a map key.
 		FieldNameByteString: cbor.FieldNameByteStringAllowed,
 
-		// When decoding an unrecognized tag to interface{}, return the decoded tag content
+		// When decoding an unrecognized tag to any, return the decoded tag content
 		// instead of the default, a cbor.Tag representing a (number, content) pair.
 		UnrecognizedTagToAny: cbor.UnrecognizedTagContentToAny,
 
-		// Decode time tags to interface{} as strings containing RFC 3339 timestamps.
+		// Decode time tags to any as strings containing RFC 3339 timestamps.
 		TimeTagToAny: cbor.TimeTagToRFC3339Nano,
 
 		// For parity with JSON, strings can be decoded into time.Time if they are RFC 3339

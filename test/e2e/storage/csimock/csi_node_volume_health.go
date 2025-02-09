@@ -186,7 +186,7 @@ func findVolumeConditionMetrics(pvcNamespace, pvcName string, kubeMetrics e2emet
 
 func createGetVolumeStatsHook(abnormalVolumeCondition bool) *drivers.Hooks {
 	return &drivers.Hooks{
-		Pre: func(ctx context.Context, fullMethod string, request interface{}) (reply interface{}, err error) {
+		Pre: func(ctx context.Context, fullMethod string, request any) (reply any, err error) {
 			if req, ok := request.(*csipbv1.NodeGetVolumeStatsRequest); ok {
 				if abnormalVolumeCondition {
 					req.VolumePath = "/tmp/csi/health/abnormal"

@@ -129,10 +129,10 @@ func NewPVCProtectionController(logger klog.Logger, pvcInformer coreinformers.Pe
 	e.pvcLister = pvcInformer.Lister()
 	e.pvcListerSynced = pvcInformer.Informer().HasSynced
 	pvcInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			e.pvcAddedUpdated(logger, obj)
 		},
-		UpdateFunc: func(old, new interface{}) {
+		UpdateFunc: func(old, new any) {
 			e.pvcAddedUpdated(logger, new)
 		},
 	})
@@ -144,13 +144,13 @@ func NewPVCProtectionController(logger klog.Logger, pvcInformer coreinformers.Pe
 		return nil, fmt.Errorf("could not initialize pvc protection controller: %w", err)
 	}
 	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			e.podAddedDeletedUpdated(logger, nil, obj, false)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			e.podAddedDeletedUpdated(logger, nil, obj, true)
 		},
-		UpdateFunc: func(old, new interface{}) {
+		UpdateFunc: func(old, new any) {
 			e.podAddedDeletedUpdated(logger, old, new, false)
 		},
 	})
@@ -418,7 +418,7 @@ func podIsShutDown(pod *v1.Pod) bool {
 }
 
 // pvcAddedUpdated reacts to pvc added/updated events
-func (c *Controller) pvcAddedUpdated(logger klog.Logger, obj interface{}) {
+func (c *Controller) pvcAddedUpdated(logger klog.Logger, obj any) {
 	pvc, ok := obj.(*v1.PersistentVolumeClaim)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("PVC informer returned non-PVC object: %#v", obj))
@@ -437,7 +437,7 @@ func (c *Controller) pvcAddedUpdated(logger klog.Logger, obj interface{}) {
 }
 
 // podAddedDeletedUpdated reacts to Pod events
-func (c *Controller) podAddedDeletedUpdated(logger klog.Logger, old, new interface{}, deleted bool) {
+func (c *Controller) podAddedDeletedUpdated(logger klog.Logger, old, new any, deleted bool) {
 	if pod := c.parsePod(new); pod != nil {
 		c.enqueuePVCs(logger, pod, deleted)
 
@@ -452,7 +452,7 @@ func (c *Controller) podAddedDeletedUpdated(logger klog.Logger, old, new interfa
 	}
 }
 
-func (*Controller) parsePod(obj interface{}) *v1.Pod {
+func (*Controller) parsePod(obj any) *v1.Pod {
 	if obj == nil {
 		return nil
 	}

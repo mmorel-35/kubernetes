@@ -190,7 +190,7 @@ func newWatchCache(
 }
 
 // Add takes runtime.Object as an argument.
-func (w *watchCache) Add(obj interface{}) error {
+func (w *watchCache) Add(obj any) error {
 	object, resourceVersion, err := w.objectToVersionedRuntimeObject(obj)
 	if err != nil {
 		return err
@@ -202,7 +202,7 @@ func (w *watchCache) Add(obj interface{}) error {
 }
 
 // Update takes runtime.Object as an argument.
-func (w *watchCache) Update(obj interface{}) error {
+func (w *watchCache) Update(obj any) error {
 	object, resourceVersion, err := w.objectToVersionedRuntimeObject(obj)
 	if err != nil {
 		return err
@@ -214,7 +214,7 @@ func (w *watchCache) Update(obj interface{}) error {
 }
 
 // Delete takes runtime.Object as an argument.
-func (w *watchCache) Delete(obj interface{}) error {
+func (w *watchCache) Delete(obj any) error {
 	object, resourceVersion, err := w.objectToVersionedRuntimeObject(obj)
 	if err != nil {
 		return err
@@ -225,7 +225,7 @@ func (w *watchCache) Delete(obj interface{}) error {
 	return w.processEvent(event, resourceVersion, f)
 }
 
-func (w *watchCache) objectToVersionedRuntimeObject(obj interface{}) (runtime.Object, uint64, error) {
+func (w *watchCache) objectToVersionedRuntimeObject(obj any) (runtime.Object, uint64, error) {
 	object, ok := obj.(runtime.Object)
 	if !ok {
 		return nil, 0, fmt.Errorf("obj does not implement runtime.Object interface: %v", obj)
@@ -385,7 +385,7 @@ func (w *watchCache) UpdateResourceVersion(resourceVersion string) {
 }
 
 // List returns list of pointers to <storeElement> objects.
-func (w *watchCache) List() []interface{} {
+func (w *watchCache) List() []any {
 	return w.store.List()
 }
 
@@ -435,7 +435,7 @@ func (w *watchCache) waitUntilFreshAndBlock(ctx context.Context, resourceVersion
 	return nil
 }
 
-type sortableStoreElements []interface{}
+type sortableStoreElements []any
 
 func (s sortableStoreElements) Len() int {
 	return len(s)
@@ -493,8 +493,8 @@ func (w *watchCache) WaitUntilFreshAndList(ctx context.Context, resourceVersion 
 	}, "", err
 }
 
-func filterPrefixAndOrder(prefix string, items []interface{}) ([]interface{}, error) {
-	var result []interface{}
+func filterPrefixAndOrder(prefix string, items []any) ([]any, error) {
+	var result []any
 	for _, item := range items {
 		elem, ok := item.(*storeElement)
 		if !ok {
@@ -516,7 +516,7 @@ func (w *watchCache) notFresh(resourceVersion uint64) bool {
 }
 
 // WaitUntilFreshAndGet returns a pointers to <storeElement> object.
-func (w *watchCache) WaitUntilFreshAndGet(ctx context.Context, resourceVersion uint64, key string) (interface{}, bool, uint64, error) {
+func (w *watchCache) WaitUntilFreshAndGet(ctx context.Context, resourceVersion uint64, key string) (any, bool, uint64, error) {
 	var err error
 	if utilfeature.DefaultFeatureGate.Enabled(features.ConsistentListFromCache) && w.notFresh(resourceVersion) {
 		w.waitingUntilFresh.Add()
@@ -539,7 +539,7 @@ func (w *watchCache) ListKeys() []string {
 
 // Get takes runtime.Object as a parameter. However, it returns
 // pointer to <storeElement>.
-func (w *watchCache) Get(obj interface{}) (interface{}, bool, error) {
+func (w *watchCache) Get(obj any) (any, bool, error) {
 	object, ok := obj.(runtime.Object)
 	if !ok {
 		return nil, false, fmt.Errorf("obj does not implement runtime.Object interface: %v", obj)
@@ -553,18 +553,18 @@ func (w *watchCache) Get(obj interface{}) (interface{}, bool, error) {
 }
 
 // GetByKey returns pointer to <storeElement>.
-func (w *watchCache) GetByKey(key string) (interface{}, bool, error) {
+func (w *watchCache) GetByKey(key string) (any, bool, error) {
 	return w.store.GetByKey(key)
 }
 
 // Replace takes slice of runtime.Object as a parameter.
-func (w *watchCache) Replace(objs []interface{}, resourceVersion string) error {
+func (w *watchCache) Replace(objs []any, resourceVersion string) error {
 	version, err := w.versioner.ParseResourceVersion(resourceVersion)
 	if err != nil {
 		return err
 	}
 
-	toReplace := make([]interface{}, 0, len(objs))
+	toReplace := make([]any, 0, len(objs))
 	for _, obj := range objs {
 		object, ok := obj.(runtime.Object)
 		if !ok {

@@ -39,10 +39,10 @@ import (
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +k8s:deepcopy-gen=true
 type Unstructured struct {
-	// Object is a JSON compatible map with string, float, int, bool, []interface{}, or
-	// map[string]interface{}
+	// Object is a JSON compatible map with string, float, int, bool, []any, or
+	// map[string]any
 	// children.
-	Object map[string]interface{}
+	Object map[string]any
 }
 
 var _ metav1.Object = &Unstructured{}
@@ -56,7 +56,7 @@ func (obj *Unstructured) IsList() bool {
 	if !ok {
 		return false
 	}
-	_, ok = field.([]interface{})
+	_, ok = field.([]any)
 	return ok
 }
 func (obj *Unstructured) ToList() (*UnstructuredList, error) {
@@ -85,12 +85,12 @@ func (obj *Unstructured) EachListItem(fn func(runtime.Object) error) error {
 	if !ok {
 		return errors.New("content is not a list")
 	}
-	items, ok := field.([]interface{})
+	items, ok := field.([]any)
 	if !ok {
 		return fmt.Errorf("content is not a list: %T", field)
 	}
 	for _, item := range items {
-		child, ok := item.(map[string]interface{})
+		child, ok := item.(map[string]any)
 		if !ok {
 			return fmt.Errorf("items member is not an object: %T", child)
 		}
@@ -106,14 +106,14 @@ func (obj *Unstructured) EachListItemWithAlloc(fn func(runtime.Object) error) er
 	return obj.EachListItem(fn)
 }
 
-func (obj *Unstructured) UnstructuredContent() map[string]interface{} {
+func (obj *Unstructured) UnstructuredContent() map[string]any {
 	if obj.Object == nil {
-		return make(map[string]interface{})
+		return make(map[string]any)
 	}
 	return obj.Object
 }
 
-func (obj *Unstructured) SetUnstructuredContent(content map[string]interface{}) {
+func (obj *Unstructured) SetUnstructuredContent(content map[string]any) {
 	obj.Object = content
 }
 
@@ -152,30 +152,30 @@ func (in *Unstructured) DeepCopy() *Unstructured {
 	return out
 }
 
-func (u *Unstructured) setNestedField(value interface{}, fields ...string) {
+func (u *Unstructured) setNestedField(value any, fields ...string) {
 	if u.Object == nil {
-		u.Object = make(map[string]interface{})
+		u.Object = make(map[string]any)
 	}
 	SetNestedField(u.Object, value, fields...)
 }
 
 func (u *Unstructured) setNestedStringSlice(value []string, fields ...string) {
 	if u.Object == nil {
-		u.Object = make(map[string]interface{})
+		u.Object = make(map[string]any)
 	}
 	SetNestedStringSlice(u.Object, value, fields...)
 }
 
-func (u *Unstructured) setNestedSlice(value []interface{}, fields ...string) {
+func (u *Unstructured) setNestedSlice(value []any, fields ...string) {
 	if u.Object == nil {
-		u.Object = make(map[string]interface{})
+		u.Object = make(map[string]any)
 	}
 	SetNestedSlice(u.Object, value, fields...)
 }
 
 func (u *Unstructured) setNestedMap(value map[string]string, fields ...string) {
 	if u.Object == nil {
-		u.Object = make(map[string]interface{})
+		u.Object = make(map[string]any)
 	}
 	SetNestedStringMap(u.Object, value, fields...)
 }
@@ -185,15 +185,15 @@ func (u *Unstructured) GetOwnerReferences() []metav1.OwnerReference {
 	if !found || err != nil {
 		return nil
 	}
-	original, ok := field.([]interface{})
+	original, ok := field.([]any)
 	if !ok {
 		return nil
 	}
 	ret := make([]metav1.OwnerReference, 0, len(original))
 	for _, obj := range original {
-		o, ok := obj.(map[string]interface{})
+		o, ok := obj.(map[string]any)
 		if !ok {
-			// expected map[string]interface{}, got something else
+			// expected map[string]any, got something else
 			return nil
 		}
 		ret = append(ret, extractOwnerReference(o))
@@ -207,7 +207,7 @@ func (u *Unstructured) SetOwnerReferences(references []metav1.OwnerReference) {
 		return
 	}
 
-	newReferences := make([]interface{}, 0, len(references))
+	newReferences := make([]any, 0, len(references))
 	for _, reference := range references {
 		out, err := runtime.DefaultUnstructuredConverter.ToUnstructured(&reference)
 		if err != nil {
@@ -454,13 +454,13 @@ func (u *Unstructured) GetManagedFields() []metav1.ManagedFieldsEntry {
 	if !found || err != nil {
 		return nil
 	}
-	items, ok := v.([]interface{})
+	items, ok := v.([]any)
 	if !ok {
 		return nil
 	}
 	managedFields := []metav1.ManagedFieldsEntry{}
 	for _, item := range items {
-		m, ok := item.(map[string]interface{})
+		m, ok := item.(map[string]any)
 		if !ok {
 			utilruntime.HandleError(fmt.Errorf("unable to retrieve managedFields for object, item %v is not a map", item))
 			return nil
@@ -480,7 +480,7 @@ func (u *Unstructured) SetManagedFields(managedFields []metav1.ManagedFieldsEntr
 		RemoveNestedField(u.Object, "metadata", "managedFields")
 		return
 	}
-	items := []interface{}{}
+	items := []any{}
 	for _, managedFieldsEntry := range managedFields {
 		out, err := runtime.DefaultUnstructuredConverter.ToUnstructured(&managedFieldsEntry)
 		if err != nil {

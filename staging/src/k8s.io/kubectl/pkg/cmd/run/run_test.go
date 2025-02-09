@@ -236,7 +236,7 @@ func TestGenerateService(t *testing.T) {
 		name       string
 		port       string
 		args       []string
-		params     map[string]interface{}
+		params     map[string]any
 		expectErr  bool
 		service    corev1.Service
 		expectPOST bool
@@ -245,7 +245,7 @@ func TestGenerateService(t *testing.T) {
 			name: "basic",
 			port: "80",
 			args: []string{"foo"},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"name": "foo",
 			},
 			expectErr: false,
@@ -276,7 +276,7 @@ func TestGenerateService(t *testing.T) {
 			name: "custom labels",
 			port: "80",
 			args: []string{"foo"},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"name":   "foo",
 				"labels": "app=bar",
 			},
@@ -314,7 +314,7 @@ func TestGenerateService(t *testing.T) {
 			name: "dry-run",
 			port: "80",
 			args: []string{"foo"},
-			params: map[string]interface{}{
+			params: map[string]any{
 				"name": "foo",
 			},
 			expectErr:  false,

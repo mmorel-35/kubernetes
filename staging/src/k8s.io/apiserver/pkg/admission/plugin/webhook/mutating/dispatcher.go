@@ -435,7 +435,7 @@ func (w *webhookAnnotator) addMutationAnnotation(mutated bool) {
 	}
 }
 
-func (w *webhookAnnotator) addPatchAnnotation(patch interface{}, patchType admissionv1.PatchType) {
+func (w *webhookAnnotator) addPatchAnnotation(patch any, patchType admissionv1.PatchType) {
 	if w.attr == nil || w.attr.Attributes == nil {
 		return
 	}
@@ -468,10 +468,10 @@ type MutationAuditAnnotation struct {
 
 // PatchAuditAnnotation logs a patch from a mutating webhook
 type PatchAuditAnnotation struct {
-	Configuration string      `json:"configuration"`
-	Webhook       string      `json:"webhook"`
-	Patch         interface{} `json:"patch,omitempty"`
-	PatchType     string      `json:"patchType,omitempty"`
+	Configuration string `json:"configuration"`
+	Webhook       string `json:"webhook"`
+	Patch         any    `json:"patch,omitempty"`
+	PatchType     string `json:"patchType,omitempty"`
 }
 
 func mutationAnnotationValue(configuration, webhook string, mutated bool) (string, error) {
@@ -484,7 +484,7 @@ func mutationAnnotationValue(configuration, webhook string, mutated bool) (strin
 	return string(bytes), err
 }
 
-func jsonPatchAnnotationValue(configuration, webhook string, patch interface{}) (string, error) {
+func jsonPatchAnnotationValue(configuration, webhook string, patch any) (string, error) {
 	p := PatchAuditAnnotation{
 		Configuration: configuration,
 		Webhook:       webhook,

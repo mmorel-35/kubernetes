@@ -20,24 +20,24 @@ package v1beta1
 
 // ClusterRoleListerExpansion allows custom methods to be added to
 // ClusterRoleLister.
-type ClusterRoleListerExpansion interface{}
+type ClusterRoleListerExpansion any
 
 // ClusterRoleBindingListerExpansion allows custom methods to be added to
 // ClusterRoleBindingLister.
-type ClusterRoleBindingListerExpansion interface{}
+type ClusterRoleBindingListerExpansion any
 
 // RoleListerExpansion allows custom methods to be added to
 // RoleLister.
-type RoleListerExpansion interface{}
+type RoleListerExpansion any
 
 // RoleNamespaceListerExpansion allows custom methods to be added to
 // RoleNamespaceLister.
-type RoleNamespaceListerExpansion interface{}
+type RoleNamespaceListerExpansion any
 
 // RoleBindingListerExpansion allows custom methods to be added to
 // RoleBindingLister.
-type RoleBindingListerExpansion interface{}
+type RoleBindingListerExpansion any
 
 // RoleBindingNamespaceListerExpansion allows custom methods to be added to
 // RoleBindingNamespaceLister.
-type RoleBindingNamespaceListerExpansion interface{}
+type RoleBindingNamespaceListerExpansion any

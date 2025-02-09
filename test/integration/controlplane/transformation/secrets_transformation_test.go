@@ -255,7 +255,7 @@ func TestAllowUnsafeMalformedObjectDeletionFeature(t *testing.T) {
 			finalEvent := make(chan struct{})
 			finalSecretName := "final-secret"
 			_, err = informer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-				AddFunc: func(obj interface{}) {
+				AddFunc: func(obj any) {
 					if obj, err := meta.Accessor(obj); err == nil && obj.GetName() == finalSecretName {
 						close(finalEvent)
 					}

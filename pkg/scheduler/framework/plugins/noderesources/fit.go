@@ -287,7 +287,7 @@ func (f *Fit) EventsToRegister(_ context.Context) ([]framework.ClusterEventWithH
 
 // isSchedulableAfterPodEvent is invoked whenever a pod deleted or scaled down. It checks whether
 // that change made a previously unschedulable pod schedulable.
-func (f *Fit) isSchedulableAfterPodEvent(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (f *Fit) isSchedulableAfterPodEvent(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	originalPod, modifiedPod, err := schedutil.As[*v1.Pod](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, err
@@ -375,7 +375,7 @@ func (f *Fit) isSchedulableAfterPodScaleDown(targetPod, originalPod, modifiedPod
 
 // isSchedulableAfterNodeChange is invoked whenever a node added or changed. It checks whether
 // that change could make a previously unschedulable pod schedulable.
-func (f *Fit) isSchedulableAfterNodeChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (f *Fit) isSchedulableAfterNodeChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	originalNode, modifiedNode, err := schedutil.As[*v1.Node](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, err

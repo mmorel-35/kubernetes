@@ -514,7 +514,7 @@ func TestGracePeriodScenarios(t *testing.T) {
 				Client: fake.CreateHTTPClient(func(req *http.Request) (*http.Response, error) {
 					switch p, m := req.URL.Path, req.Method; {
 					case m == "DELETE" && p == test.expectedDeleteRequestPath:
-						data := make(map[string]interface{})
+						data := make(map[string]any)
 						_ = json.NewDecoder(req.Body).Decode(&data)
 						actualGracePeriod = strconv.FormatFloat(data["gracePeriodSeconds"].(float64), 'f', 0, 64)
 						deleteOccurred = true

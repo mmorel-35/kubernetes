@@ -98,11 +98,11 @@ func (cc *clusterConfig) Unmarshal(docmap kubeadmapi.DocumentMap) error {
 	return cc.configBase.Unmarshal(docmap, &cc.config)
 }
 
-func (cc *clusterConfig) Get() interface{} {
+func (cc *clusterConfig) Get() any {
 	return &cc.config
 }
 
-func (cc *clusterConfig) Set(cfg interface{}) {
+func (cc *clusterConfig) Set(cfg any) {
 	cc.config = *cfg.(*kubeadmapiv1.ClusterConfiguration)
 }
 

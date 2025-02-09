@@ -53,7 +53,7 @@ type requestCache struct {
 }
 
 // Type representing an *ExecRequest, *AttachRequest, or *PortForwardRequest.
-type request interface{}
+type request any
 
 type cacheEntry struct {
 	token      string `datapolicy:"token"`

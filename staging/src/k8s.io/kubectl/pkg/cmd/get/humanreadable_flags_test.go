@@ -50,7 +50,7 @@ func TestHumanReadablePrinterSupportsExpectedOptions(t *testing.T) {
 					ObjectMeta: metav1.ObjectMeta{Name: "foo", Namespace: "foons", Labels: map[string]string{"l1": "value"}},
 				},
 			},
-			Cells: []interface{}{"foo", "0/0", "", int64(0), "<unknown>", "<none>", "<none>", "<none>", "<none>"},
+			Cells: []any{"foo", "0/0", "", int64(0), "<unknown>", "<none>", "<none>", "<none>", "<none>"},
 		}},
 	}
 	testPod := &corev1.Pod{

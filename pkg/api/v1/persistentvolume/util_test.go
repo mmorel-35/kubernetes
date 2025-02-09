@@ -289,7 +289,7 @@ func collectSecretPaths(t *testing.T, path *field.Path, name string, tp reflect.
 			secretPaths.Insert(sets.List[string](collectSecretPaths(t, path.Child(field.Name), field.Name, field.Type))...)
 		}
 	case reflect.Interface:
-		t.Errorf("cannot find secret fields in interface{} field %s", path.String())
+		t.Errorf("cannot find secret fields in any field %s", path.String())
 	case reflect.Map:
 		secretPaths.Insert(sets.List[string](collectSecretPaths(t, path.Key("*"), "", tp.Elem()))...)
 	case reflect.Slice:

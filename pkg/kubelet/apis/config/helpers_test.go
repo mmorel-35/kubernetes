@@ -79,7 +79,7 @@ func allPrimitiveFieldPaths(t *testing.T, skipRecurseList sets.Set[string], tp r
 	case reflect.Map, reflect.Slice:
 		paths.Insert(sets.List(allPrimitiveFieldPaths(t, skipRecurseList, tp.Elem(), path.Key("*")))...)
 	case reflect.Interface:
-		t.Fatalf("unexpected interface{} field %s", path.String())
+		t.Fatalf("unexpected any field %s", path.String())
 	default:
 		// if we hit a primitive type, we're at a leaf
 		paths.Insert(path.String())

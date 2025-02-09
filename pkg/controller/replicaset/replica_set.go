@@ -154,18 +154,18 @@ func NewBaseController(logger klog.Logger, rsInformer appsinformers.ReplicaSetIn
 	}
 
 	rsInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			rsc.addRS(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			rsc.updateRS(logger, oldObj, newObj)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			rsc.deleteRS(logger, obj)
 		},
 	})
 	rsInformer.Informer().AddIndexers(cache.Indexers{
-		controllerUIDIndex: func(obj interface{}) ([]string, error) {
+		controllerUIDIndex: func(obj any) ([]string, error) {
 			rs, ok := obj.(*apps.ReplicaSet)
 			if !ok {
 				return []string{}, nil
@@ -182,16 +182,16 @@ func NewBaseController(logger klog.Logger, rsInformer appsinformers.ReplicaSetIn
 	rsc.rsListerSynced = rsInformer.Informer().HasSynced
 
 	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			rsc.addPod(logger, obj)
 		},
 		// This invokes the ReplicaSet for every pod change, eg: host assignment. Though this might seem like
 		// overkill the most frequent pod update is status, and the associated ReplicaSet will only list from
 		// local storage, so it should be ok.
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			rsc.updatePod(logger, oldObj, newObj)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			rsc.deletePod(logger, obj)
 		},
 	})
@@ -311,14 +311,14 @@ func (rsc *ReplicaSetController) enqueueRSAfter(rs *apps.ReplicaSet, duration ti
 	rsc.queue.AddAfter(key, duration)
 }
 
-func (rsc *ReplicaSetController) addRS(logger klog.Logger, obj interface{}) {
+func (rsc *ReplicaSetController) addRS(logger klog.Logger, obj any) {
 	rs := obj.(*apps.ReplicaSet)
 	logger.V(4).Info("Adding", "replicaSet", klog.KObj(rs))
 	rsc.enqueueRS(rs)
 }
 
 // callback when RS is updated
-func (rsc *ReplicaSetController) updateRS(logger klog.Logger, old, cur interface{}) {
+func (rsc *ReplicaSetController) updateRS(logger klog.Logger, old, cur any) {
 	oldRS := old.(*apps.ReplicaSet)
 	curRS := cur.(*apps.ReplicaSet)
 
@@ -353,7 +353,7 @@ func (rsc *ReplicaSetController) updateRS(logger klog.Logger, old, cur interface
 	rsc.enqueueRS(curRS)
 }
 
-func (rsc *ReplicaSetController) deleteRS(logger klog.Logger, obj interface{}) {
+func (rsc *ReplicaSetController) deleteRS(logger klog.Logger, obj any) {
 	rs, ok := obj.(*apps.ReplicaSet)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
@@ -383,7 +383,7 @@ func (rsc *ReplicaSetController) deleteRS(logger klog.Logger, obj interface{}) {
 }
 
 // When a pod is created, enqueue the replica set that manages it and update its expectations.
-func (rsc *ReplicaSetController) addPod(logger klog.Logger, obj interface{}) {
+func (rsc *ReplicaSetController) addPod(logger klog.Logger, obj any) {
 	pod := obj.(*v1.Pod)
 
 	if pod.DeletionTimestamp != nil {
@@ -426,7 +426,7 @@ func (rsc *ReplicaSetController) addPod(logger klog.Logger, obj interface{}) {
 // When a pod is updated, figure out what replica set/s manage it and wake them
 // up. If the labels of the pod have changed we need to awaken both the old
 // and new replica set. old and cur must be *v1.Pod types.
-func (rsc *ReplicaSetController) updatePod(logger klog.Logger, old, cur interface{}) {
+func (rsc *ReplicaSetController) updatePod(logger klog.Logger, old, cur any) {
 	curPod := cur.(*v1.Pod)
 	oldPod := old.(*v1.Pod)
 	if curPod.ResourceVersion == oldPod.ResourceVersion {
@@ -500,7 +500,7 @@ func (rsc *ReplicaSetController) updatePod(logger klog.Logger, old, cur interfac
 
 // When a pod is deleted, enqueue the replica set that manages the pod and update its expectations.
 // obj could be an *v1.Pod, or a DeletionFinalStateUnknown marker item.
-func (rsc *ReplicaSetController) deletePod(logger klog.Logger, obj interface{}) {
+func (rsc *ReplicaSetController) deletePod(logger klog.Logger, obj any) {
 	pod, ok := obj.(*v1.Pod)
 
 	// When a delete is dropped, the relist will notice a pod in the store not

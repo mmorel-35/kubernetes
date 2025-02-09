@@ -83,7 +83,7 @@ func GetEarliestPodStartTime(victims *extenderv1.Victims) *metav1.Time {
 
 // MoreImportantPod return true when priority of the first pod is higher than
 // the second one. If two pods' priorities are equal, compare their StartTime.
-// It takes arguments of the type "interface{}" to be used with SortableList,
+// It takes arguments of the type "any" to be used with SortableList,
 // but expects those arguments to be *v1.Pod.
 func MoreImportantPod(pod1, pod2 *v1.Pod) bool {
 	p1 := corev1helpers.PodPriority(pod1)
@@ -166,7 +166,7 @@ func IsScalarResourceName(name v1.ResourceName) bool {
 // nil objects are allowed and will be converted to nil.
 // For oldObj, cache.DeletedFinalStateUnknown is handled and the
 // object stored in it will be converted instead.
-func As[T any](oldObj, newobj interface{}) (T, T, error) {
+func As[T any](oldObj, newobj any) (T, T, error) {
 	var oldTyped T
 	var newTyped T
 	var ok bool

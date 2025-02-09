@@ -155,28 +155,28 @@ func getResourceMetrics(ctx context.Context) (e2emetrics.KubeletMetrics, error) 
 	return e2emetrics.GrabKubeletMetricsWithoutProxy(ctx, nodeNameOrIP()+":10255", "/metrics/resource")
 }
 
-func nodeID(element interface{}) string {
+func nodeID(element any) string {
 	return ""
 }
 
-func podID(element interface{}) string {
+func podID(element any) string {
 	el := element.(*model.Sample)
 	return fmt.Sprintf("%s::%s", el.Metric["namespace"], el.Metric["pod"])
 }
 
-func containerID(element interface{}) string {
+func containerID(element any) string {
 	el := element.(*model.Sample)
 	return fmt.Sprintf("%s::%s::%s", el.Metric["namespace"], el.Metric["pod"], el.Metric["container"])
 }
 
-func makeCustomPairID(pri, sec string) func(interface{}) string {
-	return func(element interface{}) string {
+func makeCustomPairID(pri, sec string) func(any) string {
+	return func(element any) string {
 		el := element.(*model.Sample)
 		return fmt.Sprintf("%s::%s", el.Metric[model.LabelName(pri)], el.Metric[model.LabelName(sec)])
 	}
 }
 
-func boundedSample(lower, upper interface{}) types.GomegaMatcher {
+func boundedSample(lower, upper any) types.GomegaMatcher {
 	return gstruct.PointTo(gstruct.MatchAllFields(gstruct.Fields{
 		// We already check Metric when matching the Id
 		"Metric": gstruct.Ignore(),

@@ -213,12 +213,12 @@ func (a *HorizontalController) Run(ctx context.Context, workers int) {
 }
 
 // obj could be an *v1.HorizontalPodAutoscaler, or a DeletionFinalStateUnknown marker item.
-func (a *HorizontalController) updateHPA(old, cur interface{}) {
+func (a *HorizontalController) updateHPA(old, cur any) {
 	a.enqueueHPA(cur)
 }
 
 // obj could be an *v1.HorizontalPodAutoscaler, or a DeletionFinalStateUnknown marker item.
-func (a *HorizontalController) enqueueHPA(obj interface{}) {
+func (a *HorizontalController) enqueueHPA(obj any) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("couldn't get key for object %+v: %v", obj, err))
@@ -240,7 +240,7 @@ func (a *HorizontalController) enqueueHPA(obj interface{}) {
 	}
 }
 
-func (a *HorizontalController) deleteHPA(obj interface{}) {
+func (a *HorizontalController) deleteHPA(obj any) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("couldn't get key for object %+v: %v", obj, err))
@@ -1398,14 +1398,14 @@ func (a *HorizontalController) updateStatus(ctx context.Context, hpa *autoscalin
 // setCondition sets the specific condition type on the given HPA to the specified value with the given reason
 // and message.  The message and args are treated like a format string.  The condition will be added if it is
 // not present.
-func setCondition(hpa *autoscalingv2.HorizontalPodAutoscaler, conditionType autoscalingv2.HorizontalPodAutoscalerConditionType, status v1.ConditionStatus, reason, message string, args ...interface{}) {
+func setCondition(hpa *autoscalingv2.HorizontalPodAutoscaler, conditionType autoscalingv2.HorizontalPodAutoscalerConditionType, status v1.ConditionStatus, reason, message string, args ...any) {
 	hpa.Status.Conditions = setConditionInList(hpa.Status.Conditions, conditionType, status, reason, message, args...)
 }
 
 // setConditionInList sets the specific condition type on the given HPA to the specified value with the given
 // reason and message.  The message and args are treated like a format string.  The condition will be added if
 // it is not present.  The new list will be returned.
-func setConditionInList(inputList []autoscalingv2.HorizontalPodAutoscalerCondition, conditionType autoscalingv2.HorizontalPodAutoscalerConditionType, status v1.ConditionStatus, reason, message string, args ...interface{}) []autoscalingv2.HorizontalPodAutoscalerCondition {
+func setConditionInList(inputList []autoscalingv2.HorizontalPodAutoscalerCondition, conditionType autoscalingv2.HorizontalPodAutoscalerConditionType, status v1.ConditionStatus, reason, message string, args ...any) []autoscalingv2.HorizontalPodAutoscalerCondition {
 	resList := inputList
 	var existingCond *autoscalingv2.HorizontalPodAutoscalerCondition
 	for i, condition := range resList {

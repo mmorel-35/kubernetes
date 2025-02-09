@@ -314,7 +314,7 @@ const (
 	forgetItem
 )
 
-func (gc *GarbageCollector) attemptToDeleteWorker(ctx context.Context, item interface{}) workQueueItemAction {
+func (gc *GarbageCollector) attemptToDeleteWorker(ctx context.Context, item any) workQueueItemAction {
 	n, ok := item.(*node)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("expect *node, got %#v", item))
@@ -731,7 +731,7 @@ func (gc *GarbageCollector) processAttemptToOrphanWorker(logger klog.Logger) boo
 	return true
 }
 
-func (gc *GarbageCollector) attemptToOrphanWorker(logger klog.Logger, item interface{}) workQueueItemAction {
+func (gc *GarbageCollector) attemptToOrphanWorker(logger klog.Logger, item any) workQueueItemAction {
 	owner, ok := item.(*node)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("expect *node, got %#v", item))

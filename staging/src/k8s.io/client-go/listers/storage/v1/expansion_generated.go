@@ -20,24 +20,24 @@ package v1
 
 // CSIDriverListerExpansion allows custom methods to be added to
 // CSIDriverLister.
-type CSIDriverListerExpansion interface{}
+type CSIDriverListerExpansion any
 
 // CSINodeListerExpansion allows custom methods to be added to
 // CSINodeLister.
-type CSINodeListerExpansion interface{}
+type CSINodeListerExpansion any
 
 // CSIStorageCapacityListerExpansion allows custom methods to be added to
 // CSIStorageCapacityLister.
-type CSIStorageCapacityListerExpansion interface{}
+type CSIStorageCapacityListerExpansion any
 
 // CSIStorageCapacityNamespaceListerExpansion allows custom methods to be added to
 // CSIStorageCapacityNamespaceLister.
-type CSIStorageCapacityNamespaceListerExpansion interface{}
+type CSIStorageCapacityNamespaceListerExpansion any
 
 // StorageClassListerExpansion allows custom methods to be added to
 // StorageClassLister.
-type StorageClassListerExpansion interface{}
+type StorageClassListerExpansion any
 
 // VolumeAttachmentListerExpansion allows custom methods to be added to
 // VolumeAttachmentLister.
-type VolumeAttachmentListerExpansion interface{}
+type VolumeAttachmentListerExpansion any

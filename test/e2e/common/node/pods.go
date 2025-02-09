@@ -170,7 +170,7 @@ func getRestartDelay(ctx context.Context, podClient *e2epod.PodClient, podName s
 }
 
 // expectNoErrorWithRetries checks if an error occurs with the given retry count.
-func expectNoErrorWithRetries(fn func() error, maxRetries int, explain ...interface{}) {
+func expectNoErrorWithRetries(fn func() error, maxRetries int, explain ...any) {
 	// TODO (pohly): replace the entire function with gomege.Eventually.
 	var err error
 	for i := 0; i < maxRetries; i++ {

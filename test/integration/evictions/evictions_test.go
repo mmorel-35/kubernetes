@@ -328,8 +328,8 @@ func TestEvictionVersions(t *testing.T) {
 	}
 
 	// create unknown eviction version with apiVersion/kind should fail
-	u := &unstructured.Unstructured{Object: map[string]interface{}{
-		"metadata":   map[string]interface{}{"name": pod.Name},
+	u := &unstructured.Unstructured{Object: map[string]any{
+		"metadata":   map[string]any{"name": pod.Name},
 		"apiVersion": "policy/v2",
 		"kind":       "Eviction",
 	}}

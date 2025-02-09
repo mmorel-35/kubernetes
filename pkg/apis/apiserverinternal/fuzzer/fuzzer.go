@@ -21,6 +21,6 @@ import (
 )
 
 // Funcs returns the fuzzer functions for the apiserverinternal api group.
-func Funcs(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{}
+func Funcs(codecs runtimeserializer.CodecFactory) []any {
+	return []any{}
 }

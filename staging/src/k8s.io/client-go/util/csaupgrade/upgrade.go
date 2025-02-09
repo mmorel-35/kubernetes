@@ -155,7 +155,7 @@ func UpgradeManagedFieldsPatch(
 	// Just include all managed fields since that is only thing that will change
 	//
 	// Also include test for RV to avoid race condition
-	jsonPatch := []map[string]interface{}{
+	jsonPatch := []map[string]any{
 		{
 			"op":    "replace",
 			"path":  "/metadata/managedFields",

@@ -324,7 +324,7 @@ type ValidationRule struct {
 }
 
 // JSON represents any valid JSON value.
-// These types are supported: bool, int64, float64, string, []interface{}, map[string]interface{} and nil.
+// These types are supported: bool, int64, float64, string, []any, map[string]any and nil.
 type JSON struct {
 	Raw []byte `json:"-" protobuf:"bytes,1,opt,name=raw"`
 }

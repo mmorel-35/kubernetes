@@ -273,7 +273,7 @@ func getInt64PointerFromLabel(labels map[string]string, label string) (*int64, e
 }
 
 // getJSONObjectFromLabel returns a bool value indicating whether an object is found.
-func getJSONObjectFromLabel(labels map[string]string, label string, value interface{}) (bool, error) {
+func getJSONObjectFromLabel(labels map[string]string, label string, value any) (bool, error) {
 	if strValue, found := labels[label]; found {
 		err := json.Unmarshal([]byte(strValue), value)
 		return found, err

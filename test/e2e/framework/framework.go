@@ -519,7 +519,7 @@ func (f *Framework) createSecretFromDockerConfig(ctx context.Context, namespace 
 
 // RecordFlakeIfError records flakeness info if error happens.
 // NOTE: This function is not used at any places yet, but we are in progress for https://github.com/kubernetes/kubernetes/issues/66239 which requires this. Please don't remove this.
-func (f *Framework) RecordFlakeIfError(err error, optionalDescription ...interface{}) {
+func (f *Framework) RecordFlakeIfError(err error, optionalDescription ...any) {
 	f.flakeReport.RecordFlakeIfError(err, optionalDescription...)
 }
 

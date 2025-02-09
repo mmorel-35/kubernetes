@@ -43,7 +43,7 @@ func TestCountingWriteOnceSet(t *testing.T) {
 	clock, counter := testeventclock.NewFake(now, 0, nil)
 	var lock sync.Mutex
 	wr := NewCountingWriteOnce(counter, &lock, nil, doneCh, cval)
-	gots := make(chan interface{}, 1)
+	gots := make(chan any, 1)
 	goGetExpectNotYet(t, clock, counter, wr, gots, "Set")
 	aval := &now
 	func() {
@@ -78,7 +78,7 @@ func TestCountingWriteOnceCancel(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	var lock sync.Mutex
 	wr := NewCountingWriteOnce(counter, &lock, nil, ctx.Done(), cval)
-	gots := make(chan interface{}, 1)
+	gots := make(chan any, 1)
 	goGetExpectNotYet(t, clock, counter, wr, gots, "cancel")
 	counter.Add(1) // account for unblocking the receive on doneCh
 	cancel()
@@ -106,7 +106,7 @@ func TestCountingWriteOnceInitial(t *testing.T) {
 	now := time.Now()
 	aval := &now
 	wr := NewCountingWriteOnce(counter, &lock, aval, ctx.Done(), cval)
-	gots := make(chan interface{}, 1)
+	gots := make(chan any, 1)
 	goGetAndExpect(t, clock, counter, wr, gots, aval)
 	goGetAndExpect(t, clock, counter, wr, gots, aval) // check that a set value stays set
 	later := time.Now()
@@ -125,7 +125,7 @@ func TestCountingWriteOnceInitial(t *testing.T) {
 	goGetAndExpect(t, clock, counter, wr, gots, aval)
 }
 
-func goGetExpectNotYet(t *testing.T, clk *testeventclock.Fake, grc counter.GoRoutineCounter, wr promise.WriteOnce, gots chan interface{}, trigger string) {
+func goGetExpectNotYet(t *testing.T, clk *testeventclock.Fake, grc counter.GoRoutineCounter, wr promise.WriteOnce, gots chan any, trigger string) {
 	grc.Add(1) // count the following goroutine
 	go func() {
 		defer grc.Add(-1) // count completion of this goroutine
@@ -141,7 +141,7 @@ func goGetExpectNotYet(t *testing.T, clk *testeventclock.Fake, grc counter.GoRou
 
 }
 
-func goGetAndExpect(t *testing.T, clk *testeventclock.Fake, grc counter.GoRoutineCounter, wr promise.WriteOnce, gots chan interface{}, expected interface{}) {
+func goGetAndExpect(t *testing.T, clk *testeventclock.Fake, grc counter.GoRoutineCounter, wr promise.WriteOnce, gots chan any, expected any) {
 	grc.Add(1)
 	go func() {
 		defer grc.Add(-1)
@@ -151,7 +151,7 @@ func goGetAndExpect(t *testing.T, clk *testeventclock.Fake, grc counter.GoRoutin
 	expectGotValue(t, gots, expected)
 }
 
-func expectGotValue(t *testing.T, gots <-chan interface{}, expected interface{}) {
+func expectGotValue(t *testing.T, gots <-chan any, expected any) {
 	select {
 	case gotVal := <-gots:
 		t.Logf("Got %v", gotVal)

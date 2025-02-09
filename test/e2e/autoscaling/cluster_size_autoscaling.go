@@ -878,7 +878,7 @@ type scaleUpStatus struct {
 }
 
 // Try to get timestamp from status.
-func getStatusTimestamp(parsedStatus map[interface{}]interface{}) (time.Time, error) {
+func getStatusTimestamp(parsedStatus map[any]any) (time.Time, error) {
 	timestamp := parsedStatus["time"]
 	if timestamp == nil {
 		return time.Time{}, fmt.Errorf("failed to parse CA status timestamp, parsed status: %v", parsedStatus)
@@ -902,7 +902,7 @@ func getScaleUpStatus(ctx context.Context, c clientset.Interface) (*scaleUpStatu
 		return nil, fmt.Errorf("status information not found in configmap")
 	}
 
-	parsedStatus := make(map[interface{}]interface{})
+	parsedStatus := make(map[any]any)
 	err = yaml.Unmarshal([]byte(status), &parsedStatus)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse the autoscaler status: %w", err)
@@ -919,16 +919,16 @@ func getScaleUpStatus(ctx context.Context, c clientset.Interface) (*scaleUpStatu
 		target:    0,
 		timestamp: timestamp,
 	}
-	for _, nodeGroup := range parsedStatus["nodeGroups"].([]interface{}) {
-		if nodeGroup.(map[interface{}]interface{})["scaleUp"].(map[interface{}]interface{})["status"].(string) == caOngoingScaleUpStatus {
+	for _, nodeGroup := range parsedStatus["nodeGroups"].([]any) {
+		if nodeGroup.(map[any]any)["scaleUp"].(map[any]any)["status"].(string) == caOngoingScaleUpStatus {
 			result.status = caOngoingScaleUpStatus
 		}
-		newReady := nodeGroup.(map[interface{}]interface{})["health"].(map[interface{}]interface{})["nodeCounts"].(map[interface{}]interface{})["registered"].(map[interface{}]interface{})["ready"].(int)
+		newReady := nodeGroup.(map[any]any)["health"].(map[any]any)["nodeCounts"].(map[any]any)["registered"].(map[any]any)["ready"].(int)
 		if err != nil {
 			return nil, err
 		}
 		result.ready += newReady
-		newTarget := nodeGroup.(map[interface{}]interface{})["health"].(map[interface{}]interface{})["cloudProviderTarget"].(int)
+		newTarget := nodeGroup.(map[any]any)["health"].(map[any]any)["cloudProviderTarget"].(int)
 		if err != nil {
 			return nil, err
 		}

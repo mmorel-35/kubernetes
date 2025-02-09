@@ -436,7 +436,7 @@ func (NoopManager) Update(liveObj, newObj runtime.Object, managed internal.Manag
 }
 
 func updateObject(f managedfieldstest.TestFieldManager, fieldManagerName string, object []byte) error {
-	obj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	obj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal(object, &obj.Object); err != nil {
 		return fmt.Errorf("error decoding YAML: %v", err)
 	}
@@ -447,7 +447,7 @@ func updateObject(f managedfieldstest.TestFieldManager, fieldManagerName string,
 }
 
 func applyObject(f managedfieldstest.TestFieldManager, fieldManagerName string, object []byte) error {
-	obj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	obj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal(object, &obj.Object); err != nil {
 		return fmt.Errorf("error decoding YAML: %v", err)
 	}
@@ -463,7 +463,7 @@ func applyObject(f managedfieldstest.TestFieldManager, fieldManagerName string, 
 // removed
 func TestNilNewObjectReplacedWithDeepCopyExcludingManagedFields(t *testing.T) {
 	// Initialize our "live object" with some managed fields
-	obj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	obj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(`{
 		"apiVersion": "v1",
 		"kind": "Pod",

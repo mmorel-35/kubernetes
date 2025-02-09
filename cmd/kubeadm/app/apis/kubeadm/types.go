@@ -504,10 +504,10 @@ type ComponentConfig interface {
 	Mutate() error
 
 	// Set can be used to set the internal configuration in the ComponentConfig
-	Set(interface{})
+	Set(any)
 
 	// Get can be used to get the internal configuration in the ComponentConfig
-	Get() interface{}
+	Get() any
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

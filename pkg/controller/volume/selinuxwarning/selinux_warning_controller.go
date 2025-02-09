@@ -137,8 +137,8 @@ func NewController(
 
 	logger := klog.FromContext(ctx)
 	_, err = podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc:    func(obj interface{}) { c.addPod(logger, obj) },
-		DeleteFunc: func(obj interface{}) { c.deletePod(logger, obj) },
+		AddFunc:    func(obj any) { c.addPod(logger, obj) },
+		DeleteFunc: func(obj any) { c.deletePod(logger, obj) },
 		// Not watching updates: Pod volumes and SecurityContext are immutable after creation
 	})
 	if err != nil {
@@ -146,25 +146,25 @@ func NewController(
 	}
 
 	_, err = pvcInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc:    func(obj interface{}) { c.addPVC(logger, obj) },
-		UpdateFunc: func(oldObj, newObj interface{}) { c.updatePVC(logger, oldObj, newObj) },
+		AddFunc:    func(obj any) { c.addPVC(logger, obj) },
+		UpdateFunc: func(oldObj, newObj any) { c.updatePVC(logger, oldObj, newObj) },
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	_, err = pvInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc:    func(obj interface{}) { c.addPV(logger, obj) },
-		UpdateFunc: func(oldObj, newObj interface{}) { c.updatePV(logger, oldObj, newObj) },
+		AddFunc:    func(obj any) { c.addPV(logger, obj) },
+		UpdateFunc: func(oldObj, newObj any) { c.updatePV(logger, oldObj, newObj) },
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	_, err = csiDriverInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc:    func(obj interface{}) { c.addCSIDriver(logger, obj) },
-		UpdateFunc: func(oldObj, newObj interface{}) { c.updateCSIDriver(logger, oldObj, newObj) },
-		DeleteFunc: func(obj interface{}) { c.deleteCSIDriver(logger, obj) },
+		AddFunc:    func(obj any) { c.addCSIDriver(logger, obj) },
+		UpdateFunc: func(oldObj, newObj any) { c.updateCSIDriver(logger, oldObj, newObj) },
+		DeleteFunc: func(obj any) { c.deleteCSIDriver(logger, obj) },
 	})
 	if err != nil {
 		return nil, err
@@ -175,7 +175,7 @@ func NewController(
 	return c, nil
 }
 
-func (c *Controller) addPod(_ klog.Logger, obj interface{}) {
+func (c *Controller) addPod(_ klog.Logger, obj any) {
 	podRef, err := cache.DeletionHandlingObjectToName(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("couldn't get key for pod %#v: %w", obj, err))
@@ -183,7 +183,7 @@ func (c *Controller) addPod(_ klog.Logger, obj interface{}) {
 	c.queue.Add(podRef)
 }
 
-func (c *Controller) deletePod(_ klog.Logger, obj interface{}) {
+func (c *Controller) deletePod(_ klog.Logger, obj any) {
 	podRef, err := cache.DeletionHandlingObjectToName(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("couldn't get key for pod %#v: %w", obj, err))
@@ -191,7 +191,7 @@ func (c *Controller) deletePod(_ klog.Logger, obj interface{}) {
 	c.queue.Add(podRef)
 }
 
-func (c *Controller) addPVC(logger klog.Logger, obj interface{}) {
+func (c *Controller) addPVC(logger klog.Logger, obj any) {
 	pvc, ok := obj.(*v1.PersistentVolumeClaim)
 	if !ok {
 		return
@@ -203,7 +203,7 @@ func (c *Controller) addPVC(logger klog.Logger, obj interface{}) {
 	c.enqueueAllPodsForPVC(logger, pvc.Namespace, pvc.Name)
 }
 
-func (c *Controller) updatePVC(logger klog.Logger, oldObj, newObj interface{}) {
+func (c *Controller) updatePVC(logger klog.Logger, oldObj, newObj any) {
 	oldPVC, ok := oldObj.(*v1.PersistentVolumeClaim)
 	if !ok {
 		return
@@ -218,7 +218,7 @@ func (c *Controller) updatePVC(logger klog.Logger, oldObj, newObj interface{}) {
 	}
 }
 
-func (c *Controller) addPV(logger klog.Logger, obj interface{}) {
+func (c *Controller) addPV(logger klog.Logger, obj any) {
 	pv, ok := obj.(*v1.PersistentVolume)
 	if !ok {
 		return
@@ -235,7 +235,7 @@ func (c *Controller) addPV(logger klog.Logger, obj interface{}) {
 	c.enqueueAllPodsForPVC(logger, claimRef.Namespace, claimRef.Name)
 }
 
-func (c *Controller) updatePV(logger klog.Logger, oldObj, newObj interface{}) {
+func (c *Controller) updatePV(logger klog.Logger, oldObj, newObj any) {
 	oldPV, ok := oldObj.(*v1.PersistentVolume)
 	if !ok {
 		return
@@ -282,7 +282,7 @@ func (c *Controller) enqueueAllPodsForPVC(logger klog.Logger, namespace, name st
 	}
 }
 
-func (c *Controller) addCSIDriver(_ klog.Logger, obj interface{}) {
+func (c *Controller) addCSIDriver(_ klog.Logger, obj any) {
 	csiDriver, ok := obj.(*storagev1.CSIDriver)
 	if !ok {
 		return
@@ -295,7 +295,7 @@ func (c *Controller) addCSIDriver(_ klog.Logger, obj interface{}) {
 	c.enqueueAllPodsForCSIDriver(csiDriver.Name)
 }
 
-func (c *Controller) updateCSIDriver(_ klog.Logger, oldObj, newObj interface{}) {
+func (c *Controller) updateCSIDriver(_ klog.Logger, oldObj, newObj any) {
 	oldCSIDriver, ok := oldObj.(*storagev1.CSIDriver)
 	if !ok {
 		return
@@ -316,7 +316,7 @@ func (c *Controller) updateCSIDriver(_ klog.Logger, oldObj, newObj interface{}) 
 	}
 }
 
-func (c *Controller) deleteCSIDriver(_ klog.Logger, obj interface{}) {
+func (c *Controller) deleteCSIDriver(_ klog.Logger, obj any) {
 	csiDriver, ok := obj.(*storagev1.CSIDriver)
 	if !ok {
 		return

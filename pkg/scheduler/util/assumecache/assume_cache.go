@@ -37,19 +37,19 @@ type Informer interface {
 
 // AddTestObject adds an object to the assume cache.
 // Only use this for unit testing!
-func AddTestObject(cache *AssumeCache, obj interface{}) {
+func AddTestObject(cache *AssumeCache, obj any) {
 	cache.add(obj)
 }
 
 // UpdateTestObject updates an object in the assume cache.
 // Only use this for unit testing!
-func UpdateTestObject(cache *AssumeCache, obj interface{}) {
+func UpdateTestObject(cache *AssumeCache, obj any) {
 	cache.update(nil, obj)
 }
 
 // DeleteTestObject deletes object in the assume cache.
 // Only use this for unit testing!
-func DeleteTestObject(cache *AssumeCache, obj interface{}) {
+func DeleteTestObject(cache *AssumeCache, obj any) {
 	cache.delete(obj)
 }
 
@@ -62,7 +62,7 @@ var (
 
 type WrongTypeError struct {
 	TypeName string
-	Object   interface{}
+	Object   any
 }
 
 func (e WrongTypeError) Error() string {
@@ -165,13 +165,13 @@ type objInfo struct {
 	name string
 
 	// Latest version of object could be cached-only or from informer
-	latestObj interface{}
+	latestObj any
 
 	// Latest object from informer
-	apiObj interface{}
+	apiObj any
 }
 
-func objInfoKeyFunc(obj interface{}) (string, error) {
+func objInfoKeyFunc(obj any) (string, error) {
 	objInfo, ok := obj.(*objInfo)
 	if !ok {
 		return "", &WrongTypeError{TypeName: "objInfo", Object: obj}
@@ -179,7 +179,7 @@ func objInfoKeyFunc(obj interface{}) (string, error) {
 	return objInfo.name, nil
 }
 
-func (c *AssumeCache) objInfoIndexFunc(obj interface{}) ([]string, error) {
+func (c *AssumeCache) objInfoIndexFunc(obj any) ([]string, error) {
 	objInfo, ok := obj.(*objInfo)
 	if !ok {
 		return []string{""}, &WrongTypeError{TypeName: "objInfo", Object: obj}
@@ -215,7 +215,7 @@ func NewAssumeCache(logger klog.Logger, informer Informer, description, indexNam
 	return c
 }
 
-func (c *AssumeCache) add(obj interface{}) {
+func (c *AssumeCache) add(obj any) {
 	if obj == nil {
 		return
 	}
@@ -230,7 +230,7 @@ func (c *AssumeCache) add(obj interface{}) {
 	c.rwMutex.Lock()
 	defer c.rwMutex.Unlock()
 
-	var oldObj interface{}
+	var oldObj any
 	if objInfo, _ := c.getObjInfo(name); objInfo != nil {
 		newVersion, err := c.getObjVersion(name, obj)
 		if err != nil {
@@ -262,11 +262,11 @@ func (c *AssumeCache) add(obj interface{}) {
 	}
 }
 
-func (c *AssumeCache) update(oldObj interface{}, newObj interface{}) {
+func (c *AssumeCache) update(oldObj any, newObj any) {
 	c.add(newObj)
 }
 
-func (c *AssumeCache) delete(obj interface{}) {
+func (c *AssumeCache) delete(obj any) {
 	if obj == nil {
 		return
 	}
@@ -281,7 +281,7 @@ func (c *AssumeCache) delete(obj interface{}) {
 	c.rwMutex.Lock()
 	defer c.rwMutex.Unlock()
 
-	var oldObj interface{}
+	var oldObj any
 	if len(c.eventHandlers) > 0 {
 		if objInfo, _ := c.getObjInfo(name); objInfo != nil {
 			oldObj = objInfo.latestObj
@@ -304,7 +304,7 @@ func (c *AssumeCache) delete(obj interface{}) {
 //
 // For a delete event, newObj is nil. For an add, oldObj is nil.
 // An update has both as non-nil.
-func (c *AssumeCache) pushEvent(oldObj, newObj interface{}) {
+func (c *AssumeCache) pushEvent(oldObj, newObj any) {
 	for _, handler := range c.eventHandlers {
 		handler := handler
 		if oldObj == nil {
@@ -323,7 +323,7 @@ func (c *AssumeCache) pushEvent(oldObj, newObj interface{}) {
 	}
 }
 
-func (c *AssumeCache) getObjVersion(name string, obj interface{}) (int64, error) {
+func (c *AssumeCache) getObjVersion(name string, obj any) (int64, error) {
 	objAccessor, err := meta.Accessor(obj)
 	if err != nil {
 		return -1, err
@@ -354,7 +354,7 @@ func (c *AssumeCache) getObjInfo(key string) (*objInfo, error) {
 }
 
 // Get the object by its key.
-func (c *AssumeCache) Get(key string) (interface{}, error) {
+func (c *AssumeCache) Get(key string) (any, error) {
 	c.rwMutex.RLock()
 	defer c.rwMutex.RUnlock()
 
@@ -366,7 +366,7 @@ func (c *AssumeCache) Get(key string) (interface{}, error) {
 }
 
 // GetAPIObj gets the informer cache's version by its key.
-func (c *AssumeCache) GetAPIObj(key string) (interface{}, error) {
+func (c *AssumeCache) GetAPIObj(key string) (any, error) {
 	c.rwMutex.RLock()
 	defer c.rwMutex.RUnlock()
 
@@ -378,16 +378,16 @@ func (c *AssumeCache) GetAPIObj(key string) (interface{}, error) {
 }
 
 // List all the objects in the cache.
-func (c *AssumeCache) List(indexObj interface{}) []interface{} {
+func (c *AssumeCache) List(indexObj any) []any {
 	c.rwMutex.RLock()
 	defer c.rwMutex.RUnlock()
 
 	return c.listLocked(indexObj)
 }
 
-func (c *AssumeCache) listLocked(indexObj interface{}) []interface{} {
-	allObjs := []interface{}{}
-	var objs []interface{}
+func (c *AssumeCache) listLocked(indexObj any) []any {
+	allObjs := []any{}
+	var objs []any
 	if c.indexName != "" {
 		o, err := c.store.Index(c.indexName, &objInfo{latestObj: indexObj})
 		if err != nil {
@@ -423,7 +423,7 @@ func (c *AssumeCache) listLocked(indexObj interface{}) []interface{} {
 //
 // Only assuming objects that were returned by an apiserver
 // operation (Update, Patch) is safe.
-func (c *AssumeCache) Assume(obj interface{}) error {
+func (c *AssumeCache) Assume(obj any) error {
 	name, err := cache.MetaNamespaceKeyFunc(obj)
 	if err != nil {
 		return &ObjectNameError{err}

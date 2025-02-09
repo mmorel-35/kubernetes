@@ -35,7 +35,7 @@ import (
 // UnstructuredToVal converts a Kubernetes unstructured data element to a CEL Val.
 // The root schema of custom resource schema is expected contain type meta and object meta schemas.
 // If Embedded resources do not contain type meta and object meta schemas, they will be added automatically.
-func UnstructuredToVal(unstructured interface{}, schema Schema) ref.Val {
+func UnstructuredToVal(unstructured any, schema Schema) ref.Val {
 	if unstructured == nil {
 		if schema.Nullable() {
 			return types.NullValue
@@ -56,7 +56,7 @@ func UnstructuredToVal(unstructured interface{}, schema Schema) ref.Val {
 		return types.NewErr("invalid data, expected XIntOrString value to be either a string or integer")
 	}
 	if schema.Type() == "object" {
-		m, ok := unstructured.(map[string]interface{})
+		m, ok := unstructured.(map[string]any)
 		if !ok {
 			return types.NewErr("invalid data, expected a map for the provided schema with type=object")
 		}
@@ -103,7 +103,7 @@ func UnstructuredToVal(unstructured interface{}, schema Schema) ref.Val {
 	}
 
 	if schema.Type() == "array" {
-		l, ok := unstructured.([]interface{})
+		l, ok := unstructured.([]any)
 		if !ok {
 			return types.NewErr("invalid data, expected an array for the provided schema with type=array")
 		}
@@ -214,10 +214,10 @@ func UnstructuredToVal(unstructured interface{}, schema Schema) ref.Val {
 // unknownPreserved should be used only for values are not directly accessible in CEL expressions, i.e. for data
 // where there is no corresponding CEL type declaration.
 type unknownPreserved struct {
-	u interface{}
+	u any
 }
 
-func (t *unknownPreserved) ConvertToNative(refType reflect.Type) (interface{}, error) {
+func (t *unknownPreserved) ConvertToNative(refType reflect.Type) (any, error) {
 	return nil, fmt.Errorf("type conversion to '%s' not supported for values preserved by x-kubernetes-preserve-unknown-fields", refType)
 }
 
@@ -233,7 +233,7 @@ func (t *unknownPreserved) Type() ref.Type {
 	return types.UnknownType
 }
 
-func (t *unknownPreserved) Value() interface{} {
+func (t *unknownPreserved) Value() any {
 	return t.u // used by Equal checks
 }
 
@@ -243,12 +243,12 @@ type unstructuredMapList struct {
 	escapedKeyProps []string
 
 	sync.Once // for for lazy load of mapOfList since it is only needed if Equals is called
-	mapOfList map[interface{}]interface{}
+	mapOfList map[any]any
 }
 
-func (t *unstructuredMapList) getMap() map[interface{}]interface{} {
+func (t *unstructuredMapList) getMap() map[any]any {
 	t.Do(func() {
-		t.mapOfList = make(map[interface{}]interface{}, len(t.elements))
+		t.mapOfList = make(map[any]any, len(t.elements))
 		for _, e := range t.elements {
 			t.mapOfList[t.toMapKey(e)] = e
 		}
@@ -259,8 +259,8 @@ func (t *unstructuredMapList) getMap() map[interface{}]interface{} {
 // toMapKey returns a valid golang map key for the given element of the map list.
 // element must be a valid map list entry where all map key props are scalar types (which are comparable in go
 // and valid for use in a golang map key).
-func (t *unstructuredMapList) toMapKey(element interface{}) interface{} {
-	eObj, ok := element.(map[string]interface{})
+func (t *unstructuredMapList) toMapKey(element any) any {
+	eObj, ok := element.(map[string]any)
 	if !ok {
 		return types.NewErr("unexpected data format for element of array with x-kubernetes-list-type=map: %T", element)
 	}
@@ -271,13 +271,13 @@ func (t *unstructuredMapList) toMapKey(element interface{}) interface{} {
 		return eObj[t.escapedKeyProps[0]]
 	}
 	if len(t.escapedKeyProps) == 2 {
-		return [2]interface{}{eObj[t.escapedKeyProps[0]], eObj[t.escapedKeyProps[1]]}
+		return [2]any{eObj[t.escapedKeyProps[0]], eObj[t.escapedKeyProps[1]]}
 	}
 	if len(t.escapedKeyProps) == 3 {
-		return [3]interface{}{eObj[t.escapedKeyProps[0]], eObj[t.escapedKeyProps[1]], eObj[t.escapedKeyProps[2]]}
+		return [3]any{eObj[t.escapedKeyProps[0]], eObj[t.escapedKeyProps[1]], eObj[t.escapedKeyProps[2]]}
 	}
 
-	key := make([]interface{}, len(t.escapedKeyProps))
+	key := make([]any, len(t.escapedKeyProps))
 	for i, kf := range t.escapedKeyProps {
 		key[i] = eObj[kf]
 	}
@@ -318,8 +318,8 @@ func (t *unstructuredMapList) Add(other ref.Val) ref.Val {
 	if !ok {
 		return types.MaybeNoSuchOverloadErr(other)
 	}
-	elements := make([]interface{}, len(t.elements))
-	keyToIdx := map[interface{}]int{}
+	elements := make([]any, len(t.elements))
+	keyToIdx := map[any]int{}
 	for i, e := range t.elements {
 		k := t.toMapKey(e)
 		keyToIdx[k] = i
@@ -361,14 +361,14 @@ type unstructuredSetList struct {
 	escapedKeyProps []string
 
 	sync.Once // for for lazy load of setOfList since it is only needed if Equals is called
-	set       map[interface{}]struct{}
+	set       map[any]struct{}
 }
 
-func (t *unstructuredSetList) getSet() map[interface{}]struct{} {
+func (t *unstructuredSetList) getSet() map[any]struct{} {
 	// sets are only allowed to contain scalar elements, which are comparable in go, and can safely be used as
 	// golang map keys
 	t.Do(func() {
-		t.set = make(map[interface{}]struct{}, len(t.elements))
+		t.set = make(map[any]struct{}, len(t.elements))
 		for _, e := range t.elements {
 			t.set[e] = struct{}{}
 		}
@@ -421,13 +421,13 @@ func (t *unstructuredSetList) Add(other ref.Val) ref.Val {
 
 // unstructuredList represents an unstructured data instance of an OpenAPI array with x-kubernetes-list-type=atomic (the default).
 type unstructuredList struct {
-	elements    []interface{}
+	elements    []any
 	itemsSchema Schema
 }
 
 var _ = traits.Lister(&unstructuredList{})
 
-func (t *unstructuredList) ConvertToNative(typeDesc reflect.Type) (interface{}, error) {
+func (t *unstructuredList) ConvertToNative(typeDesc reflect.Type) (any, error) {
 	switch typeDesc.Kind() {
 	case reflect.Slice:
 		switch t.itemsSchema.Type() {
@@ -482,7 +482,7 @@ func (t *unstructuredList) Type() ref.Type {
 	return types.ListType
 }
 
-func (t *unstructuredList) Value() interface{} {
+func (t *unstructuredList) Value() any {
 	return t.elements
 }
 
@@ -566,7 +566,7 @@ func (t *unstructuredList) Size() ref.Val {
 
 // unstructuredMap represented an unstructured data instance of an OpenAPI object.
 type unstructuredMap struct {
-	value  map[string]interface{}
+	value  map[string]any
 	schema Schema
 	// propSchema finds the schema to use for a particular map key.
 	propSchema func(key string) (Schema, bool)
@@ -574,7 +574,7 @@ type unstructuredMap struct {
 
 var _ = traits.Mapper(&unstructuredMap{})
 
-func (t *unstructuredMap) ConvertToNative(typeDesc reflect.Type) (interface{}, error) {
+func (t *unstructuredMap) ConvertToNative(typeDesc reflect.Type) (any, error) {
 	switch typeDesc.Kind() {
 	case reflect.Map:
 		return t.value, nil
@@ -633,7 +633,7 @@ func (t *unstructuredMap) Type() ref.Type {
 	return types.MapType
 }
 
-func (t *unstructuredMap) Value() interface{} {
+func (t *unstructuredMap) Value() any {
 	return t.value
 }
 

@@ -30,7 +30,7 @@ func TestClientGOMetrics(t *testing.T) {
 	tests := []struct {
 		description string
 		name        string
-		metric      interface{}
+		metric      any
 		update      func()
 		want        string
 	}{

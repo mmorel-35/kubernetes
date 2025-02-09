@@ -165,7 +165,7 @@ type auditTester struct {
 	evaluator auditpkg.PolicyRuleEvaluator
 }
 
-func (t *auditTester) testResources(level audit.Level, usrVerbRes ...interface{}) {
+func (t *auditTester) testResources(level audit.Level, usrVerbRes ...any) {
 	verbs := []string{}
 	users := []user.Info{}
 	resources := []Resource{}

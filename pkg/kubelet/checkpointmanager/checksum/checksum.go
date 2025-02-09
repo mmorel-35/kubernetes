@@ -27,7 +27,7 @@ import (
 type Checksum uint64
 
 // Verify verifies that passed checksum is same as calculated checksum
-func (cs Checksum) Verify(data interface{}) error {
+func (cs Checksum) Verify(data any) error {
 	actualCS := New(data)
 	if cs != actualCS {
 		return &errors.CorruptCheckpointError{ActualCS: uint64(actualCS), ExpectedCS: uint64(cs)}
@@ -36,12 +36,12 @@ func (cs Checksum) Verify(data interface{}) error {
 }
 
 // New returns the Checksum of checkpoint data
-func New(data interface{}) Checksum {
+func New(data any) Checksum {
 	return Checksum(getChecksum(data))
 }
 
 // Get returns calculated checksum of checkpoint data
-func getChecksum(data interface{}) uint64 {
+func getChecksum(data any) uint64 {
 	hash := fnv.New32a()
 	hashutil.DeepHashObject(hash, data)
 	return uint64(hash.Sum32())

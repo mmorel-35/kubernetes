@@ -723,7 +723,7 @@ func (q Quantity) MarshalCBOR() ([]byte, error) {
 }
 
 // ToUnstructured implements the value.UnstructuredConverter interface.
-func (q Quantity) ToUnstructured() interface{} {
+func (q Quantity) ToUnstructured() any {
 	return q.String()
 }
 

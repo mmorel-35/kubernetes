@@ -275,7 +275,7 @@ func createPodWithAppArmor(ctx context.Context, f *framework.Framework, profile 
 }
 
 func expectRejection(status v1.PodStatus) {
-	args := []interface{}{"PodStatus: %+v", status}
+	args := []any{"PodStatus: %+v", status}
 	gomega.Expect(status.Phase).To(gomega.Equal(v1.PodFailed), args...)
 	gomega.Expect(status.Reason).To(gomega.Equal("AppArmor"), args...)
 	gomega.Expect(status.Message).To(gomega.ContainSubstring("AppArmor"), args...)

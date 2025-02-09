@@ -20,8 +20,8 @@ package v1
 
 // LeaseListerExpansion allows custom methods to be added to
 // LeaseLister.
-type LeaseListerExpansion interface{}
+type LeaseListerExpansion any
 
 // LeaseNamespaceListerExpansion allows custom methods to be added to
 // LeaseNamespaceLister.
-type LeaseNamespaceListerExpansion interface{}
+type LeaseNamespaceListerExpansion any

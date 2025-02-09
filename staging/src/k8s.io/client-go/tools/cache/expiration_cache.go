@@ -72,7 +72,7 @@ func (p *TTLPolicy) IsExpired(obj *TimestampedEntry) bool {
 // Behavior may be inconsistent if you get a timestamp from the API Server and
 // use it on the client machine as part of your ExpirationCache.
 type TimestampedEntry struct {
-	Obj       interface{}
+	Obj       any
 	Timestamp time.Time
 	key       string
 }
@@ -88,7 +88,7 @@ func (c *ExpirationCache) getTimestampedEntry(key string) (*TimestampedEntry, bo
 
 // getOrExpire retrieves the object from the TimestampedEntry if and only if it hasn't
 // already expired. It holds a write lock across deletion.
-func (c *ExpirationCache) getOrExpire(key string) (interface{}, bool) {
+func (c *ExpirationCache) getOrExpire(key string) (any, bool) {
 	// Prevent all inserts from the time we deem an item as "expired" to when we
 	// delete it, so an un-expired item doesn't sneak in under the same key, just
 	// before the Delete.
@@ -106,14 +106,14 @@ func (c *ExpirationCache) getOrExpire(key string) (interface{}, bool) {
 }
 
 // GetByKey returns the item stored under the key, or sets exists=false.
-func (c *ExpirationCache) GetByKey(key string) (interface{}, bool, error) {
+func (c *ExpirationCache) GetByKey(key string) (any, bool, error) {
 	obj, exists := c.getOrExpire(key)
 	return obj, exists, nil
 }
 
 // Get returns unexpired items. It purges the cache of expired items in the
 // process.
-func (c *ExpirationCache) Get(obj interface{}) (interface{}, bool, error) {
+func (c *ExpirationCache) Get(obj any) (any, bool, error) {
 	key, err := c.keyFunc(obj)
 	if err != nil {
 		return nil, false, KeyError{obj, err}
@@ -124,10 +124,10 @@ func (c *ExpirationCache) Get(obj interface{}) (interface{}, bool, error) {
 
 // List retrieves a list of unexpired items. It purges the cache of expired
 // items in the process.
-func (c *ExpirationCache) List() []interface{} {
+func (c *ExpirationCache) List() []any {
 	items := c.cacheStorage.List()
 
-	list := make([]interface{}, 0, len(items))
+	list := make([]any, 0, len(items))
 	for _, item := range items {
 		key := item.(*TimestampedEntry).key
 		if obj, exists := c.getOrExpire(key); exists {
@@ -144,7 +144,7 @@ func (c *ExpirationCache) ListKeys() []string {
 
 // Add timestamps an item and inserts it into the cache, overwriting entries
 // that might exist under the same key.
-func (c *ExpirationCache) Add(obj interface{}) error {
+func (c *ExpirationCache) Add(obj any) error {
 	key, err := c.keyFunc(obj)
 	if err != nil {
 		return KeyError{obj, err}
@@ -158,12 +158,12 @@ func (c *ExpirationCache) Add(obj interface{}) error {
 
 // Update has not been implemented yet for lack of a use case, so this method
 // simply calls `Add`. This effectively refreshes the timestamp.
-func (c *ExpirationCache) Update(obj interface{}) error {
+func (c *ExpirationCache) Update(obj any) error {
 	return c.Add(obj)
 }
 
 // Delete removes an item from the cache.
-func (c *ExpirationCache) Delete(obj interface{}) error {
+func (c *ExpirationCache) Delete(obj any) error {
 	key, err := c.keyFunc(obj)
 	if err != nil {
 		return KeyError{obj, err}
@@ -177,8 +177,8 @@ func (c *ExpirationCache) Delete(obj interface{}) error {
 // Replace will convert all items in the given list to TimestampedEntries
 // before attempting the replace operation. The replace operation will
 // delete the contents of the ExpirationCache `c`.
-func (c *ExpirationCache) Replace(list []interface{}, resourceVersion string) error {
-	items := make(map[string]interface{}, len(list))
+func (c *ExpirationCache) Replace(list []any, resourceVersion string) error {
+	items := make(map[string]any, len(list))
 	ts := c.clock.Now()
 	for _, item := range list {
 		key, err := c.keyFunc(item)

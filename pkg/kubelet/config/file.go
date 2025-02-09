@@ -55,12 +55,12 @@ type sourceFile struct {
 	period         time.Duration
 	store          cache.Store
 	fileKeyMapping map[string]string
-	updates        chan<- interface{}
+	updates        chan<- any
 	watchEvents    chan *watchEvent
 }
 
 // NewSourceFile watches a config file for changes.
-func NewSourceFile(path string, nodeName types.NodeName, period time.Duration, updates chan<- interface{}) {
+func NewSourceFile(path string, nodeName types.NodeName, period time.Duration, updates chan<- any) {
 	// "github.com/sigma/go-inotify" requires a path without trailing "/"
 	path = strings.TrimRight(path, string(os.PathSeparator))
 
@@ -69,8 +69,8 @@ func NewSourceFile(path string, nodeName types.NodeName, period time.Duration, u
 	config.run()
 }
 
-func newSourceFile(path string, nodeName types.NodeName, period time.Duration, updates chan<- interface{}) *sourceFile {
-	send := func(objs []interface{}) {
+func newSourceFile(path string, nodeName types.NodeName, period time.Duration, updates chan<- any) *sourceFile {
+	send := func(objs []any) {
 		var pods []*v1.Pod
 		for _, o := range objs {
 			pods = append(pods, o.(*v1.Pod))
@@ -237,7 +237,7 @@ func (s *sourceFile) extractFromFile(filename string) (pod *v1.Pod, err error) {
 }
 
 func (s *sourceFile) replaceStore(pods ...*v1.Pod) (err error) {
-	objs := []interface{}{}
+	objs := []any{}
 	for _, pod := range pods {
 		objs = append(objs, pod)
 	}

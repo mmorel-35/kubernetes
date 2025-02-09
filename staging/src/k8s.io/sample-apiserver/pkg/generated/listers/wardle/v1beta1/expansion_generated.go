@@ -20,8 +20,8 @@ package v1beta1
 
 // FlunderListerExpansion allows custom methods to be added to
 // FlunderLister.
-type FlunderListerExpansion interface{}
+type FlunderListerExpansion any
 
 // FlunderNamespaceListerExpansion allows custom methods to be added to
 // FlunderNamespaceLister.
-type FlunderNamespaceListerExpansion interface{}
+type FlunderNamespaceListerExpansion any

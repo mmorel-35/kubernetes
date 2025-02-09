@@ -41,7 +41,7 @@ func newPersistentVolumeOrderedIndex() persistentVolumeOrderedIndex {
 
 // accessModesIndexFunc is an indexing function that returns a persistent
 // volume's AccessModes as a string
-func accessModesIndexFunc(obj interface{}) ([]string, error) {
+func accessModesIndexFunc(obj any) ([]string, error) {
 	if pv, ok := obj.(*v1.PersistentVolume); ok {
 		modes := v1helper.GetAccessModesAsString(pv.Spec.AccessModes)
 		return []string{modes}, nil

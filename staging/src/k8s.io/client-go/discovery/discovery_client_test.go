@@ -76,7 +76,7 @@ func TestGetServerVersion(t *testing.T) {
 
 func TestGetServerGroupsWithV1Server(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		var obj interface{}
+		var obj any
 		switch req.URL.Path {
 		case "/api":
 			obj = &metav1.APIVersions{
@@ -124,7 +124,7 @@ func TestGetServerGroupsWithV1Server(t *testing.T) {
 func TestDiscoveryToleratesMissingCoreGroup(t *testing.T) {
 	// Discovery tolerates 404 from /api. Aggregated api servers can do this.
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		var obj interface{}
+		var obj any
 		switch req.URL.Path {
 		case "/api":
 			w.WriteHeader(http.StatusNotFound)
@@ -166,7 +166,7 @@ func TestDiscoveryToleratesMissingCoreGroup(t *testing.T) {
 func TestDiscoveryFailsWhenNonCoreGroupsMissing(t *testing.T) {
 	// Discovery fails when /apis returns 404.
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		var obj interface{}
+		var obj any
 		switch req.URL.Path {
 		case "/api":
 			obj = &metav1.APIVersions{
@@ -288,7 +288,7 @@ func TestGetServerResourcesForGroupVersion(t *testing.T) {
 		},
 	}
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		var list interface{}
+		var list any
 		switch req.URL.Path {
 		case "/api/v1":
 			list = &stable
@@ -660,7 +660,7 @@ func TestServerPreferredResources(t *testing.T) {
 			resourcesList: []*metav1.APIResourceList{&stable},
 			expectErr:     IsGroupDiscoveryFailedError,
 			response: func(w http.ResponseWriter, req *http.Request) {
-				var list interface{}
+				var list any
 				switch req.URL.Path {
 				case "/apis/extensions/v1beta1":
 					w.WriteHeader(http.StatusInternalServerError)
@@ -702,7 +702,7 @@ func TestServerPreferredResources(t *testing.T) {
 			resourcesList: nil,
 			expectErr:     IsGroupDiscoveryFailedError,
 			response: func(w http.ResponseWriter, req *http.Request) {
-				var list interface{}
+				var list any
 				switch req.URL.Path {
 				case "/apis/extensions/v1beta1":
 					w.WriteHeader(http.StatusInternalServerError)
@@ -788,7 +788,7 @@ func TestServerPreferredResourcesRetries(t *testing.T) {
 	response := func(numErrors int) http.HandlerFunc {
 		var i = 0
 		return func(w http.ResponseWriter, req *http.Request) {
-			var list interface{}
+			var list any
 			switch req.URL.Path {
 			case "/apis/extensions/v1beta1":
 				if i < numErrors {
@@ -910,7 +910,7 @@ func TestServerPreferredNamespacedResources(t *testing.T) {
 		{
 			// Combines discovery for /api and /apis.
 			response: func(w http.ResponseWriter, req *http.Request) {
-				var list interface{}
+				var list any
 				switch req.URL.Path {
 				case "/api":
 					list = &metav1.APIVersions{
@@ -959,7 +959,7 @@ func TestServerPreferredNamespacedResources(t *testing.T) {
 			// Only return /apis (not legacy /api); does not error. 404 for legacy
 			// core/v1 at /api is tolerated.
 			response: func(w http.ResponseWriter, req *http.Request) {
-				var list interface{}
+				var list any
 				switch req.URL.Path {
 				case "/apis":
 					list = &metav1.APIGroupList{
@@ -1002,7 +1002,7 @@ func TestServerPreferredNamespacedResources(t *testing.T) {
 		},
 		{
 			response: func(w http.ResponseWriter, req *http.Request) {
-				var list interface{}
+				var list any
 				switch req.URL.Path {
 				case "/apis":
 					list = &metav1.APIGroupList{

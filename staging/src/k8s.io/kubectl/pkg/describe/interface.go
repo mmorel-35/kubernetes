@@ -57,7 +57,7 @@ type DescriberSettings struct {
 // by default. ObjectDescribers may return ErrNoDescriber if no suitable describer
 // is found.
 type ObjectDescriber interface {
-	DescribeObject(object interface{}, extra ...interface{}) (output string, err error)
+	DescribeObject(object any, extra ...any) (output string, err error)
 }
 
 // ErrNoDescriber is a structured error indicating the provided object or objects

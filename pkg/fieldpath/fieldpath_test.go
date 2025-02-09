@@ -52,7 +52,7 @@ func TestExtractFieldPathAsString(t *testing.T) {
 	cases := []struct {
 		name                    string
 		fieldPath               string
-		obj                     interface{}
+		obj                     any
 		expectedValue           string
 		expectedMessageFragment string
 	}{

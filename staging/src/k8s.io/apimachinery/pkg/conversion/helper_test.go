@@ -19,7 +19,7 @@ package conversion
 import "testing"
 
 func TestInvalidPtrValueKind(t *testing.T) {
-	var simple interface{}
+	var simple any
 	switch obj := simple.(type) {
 	default:
 		_, err := EnforcePtr(obj)

@@ -37,7 +37,7 @@ func TestEnsureCompatible(t *testing.T) {
 
 	tests := map[string]struct {
 		new, orig  *certificates.CertificateSigningRequest
-		privateKey interface{}
+		privateKey any
 		err        string
 	}{
 		"nil signerName on 'new' matches any signerName on 'orig'": {

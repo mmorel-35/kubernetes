@@ -2976,10 +2976,10 @@ func printPriorityLevelConfiguration(obj *flowcontrol.PriorityLevelConfiguration
 		Object: runtime.RawExtension{Object: obj},
 	}
 	name := obj.Name
-	ncs := interface{}("<none>")
-	queues := interface{}("<none>")
-	handSize := interface{}("<none>")
-	queueLengthLimit := interface{}("<none>")
+	ncs := any("<none>")
+	queues := any("<none>")
+	handSize := any("<none>")
+	queueLengthLimit := any("<none>")
 	if obj.Spec.Limited != nil {
 		ncs = obj.Spec.Limited.NominalConcurrencyShares
 		if qc := obj.Spec.Limited.LimitResponse.Queuing; qc != nil {

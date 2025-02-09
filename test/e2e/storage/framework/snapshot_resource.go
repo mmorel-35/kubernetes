@@ -99,13 +99,13 @@ func CreateSnapshotResource(ctx context.Context, sDriver SnapshottableTestDriver
 		// and create another snapshot using the first snapshot's snapshot handle.
 
 		ginkgo.By("updating the snapshot content deletion policy to retain")
-		r.Vscontent.Object["spec"].(map[string]interface{})["deletionPolicy"] = "Retain"
+		r.Vscontent.Object["spec"].(map[string]any)["deletionPolicy"] = "Retain"
 
 		r.Vscontent, err = dc.Resource(utils.SnapshotContentGVR).Update(ctx, r.Vscontent, metav1.UpdateOptions{})
 		framework.ExpectNoError(err)
 
 		ginkgo.By("recording properties of the preprovisioned snapshot")
-		snapshotHandle := r.Vscontent.Object["status"].(map[string]interface{})["snapshotHandle"].(string)
+		snapshotHandle := r.Vscontent.Object["status"].(map[string]any)["snapshotHandle"].(string)
 		framework.Logf("Recording snapshot content handle: %s", snapshotHandle)
 		snapshotContentAnnotations := r.Vscontent.GetAnnotations()
 		framework.Logf("Recording snapshot content annotations: %v", snapshotContentAnnotations)
@@ -179,7 +179,7 @@ func (sr *SnapshotResource) CleanupResource(ctx context.Context, timeouts *frame
 		sr.Vs, err = dc.Resource(utils.SnapshotGVR).Namespace(sr.Vs.GetNamespace()).Get(ctx, sr.Vs.GetName(), metav1.GetOptions{})
 		switch {
 		case err == nil:
-			snapshotStatus := sr.Vs.Object["status"].(map[string]interface{})
+			snapshotStatus := sr.Vs.Object["status"].(map[string]any)
 			snapshotContentName := snapshotStatus["boundVolumeSnapshotContentName"].(string)
 			framework.Logf("received snapshotStatus %v", snapshotStatus)
 			framework.Logf("snapshotContentName %s", snapshotContentName)
@@ -187,11 +187,11 @@ func (sr *SnapshotResource) CleanupResource(ctx context.Context, timeouts *frame
 			boundVsContent, err := dc.Resource(utils.SnapshotContentGVR).Get(ctx, snapshotContentName, metav1.GetOptions{})
 			switch {
 			case err == nil:
-				if boundVsContent.Object["spec"].(map[string]interface{})["deletionPolicy"] != "Delete" {
+				if boundVsContent.Object["spec"].(map[string]any)["deletionPolicy"] != "Delete" {
 					// The purpose of this block is to prevent physical snapshotContent leaks.
 					// We must update the SnapshotContent to have Delete Deletion policy,
 					// or else the physical snapshot content will be leaked.
-					boundVsContent.Object["spec"].(map[string]interface{})["deletionPolicy"] = "Delete"
+					boundVsContent.Object["spec"].(map[string]any)["deletionPolicy"] = "Delete"
 					boundVsContent, err = dc.Resource(utils.SnapshotContentGVR).Update(ctx, boundVsContent, metav1.UpdateOptions{})
 					framework.ExpectNoError(err)
 				}
@@ -229,11 +229,11 @@ func (sr *SnapshotResource) CleanupResource(ctx context.Context, timeouts *frame
 		sr.Vscontent, err = dc.Resource(utils.SnapshotContentGVR).Get(ctx, sr.Vscontent.GetName(), metav1.GetOptions{})
 		switch {
 		case err == nil:
-			if sr.Vscontent.Object["spec"].(map[string]interface{})["deletionPolicy"] != "Delete" {
+			if sr.Vscontent.Object["spec"].(map[string]any)["deletionPolicy"] != "Delete" {
 				// The purpose of this block is to prevent physical snapshotContent leaks.
 				// We must update the SnapshotContent to have Delete Deletion policy,
 				// or else the physical snapshot content will be leaked.
-				sr.Vscontent.Object["spec"].(map[string]interface{})["deletionPolicy"] = "Delete"
+				sr.Vscontent.Object["spec"].(map[string]any)["deletionPolicy"] = "Delete"
 				sr.Vscontent, err = dc.Resource(utils.SnapshotContentGVR).Update(ctx, sr.Vscontent, metav1.UpdateOptions{})
 				framework.ExpectNoError(err)
 			}
@@ -266,16 +266,16 @@ func (sr *SnapshotResource) CleanupResource(ctx context.Context, timeouts *frame
 
 func getSnapshot(claimName string, ns, snapshotClassName string) *unstructured.Unstructured {
 	snapshot := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "VolumeSnapshot",
 			"apiVersion": utils.SnapshotAPIVersion,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"generateName": "snapshot-",
 				"namespace":    ns,
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"volumeSnapshotClassName": snapshotClassName,
-				"source": map[string]interface{}{
+				"source": map[string]any{
 					"persistentVolumeClaimName": claimName,
 				},
 			},
@@ -286,15 +286,15 @@ func getSnapshot(claimName string, ns, snapshotClassName string) *unstructured.U
 }
 func getPreProvisionedSnapshot(snapName, ns, snapshotContentName string) *unstructured.Unstructured {
 	snapshot := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "VolumeSnapshot",
 			"apiVersion": utils.SnapshotAPIVersion,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      snapName,
 				"namespace": ns,
 			},
-			"spec": map[string]interface{}{
-				"source": map[string]interface{}{
+			"spec": map[string]any{
+				"source": map[string]any{
 					"volumeSnapshotContentName": snapshotContentName,
 				},
 			},
@@ -305,19 +305,19 @@ func getPreProvisionedSnapshot(snapName, ns, snapshotContentName string) *unstru
 }
 func getPreProvisionedSnapshotContent(snapcontentName, snapshotClassName string, snapshotContentAnnotations map[string]string, snapshotName, snapshotNamespace, snapshotHandle, deletionPolicy, csiDriverName string) *unstructured.Unstructured {
 	snapshotContent := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "VolumeSnapshotContent",
 			"apiVersion": utils.SnapshotAPIVersion,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":        snapcontentName,
 				"annotations": snapshotContentAnnotations,
 			},
-			"spec": map[string]interface{}{
-				"source": map[string]interface{}{
+			"spec": map[string]any{
+				"source": map[string]any{
 					"snapshotHandle": snapshotHandle,
 				},
 				"volumeSnapshotClassName": snapshotClassName,
-				"volumeSnapshotRef": map[string]interface{}{
+				"volumeSnapshotRef": map[string]any{
 					"name":      snapshotName,
 					"namespace": snapshotNamespace,
 				},

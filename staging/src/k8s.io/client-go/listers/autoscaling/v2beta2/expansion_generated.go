@@ -20,8 +20,8 @@ package v2beta2
 
 // HorizontalPodAutoscalerListerExpansion allows custom methods to be added to
 // HorizontalPodAutoscalerLister.
-type HorizontalPodAutoscalerListerExpansion interface{}
+type HorizontalPodAutoscalerListerExpansion any
 
 // HorizontalPodAutoscalerNamespaceListerExpansion allows custom methods to be added to
 // HorizontalPodAutoscalerNamespaceLister.
-type HorizontalPodAutoscalerNamespaceListerExpansion interface{}
+type HorizontalPodAutoscalerNamespaceListerExpansion any

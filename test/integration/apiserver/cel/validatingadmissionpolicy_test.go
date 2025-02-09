@@ -1565,20 +1565,20 @@ func Test_ValidatingAdmissionPolicy_MatchWithMatchPolicyEquivalent(t *testing.T)
 	}
 
 	v1Resource := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "awesome.bears.com" + "/" + "v1",
 			"kind":       "Panda",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "v1-bears",
 			},
 		},
 	}
 
 	v2Resource := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "awesome.bears.com" + "/" + "v2",
 			"kind":       "Panda",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "v2-bears",
 			},
 		},
@@ -1658,20 +1658,20 @@ func Test_ValidatingAdmissionPolicy_MatchWithMatchPolicyExact(t *testing.T) {
 	}
 
 	v1Resource := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "awesome.bears.com" + "/" + "v1",
 			"kind":       "Panda",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "v1-bears",
 			},
 		},
 	}
 
 	v2Resource := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "awesome.bears.com" + "/" + "v2",
 			"kind":       "Panda",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "v2-bears",
 			},
 		},
@@ -2361,13 +2361,13 @@ func TestCRDParams(t *testing.T) {
 	}
 	crClient := dynamicClient.Resource(gvr)
 
-	resource := &unstructured.Unstructured{Object: map[string]interface{}{
+	resource := &unstructured.Unstructured{Object: map[string]any{
 		"apiVersion": "awesome.bears.com/v1",
 		"kind":       "Panda",
-		"metadata": map[string]interface{}{
+		"metadata": map[string]any{
 			"name": "config-obj",
 		},
-		"spec": map[string]interface{}{
+		"spec": map[string]any{
 			"nameCheck": "crd-test-k8s",
 		},
 	}}
@@ -2723,8 +2723,8 @@ func TestCRDsOnStartup(t *testing.T) {
 	crdGVR := crdGVK.GroupVersion().WithResource("foos")
 
 	param := &unstructured.Unstructured{
-		Object: map[string]interface{}{
-			"metadata": map[string]interface{}{
+		Object: map[string]any{
+			"metadata": map[string]any{
 				"name":      "test",
 				"namespace": "default",
 			},

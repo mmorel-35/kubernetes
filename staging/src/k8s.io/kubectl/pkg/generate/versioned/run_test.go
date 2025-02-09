@@ -27,13 +27,13 @@ import (
 func TestGeneratePod(t *testing.T) {
 	tests := []struct {
 		name      string
-		params    map[string]interface{}
+		params    map[string]any
 		expected  *v1.Pod
 		expectErr bool
 	}{
 		{
 			name: "test1",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"name":  "foo",
 				"image": "someimage",
 				"port":  "",
@@ -57,7 +57,7 @@ func TestGeneratePod(t *testing.T) {
 		},
 		{
 			name: "test2",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"name":  "foo",
 				"image": "someimage",
 				"env":   []string{"a", "c"},
@@ -68,7 +68,7 @@ func TestGeneratePod(t *testing.T) {
 		},
 		{
 			name: "test3",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"name":              "foo",
 				"image":             "someimage",
 				"image-pull-policy": "Always",
@@ -104,7 +104,7 @@ func TestGeneratePod(t *testing.T) {
 		},
 		{
 			name: "test4",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"name":  "foo",
 				"image": "someimage",
 				"port":  "80",
@@ -133,7 +133,7 @@ func TestGeneratePod(t *testing.T) {
 		},
 		{
 			name: "test5",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"name":     "foo",
 				"image":    "someimage",
 				"port":     "80",
@@ -164,7 +164,7 @@ func TestGeneratePod(t *testing.T) {
 		},
 		{
 			name: "test6",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"name":     "foo",
 				"image":    "someimage",
 				"hostport": "80",
@@ -174,7 +174,7 @@ func TestGeneratePod(t *testing.T) {
 		},
 		{
 			name: "test7",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"name":     "foo",
 				"image":    "someimage",
 				"replicas": "1",
@@ -199,7 +199,7 @@ func TestGeneratePod(t *testing.T) {
 		},
 		{
 			name: "test8",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"name":     "foo",
 				"image":    "someimage",
 				"replicas": "1",
@@ -227,7 +227,7 @@ func TestGeneratePod(t *testing.T) {
 		},
 		{
 			name: "test9",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"name":             "foo",
 				"image":            "someimage",
 				"replicas":         "1",
@@ -256,7 +256,7 @@ func TestGeneratePod(t *testing.T) {
 		},
 		{
 			name: "test10: privileged mode",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"name":       "foo",
 				"image":      "someimage",
 				"replicas":   "1",
@@ -282,7 +282,7 @@ func TestGeneratePod(t *testing.T) {
 		},
 		{
 			name: "test11: check annotations",
-			params: map[string]interface{}{
+			params: map[string]any{
 				"name":        "foo",
 				"image":       "someimage",
 				"replicas":    "1",

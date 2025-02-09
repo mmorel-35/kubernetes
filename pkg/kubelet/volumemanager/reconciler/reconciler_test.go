@@ -2186,7 +2186,7 @@ func Test_Run_Positive_VolumeMountControllerAttachEnabledRace(t *testing.T) {
 	close(stopChan)
 	<-stoppedChan
 
-	finished := make(chan interface{})
+	finished := make(chan any)
 	finishedOnce := &sync.Once{}
 
 	fakePlugin.Lock()

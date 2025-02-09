@@ -87,7 +87,7 @@ func (f *fakeAPIs) UpdateNodeNetworkUnavailable(nodeName string, unavailable boo
 	return f.updateNodeNetworkUnavailableErr
 }
 
-func (f *fakeAPIs) EmitNodeWarningEvent(nodeName, reason, fmtStr string, args ...interface{}) {
+func (f *fakeAPIs) EmitNodeWarningEvent(nodeName, reason, fmtStr string, args ...any) {
 	f.events = append(f.events, fakeEvent{nodeName, reason})
 }
 

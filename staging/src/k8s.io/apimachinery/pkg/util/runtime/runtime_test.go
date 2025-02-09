@@ -51,9 +51,9 @@ func TestHandleCrash(t *testing.T) {
 func TestCustomHandleCrash(t *testing.T) {
 	old := PanicHandlers
 	defer func() { PanicHandlers = old }()
-	var result interface{}
-	PanicHandlers = []func(context.Context, interface{}){
-		func(_ context.Context, r interface{}) {
+	var result any
+	PanicHandlers = []func(context.Context, any){
+		func(_ context.Context, r any) {
 			result = r
 		},
 	}
@@ -77,7 +77,7 @@ func TestCustomHandleError(t *testing.T) {
 	defer func() { ErrorHandlers = old }()
 	var result error
 	ErrorHandlers = []ErrorHandler{
-		func(_ context.Context, err error, msg string, keysAndValues ...interface{}) {
+		func(_ context.Context, err error, msg string, keysAndValues ...any) {
 			result = err
 		},
 	}
@@ -131,13 +131,13 @@ func TestHandleCrashLog(t *testing.T) {
 }
 
 func TestHandleCrashContextual(t *testing.T) {
-	for name, handleCrash := range map[string]func(logger klog.Logger, trigger func(), additionalHandlers ...func(context.Context, interface{})){
-		"WithLogger": func(logger klog.Logger, trigger func(), additionalHandlers ...func(context.Context, interface{})) {
+	for name, handleCrash := range map[string]func(logger klog.Logger, trigger func(), additionalHandlers ...func(context.Context, any)){
+		"WithLogger": func(logger klog.Logger, trigger func(), additionalHandlers ...func(context.Context, any)) {
 			logger = logger.WithCallDepth(2) // This function *and* the trigger helper.
 			defer HandleCrashWithLogger(logger, additionalHandlers...)
 			trigger()
 		},
-		"WithContext": func(logger klog.Logger, trigger func(), additionalHandlers ...func(context.Context, interface{})) {
+		"WithContext": func(logger klog.Logger, trigger func(), additionalHandlers ...func(context.Context, any)) {
 			logger = logger.WithCallDepth(2)
 			defer HandleCrashWithContext(klog.NewContext(context.Background(), logger), additionalHandlers...)
 			trigger()
@@ -172,7 +172,7 @@ func TestHandleCrashContextual(t *testing.T) {
 					ReallyCrash = false
 					defer func() { ReallyCrash = true }()
 
-					handler := func(ctx context.Context, r interface{}) {
+					handler := func(ctx context.Context, r any) {
 						// Same formatting as in HandleCrash.
 						str, ok := r.(string)
 						if !ok {
@@ -264,13 +264,13 @@ func Test_rudimentaryErrorBackoff_OnError_ParallelSleep(t *testing.T) {
 }
 
 func TestHandleError(t *testing.T) {
-	for name, handleError := range map[string]func(logger klog.Logger, err error, msg string, keysAndValues ...interface{}){
-		"WithLogger": func(logger klog.Logger, err error, msg string, keysAndValues ...interface{}) {
+	for name, handleError := range map[string]func(logger klog.Logger, err error, msg string, keysAndValues ...any){
+		"WithLogger": func(logger klog.Logger, err error, msg string, keysAndValues ...any) {
 			helper, logger := logger.WithCallStackHelper()
 			helper()
 			HandleErrorWithLogger(logger, err, msg, keysAndValues...)
 		},
-		"WithContext": func(logger klog.Logger, err error, msg string, keysAndValues ...interface{}) {
+		"WithContext": func(logger klog.Logger, err error, msg string, keysAndValues ...any) {
 			helper, logger := logger.WithCallStackHelper()
 			helper()
 			HandleErrorWithContext(klog.NewContext(context.Background(), logger), err, msg, keysAndValues...)
@@ -280,7 +280,7 @@ func TestHandleError(t *testing.T) {
 			for name, tc := range map[string]struct {
 				err           error
 				msg           string
-				keysAndValues []interface{}
+				keysAndValues []any
 				expectLog     string
 			}{
 				"no-error": {
@@ -290,7 +290,7 @@ func TestHandleError(t *testing.T) {
 				"complex": {
 					err:           errors.New("fake error"),
 					msg:           "ignore",
-					keysAndValues: []interface{}{"a", 1, "b", "c"},
+					keysAndValues: []any{"a", 1, "b", "c"},
 					expectLog:     `"ignore" err="fake error" logger="UnhandledError" a=1 b="c"`,
 				},
 			} {

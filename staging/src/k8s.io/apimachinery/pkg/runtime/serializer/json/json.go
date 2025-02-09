@@ -276,7 +276,7 @@ func (s *Serializer) unmarshal(into runtime.Object, data, originalData []byte) (
 		// Unstructured is a custom unmarshaler that gets delegated
 		// to, so in order to detect strict JSON errors we need
 		// to unmarshal directly into the object.
-		m := map[string]interface{}{}
+		m := map[string]any{}
 		strictJSONErrs, err = kjson.UnmarshalStrict(data, &m)
 		u.SetUnstructuredContent(m)
 	} else {

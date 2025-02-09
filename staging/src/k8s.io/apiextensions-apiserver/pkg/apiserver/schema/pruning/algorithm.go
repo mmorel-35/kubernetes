@@ -26,7 +26,7 @@ import (
 // and ObjectMeta fields if XEmbeddedResource is set to true, or for the root if isResourceRoot=true,
 // i.e. it does not prune unknown metadata fields.
 // It returns the set of fields that it prunes if opts.TrackUnknownFieldPaths is true
-func PruneWithOptions(obj interface{}, s *structuralschema.Structural, isResourceRoot bool, opts structuralschema.UnknownFieldPathOptions) []string {
+func PruneWithOptions(obj any, s *structuralschema.Structural, isResourceRoot bool, opts structuralschema.UnknownFieldPathOptions) []string {
 	if isResourceRoot {
 		if s == nil {
 			s = &structuralschema.Structural{}
@@ -44,7 +44,7 @@ func PruneWithOptions(obj interface{}, s *structuralschema.Structural, isResourc
 
 // Prune is equivalent to
 // PruneWithOptions(obj, s, isResourceRoot, structuralschema.UnknownFieldPathOptions{})
-func Prune(obj interface{}, s *structuralschema.Structural, isResourceRoot bool) {
+func Prune(obj any, s *structuralschema.Structural, isResourceRoot bool) {
 	PruneWithOptions(obj, s, isResourceRoot, structuralschema.UnknownFieldPathOptions{})
 }
 
@@ -54,7 +54,7 @@ var metaFields = map[string]bool{
 	"metadata":   true,
 }
 
-func prune(x interface{}, s *structuralschema.Structural, opts *structuralschema.UnknownFieldPathOptions) {
+func prune(x any, s *structuralschema.Structural, opts *structuralschema.UnknownFieldPathOptions) {
 	if s != nil && s.XPreserveUnknownFields {
 		skipPrune(x, s, opts)
 		return
@@ -65,7 +65,7 @@ func prune(x interface{}, s *structuralschema.Structural, opts *structuralschema
 		opts.ParentPath = opts.ParentPath[:origPathLen]
 	}()
 	switch x := x.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		if s == nil {
 			for k := range x {
 				opts.RecordUnknownField(k)
@@ -93,7 +93,7 @@ func prune(x interface{}, s *structuralschema.Structural, opts *structuralschema
 				delete(x, k)
 			}
 		}
-	case []interface{}:
+	case []any:
 		if s == nil {
 			for i, v := range x {
 				opts.AppendIndex(i)
@@ -112,7 +112,7 @@ func prune(x interface{}, s *structuralschema.Structural, opts *structuralschema
 	}
 }
 
-func skipPrune(x interface{}, s *structuralschema.Structural, opts *structuralschema.UnknownFieldPathOptions) {
+func skipPrune(x any, s *structuralschema.Structural, opts *structuralschema.UnknownFieldPathOptions) {
 	if s == nil {
 		return
 	}
@@ -122,7 +122,7 @@ func skipPrune(x interface{}, s *structuralschema.Structural, opts *structuralsc
 	}()
 
 	switch x := x.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		for k, v := range x {
 			if s.XEmbeddedResource && metaFields[k] {
 				continue
@@ -137,7 +137,7 @@ func skipPrune(x interface{}, s *structuralschema.Structural, opts *structuralsc
 				opts.ParentPath = opts.ParentPath[:origPathLen]
 			}
 		}
-	case []interface{}:
+	case []any:
 		for i, v := range x {
 			opts.AppendIndex(i)
 			skipPrune(v, s.Items, opts)

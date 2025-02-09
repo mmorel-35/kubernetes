@@ -90,7 +90,7 @@ func getFieldRef(obj runtime.Object, from *corev1.EnvVarSource) (string, error) 
 // extractFieldPathAsString extracts the field from the given object
 // and returns it as a string.  The object must be a pointer to an
 // API type.
-func extractFieldPathAsString(obj interface{}, fieldPath string) (string, error) {
+func extractFieldPathAsString(obj any, fieldPath string) (string, error) {
 	accessor, err := meta.Accessor(obj)
 	if err != nil {
 		return "", nil

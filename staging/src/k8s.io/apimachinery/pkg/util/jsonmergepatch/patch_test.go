@@ -33,9 +33,9 @@ type FilterNullTestCases struct {
 
 type FilterNullTestCase struct {
 	Description         string
-	OriginalObj         map[string]interface{}
-	ExpectedWithNull    map[string]interface{}
-	ExpectedWithoutNull map[string]interface{}
+	OriginalObj         map[string]any
+	ExpectedWithNull    map[string]any
+	ExpectedWithoutNull map[string]any
 }
 
 var filterNullTestCaseData = []byte(`
@@ -215,15 +215,15 @@ type JSONMergePatchTestCase struct {
 
 type JSONMergePatchTestCaseData struct {
 	// Original is the original object (last-applied config in annotation)
-	Original map[string]interface{}
+	Original map[string]any
 	// Modified is the modified object (new config we want)
-	Modified map[string]interface{}
+	Modified map[string]any
 	// Current is the current object (live config in the server)
-	Current map[string]interface{}
+	Current map[string]any
 	// ThreeWay is the expected three-way merge patch
-	ThreeWay map[string]interface{}
+	ThreeWay map[string]any
 	// Result is the expected object after applying the three-way patch on current object.
-	Result map[string]interface{}
+	Result map[string]any
 }
 
 var createJSONMergePatchTestCaseData = []byte(`
@@ -711,7 +711,7 @@ func threeWayTestCaseToJSONOrFail(t *testing.T, c JSONMergePatchTestCase) ([]byt
 		testObjectToJSONOrFail(t, c.Result)
 }
 
-func testObjectToJSONOrFail(t *testing.T, o map[string]interface{}) []byte {
+func testObjectToJSONOrFail(t *testing.T, o map[string]any) []byte {
 	if o == nil {
 		return nil
 	}
@@ -730,7 +730,7 @@ func jsonToYAMLOrError(j []byte) string {
 	return string(y)
 }
 
-func toJSON(v interface{}) ([]byte, error) {
+func toJSON(v any) ([]byte, error) {
 	j, err := json.Marshal(v)
 	if err != nil {
 		return nil, fmt.Errorf("json marshal failed: %v\n%v\n", err, dump.Pretty(v))

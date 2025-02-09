@@ -32,28 +32,28 @@ import (
 
 func defaultFillFuncs() map[reflect.Type]FillFunc {
 	funcs := map[reflect.Type]FillFunc{}
-	funcs[reflect.TypeOf(&runtime.RawExtension{})] = func(s string, i int, obj interface{}) {
+	funcs[reflect.TypeOf(&runtime.RawExtension{})] = func(s string, i int, obj any) {
 		// generate a raw object in normalized form
 		// TODO: test non-normalized round-tripping... YAMLToJSON normalizes and makes exact comparisons fail
 		obj.(*runtime.RawExtension).Raw = []byte(`{"apiVersion":"example.com/v1","kind":"CustomType","spec":{"replicas":1},"status":{"available":1}}`)
 	}
-	funcs[reflect.TypeOf(&metav1.TypeMeta{})] = func(s string, i int, obj interface{}) {
+	funcs[reflect.TypeOf(&metav1.TypeMeta{})] = func(s string, i int, obj any) {
 		// APIVersion and Kind are not serialized in all formats (notably protobuf), so clear by default for cross-format checking.
 		obj.(*metav1.TypeMeta).APIVersion = ""
 		obj.(*metav1.TypeMeta).Kind = ""
 	}
-	funcs[reflect.TypeOf(&metav1.FieldsV1{})] = func(s string, i int, obj interface{}) {
+	funcs[reflect.TypeOf(&metav1.FieldsV1{})] = func(s string, i int, obj any) {
 		obj.(*metav1.FieldsV1).Raw = []byte(`{}`)
 	}
-	funcs[reflect.TypeOf(&metav1.Time{})] = func(s string, i int, obj interface{}) {
+	funcs[reflect.TypeOf(&metav1.Time{})] = func(s string, i int, obj any) {
 		// use the integer as an offset from the year
 		obj.(*metav1.Time).Time = time.Date(2000+i, 1, 1, 1, 1, 1, 0, time.UTC)
 	}
-	funcs[reflect.TypeOf(&metav1.MicroTime{})] = func(s string, i int, obj interface{}) {
+	funcs[reflect.TypeOf(&metav1.MicroTime{})] = func(s string, i int, obj any) {
 		// use the integer as an offset from the year, and as a microsecond
 		obj.(*metav1.MicroTime).Time = time.Date(2000+i, 1, 1, 1, 1, 1, i*int(time.Microsecond), time.UTC)
 	}
-	funcs[reflect.TypeOf(&intstr.IntOrString{})] = func(s string, i int, obj interface{}) {
+	funcs[reflect.TypeOf(&intstr.IntOrString{})] = func(s string, i int, obj any) {
 		// use the string as a string value
 		obj.(*intstr.IntOrString).Type = intstr.String
 		obj.(*intstr.IntOrString).StrVal = s + "Value"

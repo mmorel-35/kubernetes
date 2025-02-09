@@ -22,7 +22,7 @@ import (
 
 // ValueFuzz recursively changes all basic type values in an object. Any kind of references will not
 // be touch, i.e. the addresses of slices, maps, pointers will stay unchanged.
-func ValueFuzz(obj interface{}) {
+func ValueFuzz(obj any) {
 	valueFuzz(reflect.ValueOf(obj))
 }
 

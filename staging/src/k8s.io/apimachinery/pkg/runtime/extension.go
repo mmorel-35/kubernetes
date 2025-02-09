@@ -28,16 +28,16 @@ import (
 // RawExtension intentionally avoids implementing value.UnstructuredConverter for now because the
 // signature of ToUnstructured does not allow returning an error value in cases where the conversion
 // is not possible (content type is unrecognized or bytes don't match content type).
-func rawToUnstructured(raw []byte, contentType string) (interface{}, error) {
+func rawToUnstructured(raw []byte, contentType string) (any, error) {
 	switch contentType {
 	case ContentTypeJSON:
-		var u interface{}
+		var u any
 		if err := json.Unmarshal(raw, &u); err != nil {
 			return nil, fmt.Errorf("failed to parse RawExtension bytes as JSON: %w", err)
 		}
 		return u, nil
 	case ContentTypeCBOR:
-		var u interface{}
+		var u any
 		if err := cbor.Unmarshal(raw, &u); err != nil {
 			return nil, fmt.Errorf("failed to parse RawExtension bytes as CBOR: %w", err)
 		}

@@ -25,10 +25,10 @@ import (
 
 // List returns a list of all the items.
 // This function was moved here because it is not consistent with normal list semantics, but is used in unit testing.
-func (f *FIFO) List() []interface{} {
+func (f *FIFO) List() []any {
 	f.lock.RLock()
 	defer f.lock.RUnlock()
-	list := make([]interface{}, 0, len(f.items))
+	list := make([]any, 0, len(f.items))
 	for _, item := range f.items {
 		list = append(list, item)
 	}
@@ -50,7 +50,7 @@ func (f *FIFO) ListKeys() []string {
 
 // Get returns the requested item, or sets exists=false.
 // This function was moved here because it is not consistent with normal list semantics, but is used in unit testing.
-func (f *FIFO) Get(obj interface{}) (item interface{}, exists bool, err error) {
+func (f *FIFO) Get(obj any) (item any, exists bool, err error) {
 	key, err := f.keyFunc(obj)
 	if err != nil {
 		return nil, false, KeyError{obj, err}
@@ -60,23 +60,23 @@ func (f *FIFO) Get(obj interface{}) (item interface{}, exists bool, err error) {
 
 // GetByKey returns the requested item, or sets exists=false.
 // This function was moved here because it is not consistent with normal list semantics, but is used in unit testing.
-func (f *FIFO) GetByKey(key string) (item interface{}, exists bool, err error) {
+func (f *FIFO) GetByKey(key string) (item any, exists bool, err error) {
 	f.lock.RLock()
 	defer f.lock.RUnlock()
 	item, exists = f.items[key]
 	return item, exists, nil
 }
 
-func testFifoObjectKeyFunc(obj interface{}) (string, error) {
+func testFifoObjectKeyFunc(obj any) (string, error) {
 	return obj.(testFifoObject).name, nil
 }
 
 type testFifoObject struct {
 	name string
-	val  interface{}
+	val  any
 }
 
-func mkFifoObj(name string, val interface{}) testFifoObject {
+func mkFifoObj(name string, val any) testFifoObject {
 	return testFifoObject{name: name, val: val}
 }
 
@@ -120,7 +120,7 @@ func TestFIFO_addUpdate(t *testing.T) {
 	f.Add(mkFifoObj("foo", 10))
 	f.Update(mkFifoObj("foo", 15))
 
-	if e, a := []interface{}{mkFifoObj("foo", 15)}, f.List(); !reflect.DeepEqual(e, a) {
+	if e, a := []any{mkFifoObj("foo", 15)}, f.List(); !reflect.DeepEqual(e, a) {
 		t.Errorf("Expected %+v, got %+v", e, a)
 	}
 	if e, a := []string{"foo"}, f.ListKeys(); !reflect.DeepEqual(e, a) {
@@ -152,7 +152,7 @@ func TestFIFO_addUpdate(t *testing.T) {
 func TestFIFO_addReplace(t *testing.T) {
 	f := NewFIFO(testFifoObjectKeyFunc)
 	f.Add(mkFifoObj("foo", 10))
-	f.Replace([]interface{}{mkFifoObj("foo", 15)}, "15")
+	f.Replace([]any{mkFifoObj("foo", 15)}, "15")
 	got := make(chan testFifoObject, 2)
 	go func() {
 		for {
@@ -220,26 +220,26 @@ func TestFIFO_HasSynced(t *testing.T) {
 		},
 		{
 			actions: []func(f *FIFO){
-				func(f *FIFO) { f.Replace([]interface{}{}, "0") },
+				func(f *FIFO) { f.Replace([]any{}, "0") },
 			},
 			expectedSynced: true,
 		},
 		{
 			actions: []func(f *FIFO){
-				func(f *FIFO) { f.Replace([]interface{}{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
+				func(f *FIFO) { f.Replace([]any{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
 			},
 			expectedSynced: false,
 		},
 		{
 			actions: []func(f *FIFO){
-				func(f *FIFO) { f.Replace([]interface{}{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
+				func(f *FIFO) { f.Replace([]any{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
 				func(f *FIFO) { Pop(f) },
 			},
 			expectedSynced: false,
 		},
 		{
 			actions: []func(f *FIFO){
-				func(f *FIFO) { f.Replace([]interface{}{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
+				func(f *FIFO) { f.Replace([]any{mkFifoObj("a", 1), mkFifoObj("b", 2)}, "0") },
 				func(f *FIFO) { Pop(f) },
 				func(f *FIFO) { Pop(f) },
 			},
@@ -268,7 +268,7 @@ func TestFIFO_PopShouldUnblockWhenClosed(t *testing.T) {
 	const jobs = 10
 	for i := 0; i < jobs; i++ {
 		go func() {
-			f.Pop(func(obj interface{}, isInInitialList bool) error {
+			f.Pop(func(obj any, isInInitialList bool) error {
 				return nil
 			})
 			c <- struct{}{}

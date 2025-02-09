@@ -44,7 +44,7 @@ func TestRoundtripObjectMeta(t *testing.T) {
 
 	N := 1000
 	for i := 0; i < N; i++ {
-		u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+		u := &unstructured.Unstructured{Object: map[string]any{}}
 		original := &metav1.ObjectMeta{}
 		fuzzer.Fuzz(original)
 		if err := SetObjectMeta(u.Object, original); err != nil {
@@ -66,8 +66,8 @@ func TestRoundtripObjectMeta(t *testing.T) {
 // gives the same result. Otherwise, drop malformed fields.
 func TestMalformedObjectMetaFields(t *testing.T) {
 	fuzzer := fuzzer.FuzzerFor(metafuzzer.Funcs, rand.NewSource(rand.Int63()), serializer.NewCodecFactory(runtime.NewScheme()))
-	spuriousValues := func() []interface{} {
-		return []interface{}{
+	spuriousValues := func() []any {
+		return []any{
 			// primitives
 			nil,
 			int64(1),
@@ -75,15 +75,15 @@ func TestMalformedObjectMetaFields(t *testing.T) {
 			true,
 			"a",
 			// well-formed complex values
-			[]interface{}{"a", "b"},
-			map[string]interface{}{"a": "1", "b": "2"},
-			[]interface{}{int64(1), int64(2)},
-			[]interface{}{float64(1.5), float64(2.5)},
+			[]any{"a", "b"},
+			map[string]any{"a": "1", "b": "2"},
+			[]any{int64(1), int64(2)},
+			[]any{float64(1.5), float64(2.5)},
 			// known things json decoding tolerates
-			map[string]interface{}{"a": "1", "b": nil},
+			map[string]any{"a": "1", "b": nil},
 			// malformed things
-			map[string]interface{}{"a": "1", "b": []interface{}{"nested"}},
-			[]interface{}{"a", int64(1), float64(1.5), true, []interface{}{"nested"}},
+			map[string]any{"a": "1", "b": []any{"nested"}},
+			[]any{"a", int64(1), float64(1.5), true, []any{"nested"}},
 		}
 	}
 	N := 100
@@ -145,7 +145,7 @@ func TestMalformedObjectMetaFields(t *testing.T) {
 				}
 
 				// make sure dropInvalidTypedFields+getObjectMeta matches what we expect
-				u := &unstructured.Unstructured{Object: map[string]interface{}{"metadata": spuriousMetaMap}}
+				u := &unstructured.Unstructured{Object: map[string]any{"metadata": spuriousMetaMap}}
 				actualObjectMeta, _, err := GetObjectMeta(u.Object, true)
 				if err != nil {
 					t.Errorf("got unexpected error after dropping invalid typed fields on %v=%#v: %v", pth, v, err)
@@ -162,10 +162,10 @@ func TestMalformedObjectMetaFields(t *testing.T) {
 }
 
 func TestGetObjectMetaWithOptions(t *testing.T) {
-	unknownAndMalformed := map[string]interface{}{
+	unknownAndMalformed := map[string]any{
 		"kind":       "Pod",
 		"apiVersion": "v1",
-		"metadata": map[string]interface{}{
+		"metadata": map[string]any{
 			"name":         "my-meta",
 			"unknownField": "foo",
 			"generateName": nil,
@@ -177,10 +177,10 @@ func TestGetObjectMetaWithOptions(t *testing.T) {
 		},
 	}
 
-	unknownOnly := map[string]interface{}{
+	unknownOnly := map[string]any{
 		"kind":       "Pod",
 		"apiVersion": "v1",
-		"metadata": map[string]interface{}{
+		"metadata": map[string]any{
 			"name":         "my-meta",
 			"unknownField": "foo",
 			"generateName": nil,
@@ -191,10 +191,10 @@ func TestGetObjectMetaWithOptions(t *testing.T) {
 		},
 	}
 
-	malformedOnly := map[string]interface{}{
+	malformedOnly := map[string]any{
 		"kind":       "Pod",
 		"apiVersion": "v1",
-		"metadata": map[string]interface{}{
+		"metadata": map[string]any{
 			"name":         "my-meta",
 			"generateName": nil,
 			"generation":   nil,
@@ -206,7 +206,7 @@ func TestGetObjectMetaWithOptions(t *testing.T) {
 	}
 
 	var testcases = []struct {
-		obj                     map[string]interface{}
+		obj                     map[string]any
 		dropMalformedFields     bool
 		returnUnknownFieldPaths bool
 		expectedObject          *metav1.ObjectMeta
@@ -351,13 +351,13 @@ func TestGetObjectMetaWithOptions(t *testing.T) {
 
 func TestGetObjectMetaNils(t *testing.T) {
 	u := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "Pod",
 			"apiVersion": "v1",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"generateName": nil,
 				"generation":   nil,
-				"labels": map[string]interface{}{
+				"labels": map[string]any{
 					"foo": nil,
 				},
 			},
@@ -401,8 +401,8 @@ func TestGetObjectMetaNils(t *testing.T) {
 
 func TestGetObjectMeta(t *testing.T) {
 	for i := 0; i < 100; i++ {
-		u := &unstructured.Unstructured{Object: map[string]interface{}{
-			"metadata": map[string]interface{}{
+		u := &unstructured.Unstructured{Object: map[string]any{
+			"metadata": map[string]any{
 				"name": "good",
 				"Name": "bad1",
 				"nAme": "bad2",

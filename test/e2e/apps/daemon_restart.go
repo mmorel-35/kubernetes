@@ -185,7 +185,7 @@ func newPodTracker() *podTracker {
 
 // replacePods replaces content of the store with the given pods.
 func replacePods(pods []*v1.Pod, store cache.Store) {
-	found := make([]interface{}, 0, len(pods))
+	found := make([]any, 0, len(pods))
 	for i := range pods {
 		found = append(found, pods[i])
 	}
@@ -260,13 +260,13 @@ var _ = SIGDescribe("DaemonRestart", framework.WithDisruptive(), func() {
 			&v1.Pod{},
 			0,
 			cache.ResourceEventHandlerFuncs{
-				AddFunc: func(obj interface{}) {
+				AddFunc: func(obj any) {
 					tracker.remember(obj.(*v1.Pod), ADD)
 				},
-				UpdateFunc: func(oldObj, newObj interface{}) {
+				UpdateFunc: func(oldObj, newObj any) {
 					tracker.remember(newObj.(*v1.Pod), UPDATE)
 				},
-				DeleteFunc: func(obj interface{}) {
+				DeleteFunc: func(obj any) {
 					tracker.remember(obj.(*v1.Pod), DEL)
 				},
 			},

@@ -1337,7 +1337,7 @@ func checkForExpectedMetrics(t *testing.T, expectedMetrics []string) {
 		t.Fatalf("Failed to gather metrics %v", err)
 	}
 
-	metrics := map[string]interface{}{}
+	metrics := map[string]any{}
 	for _, mf := range metricsFamily {
 		metrics[*mf.Name] = mf
 	}

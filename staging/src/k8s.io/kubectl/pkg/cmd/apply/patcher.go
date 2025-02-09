@@ -415,7 +415,7 @@ func (p *Patcher) deleteAndCreate(original runtime.Object, modified []byte, name
 }
 
 func addResourceVersion(patch []byte, rv string) ([]byte, error) {
-	var patchMap map[string]interface{}
+	var patchMap map[string]any
 	err := json.Unmarshal(patch, &patchMap)
 	if err != nil {
 		return nil, err

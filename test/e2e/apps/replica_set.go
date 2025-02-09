@@ -507,16 +507,16 @@ func testRSLifeCycle(ctx context.Context, f *framework.Framework) {
 
 	// Patch the PeplicaSet
 	ginkgo.By("patching the ReplicaSet")
-	rsPatch, err := json.Marshal(map[string]interface{}{
-		"metadata": map[string]interface{}{
+	rsPatch, err := json.Marshal(map[string]any{
+		"metadata": map[string]any{
 			"labels": labelMap,
 		},
-		"spec": map[string]interface{}{
+		"spec": map[string]any{
 			"replicas": rsPatchReplicas,
-			"template": map[string]interface{}{
-				"spec": map[string]interface{}{
+			"template": map[string]any{
+				"spec": map[string]any{
 					"terminationGracePeriodSeconds": &zero,
-					"containers": [1]map[string]interface{}{{
+					"containers": [1]map[string]any{{
 						"name":  rsName,
 						"image": rsPatchImage,
 					}},

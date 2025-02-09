@@ -38,7 +38,7 @@ func (s objectReference) String() string {
 }
 
 // MarshalLog is used when logging an objectReference in JSON format.
-func (s objectReference) MarshalLog() interface{} {
+func (s objectReference) MarshalLog() any {
 	return struct {
 		Name       string    `json:"name"`
 		Namespace  string    `json:"namespace"`

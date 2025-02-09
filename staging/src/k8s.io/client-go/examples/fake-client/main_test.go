@@ -56,7 +56,7 @@ func TestFakeClient(t *testing.T) {
 	informers := informers.NewSharedInformerFactory(client, 0)
 	podInformer := informers.Core().V1().Pods().Informer()
 	podInformer.AddEventHandler(&cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			pod := obj.(*v1.Pod)
 			t.Logf("pod added: %s/%s", pod.Namespace, pod.Name)
 			pods <- pod

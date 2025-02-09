@@ -39,7 +39,7 @@ func TestLastAppliedUpdater(t *testing.T) {
 		})
 
 	originalLastApplied := `nonempty`
-	appliedObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	appliedObj := &unstructured.Unstructured{Object: map[string]any{}}
 	appliedDeployment := []byte(`
 apiVersion: apps/v1
 kind: Deployment

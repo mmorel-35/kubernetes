@@ -42,7 +42,7 @@ type RunnerOptions struct {
 }
 
 // RunData defines the data shared among all the phases included in the workflow, that is any type.
-type RunData = interface{}
+type RunData = any
 
 // Runner implements management of composable kubeadm workflows.
 type Runner struct {

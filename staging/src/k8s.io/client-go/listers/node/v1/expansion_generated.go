@@ -20,4 +20,4 @@ package v1
 
 // RuntimeClassListerExpansion allows custom methods to be added to
 // RuntimeClassLister.
-type RuntimeClassListerExpansion interface{}
+type RuntimeClassListerExpansion any

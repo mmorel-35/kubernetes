@@ -27,13 +27,13 @@ import (
 // Use this instead of `klog.Infof` because stack unwinding automatically
 // skips over helper functions which marked themselves as helper by
 // calling [ginkgo.GinkgoHelper].
-func Logf(format string, args ...interface{}) {
+func Logf(format string, args ...any) {
 	log(1, fmt.Sprintf(format, args...))
 }
 
 // Failf logs the fail info, including a stack trace starts with its direct caller
 // (for example, for call chain f -> g -> Failf("foo", ...) error would be logged for "g").
-func Failf(format string, args ...interface{}) {
+func Failf(format string, args ...any) {
 	msg := fmt.Sprintf(format, args...)
 	skip := 1
 	ginkgo.Fail(msg, skip)

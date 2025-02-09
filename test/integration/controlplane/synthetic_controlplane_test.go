@@ -132,7 +132,7 @@ func TestEmptyList(t *testing.T) {
 		t.Fatalf("got status %v instead of 200 OK", resp.StatusCode)
 	}
 	data, _ := io.ReadAll(resp.Body)
-	decodedData := map[string]interface{}{}
+	decodedData := map[string]any{}
 	if err := json.Unmarshal(data, &decodedData); err != nil {
 		t.Logf("body: %s", string(data))
 		t.Fatalf("got error decoding data: %v", err)
@@ -224,7 +224,7 @@ func TestStatus(t *testing.T) {
 				t.Fatalf("got status %v instead of %s", resp.StatusCode, tc.name)
 			}
 			data, _ := io.ReadAll(resp.Body)
-			decodedData := map[string]interface{}{}
+			decodedData := map[string]any{}
 			if err := json.Unmarshal(data, &decodedData); err != nil {
 				t.Logf("body: %s", string(data))
 				t.Fatalf("got error decoding data: %v", err)
@@ -596,7 +596,7 @@ func TestAccept(t *testing.T) {
 	if resp.Header.Get("Content-Type") != "application/json" {
 		t.Errorf("unexpected content: %s", body)
 	}
-	if err := json.Unmarshal(body, &map[string]interface{}{}); err != nil {
+	if err := json.Unmarshal(body, &map[string]any{}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -615,7 +615,7 @@ func TestAccept(t *testing.T) {
 		t.Errorf("unexpected content: %s", body)
 	}
 	t.Logf("body: %s", body)
-	if err := yaml.Unmarshal(body, &map[string]interface{}{}); err != nil {
+	if err := yaml.Unmarshal(body, &map[string]any{}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -634,7 +634,7 @@ func TestAccept(t *testing.T) {
 		t.Errorf("unexpected content: %s", body)
 	}
 	t.Logf("body: %s", body)
-	if err := yaml.Unmarshal(body, &map[string]interface{}{}); err != nil {
+	if err := yaml.Unmarshal(body, &map[string]any{}); err != nil {
 		t.Fatal(err)
 	}
 

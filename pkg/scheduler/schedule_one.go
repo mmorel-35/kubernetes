@@ -928,11 +928,11 @@ func (h nodeScoreHeap) Len() int           { return len(h) }
 func (h nodeScoreHeap) Less(i, j int) bool { return h[i].TotalScore > h[j].TotalScore }
 func (h nodeScoreHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
 
-func (h *nodeScoreHeap) Push(x interface{}) {
+func (h *nodeScoreHeap) Push(x any) {
 	*h = append(*h, x.(framework.NodePluginScores))
 }
 
-func (h *nodeScoreHeap) Pop() interface{} {
+func (h *nodeScoreHeap) Pop() any {
 	old := *h
 	n := len(old)
 	x := old[n-1]

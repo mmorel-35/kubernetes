@@ -478,17 +478,17 @@ func TestPruningCreatePreservingUnknownFields(t *testing.T) {
 	unstructured.SetNestedField(foo.Object, float64(42.0), "beta")
 	unstructured.SetNestedField(foo.Object, "bar", "metadata", "unspecified")
 	unstructured.SetNestedField(foo.Object, "bar", "metadata", "labels", "foo")
-	unstructured.SetNestedField(foo.Object, map[string]interface{}{
+	unstructured.SetNestedField(foo.Object, map[string]any{
 		"unspecified":       "bar",
-		"unspecifiedObject": map[string]interface{}{"unspecified": "bar"},
-		"pruning":           map[string]interface{}{"unspecified": "bar"},
-		"preserving":        map[string]interface{}{"unspecified": "bar"},
+		"unspecifiedObject": map[string]any{"unspecified": "bar"},
+		"pruning":           map[string]any{"unspecified": "bar"},
+		"preserving":        map[string]any{"unspecified": "bar"},
 	}, "pruning")
-	unstructured.SetNestedField(foo.Object, map[string]interface{}{
+	unstructured.SetNestedField(foo.Object, map[string]any{
 		"unspecified":       "bar",
-		"unspecifiedObject": map[string]interface{}{"unspecified": "bar"},
-		"pruning":           map[string]interface{}{"unspecified": "bar"},
-		"preserving":        map[string]interface{}{"unspecified": "bar"},
+		"unspecifiedObject": map[string]any{"unspecified": "bar"},
+		"pruning":           map[string]any{"unspecified": "bar"},
+		"preserving":        map[string]any{"unspecified": "bar"},
 	}, "preserving")
 
 	foo, err = fooClient.Create(context.TODO(), foo, metav1.CreateOptions{})
@@ -569,7 +569,7 @@ func TestPruningEmbeddedResources(t *testing.T) {
 	delete(x, "apiVersion")
 	delete(x, "kind")
 	delete(x, "metadata")
-	var expected map[string]interface{}
+	var expected map[string]any
 	if err := yaml.Unmarshal([]byte(`
 embeddedPruning:
   apiVersion: foo/v1

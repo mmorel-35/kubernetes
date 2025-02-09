@@ -31,7 +31,7 @@ import (
 type Error struct {
 	Type     ErrorType
 	Field    string
-	BadValue interface{}
+	BadValue any
 	Detail   string
 }
 
@@ -168,13 +168,13 @@ func (t ErrorType) String() string {
 }
 
 // TypeInvalid returns a *Error indicating "type is invalid"
-func TypeInvalid(field *Path, value interface{}, detail string) *Error {
+func TypeInvalid(field *Path, value any, detail string) *Error {
 	return &Error{ErrorTypeTypeInvalid, field.String(), value, detail}
 }
 
 // NotFound returns a *Error indicating "value not found".  This is
 // used to report failure to find a requested value (e.g. looking up an ID).
-func NotFound(field *Path, value interface{}) *Error {
+func NotFound(field *Path, value any) *Error {
 	return &Error{ErrorTypeNotFound, field.String(), value, ""}
 }
 
@@ -187,20 +187,20 @@ func Required(field *Path, detail string) *Error {
 
 // Duplicate returns a *Error indicating "duplicate value".  This is
 // used to report collisions of values that must be unique (e.g. names or IDs).
-func Duplicate(field *Path, value interface{}) *Error {
+func Duplicate(field *Path, value any) *Error {
 	return &Error{ErrorTypeDuplicate, field.String(), value, ""}
 }
 
 // Invalid returns a *Error indicating "invalid value".  This is used
 // to report malformed values (e.g. failed regex match, too long, out of bounds).
-func Invalid(field *Path, value interface{}, detail string) *Error {
+func Invalid(field *Path, value any, detail string) *Error {
 	return &Error{ErrorTypeInvalid, field.String(), value, detail}
 }
 
 // NotSupported returns a *Error indicating "unsupported value".
 // This is used to report unknown values for enumerated fields (e.g. a list of
 // valid values).
-func NotSupported[T ~string](field *Path, value interface{}, validValues []T) *Error {
+func NotSupported[T ~string](field *Path, value any, validValues []T) *Error {
 	detail := ""
 	if len(validValues) > 0 {
 		quotedValues := make([]string, len(validValues))
@@ -224,7 +224,7 @@ func Forbidden(field *Path, detail string) *Error {
 // the given value is too long.  This is similar to Invalid, but the returned
 // error will not include the too-long value. If maxLength is negative, it will
 // be included in the message.  The value argument is not used.
-func TooLong(field *Path, value interface{}, maxLength int) *Error {
+func TooLong(field *Path, value any, maxLength int) *Error {
 	var msg string
 	if maxLength >= 0 {
 		msg = fmt.Sprintf("may not be more than %d bytes", maxLength)
@@ -236,7 +236,7 @@ func TooLong(field *Path, value interface{}, maxLength int) *Error {
 
 // TooLongMaxLength returns a *Error indicating "too long".
 // Deprecated: Use TooLong instead.
-func TooLongMaxLength(field *Path, value interface{}, maxLength int) *Error {
+func TooLongMaxLength(field *Path, value any, maxLength int) *Error {
 	return TooLong(field, "", maxLength)
 }
 
@@ -252,7 +252,7 @@ func TooMany(field *Path, actualQuantity, maxQuantity int) *Error {
 		msg = "has too many items"
 	}
 
-	var actual interface{}
+	var actual any
 	if actualQuantity >= 0 {
 		actual = actualQuantity
 	} else {

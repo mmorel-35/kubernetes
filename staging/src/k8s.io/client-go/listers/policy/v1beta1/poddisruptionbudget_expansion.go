@@ -33,7 +33,7 @@ type PodDisruptionBudgetListerExpansion interface {
 
 // PodDisruptionBudgetNamespaceListerExpansion allows custom methods to be added to
 // PodDisruptionBudgetNamespaceLister.
-type PodDisruptionBudgetNamespaceListerExpansion interface{}
+type PodDisruptionBudgetNamespaceListerExpansion any
 
 // GetPodPodDisruptionBudgets returns a list of PodDisruptionBudgets matching a pod.  Returns an error only if no matching PodDisruptionBudgets are found.
 func (s *podDisruptionBudgetLister) GetPodPodDisruptionBudgets(pod *v1.Pod) ([]*policy.PodDisruptionBudget, error) {

@@ -132,7 +132,7 @@ func StaticResyncPeriodFunc(resyncPeriod time.Duration) ResyncPeriodFunc {
 // * Controllers that don't set expectations will get woken up for every matching controllee
 
 // ExpKeyFunc to parse out the key from a ControlleeExpectation
-var ExpKeyFunc = func(obj interface{}) (string, error) {
+var ExpKeyFunc = func(obj any) (string, error) {
 	if e, ok := obj.(*ControlleeExpectations); ok {
 		return e.key, nil
 	}
@@ -289,7 +289,7 @@ func (e *ControlleeExpectations) GetExpectations() (int64, int64) {
 
 // MarshalLog makes a thread-safe copy of the values of the expectations that
 // can be used for logging.
-func (e *ControlleeExpectations) MarshalLog() interface{} {
+func (e *ControlleeExpectations) MarshalLog() any {
 	return struct {
 		add int64
 		del int64
@@ -307,7 +307,7 @@ func NewControllerExpectations() *ControllerExpectations {
 }
 
 // UIDSetKeyFunc to parse out the key from a UIDSet.
-var UIDSetKeyFunc = func(obj interface{}) (string, error) {
+var UIDSetKeyFunc = func(obj any) (string, error) {
 	if u, ok := obj.(*UIDSet); ok {
 		return u.key, nil
 	}

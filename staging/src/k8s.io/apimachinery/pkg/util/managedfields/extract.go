@@ -50,7 +50,7 @@ import (
 // StatefulSet. While the spec.replicas, status.replicas fields are in the same
 // exact field path locations as they are in autoscaling.Scale, the selector
 // fields are in different locations, and are a different type.
-func ExtractInto(object runtime.Object, objectType typed.ParseableType, fieldManager string, applyConfiguration interface{}, subresource string) error {
+func ExtractInto(object runtime.Object, objectType typed.ParseableType, fieldManager string, applyConfiguration any, subresource string) error {
 	typedObj, err := toTyped(object, objectType)
 	if err != nil {
 		return fmt.Errorf("error converting obj to typed: %w", err)
@@ -71,7 +71,7 @@ func ExtractInto(object runtime.Object, objectType typed.ParseableType, fieldMan
 	}
 
 	u := typedObj.ExtractItems(fieldset.Leaves()).AsValue().Unstructured()
-	m, ok := u.(map[string]interface{})
+	m, ok := u.(map[string]any)
 	if !ok {
 		return fmt.Errorf("unable to convert managed fields for %s to unstructured, expected map, got %T", fieldManager, u)
 	}

@@ -161,19 +161,19 @@ type matchCSIStorageCapacities struct {
 
 var _ types.GomegaMatcher = matchCSIStorageCapacities{}
 
-func (m matchCSIStorageCapacities) Match(actual interface{}) (success bool, err error) {
+func (m matchCSIStorageCapacities) Match(actual any) (success bool, err error) {
 	return m.match.Match(actual)
 }
 
-func (m matchCSIStorageCapacities) FailureMessage(actual interface{}) (message string) {
+func (m matchCSIStorageCapacities) FailureMessage(actual any) (message string) {
 	return m.match.FailureMessage(actual) + m.dump(actual)
 }
 
-func (m matchCSIStorageCapacities) NegatedFailureMessage(actual interface{}) (message string) {
+func (m matchCSIStorageCapacities) NegatedFailureMessage(actual any) (message string) {
 	return m.match.NegatedFailureMessage(actual) + m.dump(actual)
 }
 
-func (m matchCSIStorageCapacities) dump(actual interface{}) string {
+func (m matchCSIStorageCapacities) dump(actual any) string {
 	capacities, ok := actual.(*storagev1.CSIStorageCapacityList)
 	if !ok || capacities == nil {
 		return ""
@@ -208,7 +208,7 @@ type haveCSIStorageCapacities struct {
 
 var _ CapacityMatcher = &haveCSIStorageCapacities{}
 
-func (h *haveCSIStorageCapacities) Match(actual interface{}) (success bool, err error) {
+func (h *haveCSIStorageCapacities) Match(actual any) (success bool, err error) {
 	capacities, ok := actual.(*storagev1.CSIStorageCapacityList)
 	if !ok {
 		return false, fmt.Errorf("expected *storagev1.CSIStorageCapacityList, got: %T", actual)
@@ -226,11 +226,11 @@ func (h *haveCSIStorageCapacities) MatchedCapacities() []storagev1.CSIStorageCap
 	return h.matchingCapacities
 }
 
-func (h *haveCSIStorageCapacities) FailureMessage(actual interface{}) (message string) {
+func (h *haveCSIStorageCapacities) FailureMessage(actual any) (message string) {
 	return fmt.Sprintf("no CSIStorageCapacity objects for storage class %q", h.scName)
 }
 
-func (h *haveCSIStorageCapacities) NegatedFailureMessage(actual interface{}) (message string) {
+func (h *haveCSIStorageCapacities) NegatedFailureMessage(actual any) (message string) {
 	return fmt.Sprintf("CSIStorageCapacity objects for storage class %q:\n%s",
 		h.scName,
 		strings.Join(formatCapacities(h.matchingCapacities), "\n"),
@@ -264,7 +264,7 @@ type haveLocalStorageCapacities struct {
 
 var _ CapacityMatcher = &haveLocalStorageCapacities{}
 
-func (h *haveLocalStorageCapacities) Match(actual interface{}) (success bool, err error) {
+func (h *haveLocalStorageCapacities) Match(actual any) (success bool, err error) {
 	ctx := h.ctx
 	h.expectedCapacities = nil
 	h.unexpectedCapacities = nil
@@ -338,7 +338,7 @@ func (h *haveLocalStorageCapacities) MatchedCapacities() []storagev1.CSIStorageC
 	return h.match.MatchedCapacities()
 }
 
-func (h *haveLocalStorageCapacities) FailureMessage(actual interface{}) (message string) {
+func (h *haveLocalStorageCapacities) FailureMessage(actual any) (message string) {
 	if !h.matchSuccess {
 		return h.match.FailureMessage(actual)
 	}
@@ -355,7 +355,7 @@ func (h *haveLocalStorageCapacities) FailureMessage(actual interface{}) (message
 	return strings.Join(lines, "\n")
 }
 
-func (h *haveLocalStorageCapacities) NegatedFailureMessage(actual interface{}) (message string) {
+func (h *haveLocalStorageCapacities) NegatedFailureMessage(actual any) (message string) {
 	if h.matchSuccess {
 		return h.match.NegatedFailureMessage(actual)
 	}

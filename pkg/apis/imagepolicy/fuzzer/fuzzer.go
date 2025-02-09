@@ -21,6 +21,6 @@ import (
 )
 
 // Funcs returns the fuzzer functions for the imagepolicy api group.
-var Funcs = func(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{}
+var Funcs = func(codecs runtimeserializer.CodecFactory) []any {
+	return []any{}
 }

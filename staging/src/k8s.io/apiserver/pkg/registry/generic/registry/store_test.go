@@ -504,11 +504,11 @@ func TestNewCreateOptionsFromUpdateOptions(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed to json.Marshal(out): %v", err)
 		}
-		inMap := map[string]interface{}{}
+		inMap := map[string]any{}
 		if err := json.Unmarshal(inBytes, &inMap); err != nil {
 			t.Fatalf("failed to json.Unmarshal(in): %v", err)
 		}
-		outMap := map[string]interface{}{}
+		outMap := map[string]any{}
 		if err := json.Unmarshal(outBytes, &outMap); err != nil {
 			t.Fatalf("failed to json.Unmarshal(out): %v", err)
 		}
@@ -556,11 +556,11 @@ func TestNewDeleteOptionsFromUpdateOptions(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed to json.Marshal(out): %v", err)
 		}
-		inMap := map[string]interface{}{}
+		inMap := map[string]any{}
 		if err := json.Unmarshal(inBytes, &inMap); err != nil {
 			t.Fatalf("failed to json.Unmarshal(in): %v", err)
 		}
-		outMap := map[string]interface{}{}
+		outMap := map[string]any{}
 		if err := json.Unmarshal(outBytes, &outMap); err != nil {
 			t.Fatalf("failed to json.Unmarshal(out): %v", err)
 		}
@@ -2925,7 +2925,7 @@ func TestRetryDeleteValidation(t *testing.T) {
 	}
 }
 
-func emptyIndexFunc(obj interface{}) ([]string, error) {
+func emptyIndexFunc(obj any) ([]string, error) {
 	return []string{}, nil
 }
 

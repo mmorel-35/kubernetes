@@ -144,7 +144,7 @@ func NewCloudNodeController(
 	// that exist before node controller starts will show up in the update method
 	cnc.nodeInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc:    cnc.enqueueNode,
-		UpdateFunc: func(oldObj, newObj interface{}) { cnc.enqueueNode(newObj) },
+		UpdateFunc: func(oldObj, newObj any) { cnc.enqueueNode(newObj) },
 	})
 
 	return cnc, nil
@@ -295,7 +295,7 @@ func (cnc *CloudNodeController) UpdateNodeStatus(ctx context.Context) error {
 
 // enqueueNode takes a Node resource and converts it into a key
 // string which is then put onto the work queue.
-func (cnc *CloudNodeController) enqueueNode(obj interface{}) {
+func (cnc *CloudNodeController) enqueueNode(obj any) {
 	var key string
 	var err error
 	if key, err = cache.MetaNamespaceKeyFunc(obj); err != nil {

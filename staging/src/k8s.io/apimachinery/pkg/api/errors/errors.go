@@ -79,11 +79,11 @@ func (e *StatusError) Status() metav1.Status {
 }
 
 // DebugError reports extended info about the error to debug output.
-func (e *StatusError) DebugError() (string, []interface{}) {
+func (e *StatusError) DebugError() (string, []any) {
 	if out, err := json.MarshalIndent(e.ErrStatus, "", "  "); err == nil {
-		return "server response object: %s", []interface{}{string(out)}
+		return "server response object: %s", []any{string(out)}
 	}
-	return "server response object: %#v", []interface{}{e.ErrStatus}
+	return "server response object: %#v", []any{e.ErrStatus}
 }
 
 // HasStatusCause returns true if the provided error has a details cause

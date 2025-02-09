@@ -33,7 +33,7 @@ import (
 	e2essh "k8s.io/kubernetes/test/e2e/framework/ssh"
 )
 
-func skipInternalf(caller int, format string, args ...interface{}) {
+func skipInternalf(caller int, format string, args ...any) {
 	msg := fmt.Sprintf(format, args...)
 	ginkgo.Skip(msg, caller+1)
 	panic("unreachable")
@@ -41,7 +41,7 @@ func skipInternalf(caller int, format string, args ...interface{}) {
 
 // Skipf skips with information about why the test is being skipped.
 // The direct caller is recorded in the callstack.
-func Skipf(format string, args ...interface{}) {
+func Skipf(format string, args ...any) {
 	skipInternalf(1, format, args...)
 	panic("unreachable")
 }

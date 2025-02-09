@@ -184,7 +184,7 @@ jwt:
 					signingPrivateKey,
 					// This asserts the minimum valid claims for an ID token required by the authenticator.
 					// "iss", "aud", "exp" and a claim for the username.
-					map[string]interface{}{
+					map[string]any{
 						"iss":  oidcServer.URL(),
 						"user": defaultOIDCClaimedUsername,
 						"aud":  defaultOIDCClientID,
@@ -317,7 +317,7 @@ jwt:
 				oidcServer.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 					t,
 					signingPrivateKey,
-					map[string]interface{}{
+					map[string]any{
 						"iss": oidcServer.URL(),
 						"sub": defaultOIDCClaimedUsername,
 						"aud": defaultOIDCClientID,
@@ -378,7 +378,7 @@ jwt:
 				oidcServer.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 					t,
 					signingPrivateKey,
-					map[string]interface{}{
+					map[string]any{
 						"iss": oidcServer.URL(),
 						"sub": "",
 						"aud": defaultOIDCClientID,
@@ -419,7 +419,7 @@ jwt:
 				oidcServer.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 					t,
 					signingPrivateKey,
-					map[string]interface{}{
+					map[string]any{
 						"iss": oidcServer.URL(),
 						"sub": defaultOIDCClaimedUsername,
 						"aud": defaultOIDCClientID,
@@ -520,7 +520,7 @@ func TestUpdatingRefreshTokenInCaseOfExpiredIDToken(t *testing.T) {
 				oidcServer.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 					t,
 					signingPrivateKey,
-					map[string]interface{}{
+					map[string]any{
 						"iss": oidcServer.URL(),
 						"sub": defaultOIDCClaimedUsername,
 						"aud": defaultOIDCClientID,
@@ -624,7 +624,7 @@ jwt:
 				oidcServer.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 					t,
 					signingPrivateKey,
-					map[string]interface{}{
+					map[string]any{
 						"iss": oidcServer.URL(),
 						"sub": defaultOIDCClaimedUsername,
 						"aud": defaultOIDCClientID,
@@ -676,7 +676,7 @@ jwt:
 				oidcServer.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 					t,
 					signingPrivateKey,
-					map[string]interface{}{
+					map[string]any{
 						"iss":         oidcServer.URL(),
 						"sub":         defaultOIDCClaimedUsername,
 						"aud":         defaultOIDCClientID,
@@ -726,7 +726,7 @@ jwt:
 				oidcServer.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 					t,
 					signingPrivateKey,
-					map[string]interface{}{
+					map[string]any{
 						"iss": oidcServer.URL(),
 						"sub": defaultOIDCClaimedUsername,
 						"aud": defaultOIDCClientID,
@@ -776,7 +776,7 @@ jwt:
 				oidcServer.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 					t,
 					signingPrivateKey,
-					map[string]interface{}{
+					map[string]any{
 						"iss": oidcServer.URL(),
 						"sub": defaultOIDCClaimedUsername,
 						"aud": defaultOIDCClientID,
@@ -831,7 +831,7 @@ jwt:
 				oidcServer.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 					t,
 					signingPrivateKey,
-					map[string]interface{}{
+					map[string]any{
 						"iss": oidcServer.URL(),
 						"sub": defaultOIDCClaimedUsername,
 						"aud": defaultOIDCClientID,
@@ -883,7 +883,7 @@ jwt:
 				oidcServer.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 					t,
 					signingPrivateKey,
-					map[string]interface{}{
+					map[string]any{
 						"iss":         oidcServer.URL(),
 						"sub":         defaultOIDCClaimedUsername,
 						"aud":         defaultOIDCClientID,
@@ -932,7 +932,7 @@ jwt:
 				oidcServer.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 					t,
 					signingPrivateKey,
-					map[string]interface{}{
+					map[string]any{
 						"iss": oidcServer.URL(),
 						"sub": defaultOIDCClaimedUsername,
 						"aud": []string{"foo", "bar", "baz"},
@@ -979,7 +979,7 @@ jwt:
 				oidcServer.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 					t,
 					signingPrivateKey,
-					map[string]interface{}{
+					map[string]any{
 						"iss": oidcServer.URL(),
 						"sub": defaultOIDCClaimedUsername,
 						"aud": defaultOIDCClientID,
@@ -1487,7 +1487,7 @@ func configureBasicTestInfrastructure[K utilsoidc.JosePrivateKey, L utilsoidc.Jo
 	oidcServer.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 		t,
 		signingPrivateKey,
-		map[string]interface{}{
+		map[string]any{
 			"iss": oidcServer.URL(),
 			"sub": defaultOIDCClaimedUsername,
 			"aud": defaultOIDCClientID,
@@ -1574,7 +1574,7 @@ jwt:
 			oidcServer.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 				t,
 				signingPrivateKey,
-				map[string]interface{}{
+				map[string]any{
 					"iss": tt.issuerURL, // issuer in the discovery document is used to validate the ID token
 					"sub": defaultOIDCClaimedUsername,
 					"aud": "foo",
@@ -1654,7 +1654,7 @@ jwt:
 	oidcServer1.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 		t,
 		signingPrivateKey1,
-		map[string]interface{}{
+		map[string]any{
 			"iss": oidcServer1.URL(),
 			"sub": defaultOIDCClaimedUsername,
 			"aud": "foo",
@@ -1668,7 +1668,7 @@ jwt:
 	oidcServer2.TokenHandler().EXPECT().Token().RunAndReturn(utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 		t,
 		signingPrivateKey2,
-		map[string]interface{}{
+		map[string]any{
 			"iss":         "https://example.com",
 			"sub":         "not_john_doe",
 			"aud":         "bar",
@@ -1887,7 +1887,7 @@ func configureOIDCServerToReturnExpiredIDToken(t *testing.T, returningExpiredTok
 		token, err := utilsoidc.TokenHandlerBehaviorReturningPredefinedJWT(
 			t,
 			signingPrivateKey,
-			map[string]interface{}{
+			map[string]any{
 				"iss": oidcServer.URL(),
 				"sub": defaultOIDCClaimedUsername,
 				"aud": defaultOIDCClientID,

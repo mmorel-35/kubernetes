@@ -76,7 +76,7 @@ type MockNodeServer_NodeExpandVolume_Call struct {
 // NodeExpandVolume is a helper method to define mock.On call
 //   - _a0 context.Context
 //   - _a1 *csi.NodeExpandVolumeRequest
-func (_e *MockNodeServer_Expecter) NodeExpandVolume(_a0 interface{}, _a1 interface{}) *MockNodeServer_NodeExpandVolume_Call {
+func (_e *MockNodeServer_Expecter) NodeExpandVolume(_a0 any, _a1 any) *MockNodeServer_NodeExpandVolume_Call {
 	return &MockNodeServer_NodeExpandVolume_Call{Call: _e.mock.On("NodeExpandVolume", _a0, _a1)}
 }
 
@@ -135,7 +135,7 @@ type MockNodeServer_NodeGetCapabilities_Call struct {
 // NodeGetCapabilities is a helper method to define mock.On call
 //   - _a0 context.Context
 //   - _a1 *csi.NodeGetCapabilitiesRequest
-func (_e *MockNodeServer_Expecter) NodeGetCapabilities(_a0 interface{}, _a1 interface{}) *MockNodeServer_NodeGetCapabilities_Call {
+func (_e *MockNodeServer_Expecter) NodeGetCapabilities(_a0 any, _a1 any) *MockNodeServer_NodeGetCapabilities_Call {
 	return &MockNodeServer_NodeGetCapabilities_Call{Call: _e.mock.On("NodeGetCapabilities", _a0, _a1)}
 }
 
@@ -194,7 +194,7 @@ type MockNodeServer_NodeGetInfo_Call struct {
 // NodeGetInfo is a helper method to define mock.On call
 //   - _a0 context.Context
 //   - _a1 *csi.NodeGetInfoRequest
-func (_e *MockNodeServer_Expecter) NodeGetInfo(_a0 interface{}, _a1 interface{}) *MockNodeServer_NodeGetInfo_Call {
+func (_e *MockNodeServer_Expecter) NodeGetInfo(_a0 any, _a1 any) *MockNodeServer_NodeGetInfo_Call {
 	return &MockNodeServer_NodeGetInfo_Call{Call: _e.mock.On("NodeGetInfo", _a0, _a1)}
 }
 
@@ -253,7 +253,7 @@ type MockNodeServer_NodeGetVolumeStats_Call struct {
 // NodeGetVolumeStats is a helper method to define mock.On call
 //   - _a0 context.Context
 //   - _a1 *csi.NodeGetVolumeStatsRequest
-func (_e *MockNodeServer_Expecter) NodeGetVolumeStats(_a0 interface{}, _a1 interface{}) *MockNodeServer_NodeGetVolumeStats_Call {
+func (_e *MockNodeServer_Expecter) NodeGetVolumeStats(_a0 any, _a1 any) *MockNodeServer_NodeGetVolumeStats_Call {
 	return &MockNodeServer_NodeGetVolumeStats_Call{Call: _e.mock.On("NodeGetVolumeStats", _a0, _a1)}
 }
 
@@ -312,7 +312,7 @@ type MockNodeServer_NodePublishVolume_Call struct {
 // NodePublishVolume is a helper method to define mock.On call
 //   - _a0 context.Context
 //   - _a1 *csi.NodePublishVolumeRequest
-func (_e *MockNodeServer_Expecter) NodePublishVolume(_a0 interface{}, _a1 interface{}) *MockNodeServer_NodePublishVolume_Call {
+func (_e *MockNodeServer_Expecter) NodePublishVolume(_a0 any, _a1 any) *MockNodeServer_NodePublishVolume_Call {
 	return &MockNodeServer_NodePublishVolume_Call{Call: _e.mock.On("NodePublishVolume", _a0, _a1)}
 }
 
@@ -371,7 +371,7 @@ type MockNodeServer_NodeStageVolume_Call struct {
 // NodeStageVolume is a helper method to define mock.On call
 //   - _a0 context.Context
 //   - _a1 *csi.NodeStageVolumeRequest
-func (_e *MockNodeServer_Expecter) NodeStageVolume(_a0 interface{}, _a1 interface{}) *MockNodeServer_NodeStageVolume_Call {
+func (_e *MockNodeServer_Expecter) NodeStageVolume(_a0 any, _a1 any) *MockNodeServer_NodeStageVolume_Call {
 	return &MockNodeServer_NodeStageVolume_Call{Call: _e.mock.On("NodeStageVolume", _a0, _a1)}
 }
 
@@ -430,7 +430,7 @@ type MockNodeServer_NodeUnpublishVolume_Call struct {
 // NodeUnpublishVolume is a helper method to define mock.On call
 //   - _a0 context.Context
 //   - _a1 *csi.NodeUnpublishVolumeRequest
-func (_e *MockNodeServer_Expecter) NodeUnpublishVolume(_a0 interface{}, _a1 interface{}) *MockNodeServer_NodeUnpublishVolume_Call {
+func (_e *MockNodeServer_Expecter) NodeUnpublishVolume(_a0 any, _a1 any) *MockNodeServer_NodeUnpublishVolume_Call {
 	return &MockNodeServer_NodeUnpublishVolume_Call{Call: _e.mock.On("NodeUnpublishVolume", _a0, _a1)}
 }
 
@@ -489,7 +489,7 @@ type MockNodeServer_NodeUnstageVolume_Call struct {
 // NodeUnstageVolume is a helper method to define mock.On call
 //   - _a0 context.Context
 //   - _a1 *csi.NodeUnstageVolumeRequest
-func (_e *MockNodeServer_Expecter) NodeUnstageVolume(_a0 interface{}, _a1 interface{}) *MockNodeServer_NodeUnstageVolume_Call {
+func (_e *MockNodeServer_Expecter) NodeUnstageVolume(_a0 any, _a1 any) *MockNodeServer_NodeUnstageVolume_Call {
 	return &MockNodeServer_NodeUnstageVolume_Call{Call: _e.mock.On("NodeUnstageVolume", _a0, _a1)}
 }
 

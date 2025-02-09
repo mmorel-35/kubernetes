@@ -38,7 +38,7 @@ func TestStructuralRoundtripOrError(t *testing.T) {
 	f.RandSource(rand.New(rand.NewSource(seed)))
 	f.Funcs(
 		func(s *apiextensions.JSON, c fuzz.Continue) {
-			*s = apiextensions.JSON(map[string]interface{}{"foo": float64(42.2)})
+			*s = apiextensions.JSON(map[string]any{"foo": float64(42.2)})
 		},
 		func(s *apiextensions.JSONSchemaPropsOrArray, c fuzz.Continue) {
 			c.FuzzNoCustom(s)

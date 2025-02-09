@@ -130,19 +130,19 @@ func NewCIDRRangeAllocator(ctx context.Context, client clientset.Interface, node
 	}
 
 	nodeInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			key, err := cache.MetaNamespaceKeyFunc(obj)
 			if err == nil {
 				ra.queue.Add(key)
 			}
 		},
-		UpdateFunc: func(old, new interface{}) {
+		UpdateFunc: func(old, new any) {
 			key, err := cache.MetaNamespaceKeyFunc(new)
 			if err == nil {
 				ra.queue.Add(key)
 			}
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			// The informer cache no longer has the object, and since Node doesn't have a finalizer,
 			// we don't see the Update with DeletionTimestamp != 0.
 			node, ok := obj.(*v1.Node)
@@ -211,7 +211,7 @@ func (r *rangeAllocator) processNextNodeWorkItem(ctx context.Context) bool {
 	}
 
 	// We wrap this block in a func so we can defer r.queue.Done.
-	err := func(logger klog.Logger, obj interface{}) error {
+	err := func(logger klog.Logger, obj any) error {
 		// We call Done here so the workNodeQueue knows we have finished
 		// processing this item. We also must remember to call Forget if we
 		// do not want this work item being re-queued. For example, we do

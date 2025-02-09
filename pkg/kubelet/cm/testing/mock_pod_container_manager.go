@@ -65,7 +65,7 @@ type MockPodContainerManager_Destroy_Call struct {
 
 // Destroy is a helper method to define mock.On call
 //   - name cm.CgroupName
-func (_e *MockPodContainerManager_Expecter) Destroy(name interface{}) *MockPodContainerManager_Destroy_Call {
+func (_e *MockPodContainerManager_Expecter) Destroy(name any) *MockPodContainerManager_Destroy_Call {
 	return &MockPodContainerManager_Destroy_Call{Call: _e.mock.On("Destroy", name)}
 }
 
@@ -111,7 +111,7 @@ type MockPodContainerManager_EnsureExists_Call struct {
 
 // EnsureExists is a helper method to define mock.On call
 //   - _a0 *v1.Pod
-func (_e *MockPodContainerManager_Expecter) EnsureExists(_a0 interface{}) *MockPodContainerManager_EnsureExists_Call {
+func (_e *MockPodContainerManager_Expecter) EnsureExists(_a0 any) *MockPodContainerManager_EnsureExists_Call {
 	return &MockPodContainerManager_EnsureExists_Call{Call: _e.mock.On("EnsureExists", _a0)}
 }
 
@@ -157,7 +157,7 @@ type MockPodContainerManager_Exists_Call struct {
 
 // Exists is a helper method to define mock.On call
 //   - _a0 *v1.Pod
-func (_e *MockPodContainerManager_Expecter) Exists(_a0 interface{}) *MockPodContainerManager_Exists_Call {
+func (_e *MockPodContainerManager_Expecter) Exists(_a0 any) *MockPodContainerManager_Exists_Call {
 	return &MockPodContainerManager_Exists_Call{Call: _e.mock.On("Exists", _a0)}
 }
 
@@ -273,7 +273,7 @@ type MockPodContainerManager_GetPodCgroupConfig_Call struct {
 // GetPodCgroupConfig is a helper method to define mock.On call
 //   - pod *v1.Pod
 //   - resource v1.ResourceName
-func (_e *MockPodContainerManager_Expecter) GetPodCgroupConfig(pod interface{}, resource interface{}) *MockPodContainerManager_GetPodCgroupConfig_Call {
+func (_e *MockPodContainerManager_Expecter) GetPodCgroupConfig(pod any, resource any) *MockPodContainerManager_GetPodCgroupConfig_Call {
 	return &MockPodContainerManager_GetPodCgroupConfig_Call{Call: _e.mock.On("GetPodCgroupConfig", pod, resource)}
 }
 
@@ -329,7 +329,7 @@ type MockPodContainerManager_GetPodCgroupMemoryUsage_Call struct {
 
 // GetPodCgroupMemoryUsage is a helper method to define mock.On call
 //   - pod *v1.Pod
-func (_e *MockPodContainerManager_Expecter) GetPodCgroupMemoryUsage(pod interface{}) *MockPodContainerManager_GetPodCgroupMemoryUsage_Call {
+func (_e *MockPodContainerManager_Expecter) GetPodCgroupMemoryUsage(pod any) *MockPodContainerManager_GetPodCgroupMemoryUsage_Call {
 	return &MockPodContainerManager_GetPodCgroupMemoryUsage_Call{Call: _e.mock.On("GetPodCgroupMemoryUsage", pod)}
 }
 
@@ -387,7 +387,7 @@ type MockPodContainerManager_GetPodContainerName_Call struct {
 
 // GetPodContainerName is a helper method to define mock.On call
 //   - _a0 *v1.Pod
-func (_e *MockPodContainerManager_Expecter) GetPodContainerName(_a0 interface{}) *MockPodContainerManager_GetPodContainerName_Call {
+func (_e *MockPodContainerManager_Expecter) GetPodContainerName(_a0 any) *MockPodContainerManager_GetPodContainerName_Call {
 	return &MockPodContainerManager_GetPodContainerName_Call{Call: _e.mock.On("GetPodContainerName", _a0)}
 }
 
@@ -443,7 +443,7 @@ type MockPodContainerManager_IsPodCgroup_Call struct {
 
 // IsPodCgroup is a helper method to define mock.On call
 //   - cgroupfs string
-func (_e *MockPodContainerManager_Expecter) IsPodCgroup(cgroupfs interface{}) *MockPodContainerManager_IsPodCgroup_Call {
+func (_e *MockPodContainerManager_Expecter) IsPodCgroup(cgroupfs any) *MockPodContainerManager_IsPodCgroup_Call {
 	return &MockPodContainerManager_IsPodCgroup_Call{Call: _e.mock.On("IsPodCgroup", cgroupfs)}
 }
 
@@ -489,7 +489,7 @@ type MockPodContainerManager_ReduceCPULimits_Call struct {
 
 // ReduceCPULimits is a helper method to define mock.On call
 //   - name cm.CgroupName
-func (_e *MockPodContainerManager_Expecter) ReduceCPULimits(name interface{}) *MockPodContainerManager_ReduceCPULimits_Call {
+func (_e *MockPodContainerManager_Expecter) ReduceCPULimits(name any) *MockPodContainerManager_ReduceCPULimits_Call {
 	return &MockPodContainerManager_ReduceCPULimits_Call{Call: _e.mock.On("ReduceCPULimits", name)}
 }
 
@@ -536,7 +536,7 @@ type MockPodContainerManager_SetPodCgroupConfig_Call struct {
 // SetPodCgroupConfig is a helper method to define mock.On call
 //   - pod *v1.Pod
 //   - resourceConfig *cm.ResourceConfig
-func (_e *MockPodContainerManager_Expecter) SetPodCgroupConfig(pod interface{}, resourceConfig interface{}) *MockPodContainerManager_SetPodCgroupConfig_Call {
+func (_e *MockPodContainerManager_Expecter) SetPodCgroupConfig(pod any, resourceConfig any) *MockPodContainerManager_SetPodCgroupConfig_Call {
 	return &MockPodContainerManager_SetPodCgroupConfig_Call{Call: _e.mock.On("SetPodCgroupConfig", pod, resourceConfig)}
 }
 

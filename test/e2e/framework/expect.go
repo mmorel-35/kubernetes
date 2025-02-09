@@ -40,18 +40,18 @@ import (
 //     failures in Eventually or Consistently.
 //   - Both function and error are nil, which means that the check
 //     succeeded.
-func MakeMatcher[T interface{}](match func(actual T) (failure func() string, err error)) types.GomegaMatcher {
+func MakeMatcher[T any](match func(actual T) (failure func() string, err error)) types.GomegaMatcher {
 	return &matcher[T]{
 		match: match,
 	}
 }
 
-type matcher[T interface{}] struct {
+type matcher[T any] struct {
 	match   func(actual T) (func() string, error)
 	failure func() string
 }
 
-func (m *matcher[T]) Match(actual interface{}) (success bool, err error) {
+func (m *matcher[T]) Match(actual any) (success bool, err error) {
 	if actual, ok := actual.(T); ok {
 		failure, err := m.match(actual)
 		if err != nil {
@@ -67,11 +67,11 @@ func (m *matcher[T]) Match(actual interface{}) (success bool, err error) {
 	return false, gomega.StopTrying(fmt.Sprintf("internal error: expected %T, got:\n%s", empty, format.Object(actual, 1)))
 }
 
-func (m *matcher[T]) FailureMessage(actual interface{}) string {
+func (m *matcher[T]) FailureMessage(actual any) string {
 	return m.failure()
 }
 
-func (m matcher[T]) NegatedFailureMessage(actual interface{}) string {
+func (m matcher[T]) NegatedFailureMessage(actual any) string {
 	return m.failure()
 }
 
@@ -101,9 +101,9 @@ func Gomega() GomegaInstance {
 }
 
 type GomegaInstance interface {
-	Expect(actual interface{}) Assertion
-	Eventually(ctx context.Context, args ...interface{}) AsyncAssertion
-	Consistently(ctx context.Context, args ...interface{}) AsyncAssertion
+	Expect(actual any) Assertion
+	Eventually(ctx context.Context, args ...any) AsyncAssertion
+	Consistently(ctx context.Context, args ...any) AsyncAssertion
 }
 
 type Assertion interface {
@@ -126,15 +126,15 @@ type gomegaInstance struct{}
 
 var _ GomegaInstance = gomegaInstance{}
 
-func (g gomegaInstance) Expect(actual interface{}) Assertion {
+func (g gomegaInstance) Expect(actual any) Assertion {
 	return assertion{actual: actual}
 }
 
-func (g gomegaInstance) Eventually(ctx context.Context, args ...interface{}) AsyncAssertion {
+func (g gomegaInstance) Eventually(ctx context.Context, args ...any) AsyncAssertion {
 	return newAsyncAssertion(ctx, args, false)
 }
 
-func (g gomegaInstance) Consistently(ctx context.Context, args ...interface{}) AsyncAssertion {
+func (g gomegaInstance) Consistently(ctx context.Context, args ...any) AsyncAssertion {
 	return newAsyncAssertion(ctx, args, true)
 }
 
@@ -150,7 +150,7 @@ func newG() (*FailureError, gomega.Gomega) {
 }
 
 type assertion struct {
-	actual interface{}
+	actual any
 }
 
 func (a assertion) Should(matcher types.GomegaMatcher) error {
@@ -200,13 +200,13 @@ func (a assertion) NotTo(matcher types.GomegaMatcher) error {
 
 type asyncAssertion struct {
 	ctx          context.Context
-	args         []interface{}
+	args         []any
 	timeout      time.Duration
 	interval     time.Duration
 	consistently bool
 }
 
-func newAsyncAssertion(ctx context.Context, args []interface{}, consistently bool) asyncAssertion {
+func newAsyncAssertion(ctx context.Context, args []any, consistently bool) asyncAssertion {
 	return asyncAssertion{
 		ctx:  ctx,
 		args: args,
@@ -299,7 +299,7 @@ var ErrFailure error = FailureError{}
 // additional information in case of a failure in one of these two ways:
 //   - A single string is used as first line of the failure message directly.
 //   - A string with additional parameters is passed through [fmt.Sprintf].
-func ExpectNoError(err error, explain ...interface{}) {
+func ExpectNoError(err error, explain ...any) {
 	ExpectNoErrorWithOffset(1, err, explain...)
 }
 
@@ -310,7 +310,7 @@ func ExpectNoError(err error, explain ...interface{}) {
 // additional information in case of a failure in one of these two ways:
 //   - A single string is used as first line of the failure message directly.
 //   - A string with additional parameters is passed through [fmt.Sprintf].
-func ExpectNoErrorWithOffset(offset int, err error, explain ...interface{}) {
+func ExpectNoErrorWithOffset(offset int, err error, explain ...any) {
 	if err == nil {
 		return
 	}

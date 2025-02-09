@@ -169,7 +169,7 @@ type reinvocationContext struct {
 	// reinvokeRequested is true when an admission plugin requested a re-invocation of the chain
 	reinvokeRequested bool
 	// values stores reinvoke context values per plugin.
-	values map[string]interface{}
+	values map[string]any
 }
 
 func (rc *reinvocationContext) IsReinvoke() bool {
@@ -188,14 +188,14 @@ func (rc *reinvocationContext) SetShouldReinvoke() {
 	rc.reinvokeRequested = true
 }
 
-func (rc *reinvocationContext) SetValue(plugin string, v interface{}) {
+func (rc *reinvocationContext) SetValue(plugin string, v any) {
 	if rc.values == nil {
-		rc.values = map[string]interface{}{}
+		rc.values = map[string]any{}
 	}
 	rc.values[plugin] = v
 }
 
-func (rc *reinvocationContext) Value(plugin string) interface{} {
+func (rc *reinvocationContext) Value(plugin string) any {
 	return rc.values[plugin]
 }
 

@@ -34,8 +34,8 @@ import (
 
 type FakeObject struct {
 	name   string
-	merged map[string]interface{}
-	live   map[string]interface{}
+	merged map[string]any
+	live   map[string]any
 }
 
 var _ Object = &FakeObject{}
@@ -90,7 +90,7 @@ func TestDiffProgram(t *testing.T) {
 func TestPrinter(t *testing.T) {
 	printer := Printer{}
 
-	obj := &unstructured.Unstructured{Object: map[string]interface{}{
+	obj := &unstructured.Unstructured{Object: map[string]any{
 		"string": "string",
 		"list":   []int{1, 2, 3},
 		"int":    12,
@@ -118,8 +118,8 @@ func TestDiffVersion(t *testing.T) {
 
 	obj := FakeObject{
 		name:   "bla",
-		live:   map[string]interface{}{"live": true},
-		merged: map[string]interface{}{"merged": true},
+		live:   map[string]any{"live": true},
+		merged: map[string]any{"merged": true},
 	}
 	rObj, err := obj.Merged()
 	if err != nil {
@@ -193,8 +193,8 @@ func TestDiffer(t *testing.T) {
 
 	obj := FakeObject{
 		name:   "bla",
-		live:   map[string]interface{}{"live": true},
-		merged: map[string]interface{}{"merged": true},
+		live:   map[string]any{"live": true},
+		merged: map[string]any{"merged": true},
 	}
 	err = diff.Diff(&obj, Printer{}, true)
 	if err != nil {
@@ -264,16 +264,16 @@ metadata:
 		t.Run(tc.name, func(t *testing.T) {
 			obj := FakeObject{
 				name: fmt.Sprintf("TestCase%d", i),
-				live: map[string]interface{}{
+				live: map[string]any{
 					"live": true,
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"managedFields": "mf-data",
 						"name":          "foo",
 					},
 				},
-				merged: map[string]interface{}{
+				merged: map[string]any{
 					"merged": true,
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"managedFields": "mf-data",
 						"name":          "foo",
 					},
@@ -312,16 +312,16 @@ func TestMasker(t *testing.T) {
 			name: "no_changes",
 			input: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "abc",
 							"password": "123",
 						},
 					},
 				},
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "abc",
 							"password": "123",
 						},
@@ -330,16 +330,16 @@ func TestMasker(t *testing.T) {
 			},
 			want: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "***", // still masked
 							"password": "***", // still masked
 						},
 					},
 				},
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "***", // still masked
 							"password": "***", // still masked
 						},
@@ -352,8 +352,8 @@ func TestMasker(t *testing.T) {
 			input: diff{
 				from: nil, // does not exist yet
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "abc",
 							"password": "123",
 						},
@@ -363,8 +363,8 @@ func TestMasker(t *testing.T) {
 			want: diff{
 				from: nil, // does not exist yet
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "***", // no suffix needed
 							"password": "***", // no suffix needed
 						},
@@ -376,8 +376,8 @@ func TestMasker(t *testing.T) {
 			name: "object_removed",
 			input: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "abc",
 							"password": "123",
 						},
@@ -387,8 +387,8 @@ func TestMasker(t *testing.T) {
 			},
 			want: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "***", // no suffix needed
 							"password": "***", // no suffix needed
 						},
@@ -401,15 +401,15 @@ func TestMasker(t *testing.T) {
 			name: "data_key_added",
 			input: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "abc",
 						},
 					},
 				},
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "abc",
 							"password": "123", // added
 						},
@@ -418,15 +418,15 @@ func TestMasker(t *testing.T) {
 			},
 			want: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "***",
 						},
 					},
 				},
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "***",
 							"password": "***", // no suffix needed
 						},
@@ -438,16 +438,16 @@ func TestMasker(t *testing.T) {
 			name: "data_key_changed",
 			input: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "abc",
 							"password": "123",
 						},
 					},
 				},
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "abc",
 							"password": "456", // changed
 						},
@@ -456,16 +456,16 @@ func TestMasker(t *testing.T) {
 			},
 			want: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "***",
 							"password": "*** (before)", // added suffix for diff
 						},
 					},
 				},
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "***",
 							"password": "*** (after)", // added suffix for diff
 						},
@@ -477,16 +477,16 @@ func TestMasker(t *testing.T) {
 			name: "data_key_removed",
 			input: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "abc",
 							"password": "123",
 						},
 					},
 				},
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "abc",
 							// "password": "123", // removed
 						},
@@ -495,16 +495,16 @@ func TestMasker(t *testing.T) {
 			},
 			want: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "***",
 							"password": "***", // no suffix needed
 						},
 					},
 				},
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "***",
 							// "password": "***",
 						},
@@ -516,11 +516,11 @@ func TestMasker(t *testing.T) {
 			name: "empty_secret_from",
 			input: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{}, // no data key
+					Object: map[string]any{}, // no data key
 				},
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "abc",
 							"password": "123",
 						},
@@ -529,11 +529,11 @@ func TestMasker(t *testing.T) {
 			},
 			want: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{}, // no data key
+					Object: map[string]any{}, // no data key
 				},
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "***",
 							"password": "***",
 						},
@@ -545,28 +545,28 @@ func TestMasker(t *testing.T) {
 			name: "empty_secret_to",
 			input: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "abc",
 							"password": "123",
 						},
 					},
 				},
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{}, // no data key
+					Object: map[string]any{}, // no data key
 				},
 			},
 			want: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"data": map[string]interface{}{
+					Object: map[string]any{
+						"data": map[string]any{
 							"username": "***",
 							"password": "***",
 						},
 					},
 				},
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{}, // no data key
+					Object: map[string]any{}, // no data key
 				},
 			},
 		},
@@ -574,16 +574,16 @@ func TestMasker(t *testing.T) {
 			name: "invalid_data_key",
 			input: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"some_other_key": map[string]interface{}{ // invalid key
+					Object: map[string]any{
+						"some_other_key": map[string]any{ // invalid key
 							"username": "abc",
 							"password": "123",
 						},
 					},
 				},
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"some_other_key": map[string]interface{}{ // invalid key
+					Object: map[string]any{
+						"some_other_key": map[string]any{ // invalid key
 							"username": "abc",
 							"password": "123",
 						},
@@ -592,16 +592,16 @@ func TestMasker(t *testing.T) {
 			},
 			want: diff{
 				from: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"some_other_key": map[string]interface{}{
+					Object: map[string]any{
+						"some_other_key": map[string]any{
 							"username": "abc", // skipped
 							"password": "123", // skipped
 						},
 					},
 				},
 				to: &unstructured.Unstructured{
-					Object: map[string]interface{}{
-						"some_other_key": map[string]interface{}{
+					Object: map[string]any{
+						"some_other_key": map[string]any{
 							"username": "abc", // skipped
 							"password": "123", // skipped
 						},

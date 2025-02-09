@@ -27,7 +27,7 @@ type Equalities struct {
 }
 
 // For convenience, panics on errors
-func EqualitiesOrDie(funcs ...interface{}) Equalities {
+func EqualitiesOrDie(funcs ...any) Equalities {
 	e := Equalities{reflect.Equalities{}}
 	if err := e.AddFuncs(funcs...); err != nil {
 		panic(err)

@@ -83,7 +83,7 @@ func NewPortMapKey(endpointPorts []discovery.EndpointPort) PortMapKey {
 }
 
 // deepHashObjectToString creates a unique hash string from a go object.
-func deepHashObjectToString(objectToWrite interface{}) string {
+func deepHashObjectToString(objectToWrite any) string {
 	hasher := md5.New()
 	deepHashObject(hasher, objectToWrite)
 	return hex.EncodeToString(hasher.Sum(nil)[0:])
@@ -160,7 +160,7 @@ func podEndpointsChanged(oldPod, newPod *v1.Pod) (bool, bool) {
 
 // GetServicesToUpdateOnPodChange returns a set of Service keys for Services
 // that have potentially been affected by a change to this pod.
-func GetServicesToUpdateOnPodChange(serviceLister v1listers.ServiceLister, old, cur interface{}) sets.String {
+func GetServicesToUpdateOnPodChange(serviceLister v1listers.ServiceLister, old, cur any) sets.String {
 	newPod := cur.(*v1.Pod)
 	oldPod := old.(*v1.Pod)
 	if newPod.ResourceVersion == oldPod.ResourceVersion {
@@ -195,7 +195,7 @@ func GetServicesToUpdateOnPodChange(serviceLister v1listers.ServiceLister, old, 
 
 // GetPodFromDeleteAction returns a pointer to a pod if one can be derived from
 // obj (could be a *v1.Pod, or a DeletionFinalStateUnknown marker item).
-func GetPodFromDeleteAction(obj interface{}) *v1.Pod {
+func GetPodFromDeleteAction(obj any) *v1.Pod {
 	if pod, ok := obj.(*v1.Pod); ok {
 		// Enqueue all the services that the pod used to be a member of.
 		// This is the same thing we do when we add a pod.
@@ -301,7 +301,7 @@ func stringPtrChanged(ptr1, ptr2 *string) bool {
 // which follows pointers and prints actual values of the nested objects
 // ensuring the hash does not change when a pointer changes.
 // copied from k8s.io/kubernetes/pkg/util/hash
-func deepHashObject(hasher hash.Hash, objectToWrite interface{}) {
+func deepHashObject(hasher hash.Hash, objectToWrite any) {
 	hasher.Reset()
 	fmt.Fprint(hasher, dump.ForHash(objectToWrite))
 }

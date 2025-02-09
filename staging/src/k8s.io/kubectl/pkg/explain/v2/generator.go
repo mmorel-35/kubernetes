@@ -32,7 +32,7 @@ type Generator interface {
 		templateName string,
 		// Self-Contained OpenAPI Document Containing all schemas used by $ref
 		// Only OpenAPI V3 documents are supported
-		document map[string]interface{},
+		document map[string]any,
 		// Resource within OpenAPI document for which to render explain schema
 		gvr schema.GroupVersionResource,
 		// Field path of child of resource to focus output onto
@@ -46,7 +46,7 @@ type Generator interface {
 
 type TemplateContext struct {
 	GVR       schema.GroupVersionResource
-	Document  map[string]interface{}
+	Document  map[string]any
 	Recursive bool
 	FieldPath []string
 }
@@ -77,7 +77,7 @@ func (g *generator) Render(
 	templateName string,
 	// Self-Contained OpenAPI Document Containing all schemas used by $ref
 	// Only OpenAPI V3 documents are supported
-	document map[string]interface{},
+	document map[string]any,
 	// Resource within OpenAPI document for which to render explain schema
 	gvr schema.GroupVersionResource,
 	// Field path of child of resource to focus output onto

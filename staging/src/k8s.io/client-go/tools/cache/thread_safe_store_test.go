@@ -29,7 +29,7 @@ func TestThreadSafeStoreDeleteRemovesEmptySetsFromIndex(t *testing.T) {
 	testIndexer := "testIndexer"
 
 	indexers := Indexers{
-		testIndexer: func(obj interface{}) (strings []string, e error) {
+		testIndexer: func(obj any) (strings []string, e error) {
 			indexes := []string{obj.(string)}
 			return indexes, nil
 		},
@@ -63,7 +63,7 @@ func TestThreadSafeStoreAddKeepsNonEmptySetPostDeleteFromIndex(t *testing.T) {
 	testIndex := "testIndex"
 
 	indexers := Indexers{
-		testIndexer: func(obj interface{}) (strings []string, e error) {
+		testIndexer: func(obj any) (strings []string, e error) {
 			indexes := []string{testIndex}
 			return indexes, nil
 		},
@@ -100,7 +100,7 @@ func TestThreadSafeStoreIndexingFunctionsWithMultipleValues(t *testing.T) {
 	testIndexer := "testIndexer"
 
 	indexers := Indexers{
-		testIndexer: func(obj interface{}) ([]string, error) {
+		testIndexer: func(obj any) ([]string, error) {
 			return strings.Split(obj.(string), ","), nil
 		},
 	}
@@ -169,7 +169,7 @@ func BenchmarkIndexer(b *testing.B) {
 	testIndexer := "testIndexer"
 
 	indexers := Indexers{
-		testIndexer: func(obj interface{}) (strings []string, e error) {
+		testIndexer: func(obj any) (strings []string, e error) {
 			indexes := []string{obj.(string)}
 			return indexes, nil
 		},

@@ -186,7 +186,7 @@ func TestEventf(t *testing.T) {
 		eventtype           string
 		reason              string
 		messageFmt          string
-		elements            []interface{}
+		elements            []any
 		expect              *v1.Event
 		expectLog           string
 		expectStructuredLog string
@@ -197,7 +197,7 @@ func TestEventf(t *testing.T) {
 			eventtype:  v1.EventTypeNormal,
 			reason:     "Started",
 			messageFmt: "some verbose message: %v",
-			elements:   []interface{}{1},
+			elements:   []any{1},
 			expect: &v1.Event{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "foo",
@@ -228,7 +228,7 @@ func TestEventf(t *testing.T) {
 			eventtype:  v1.EventTypeNormal,
 			reason:     "Killed",
 			messageFmt: "some other verbose message: %v",
-			elements:   []interface{}{1},
+			elements:   []any{1},
 			expect: &v1.Event{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "foo",
@@ -258,7 +258,7 @@ func TestEventf(t *testing.T) {
 			eventtype:  v1.EventTypeNormal,
 			reason:     "Started",
 			messageFmt: "some verbose message: %v",
-			elements:   []interface{}{1},
+			elements:   []any{1},
 			expect: &v1.Event{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "foo",
@@ -289,7 +289,7 @@ func TestEventf(t *testing.T) {
 			eventtype:  v1.EventTypeNormal,
 			reason:     "Started",
 			messageFmt: "some verbose message: %v",
-			elements:   []interface{}{1},
+			elements:   []any{1},
 			expect: &v1.Event{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "foo",
@@ -320,7 +320,7 @@ func TestEventf(t *testing.T) {
 			eventtype:  v1.EventTypeNormal,
 			reason:     "Started",
 			messageFmt: "some verbose message: %v",
-			elements:   []interface{}{1},
+			elements:   []any{1},
 			expect: &v1.Event{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "foo",
@@ -351,7 +351,7 @@ func TestEventf(t *testing.T) {
 			eventtype:  v1.EventTypeNormal,
 			reason:     "Stopped",
 			messageFmt: "some verbose message: %v",
-			elements:   []interface{}{1},
+			elements:   []any{1},
 			expect: &v1.Event{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "foo",
@@ -382,7 +382,7 @@ func TestEventf(t *testing.T) {
 			eventtype:  v1.EventTypeNormal,
 			reason:     "Stopped",
 			messageFmt: "some verbose message: %v",
-			elements:   []interface{}{1},
+			elements:   []any{1},
 			expect: &v1.Event{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "foo",
@@ -435,7 +435,7 @@ func TestEventf(t *testing.T) {
 	for index, item := range table {
 		clock.Step(1 * time.Second)
 		//nolint:logcheck // Intentionally testing StartLogging here.
-		logWatcher := eventBroadcaster.StartLogging(func(formatter string, args ...interface{}) {
+		logWatcher := eventBroadcaster.StartLogging(func(formatter string, args ...any) {
 			if e, a := item.expectLog, fmt.Sprintf(formatter, args...); e != a {
 				t.Errorf("Expected '%v', got '%v'", e, a)
 			}
@@ -624,7 +624,7 @@ func TestLotsOfEvents(t *testing.T) {
 	eventBroadcaster := newBroadcasterForTests(t)
 	sinkWatcher := eventBroadcaster.StartRecordingToSink(&testEvents)
 	//nolint:logcheck // Intentionally using StartLogging here to get notified.
-	logWatcher := eventBroadcaster.StartLogging(func(formatter string, args ...interface{}) {
+	logWatcher := eventBroadcaster.StartLogging(func(formatter string, args ...any) {
 		loggerCalled <- struct{}{}
 	})
 	recorder := eventBroadcaster.NewRecorder(scheme.Scheme, v1.EventSource{Component: "eventTest"})
@@ -671,7 +671,7 @@ func TestEventfNoNamespace(t *testing.T) {
 		eventtype    string
 		reason       string
 		messageFmt   string
-		elements     []interface{}
+		elements     []any
 		expect       *v1.Event
 		expectLog    string
 		expectUpdate bool
@@ -681,7 +681,7 @@ func TestEventfNoNamespace(t *testing.T) {
 			eventtype:  v1.EventTypeNormal,
 			reason:     "Started",
 			messageFmt: "some verbose message: %v",
-			elements:   []interface{}{1},
+			elements:   []any{1},
 			expect: &v1.Event{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "foo",
@@ -727,7 +727,7 @@ func TestEventfNoNamespace(t *testing.T) {
 
 	for index, item := range table {
 		clock.Step(1 * time.Second)
-		logWatcher := eventBroadcaster.StartLogging(func(formatter string, args ...interface{}) {
+		logWatcher := eventBroadcaster.StartLogging(func(formatter string, args ...any) {
 			if e, a := item.expectLog, fmt.Sprintf(formatter, args...); e != a {
 				t.Errorf("Expected '%v', got '%v'", e, a)
 			}
@@ -779,7 +779,7 @@ func TestMultiSinkCache(t *testing.T) {
 		eventtype    string
 		reason       string
 		messageFmt   string
-		elements     []interface{}
+		elements     []any
 		expect       *v1.Event
 		expectLog    string
 		expectUpdate bool
@@ -789,7 +789,7 @@ func TestMultiSinkCache(t *testing.T) {
 			eventtype:  v1.EventTypeNormal,
 			reason:     "Started",
 			messageFmt: "some verbose message: %v",
-			elements:   []interface{}{1},
+			elements:   []any{1},
 			expect: &v1.Event{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "foo",
@@ -818,7 +818,7 @@ func TestMultiSinkCache(t *testing.T) {
 			eventtype:  v1.EventTypeNormal,
 			reason:     "Killed",
 			messageFmt: "some other verbose message: %v",
-			elements:   []interface{}{1},
+			elements:   []any{1},
 			expect: &v1.Event{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "foo",
@@ -846,7 +846,7 @@ func TestMultiSinkCache(t *testing.T) {
 			eventtype:  v1.EventTypeNormal,
 			reason:     "Started",
 			messageFmt: "some verbose message: %v",
-			elements:   []interface{}{1},
+			elements:   []any{1},
 			expect: &v1.Event{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "foo",
@@ -875,7 +875,7 @@ func TestMultiSinkCache(t *testing.T) {
 			eventtype:  v1.EventTypeNormal,
 			reason:     "Started",
 			messageFmt: "some verbose message: %v",
-			elements:   []interface{}{1},
+			elements:   []any{1},
 			expect: &v1.Event{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "foo",
@@ -904,7 +904,7 @@ func TestMultiSinkCache(t *testing.T) {
 			eventtype:  v1.EventTypeNormal,
 			reason:     "Started",
 			messageFmt: "some verbose message: %v",
-			elements:   []interface{}{1},
+			elements:   []any{1},
 			expect: &v1.Event{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "foo",
@@ -933,7 +933,7 @@ func TestMultiSinkCache(t *testing.T) {
 			eventtype:  v1.EventTypeNormal,
 			reason:     "Stopped",
 			messageFmt: "some verbose message: %v",
-			elements:   []interface{}{1},
+			elements:   []any{1},
 			expect: &v1.Event{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "foo",
@@ -962,7 +962,7 @@ func TestMultiSinkCache(t *testing.T) {
 			eventtype:  v1.EventTypeNormal,
 			reason:     "Stopped",
 			messageFmt: "some verbose message: %v",
-			elements:   []interface{}{1},
+			elements:   []any{1},
 			expect: &v1.Event{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      "foo",

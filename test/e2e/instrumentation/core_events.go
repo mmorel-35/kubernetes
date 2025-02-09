@@ -103,7 +103,7 @@ var _ = common.SIGDescribe("Events", func() {
 		ginkgo.By("patching the test event")
 		// patch the event's message
 		eventPatchMessage := "This is a test event - patched"
-		eventPatch, err := json.Marshal(map[string]interface{}{
+		eventPatch, err := json.Marshal(map[string]any{
 			"message": eventPatchMessage,
 		})
 		framework.ExpectNoError(err, "failed to marshal the patch JSON payload")

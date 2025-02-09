@@ -190,7 +190,7 @@ func printMissingMetricsNodeLine(out io.Writer, nodeName string) {
 	fmt.Fprint(out, "\n")
 }
 
-func printValue(out io.Writer, value interface{}) {
+func printValue(out io.Writer, value any) {
 	fmt.Fprintf(out, "%v\t", value)
 }
 

@@ -59,13 +59,13 @@ func NewMutatingWebhookConfigurationManager(f informers.SharedInformerFactory) g
 	manager.lazy.Evaluate = manager.getConfiguration
 
 	handle, _ := informer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(_ interface{}) { manager.lazy.Notify() },
-		UpdateFunc: func(old, new interface{}) {
+		AddFunc: func(_ any) { manager.lazy.Notify() },
+		UpdateFunc: func(old, new any) {
 			obj := new.(*v1.MutatingWebhookConfiguration)
 			manager.configurationsCache.Delete(obj.GetName())
 			manager.lazy.Notify()
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			vwc, ok := obj.(*v1.MutatingWebhookConfiguration)
 			if !ok {
 				tombstone, ok := obj.(cache.DeletedFinalStateUnknown)

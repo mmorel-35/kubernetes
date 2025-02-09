@@ -117,7 +117,7 @@ func (v *ValueValidation) toKubeOpenAPI(ret *spec.Schema) {
 	ret.UniqueItems = v.UniqueItems
 	ret.MultipleOf = v.MultipleOf
 	if v.Enum != nil {
-		ret.Enum = make([]interface{}, 0, len(v.Enum))
+		ret.Enum = make([]any, 0, len(v.Enum))
 		for i := range v.Enum {
 			ret.Enum = append(ret.Enum, v.Enum[i].Object)
 		}

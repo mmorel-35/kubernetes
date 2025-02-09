@@ -31,8 +31,8 @@ import (
 
 // overrideMetaFuncs override some generic fuzzer funcs from k8s.io/apiserver in order to have more realistic
 // values in a Kubernetes context.
-func overrideMetaFuncs(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+func overrideMetaFuncs(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(j *runtime.Object, c fuzz.Continue) {
 			// TODO: uncomment when round trip starts from a versioned object
 			if true { //c.RandBool() {
@@ -66,8 +66,8 @@ func overrideMetaFuncs(codecs runtimeserializer.CodecFactory) []interface{} {
 	}
 }
 
-func exampleFuncs(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+func exampleFuncs(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(s *example.PodSpec, c fuzz.Continue) {
 			c.FuzzNoCustom(s)
 			// has a default value

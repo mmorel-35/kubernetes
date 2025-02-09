@@ -389,7 +389,7 @@ func (w *wrappedParam) UnmarshalJSON(data []byte) error {
 	return errors.New("UnmarshalJSON unimplemented for wrappedParam")
 }
 
-func (w *wrappedParam) ToUnstructured() interface{} {
+func (w *wrappedParam) ToUnstructured() any {
 	res, err := runtime.DefaultUnstructuredConverter.ToUnstructured(w.nested)
 
 	if err != nil {

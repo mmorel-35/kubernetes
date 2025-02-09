@@ -146,8 +146,8 @@ func (g *gRPCService) Encrypt(plain []byte) ([]byte, error) {
 func (g *gRPCService) interceptor(
 	ctx context.Context,
 	method string,
-	req interface{},
-	reply interface{},
+	req any,
+	reply any,
 	cc *grpc.ClientConn,
 	invoker grpc.UnaryInvoker,
 	opts ...grpc.CallOption,

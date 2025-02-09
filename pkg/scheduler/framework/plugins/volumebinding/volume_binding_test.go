@@ -843,8 +843,8 @@ func TestVolumeBinding(t *testing.T) {
 func TestIsSchedulableAfterCSINodeChange(t *testing.T) {
 	table := []struct {
 		name   string
-		oldObj interface{}
-		newObj interface{}
+		oldObj any
+		newObj any
 		err    bool
 		expect framework.QueueingHint
 	}{
@@ -950,8 +950,8 @@ func TestIsSchedulableAfterPersistentVolumeClaimChange(t *testing.T) {
 	table := []struct {
 		name    string
 		pod     *v1.Pod
-		oldPVC  interface{}
-		newPVC  interface{}
+		oldPVC  any
+		newPVC  any
 		wantErr bool
 		expect  framework.QueueingHint
 	}{
@@ -1047,8 +1047,8 @@ func TestIsSchedulableAfterStorageClassChange(t *testing.T) {
 	table := []struct {
 		name      string
 		pod       *v1.Pod
-		oldSC     interface{}
-		newSC     interface{}
+		oldSC     any
+		newSC     any
 		pvcLister tf.PersistentVolumeClaimLister
 		err       bool
 		expect    framework.QueueingHint
@@ -1135,8 +1135,8 @@ func TestIsSchedulableAfterCSIStorageCapacityChange(t *testing.T) {
 	table := []struct {
 		name    string
 		pod     *v1.Pod
-		oldCap  interface{}
-		newCap  interface{}
+		oldCap  any
+		newCap  any
 		wantErr bool
 		expect  framework.QueueingHint
 	}{
@@ -1364,8 +1364,8 @@ func TestIsSchedulableAfterCSIDriverChange(t *testing.T) {
 	table := []struct {
 		name   string
 		pod    *v1.Pod
-		newObj interface{}
-		oldObj interface{}
+		newObj any
+		oldObj any
 		err    bool
 		expect framework.QueueingHint
 	}{

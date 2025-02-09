@@ -5212,7 +5212,7 @@ URL:	http://localhost
 	out := new(bytes.Buffer)
 	w := NewPrefixWriter(out)
 	obj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion":        "v1",
 			"kind":              "Test",
 			"dummyDummy":        "present",
@@ -5221,7 +5221,7 @@ URL:	http://localhost
 			"dummy-dummy":       "present",
 			"dummy1":            "present",
 			"dummy2":            "present",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":              "MyName",
 				"namespace":         "MyNamespace",
 				"creationTimestamp": "2017-04-01T00:00:00Z",
@@ -5229,8 +5229,8 @@ URL:	http://localhost
 				"uid":               "00000000-0000-0000-0000-000000000001",
 				"dummy3":            "present",
 			},
-			"items": []interface{}{
-				map[string]interface{}{
+			"items": []any{
+				map[string]any{
 					"itemBool": true,
 					"itemInt":  42,
 				},

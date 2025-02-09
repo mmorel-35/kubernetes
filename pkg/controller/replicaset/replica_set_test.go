@@ -1180,7 +1180,7 @@ func TestDeleteControllerAndExpectations(t *testing.T) {
 
 	// This should have no effect, since we've deleted the ReplicaSet.
 	podExp.Add(-1, 0)
-	informers.Core().V1().Pods().Informer().GetIndexer().Replace(make([]interface{}, 0), "0")
+	informers.Core().V1().Pods().Informer().GetIndexer().Replace(make([]any, 0), "0")
 	manager.syncReplicaSet(ctx, GetKey(rs, t))
 	err = validateSyncReplicaSet(&fakePodControl, 0, 0, 0)
 	if err != nil {

@@ -240,7 +240,7 @@ func asVersionedObjects(infos []*resource.Info, specifiedOutputVersion schema.Gr
 
 		targetVersions := []schema.GroupVersion{}
 		// objects that are not part of api.Scheme must be converted to JSON
-		// TODO: convert to map[string]interface{}, attach to runtime.Unknown?
+		// TODO: convert to map[string]any, attach to runtime.Unknown?
 		if !specifiedOutputVersion.Empty() {
 			if _, _, err := scheme.Scheme.ObjectKinds(info.Object); runtime.IsNotRegisteredError(err) {
 				// TODO: ideally this would encode to version, but we don't expose multiple codecs here.

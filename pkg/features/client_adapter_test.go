@@ -37,7 +37,7 @@ func TestClientAdapterEnabled(t *testing.T) {
 	if !a.Enabled("Foo") {
 		t.Error("expected Enabled(\"Foo\") to return true")
 	}
-	var r interface{}
+	var r any
 	func() {
 		defer func() {
 			r = recover()
@@ -85,7 +85,7 @@ func TestClientAdapterAdd(t *testing.T) {
 		}
 	}
 
-	var r interface{}
+	var r any
 	func() {
 		defer func() {
 			r = recover()

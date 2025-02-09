@@ -60,7 +60,7 @@ type datapolBehindPointer struct {
 func TestValidate(t *testing.T) {
 	testcases := []struct {
 		name      string
-		value     interface{}
+		value     any
 		expect    []string
 		badFilter bool
 	}{{
@@ -126,13 +126,13 @@ func TestValidate(t *testing.T) {
 		expect: []string{},
 	}, {
 		name: "struct in interface",
-		value: struct{ v interface{} }{v: withDatapolTag{
+		value: struct{ v any }{v: withDatapolTag{
 			Key: marker,
 		}},
 		expect: []string{"password"},
 	}, {
 		name: "structptr in interface",
-		value: struct{ v interface{} }{v: &withDatapolTag{
+		value: struct{ v any }{v: &withDatapolTag{
 			Key: marker,
 		}},
 		expect: []string{},

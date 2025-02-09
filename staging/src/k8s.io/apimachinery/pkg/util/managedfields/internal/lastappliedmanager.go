@@ -114,7 +114,7 @@ func (f *lastAppliedManager) allowedConflictsFromLastApplied(liveObj runtime.Obj
 		return nil, fmt.Errorf("failed to convert live obj to typed: %v", err)
 	}
 
-	var lastAppliedObj = &unstructured.Unstructured{Object: map[string]interface{}{}}
+	var lastAppliedObj = &unstructured.Unstructured{Object: map[string]any{}}
 	err = json.Unmarshal([]byte(lastApplied), lastAppliedObj)
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode last applied obj: %v in '%s'", err, lastApplied)

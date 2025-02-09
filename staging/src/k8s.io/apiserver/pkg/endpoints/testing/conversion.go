@@ -51,7 +51,7 @@ func convertUrlValuesToSimpleGetOptions(in *url.Values, out *SimpleGetOptions, s
 }
 
 func RegisterConversions(s *runtime.Scheme) error {
-	if err := s.AddConversionFunc((*url.Values)(nil), (*SimpleGetOptions)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*url.Values)(nil), (*SimpleGetOptions)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertUrlValuesToSimpleGetOptions(a.(*url.Values), b.(*SimpleGetOptions), scope)
 	}); err != nil {
 		return err

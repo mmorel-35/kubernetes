@@ -525,12 +525,12 @@ func TestAuthModeAlwaysAllow(t *testing.T) {
 }
 
 func parseResourceVersion(response []byte) (string, float64, error) {
-	var resultBodyMap map[string]interface{}
+	var resultBodyMap map[string]any
 	err := json.Unmarshal(response, &resultBodyMap)
 	if err != nil {
 		return "", 0, fmt.Errorf("unexpected error unmarshaling resultBody: %v", err)
 	}
-	metadata, ok := resultBodyMap["metadata"].(map[string]interface{})
+	metadata, ok := resultBodyMap["metadata"].(map[string]any)
 	if !ok {
 		return "", 0, fmt.Errorf("unexpected error, metadata not found in JSON response: %v", string(response))
 	}

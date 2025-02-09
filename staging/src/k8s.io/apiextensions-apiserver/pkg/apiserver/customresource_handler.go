@@ -199,7 +199,7 @@ func NewCustomResourceDefinitionHandler(
 	crdInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc:    ret.createCustomResourceDefinition,
 		UpdateFunc: ret.updateCustomResourceDefinition,
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			ret.removeDeadStorage()
 		},
 	})
@@ -451,7 +451,7 @@ func (r *crdHandler) serveScale(w http.ResponseWriter, req *http.Request, reques
 }
 
 // createCustomResourceDefinition removes potentially stale storage so it gets re-created
-func (r *crdHandler) createCustomResourceDefinition(obj interface{}) {
+func (r *crdHandler) createCustomResourceDefinition(obj any) {
 	crd := obj.(*apiextensionsv1.CustomResourceDefinition)
 	r.customStorageLock.Lock()
 	defer r.customStorageLock.Unlock()
@@ -470,7 +470,7 @@ func (r *crdHandler) createCustomResourceDefinition(obj interface{}) {
 }
 
 // updateCustomResourceDefinition removes potentially stale storage so it gets re-created
-func (r *crdHandler) updateCustomResourceDefinition(oldObj, newObj interface{}) {
+func (r *crdHandler) updateCustomResourceDefinition(oldObj, newObj any) {
 	oldCRD := oldObj.(*apiextensionsv1.CustomResourceDefinition)
 	newCRD := newObj.(*apiextensionsv1.CustomResourceDefinition)
 
@@ -1274,7 +1274,7 @@ type schemaCoercingConverter struct {
 
 var _ runtime.ObjectConvertor = schemaCoercingConverter{}
 
-func (v schemaCoercingConverter) Convert(in, out, context interface{}) error {
+func (v schemaCoercingConverter) Convert(in, out, context any) error {
 	if err := v.delegate.Convert(in, out, context); err != nil {
 		return err
 	}

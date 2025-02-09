@@ -86,20 +86,20 @@ var objectObjectSchema *spec.Schema = &spec.Schema{
 // Shows scalar fields of objects can be ratcheted
 func TestObjectScalarFieldsRatcheting(t *testing.T) {
 	validator := validation.NewRatchetingSchemaValidator(objectSchema, nil, "", strfmt.Default)
-	assert.True(t, validator.ValidateUpdate(map[string]interface{}{
+	assert.True(t, validator.ValidateUpdate(map[string]any{
 		"small": 500,
-	}, map[string]interface{}{
+	}, map[string]any{
 		"small": 500,
 	}, validation.WithRatcheting(nil)).IsValid())
-	assert.True(t, validator.ValidateUpdate(map[string]interface{}{
+	assert.True(t, validator.ValidateUpdate(map[string]any{
 		"small": 501,
-	}, map[string]interface{}{
+	}, map[string]any{
 		"small":  501,
 		"medium": 500,
 	}, validation.WithRatcheting(nil)).IsValid())
-	assert.False(t, validator.ValidateUpdate(map[string]interface{}{
+	assert.False(t, validator.ValidateUpdate(map[string]any{
 		"small": 500,
-	}, map[string]interface{}{
+	}, map[string]any{
 		"small": 501,
 	}, validation.WithRatcheting(nil)).IsValid())
 }
@@ -107,26 +107,26 @@ func TestObjectScalarFieldsRatcheting(t *testing.T) {
 // Shows schemas with object fields which themselves are ratcheted can be ratcheted
 func TestObjectObjectFieldsRatcheting(t *testing.T) {
 	validator := validation.NewRatchetingSchemaValidator(objectObjectSchema, nil, "", strfmt.Default)
-	assert.True(t, validator.ValidateUpdate(map[string]interface{}{
-		"nested": map[string]interface{}{
+	assert.True(t, validator.ValidateUpdate(map[string]any{
+		"nested": map[string]any{
 			"small": 500,
-		}}, map[string]interface{}{
-		"nested": map[string]interface{}{
+		}}, map[string]any{
+		"nested": map[string]any{
 			"small": 500,
 		}}, validation.WithRatcheting(nil)).IsValid())
-	assert.True(t, validator.ValidateUpdate(map[string]interface{}{
-		"nested": map[string]interface{}{
+	assert.True(t, validator.ValidateUpdate(map[string]any{
+		"nested": map[string]any{
 			"small": 501,
-		}}, map[string]interface{}{
-		"nested": map[string]interface{}{
+		}}, map[string]any{
+		"nested": map[string]any{
 			"small":  501,
 			"medium": 500,
 		}}, validation.WithRatcheting(nil)).IsValid())
-	assert.False(t, validator.ValidateUpdate(map[string]interface{}{
-		"nested": map[string]interface{}{
+	assert.False(t, validator.ValidateUpdate(map[string]any{
+		"nested": map[string]any{
 			"small": 500,
-		}}, map[string]interface{}{
-		"nested": map[string]interface{}{
+		}}, map[string]any{
+		"nested": map[string]any{
 			"small": 501,
 		}}, validation.WithRatcheting(nil)).IsValid())
 }

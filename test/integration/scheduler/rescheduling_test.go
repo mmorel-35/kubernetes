@@ -70,7 +70,7 @@ func (rp *ReservePlugin) EventsToRegister(_ context.Context) ([]framework.Cluste
 	return []framework.ClusterEventWithHint{
 		{
 			Event: framework.ClusterEvent{Resource: framework.Node, ActionType: framework.Add},
-			QueueingHintFn: func(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+			QueueingHintFn: func(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 				return framework.Queue, nil
 			},
 		},
@@ -107,7 +107,7 @@ func (pp *PermitPlugin) EventsToRegister(_ context.Context) ([]framework.Cluster
 	return []framework.ClusterEventWithHint{
 		{
 			Event: framework.ClusterEvent{Resource: framework.Node, ActionType: framework.Add},
-			QueueingHintFn: func(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+			QueueingHintFn: func(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 				return framework.Queue, nil
 			},
 		},

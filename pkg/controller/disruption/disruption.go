@@ -208,13 +208,13 @@ func NewDisruptionControllerInternal(ctx context.Context,
 	dc.getUpdater = func() updater { return dc.writePdbStatus }
 
 	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			dc.addPod(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			dc.updatePod(logger, oldObj, newObj)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			dc.deletePod(logger, obj)
 		},
 	})
@@ -222,13 +222,13 @@ func NewDisruptionControllerInternal(ctx context.Context,
 	dc.podListerSynced = podInformer.Informer().HasSynced
 
 	pdbInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			dc.addDB(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			dc.updateDB(logger, oldObj, newObj)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			dc.removeDB(logger, obj)
 		},
 	})
@@ -474,20 +474,20 @@ func (dc *DisruptionController) Run(ctx context.Context) {
 	<-ctx.Done()
 }
 
-func (dc *DisruptionController) addDB(logger klog.Logger, obj interface{}) {
+func (dc *DisruptionController) addDB(logger klog.Logger, obj any) {
 	pdb := obj.(*policy.PodDisruptionBudget)
 	logger.V(4).Info("Add DB", "podDisruptionBudget", klog.KObj(pdb))
 	dc.enqueuePdb(logger, pdb)
 }
 
-func (dc *DisruptionController) updateDB(logger klog.Logger, old, cur interface{}) {
+func (dc *DisruptionController) updateDB(logger klog.Logger, old, cur any) {
 	// TODO(mml) ignore updates where 'old' is equivalent to 'cur'.
 	pdb := cur.(*policy.PodDisruptionBudget)
 	logger.V(4).Info("Update DB", "podDisruptionBudget", klog.KObj(pdb))
 	dc.enqueuePdb(logger, pdb)
 }
 
-func (dc *DisruptionController) removeDB(logger klog.Logger, obj interface{}) {
+func (dc *DisruptionController) removeDB(logger klog.Logger, obj any) {
 	pdb, ok := obj.(*policy.PodDisruptionBudget)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
@@ -505,7 +505,7 @@ func (dc *DisruptionController) removeDB(logger klog.Logger, obj interface{}) {
 	dc.enqueuePdb(logger, pdb)
 }
 
-func (dc *DisruptionController) addPod(logger klog.Logger, obj interface{}) {
+func (dc *DisruptionController) addPod(logger klog.Logger, obj any) {
 	pod := obj.(*v1.Pod)
 	logger.V(4).Info("AddPod called on pod", "pod", klog.KObj(pod))
 	pdb := dc.getPdbForPod(logger, pod)
@@ -520,7 +520,7 @@ func (dc *DisruptionController) addPod(logger klog.Logger, obj interface{}) {
 	}
 }
 
-func (dc *DisruptionController) updatePod(logger klog.Logger, _, cur interface{}) {
+func (dc *DisruptionController) updatePod(logger klog.Logger, _, cur any) {
 	pod := cur.(*v1.Pod)
 	logger.V(4).Info("UpdatePod called on pod", "pod", klog.KObj(pod))
 	pdb := dc.getPdbForPod(logger, pod)
@@ -535,7 +535,7 @@ func (dc *DisruptionController) updatePod(logger klog.Logger, _, cur interface{}
 	}
 }
 
-func (dc *DisruptionController) deletePod(logger klog.Logger, obj interface{}) {
+func (dc *DisruptionController) deletePod(logger klog.Logger, obj any) {
 	pod, ok := obj.(*v1.Pod)
 	// When a delete is dropped, the relist will notice a pod in the store not
 	// in the list, leading to the insertion of a tombstone object which contains

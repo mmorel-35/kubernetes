@@ -627,7 +627,7 @@ func TestDispatcher(t *testing.T) {
 	// Register a fake defaulter since registering the full defaulter adds noise
 	// and creates dep cycles.
 	scheme.AddTypeDefaultingFunc(&appsv1.Deployment{},
-		func(obj interface{}) { fakeSetDefaultForDeployment(obj.(*appsv1.Deployment)) })
+		func(obj any) { fakeSetDefaultForDeployment(obj.(*appsv1.Deployment)) })
 
 	objectInterfaces := admission.NewObjectInterfacesFromScheme(scheme)
 

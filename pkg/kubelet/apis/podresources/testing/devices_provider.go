@@ -112,7 +112,7 @@ type MockDevicesProvider_GetDevices_Call struct {
 // GetDevices is a helper method to define mock.On call
 //   - podUID string
 //   - containerName string
-func (_e *MockDevicesProvider_Expecter) GetDevices(podUID interface{}, containerName interface{}) *MockDevicesProvider_GetDevices_Call {
+func (_e *MockDevicesProvider_Expecter) GetDevices(podUID any, containerName any) *MockDevicesProvider_GetDevices_Call {
 	return &MockDevicesProvider_GetDevices_Call{Call: _e.mock.On("GetDevices", podUID, containerName)}
 }
 

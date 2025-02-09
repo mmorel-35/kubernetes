@@ -2107,14 +2107,14 @@ func testCustomResourceWebhook(ctx context.Context, f *framework.Framework, crd 
 	ginkgo.By("Creating a custom resource that should be denied by the webhook")
 	crInstanceName := "cr-instance-1"
 	crInstance := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       crd.Spec.Names.Kind,
 			"apiVersion": crd.Spec.Group + "/" + crd.Spec.Versions[0].Name,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      crInstanceName,
 				"namespace": f.Namespace.Name,
 			},
-			"data": map[string]interface{}{
+			"data": map[string]any{
 				"webhook-e2e-test": "webhook-disallow",
 			},
 		},
@@ -2131,14 +2131,14 @@ func testBlockingCustomResourceUpdateDeletion(ctx context.Context, f *framework.
 	ginkgo.By("Creating a custom resource whose deletion would be denied by the webhook")
 	crInstanceName := "cr-instance-2"
 	crInstance := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       crd.Spec.Names.Kind,
 			"apiVersion": crd.Spec.Group + "/" + crd.Spec.Versions[0].Name,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      crInstanceName,
 				"namespace": f.Namespace.Name,
 			},
-			"data": map[string]interface{}{
+			"data": map[string]any{
 				"webhook-e2e-test": "webhook-nondeletable",
 			},
 		},
@@ -2149,9 +2149,9 @@ func testBlockingCustomResourceUpdateDeletion(ctx context.Context, f *framework.
 	ginkgo.By("Updating the custom resource with disallowed data should be denied")
 	toNonCompliantFn := func(cr *unstructured.Unstructured) {
 		if _, ok := cr.Object["data"]; !ok {
-			cr.Object["data"] = map[string]interface{}{}
+			cr.Object["data"] = map[string]any{}
 		}
-		data := cr.Object["data"].(map[string]interface{})
+		data := cr.Object["data"].(map[string]any)
 		data["webhook-e2e-test"] = "webhook-disallow"
 	}
 	_, err = updateCustomResource(ctx, customResourceClient, f.Namespace.Name, crInstanceName, toNonCompliantFn)
@@ -2173,9 +2173,9 @@ func testBlockingCustomResourceUpdateDeletion(ctx context.Context, f *framework.
 	ginkgo.By("Remove the offending key and value from the custom resource data")
 	toCompliantFn := func(cr *unstructured.Unstructured) {
 		if _, ok := cr.Object["data"]; !ok {
-			cr.Object["data"] = map[string]interface{}{}
+			cr.Object["data"] = map[string]any{}
 		}
-		data := cr.Object["data"].(map[string]interface{})
+		data := cr.Object["data"].(map[string]any)
 		data["webhook-e2e-test"] = "webhook-allow"
 	}
 	_, err = updateCustomResource(ctx, customResourceClient, f.Namespace.Name, crInstanceName, toCompliantFn)
@@ -2191,21 +2191,21 @@ func testMutatingCustomResourceWebhook(ctx context.Context, f *framework.Framewo
 	ginkgo.By("Creating a custom resource that should be mutated by the webhook")
 	crName := "cr-instance-1"
 	cr := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       crd.Spec.Names.Kind,
 			"apiVersion": crd.Spec.Group + "/" + crd.Spec.Versions[0].Name,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      crName,
 				"namespace": f.Namespace.Name,
 			},
-			"data": map[string]interface{}{
+			"data": map[string]any{
 				"mutation-start": "yes",
 			},
 		},
 	}
 	mutatedCR, err := customResourceClient.Create(ctx, cr, metav1.CreateOptions{})
 	framework.ExpectNoError(err, "failed to create custom resource %s in namespace: %s", crName, f.Namespace.Name)
-	expectedCRData := map[string]interface{}{
+	expectedCRData := map[string]any{
 		"mutation-start":   "yes",
 		"mutation-stage-1": "yes",
 	}
@@ -2222,14 +2222,14 @@ func testMultiVersionCustomResourceWebhook(ctx context.Context, f *framework.Fra
 	ginkgo.By("Creating a custom resource while v1 is storage version")
 	crName := "cr-instance-1"
 	cr := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       testcrd.Crd.Spec.Names.Kind,
 			"apiVersion": testcrd.Crd.Spec.Group + "/" + testcrd.Crd.Spec.Versions[0].Name,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      crName,
 				"namespace": f.Namespace.Name,
 			},
-			"data": map[string]interface{}{
+			"data": map[string]any{
 				"mutation-start": "yes",
 			},
 		},
@@ -2267,7 +2267,7 @@ func testMultiVersionCustomResourceWebhook(ctx context.Context, f *framework.Fra
 	crDummyPatch := fmt.Sprint(`[{ "op": "add", "path": "/dummy", "value": "test" }]`)
 	mutatedCR, err := testcrd.DynamicClients["v2"].Patch(ctx, crName, types.JSONPatchType, []byte(crDummyPatch), metav1.PatchOptions{})
 	framework.ExpectNoError(err, "failed to patch custom resource %s in namespace: %s", crName, f.Namespace.Name)
-	expectedCRData := map[string]interface{}{
+	expectedCRData := map[string]any{
 		"mutation-start":   "yes",
 		"mutation-stage-1": "yes",
 		"mutation-stage-2": "yes",
@@ -2399,8 +2399,8 @@ func labelNamespace(ctx context.Context, f *framework.Framework, namespace strin
 	client := f.ClientSet
 
 	// Add a unique label to the namespace
-	nsPatch, err := json.Marshal(map[string]interface{}{
-		"metadata": map[string]interface{}{
+	nsPatch, err := json.Marshal(map[string]any{
+		"metadata": map[string]any{
 			"labels": map[string]string{f.UniqueName: "true"},
 		},
 	})

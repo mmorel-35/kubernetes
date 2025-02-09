@@ -25,7 +25,7 @@ import (
 	"k8s.io/kube-openapi/pkg/validation/spec"
 )
 
-func assertEqual(t *testing.T, expected, actual interface{}) {
+func assertEqual(t *testing.T, expected, actual any) {
 	var equal bool
 	if expected == nil || actual == nil {
 		equal = expected == actual
@@ -49,8 +49,8 @@ func TestGetDefinitionName(t *testing.T) {
 	namer := NewDefinitionNamer(s)
 	n, e := namer.GetDefinitionName(typePkgName)
 	assertEqual(t, typeFriendlyName, n)
-	assertEqual(t, []interface{}{
-		map[string]interface{}{
+	assertEqual(t, []any{
+		map[string]any{
 			"group":   "test",
 			"version": "v1",
 			"kind":    "TestType",

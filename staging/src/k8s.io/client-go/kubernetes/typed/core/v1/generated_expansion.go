@@ -18,24 +18,24 @@ limitations under the License.
 
 package v1
 
-type ComponentStatusExpansion interface{}
+type ComponentStatusExpansion any
 
-type ConfigMapExpansion interface{}
+type ConfigMapExpansion any
 
-type EndpointsExpansion interface{}
+type EndpointsExpansion any
 
-type LimitRangeExpansion interface{}
+type LimitRangeExpansion any
 
-type PersistentVolumeExpansion interface{}
+type PersistentVolumeExpansion any
 
-type PersistentVolumeClaimExpansion interface{}
+type PersistentVolumeClaimExpansion any
 
-type PodTemplateExpansion interface{}
+type PodTemplateExpansion any
 
-type ReplicationControllerExpansion interface{}
+type ReplicationControllerExpansion any
 
-type ResourceQuotaExpansion interface{}
+type ResourceQuotaExpansion any
 
-type SecretExpansion interface{}
+type SecretExpansion any
 
-type ServiceAccountExpansion interface{}
+type ServiceAccountExpansion any

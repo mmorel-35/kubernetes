@@ -31,7 +31,7 @@ type ReplicationControllerListerExpansion interface {
 
 // ReplicationControllerNamespaceListerExpansion allows custom methods to be added to
 // ReplicationControllerNamespaceLister.
-type ReplicationControllerNamespaceListerExpansion interface{}
+type ReplicationControllerNamespaceListerExpansion any
 
 // GetPodControllers returns a list of ReplicationControllers that potentially match a pod.
 // Only the one specified in the Pod's ControllerRef will actually manage it.

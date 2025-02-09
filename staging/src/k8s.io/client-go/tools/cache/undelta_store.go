@@ -25,7 +25,7 @@ package cache
 // PushFunc should be thread safe.
 type UndeltaStore struct {
 	Store
-	PushFunc func([]interface{})
+	PushFunc func([]any)
 }
 
 // Assert that it implements the Store interface.
@@ -42,7 +42,7 @@ var _ Store = &UndeltaStore{}
 // 3                                         Store.Add(b)
 // 4               Store.List() -> [a,b]
 // 5                                         Store.List() -> [a,b]
-func (u *UndeltaStore) Add(obj interface{}) error {
+func (u *UndeltaStore) Add(obj any) error {
 	if err := u.Store.Add(obj); err != nil {
 		return err
 	}
@@ -51,7 +51,7 @@ func (u *UndeltaStore) Add(obj interface{}) error {
 }
 
 // Update sets an item in the cache to its updated state and sends complete state by calling PushFunc.
-func (u *UndeltaStore) Update(obj interface{}) error {
+func (u *UndeltaStore) Update(obj any) error {
 	if err := u.Store.Update(obj); err != nil {
 		return err
 	}
@@ -60,7 +60,7 @@ func (u *UndeltaStore) Update(obj interface{}) error {
 }
 
 // Delete removes an item from the cache and sends complete state by calling PushFunc.
-func (u *UndeltaStore) Delete(obj interface{}) error {
+func (u *UndeltaStore) Delete(obj any) error {
 	if err := u.Store.Delete(obj); err != nil {
 		return err
 	}
@@ -72,7 +72,7 @@ func (u *UndeltaStore) Delete(obj interface{}) error {
 // 'u' takes ownership of the list, you should not reference the list again
 // after calling this function.
 // The new contents complete state will be sent by calling PushFunc after replacement.
-func (u *UndeltaStore) Replace(list []interface{}, resourceVersion string) error {
+func (u *UndeltaStore) Replace(list []any, resourceVersion string) error {
 	if err := u.Store.Replace(list, resourceVersion); err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func (u *UndeltaStore) Replace(list []interface{}, resourceVersion string) error
 }
 
 // NewUndeltaStore returns an UndeltaStore implemented with a Store.
-func NewUndeltaStore(pushFunc func([]interface{}), keyFunc KeyFunc) *UndeltaStore {
+func NewUndeltaStore(pushFunc func([]any), keyFunc KeyFunc) *UndeltaStore {
 	return &UndeltaStore{
 		Store:    NewStore(keyFunc),
 		PushFunc: pushFunc,

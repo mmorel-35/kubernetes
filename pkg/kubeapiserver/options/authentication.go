@@ -606,7 +606,7 @@ func (o *BuiltInAuthenticationOptions) ToAuthenticationConfig() (kubeauthenticat
 		case len(o.ServiceAccounts.KeyFiles) > 0 && o.ServiceAccounts.ExternalPublicKeysGetter != nil:
 			return kubeauthenticator.Config{}, fmt.Errorf("cannot set mutually exclusive flags `--service-account-key-file` and `--service-account-signing-endpoint` at the same time")
 		case len(o.ServiceAccounts.KeyFiles) > 0:
-			allPublicKeys := []interface{}{}
+			allPublicKeys := []any{}
 			for _, keyfile := range o.ServiceAccounts.KeyFiles {
 				publicKeys, err := keyutil.PublicKeysFromFile(keyfile)
 				if err != nil {

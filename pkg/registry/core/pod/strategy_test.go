@@ -791,7 +791,7 @@ func TestPodIndexFunc(t *testing.T) {
 	tcs := []struct {
 		name          string
 		indexFunc     cache.IndexFunc
-		pod           interface{}
+		pod           any
 		expectedValue string
 		expectedErr   error
 	}{

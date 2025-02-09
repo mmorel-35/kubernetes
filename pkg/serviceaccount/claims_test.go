@@ -280,7 +280,7 @@ func TestClaims(t *testing.T) {
 			// comparing json spews has the benefit over
 			// reflect.DeepEqual that we are also asserting that
 			// claims structs are json serializable
-			spew := func(obj interface{}) string {
+			spew := func(obj any) string {
 				b, err := json.Marshal(obj)
 				if err != nil {
 					t.Fatalf("err, couldn't marshal claims: %v", err)

@@ -42,7 +42,7 @@ type StacktracePred func(httpStatus int) (logStacktrace bool)
 type ShouldLogRequestPred func() bool
 
 type logger interface {
-	Addf(format string, data ...interface{})
+	Addf(format string, data ...any)
 }
 
 type respLoggerContextKeyType int
@@ -65,7 +65,7 @@ type respLogger struct {
 	// They can be modified by other goroutine when logging happens (in case of request timeout)
 	mutex              sync.Mutex
 	addedInfo          strings.Builder
-	addedKeyValuePairs []interface{}
+	addedKeyValuePairs []any
 	startTime          time.Time
 
 	captureErrorOutput bool
@@ -88,7 +88,7 @@ func (rl *respLogger) Unwrap() http.ResponseWriter {
 type passthroughLogger struct{}
 
 // Addf logs info immediately.
-func (passthroughLogger) Addf(format string, data ...interface{}) {
+func (passthroughLogger) Addf(format string, data ...any) {
 	klog.V(2).Info(fmt.Sprintf(format, data...))
 }
 
@@ -219,19 +219,19 @@ func StatusIsNot(statuses ...int) StacktracePred {
 }
 
 // Addf adds additional data to be logged with this request.
-func (rl *respLogger) Addf(format string, data ...interface{}) {
+func (rl *respLogger) Addf(format string, data ...any) {
 	rl.mutex.Lock()
 	defer rl.mutex.Unlock()
 	rl.addedInfo.WriteString(fmt.Sprintf(format, data...))
 }
 
-func AddInfof(ctx context.Context, format string, data ...interface{}) {
+func AddInfof(ctx context.Context, format string, data ...any) {
 	if rl := respLoggerFromContext(ctx); rl != nil {
 		rl.Addf(format, data...)
 	}
 }
 
-func (rl *respLogger) AddKeyValue(key string, value interface{}) {
+func (rl *respLogger) AddKeyValue(key string, value any) {
 	rl.mutex.Lock()
 	defer rl.mutex.Unlock()
 	rl.addedKeyValuePairs = append(rl.addedKeyValuePairs, key, value)
@@ -241,7 +241,7 @@ func (rl *respLogger) AddKeyValue(key string, value interface{}) {
 // with the request.
 // Use this function if you want your data to show up in httplog
 // in a more structured and readable way.
-func AddKeyValue(ctx context.Context, key string, value interface{}) {
+func AddKeyValue(ctx context.Context, key string, value any) {
 	if rl := respLoggerFromContext(ctx); rl != nil {
 		rl.AddKeyValue(key, value)
 	}
@@ -261,7 +261,7 @@ func (rl *respLogger) Log() {
 	auditID := audit.GetAuditIDTruncated(rl.req.Context())
 	verb := metrics.NormalizedVerb(rl.req)
 
-	keysAndValues := []interface{}{
+	keysAndValues := []any{
 		"verb", verb,
 		"URI", rl.req.RequestURI,
 		"latency", latency,

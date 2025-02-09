@@ -97,7 +97,7 @@ func TestUpdateApplyConflict(t *testing.T) {
                         }
 		}
 	}`)
-	newObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	newObj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal(patch, &newObj.Object); err != nil {
 		t.Fatalf("error decoding YAML: %v", err)
 	}
@@ -106,7 +106,7 @@ func TestUpdateApplyConflict(t *testing.T) {
 		t.Fatalf("failed to apply object: %v", err)
 	}
 
-	appliedObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	appliedObj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(`{
 		"apiVersion": "apps/v1",
 		"kind": "Deployment",
@@ -130,7 +130,7 @@ func TestApplyStripsFields(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManager(fakeTypeConverter, schema.FromAPIVersionAndKind("apps/v1", "Deployment"))
 
 	newObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "apps/v1",
 			"kind":       "Deployment",
 		},
@@ -161,7 +161,7 @@ func TestApplyStripsFields(t *testing.T) {
 func TestVersionCheck(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManager(fakeTypeConverter, schema.FromAPIVersionAndKind("apps/v1", "Deployment"))
 
-	appliedObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	appliedObj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(`{
 		"apiVersion": "apps/v1",
 		"kind": "Deployment",
@@ -175,7 +175,7 @@ func TestVersionCheck(t *testing.T) {
 		t.Fatalf("failed to apply object: %v", err)
 	}
 
-	appliedObj = &unstructured.Unstructured{Object: map[string]interface{}{}}
+	appliedObj = &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(`{
 		"apiVersion": "apps/v1beta1",
 		"kind": "Deployment",
@@ -202,7 +202,7 @@ func TestVersionCheck(t *testing.T) {
 func TestVersionCheckDoesNotPanic(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManager(fakeTypeConverter, schema.FromAPIVersionAndKind("apps/v1", "Deployment"))
 
-	appliedObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	appliedObj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(`{
 		"apiVersion": "apps/v1",
 		"kind": "Deployment",
@@ -216,7 +216,7 @@ func TestVersionCheckDoesNotPanic(t *testing.T) {
 		t.Fatalf("failed to apply object: %v", err)
 	}
 
-	appliedObj = &unstructured.Unstructured{Object: map[string]interface{}{}}
+	appliedObj = &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(`{
 		}`), &appliedObj.Object); err != nil {
 		t.Fatalf("error decoding YAML: %v", err)
@@ -241,7 +241,7 @@ func TestVersionCheckDoesNotPanic(t *testing.T) {
 func TestApplyDoesNotStripLabels(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManager(fakeTypeConverter, schema.FromAPIVersionAndKind("v1", "Pod"))
 
-	appliedObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	appliedObj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(`{
 		"apiVersion": "v1",
 		"kind": "Pod",
@@ -295,7 +295,7 @@ func TestApplyNewObject(t *testing.T) {
 		t.Run(test.gvk.String(), func(t *testing.T) {
 			f := managedfieldstest.NewTestFieldManager(fakeTypeConverter, test.gvk)
 
-			appliedObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+			appliedObj := &unstructured.Unstructured{Object: map[string]any{}}
 			if err := yaml.Unmarshal(test.obj, &appliedObj.Object); err != nil {
 				t.Fatalf("error decoding YAML: %v", err)
 			}
@@ -310,7 +310,7 @@ func TestApplyNewObject(t *testing.T) {
 func TestApplyFailsWithManagedFields(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManager(fakeTypeConverter, schema.FromAPIVersionAndKind("v1", "Pod"))
 
-	appliedObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	appliedObj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(`{
 		"apiVersion": "v1",
 		"kind": "Pod",
@@ -335,7 +335,7 @@ func TestApplyFailsWithManagedFields(t *testing.T) {
 func TestApplySuccessWithNoManagedFields(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManager(fakeTypeConverter, schema.FromAPIVersionAndKind("v1", "Pod"))
 
-	appliedObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	appliedObj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(`{
 		"apiVersion": "v1",
 		"kind": "Pod",
@@ -358,7 +358,7 @@ func TestApplySuccessWithNoManagedFields(t *testing.T) {
 func TestNoOpChanges(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManager(fakeTypeConverter, schema.FromAPIVersionAndKind("v1", "Pod"))
 
-	obj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	obj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(`{
 		"apiVersion": "v1",
 		"kind": "Pod",
@@ -409,7 +409,7 @@ func TestNoOpChanges(t *testing.T) {
 func TestResetManagedFieldsEmptyList(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManager(fakeTypeConverter, schema.FromAPIVersionAndKind("v1", "Pod"))
 
-	obj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	obj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(`{
 		"apiVersion": "v1",
 		"kind": "Pod",
@@ -450,7 +450,7 @@ func TestResetManagedFieldsEmptyList(t *testing.T) {
 func TestResetManagedFieldsEmptyItem(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManager(fakeTypeConverter, schema.FromAPIVersionAndKind("v1", "Pod"))
 
-	obj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	obj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(`{
 		"apiVersion": "v1",
 		"kind": "Pod",
@@ -491,7 +491,7 @@ func TestServerSideApplyWithInvalidLastApplied(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManager(fakeTypeConverter, schema.FromAPIVersionAndKind("apps/v1", "Deployment"))
 
 	// create object with client-side apply
-	newObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	newObj := &unstructured.Unstructured{Object: map[string]any{}}
 	deployment := []byte(`
 apiVersion: apps/v1
 kind: Deployment
@@ -524,7 +524,7 @@ spec:
 	}
 
 	// upgrade management of the object from client-side apply to server-side apply
-	appliedObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	appliedObj := &unstructured.Unstructured{Object: map[string]any{}}
 	appliedDeployment := []byte(`
 apiVersion: apps/v1
 kind: Deployment
@@ -570,7 +570,7 @@ func TestInteropForClientSideApplyAndServerSideApply(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManager(fakeTypeConverter, schema.FromAPIVersionAndKind("apps/v1", "Deployment"))
 
 	// create object with client-side apply
-	newObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	newObj := &unstructured.Unstructured{Object: map[string]any{}}
 	deployment := []byte(`
 apiVersion: apps/v1
 kind: Deployment
@@ -611,7 +611,7 @@ spec:
 	}
 
 	// upgrade management of the object from client-side apply to server-side apply
-	appliedObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	appliedObj := &unstructured.Unstructured{Object: map[string]any{}}
 	appliedDeployment := []byte(`
 apiVersion: apps/v1
 kind: Deployment
@@ -654,7 +654,7 @@ func TestNoTrackManagedFieldsForClientSideApply(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManager(fakeTypeConverter, schema.FromAPIVersionAndKind("apps/v1", "Deployment"))
 
 	// create object
-	newObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	newObj := &unstructured.Unstructured{Object: map[string]any{}}
 	deployment := []byte(`
 apiVersion: apps/v1
 kind: Deployment
@@ -676,7 +676,7 @@ spec:
 	}
 
 	// stop tracking managed fields
-	newObj = &unstructured.Unstructured{Object: map[string]interface{}{}}
+	newObj = &unstructured.Unstructured{Object: map[string]any{}}
 	deployment = []byte(`
 apiVersion: apps/v1
 kind: Deployment
@@ -700,7 +700,7 @@ spec:
 	}
 
 	// check that we still don't track managed fields
-	newObj = &unstructured.Unstructured{Object: map[string]interface{}{}}
+	newObj = &unstructured.Unstructured{Object: map[string]any{}}
 	deployment = []byte(`
 apiVersion: apps/v1
 kind: Deployment
@@ -732,7 +732,7 @@ spec:
 	}
 
 	// start tracking managed fields
-	newObj = &unstructured.Unstructured{Object: map[string]interface{}{}}
+	newObj = &unstructured.Unstructured{Object: map[string]any{}}
 	deployment = []byte(`
 apiVersion: apps/v1
 kind: Deployment
@@ -760,7 +760,7 @@ spec:
 	}
 
 	// upgrade management of the object from client-side apply to server-side apply
-	newObj = &unstructured.Unstructured{Object: map[string]interface{}{}}
+	newObj = &unstructured.Unstructured{Object: map[string]any{}}
 	deployment = []byte(`
 apiVersion: apps/v1
 kind: Deployment
@@ -790,7 +790,7 @@ spec:
 }
 
 func yamlToJSON(y []byte) (string, error) {
-	obj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	obj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal(y, &obj.Object); err != nil {
 		return "", fmt.Errorf("error decoding YAML: %v", err)
 	}
@@ -833,7 +833,7 @@ func getLastApplied(obj runtime.Object) (string, error) {
 func TestUpdateViaSubresources(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManagerSubresource(fakeTypeConverter, schema.FromAPIVersionAndKind("v1", "Pod"), "scale")
 
-	obj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	obj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(`{
 		"apiVersion": "v1",
 		"kind": "Pod",
@@ -889,10 +889,10 @@ func TestApplyDoesNotChangeManagedFields(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManager(fakeTypeConverter,
 		schema.FromAPIVersionAndKind("apps/v1", "Deployment"))
 	newObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{},
+		Object: map[string]any{},
 	}
 	appliedObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{},
+		Object: map[string]any{},
 	}
 
 	// Convert YAML string inputs to unstructured instances
@@ -983,7 +983,7 @@ func TestUpdateDoesNotChangeManagedFields(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManager(fakeTypeConverter,
 		schema.FromAPIVersionAndKind("apps/v1", "Deployment"))
 	newObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{},
+		Object: map[string]any{},
 	}
 
 	if err := yaml.Unmarshal([]byte(`{
@@ -1055,10 +1055,10 @@ func TestLiveObjectManagedFieldsNotRemoved(t *testing.T) {
 	f := managedfieldstest.NewTestFieldManager(fakeTypeConverter,
 		schema.FromAPIVersionAndKind("apps/v1", "Deployment"))
 	newObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{},
+		Object: map[string]any{},
 	}
 	appliedObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{},
+		Object: map[string]any{},
 	}
 	// Convert YAML string inputs to unstructured instances
 	if err := yaml.Unmarshal([]byte(`{

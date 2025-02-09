@@ -181,7 +181,7 @@ func registerLRUMetrics() {
 		keyIDHashStatusLastTimestampSecondsMetricLabels.Clear()
 	}
 
-	keyIDHashTotalMetricLabels = lru.NewWithEvictionFunc(cacheSize, func(key lru.Key, _ interface{}) {
+	keyIDHashTotalMetricLabels = lru.NewWithEvictionFunc(cacheSize, func(key lru.Key, _ any) {
 		item := key.(metricLabels)
 		if deleted := KeyIDHashTotal.DeleteLabelValues(item.transformationType, item.providerName, item.keyIDHash, item.apiServerIDHash); deleted {
 			klog.InfoS("Deleted keyIDHashTotalMetricLabels", "transformationType", item.transformationType,
@@ -192,7 +192,7 @@ func registerLRUMetrics() {
 				"providerName", item.providerName, "keyIDHash", item.keyIDHash, "apiServerIDHash", item.apiServerIDHash)
 		}
 	})
-	keyIDHashStatusLastTimestampSecondsMetricLabels = lru.NewWithEvictionFunc(cacheSize, func(key lru.Key, _ interface{}) {
+	keyIDHashStatusLastTimestampSecondsMetricLabels = lru.NewWithEvictionFunc(cacheSize, func(key lru.Key, _ any) {
 		item := key.(metricLabels)
 		if deleted := KeyIDHashStatusLastTimestampSeconds.DeleteLabelValues(item.providerName, item.keyIDHash, item.apiServerIDHash); deleted {
 			klog.InfoS("Deleted keyIDHashStatusLastTimestampSecondsMetricLabels", "providerName", item.providerName, "keyIDHash", item.keyIDHash, "apiServerIDHash", item.apiServerIDHash)
@@ -203,7 +203,7 @@ func RegisterMetrics() {
 	registerMetricsFunc.Do(func() {
 		registerLRUMetrics()
 		hashPool = &sync.Pool{
-			New: func() interface{} {
+			New: func() any {
 				return sha256.New()
 			},
 		}

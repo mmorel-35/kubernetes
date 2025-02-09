@@ -31,7 +31,7 @@ import (
 
 // ForKind returns an apply configuration type for the given GroupVersionKind, or nil if no
 // apply configuration type exists for the given GroupVersionKind.
-func ForKind(kind schema.GroupVersionKind) interface{} {
+func ForKind(kind schema.GroupVersionKind) any {
 	switch kind {
 	// Group=wardle.example.com, Version=v1alpha1
 	case v1alpha1.SchemeGroupVersion.WithKind("Fischer"):

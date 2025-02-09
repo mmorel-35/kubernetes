@@ -114,7 +114,7 @@ var additionalInfoKey additionalInfoKeyType
 func (cmm *MetricsManager) RecordMetricsInterceptor(
 	ctx context.Context,
 	method string,
-	req, reply interface{},
+	req, reply any,
 	cc *grpc.ClientConn,
 	invoker grpc.UnaryInvoker,
 	opts ...grpc.CallOption) error {

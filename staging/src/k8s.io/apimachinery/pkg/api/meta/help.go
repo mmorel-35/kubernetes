@@ -77,7 +77,7 @@ var (
 // and an error will be returned.
 // This function will either return a pointer to a slice, or an error, but not both.
 // TODO: this will be replaced with an interface in the future
-func GetItemsPtr(list runtime.Object) (interface{}, error) {
+func GetItemsPtr(list runtime.Object) (any, error) {
 	obj, err := getItemsPtr(list)
 	if err != nil {
 		return nil, fmt.Errorf("%T is not a list: %v", list, err)
@@ -86,7 +86,7 @@ func GetItemsPtr(list runtime.Object) (interface{}, error) {
 }
 
 // getItemsPtr returns a pointer to the list object's Items member or an error.
-func getItemsPtr(list runtime.Object) (interface{}, error) {
+func getItemsPtr(list runtime.Object) (any, error) {
 	v, err := conversion.EnforcePtr(list)
 	if err != nil {
 		return nil, err

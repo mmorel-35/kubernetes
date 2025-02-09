@@ -187,13 +187,13 @@ func newControllerWithClock(ctx context.Context, podInformer coreinformers.PodIn
 	}
 
 	if _, err := jobInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			jm.addJob(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			jm.updateJob(logger, oldObj, newObj)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			jm.deleteJob(logger, obj)
 		},
 	}); err != nil {
@@ -203,13 +203,13 @@ func newControllerWithClock(ctx context.Context, podInformer coreinformers.PodIn
 	jm.jobStoreSynced = jobInformer.Informer().HasSynced
 
 	if _, err := podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			jm.addPod(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			jm.updatePod(logger, oldObj, newObj)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			jm.deletePod(logger, obj, true)
 		},
 	}); err != nil {
@@ -295,7 +295,7 @@ func (jm *Controller) resolveControllerRef(namespace string, controllerRef *meta
 }
 
 // When a pod is created, enqueue the controller that manages it and update its expectations.
-func (jm *Controller) addPod(logger klog.Logger, obj interface{}) {
+func (jm *Controller) addPod(logger klog.Logger, obj any) {
 	pod := obj.(*v1.Pod)
 	recordFinishedPodWithTrackingFinalizer(nil, pod)
 	if pod.DeletionTimestamp != nil {
@@ -337,7 +337,7 @@ func (jm *Controller) addPod(logger klog.Logger, obj interface{}) {
 // When a pod is updated, figure out what job/s manage it and wake them up.
 // If the labels of the pod have changed we need to awaken both the old
 // and new job. old and cur must be *v1.Pod types.
-func (jm *Controller) updatePod(logger klog.Logger, old, cur interface{}) {
+func (jm *Controller) updatePod(logger klog.Logger, old, cur any) {
 	curPod := cur.(*v1.Pod)
 	oldPod := old.(*v1.Pod)
 	recordFinishedPodWithTrackingFinalizer(oldPod, curPod)
@@ -410,7 +410,7 @@ func (jm *Controller) updatePod(logger klog.Logger, old, cur interface{}) {
 
 // When a pod is deleted, enqueue the job that manages the pod and update its expectations.
 // obj could be an *v1.Pod, or a DeleteFinalStateUnknown marker item.
-func (jm *Controller) deletePod(logger klog.Logger, obj interface{}, final bool) {
+func (jm *Controller) deletePod(logger klog.Logger, obj any, final bool) {
 	pod, ok := obj.(*v1.Pod)
 	if final {
 		recordFinishedPodWithTrackingFinalizer(pod, nil)
@@ -466,7 +466,7 @@ func (jm *Controller) deletePod(logger klog.Logger, obj interface{}, final bool)
 	jm.enqueueSyncJobBatched(logger, job)
 }
 
-func (jm *Controller) addJob(logger klog.Logger, obj interface{}) {
+func (jm *Controller) addJob(logger klog.Logger, obj any) {
 	jm.enqueueSyncJobImmediately(logger, obj)
 	jobObj, ok := obj.(*batch.Job)
 	if !ok {
@@ -477,7 +477,7 @@ func (jm *Controller) addJob(logger klog.Logger, obj interface{}) {
 	}
 }
 
-func (jm *Controller) updateJob(logger klog.Logger, old, cur interface{}) {
+func (jm *Controller) updateJob(logger klog.Logger, old, cur any) {
 	oldJob := old.(*batch.Job)
 	curJob := cur.(*batch.Job)
 
@@ -521,7 +521,7 @@ func (jm *Controller) updateJob(logger klog.Logger, old, cur interface{}) {
 
 // deleteJob enqueues the job and all the pods associated with it that still
 // have a finalizer.
-func (jm *Controller) deleteJob(logger klog.Logger, obj interface{}) {
+func (jm *Controller) deleteJob(logger klog.Logger, obj any) {
 	jm.enqueueSyncJobImmediately(logger, obj)
 	jobObj, ok := obj.(*batch.Job)
 	if !ok {
@@ -557,7 +557,7 @@ func (jm *Controller) enqueueLabelSelector(jobObj *batch.Job) {
 // immediately.
 // It is only used for Job events (creation, deletion, spec update).
 // obj could be an *batch.Job, or a DeletionFinalStateUnknown marker item.
-func (jm *Controller) enqueueSyncJobImmediately(logger klog.Logger, obj interface{}) {
+func (jm *Controller) enqueueSyncJobImmediately(logger klog.Logger, obj any) {
 	jm.enqueueSyncJobInternal(logger, obj, 0)
 }
 
@@ -567,7 +567,7 @@ func (jm *Controller) enqueueSyncJobImmediately(logger klog.Logger, obj interfac
 // - Pod events (creation, deletion, update)
 // - Job status update
 // obj could be an *batch.Job, or a DeletionFinalStateUnknown marker item.
-func (jm *Controller) enqueueSyncJobBatched(logger klog.Logger, obj interface{}) {
+func (jm *Controller) enqueueSyncJobBatched(logger klog.Logger, obj any) {
 	jm.enqueueSyncJobInternal(logger, obj, syncJobBatchPeriod)
 }
 
@@ -575,14 +575,14 @@ func (jm *Controller) enqueueSyncJobBatched(logger klog.Logger, obj interface{})
 // custom delay, but not smaller than the batching delay.
 // It is used when pod recreations are delayed due to pod failures.
 // obj could be an *batch.Job, or a DeletionFinalStateUnknown marker item.
-func (jm *Controller) enqueueSyncJobWithDelay(logger klog.Logger, obj interface{}, delay time.Duration) {
+func (jm *Controller) enqueueSyncJobWithDelay(logger klog.Logger, obj any, delay time.Duration) {
 	if delay < syncJobBatchPeriod {
 		delay = syncJobBatchPeriod
 	}
 	jm.enqueueSyncJobInternal(logger, obj, delay)
 }
 
-func (jm *Controller) enqueueSyncJobInternal(logger klog.Logger, obj interface{}, delay time.Duration) {
+func (jm *Controller) enqueueSyncJobInternal(logger klog.Logger, obj any, delay time.Duration) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("Couldn't get key for object %+v: %v", obj, err))
@@ -1909,8 +1909,8 @@ func removeTrackingFinalizerPatch(pod *v1.Pod) []byte {
 	if !hasJobTrackingFinalizer(pod) {
 		return nil
 	}
-	patch := map[string]interface{}{
-		"metadata": map[string]interface{}{
+	patch := map[string]any{
+		"metadata": map[string]any{
 			"$deleteFromPrimitiveList/finalizers": []string{batch.JobTrackingFinalizer},
 		},
 	}

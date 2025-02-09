@@ -119,7 +119,7 @@ func NewController(
 	return ec, nil
 }
 
-func (ec *ephemeralController) enqueuePod(obj interface{}) {
+func (ec *ephemeralController) enqueuePod(obj any) {
 	pod, ok := obj.(*v1.Pod)
 	if !ok {
 		return
@@ -144,7 +144,7 @@ func (ec *ephemeralController) enqueuePod(obj interface{}) {
 	}
 }
 
-func (ec *ephemeralController) onPVCDelete(obj interface{}) {
+func (ec *ephemeralController) onPVCDelete(obj any) {
 	pvc, ok := obj.(*v1.PersistentVolumeClaim)
 	if !ok {
 		return

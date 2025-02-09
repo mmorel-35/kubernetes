@@ -38,7 +38,7 @@ var appsDeploymentGVR = schema.GroupVersionResource{
 // And if it is then added as a template, no error is thrown upon `Render`
 func TestGeneratorMissingOutput(t *testing.T) {
 	var buf bytes.Buffer
-	var doc map[string]interface{}
+	var doc map[string]any
 
 	appsv1Bytes := bytesForGV(t, appsv1Path)
 	err := json.Unmarshal(appsv1Bytes, &doc)
@@ -62,7 +62,7 @@ func TestGeneratorMissingOutput(t *testing.T) {
 // Shows that correct context with the passed object is passed to the template
 func TestGeneratorContext(t *testing.T) {
 	var buf bytes.Buffer
-	var doc map[string]interface{}
+	var doc map[string]any
 
 	appsv1Bytes := bytesForGV(t, appsv1Path)
 	err := json.Unmarshal(appsv1Bytes, &doc)

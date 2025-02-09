@@ -225,10 +225,10 @@ func TestListerListMethod(t *testing.T) {
 
 func newUnstructured(apiVersion, kind, namespace, name string) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": apiVersion,
 			"kind":       kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace": namespace,
 				"name":      name,
 			},

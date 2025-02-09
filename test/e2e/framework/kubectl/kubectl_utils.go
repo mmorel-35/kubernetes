@@ -100,7 +100,7 @@ func (tk *TestKubeconfig) KubectlCmd(args ...string) *exec.Cmd {
 }
 
 // LogFailedContainers runs `kubectl logs` on a failed containers.
-func LogFailedContainers(ctx context.Context, c clientset.Interface, ns string, logFunc func(ftm string, args ...interface{})) {
+func LogFailedContainers(ctx context.Context, c clientset.Interface, ns string, logFunc func(ftm string, args ...any)) {
 	podList, err := c.CoreV1().Pods(ns).List(ctx, metav1.ListOptions{})
 	if err != nil {
 		logFunc("Error getting pods in namespace '%s': %v", ns, err)
@@ -114,7 +114,7 @@ func LogFailedContainers(ctx context.Context, c clientset.Interface, ns string, 
 	}
 }
 
-func kubectlLogPod(ctx context.Context, c clientset.Interface, pod v1.Pod, containerNameSubstr string, logFunc func(ftm string, args ...interface{})) {
+func kubectlLogPod(ctx context.Context, c clientset.Interface, pod v1.Pod, containerNameSubstr string, logFunc func(ftm string, args ...any)) {
 	for _, container := range pod.Spec.Containers {
 		if strings.Contains(container.Name, containerNameSubstr) {
 			// Contains() matches all strings if substr is empty

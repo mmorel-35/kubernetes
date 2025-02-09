@@ -135,7 +135,7 @@ func (g *utilGenerator) GenerateType(c *generator.Context, _ *types.Type, w io.W
 	}
 	sort.Sort(groupSort(groups))
 
-	m := map[string]interface{}{
+	m := map[string]any{
 		"applyConfiguration":     applyConfiguration,
 		"groups":                 groups,
 		"internalParser":         types.Ref(path.Join(g.outputPackage, "internal"), "Parser"),
@@ -159,7 +159,7 @@ func NewTypeConverter(scheme *{{.runtimeScheme|raw}}) *{{.testingTypeConverter|r
 var forKindFunc = `
 // ForKind returns an apply configuration type for the given GroupVersionKind, or nil if no
 // apply configuration type exists for the given GroupVersionKind.
-func ForKind(kind {{.schemaGroupVersionKind|raw}}) interface{} {
+func ForKind(kind {{.schemaGroupVersionKind|raw}}) any {
 	switch kind {
 		{{range $group := .groups -}}{{$GroupGoName := .GroupGoName -}}
 			{{range $version := .Versions -}}

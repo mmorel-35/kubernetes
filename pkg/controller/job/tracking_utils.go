@@ -30,7 +30,7 @@ import (
 )
 
 // uidSetKeyFunc to parse out the key from a uidSet.
-var uidSetKeyFunc = func(obj interface{}) (string, error) {
+var uidSetKeyFunc = func(obj any) (string, error) {
 	if u, ok := obj.(*uidSet); ok {
 		return u.key, nil
 	}

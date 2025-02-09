@@ -416,12 +416,12 @@ func assertReplicasOwnership(t *testing.T, obj *unstructured.Unstructured, field
 	}
 
 	for _, managedField := range accessor.GetManagedFields() {
-		var entryJSON map[string]interface{}
+		var entryJSON map[string]any
 		if err := json.Unmarshal(managedField.FieldsV1.Raw, &entryJSON); err != nil {
 			t.Fatalf("failed to read into json")
 		}
 
-		spec, ok := entryJSON["f:spec"].(map[string]interface{})
+		spec, ok := entryJSON["f:spec"].(map[string]any)
 		if !ok {
 			// continue with the next managedField, as we this field does not hold the spec entry
 			continue

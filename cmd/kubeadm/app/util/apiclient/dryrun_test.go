@@ -487,10 +487,10 @@ func TestDecodeUnstructuredIntoAPIObject(t *testing.T) {
 				"kubeadm-config",
 			),
 			unstructured: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "ConfigMap",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"namespace": "foo",
 						"name":      "bar",
 					},
@@ -520,10 +520,10 @@ func TestDecodeUnstructuredIntoAPIObject(t *testing.T) {
 				"baz01",
 			),
 			unstructured: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "foo/bar",
 					"kind":       "baz",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"namespace": "some-ns",
 						"name":      "baz01",
 					},

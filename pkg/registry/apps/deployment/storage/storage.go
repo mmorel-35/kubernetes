@@ -181,7 +181,7 @@ func (r *RollbackREST) ProducesMIMETypes(verb string) []string {
 
 // ProducesObject returns an object the specified HTTP verb respond with. It will overwrite storage object if
 // it is not nil. Only the type of the return object matters, the value will be ignored.
-func (r *RollbackREST) ProducesObject(verb string) interface{} {
+func (r *RollbackREST) ProducesObject(verb string) any {
 	return metav1.Status{}
 }
 

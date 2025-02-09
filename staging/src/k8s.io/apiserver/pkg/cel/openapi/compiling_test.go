@@ -143,7 +143,7 @@ type simpleActivation struct {
 	bar any
 }
 
-func (a *simpleActivation) ResolveName(name string) (interface{}, bool) {
+func (a *simpleActivation) ResolveName(name string) (any, bool) {
 	switch name {
 	case "foo":
 		return a.foo, true

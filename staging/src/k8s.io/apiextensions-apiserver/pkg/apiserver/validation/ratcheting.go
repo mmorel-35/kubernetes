@@ -30,7 +30,7 @@ import (
 // NewSchemaValidator
 type schemaArgs struct {
 	schema       *spec.Schema
-	root         interface{}
+	root         any
 	path         string
 	knownFormats strfmt.Registry
 	options      []validate.Option
@@ -42,7 +42,7 @@ type RatchetingSchemaValidator struct {
 	schemaArgs
 }
 
-func NewRatchetingSchemaValidator(schema *spec.Schema, rootSchema interface{}, root string, formats strfmt.Registry, options ...validate.Option) *RatchetingSchemaValidator {
+func NewRatchetingSchemaValidator(schema *spec.Schema, rootSchema any, root string, formats strfmt.Registry, options ...validate.Option) *RatchetingSchemaValidator {
 	return &RatchetingSchemaValidator{
 		schemaArgs: schemaArgs{
 			schema:       schema,
@@ -54,12 +54,12 @@ func NewRatchetingSchemaValidator(schema *spec.Schema, rootSchema interface{}, r
 	}
 }
 
-func (r *RatchetingSchemaValidator) Validate(new interface{}, options ...ValidationOption) *validate.Result {
+func (r *RatchetingSchemaValidator) Validate(new any, options ...ValidationOption) *validate.Result {
 	sv := validate.NewSchemaValidator(r.schema, r.root, r.path, r.knownFormats, r.options...)
 	return sv.Validate(new)
 }
 
-func (r *RatchetingSchemaValidator) ValidateUpdate(new, old interface{}, options ...ValidationOption) *validate.Result {
+func (r *RatchetingSchemaValidator) ValidateUpdate(new, old any, options ...ValidationOption) *validate.Result {
 	opts := NewValidationOptions(options...)
 
 	if !opts.Ratcheting {
@@ -133,7 +133,7 @@ func (r *ratchetingValueValidator) getValidateOption() validate.Option {
 //
 // This call has a side-effect of populating it's `children` variable with
 // the explored nodes of the object tree.
-func (r *ratchetingValueValidator) Validate(new interface{}) *validate.Result {
+func (r *ratchetingValueValidator) Validate(new any) *validate.Result {
 	opts := append([]validate.Option{
 		r.getValidateOption(),
 	}, r.options...)
@@ -163,7 +163,7 @@ func (r *ratchetingValueValidator) Validate(new interface{}) *validate.Result {
 // use for the child.
 //
 // If the old value cannot be correlated, then default validation is used.
-func (r *ratchetingValueValidator) SubPropertyValidator(field string, schema *spec.Schema, rootSchema interface{}, root string, formats strfmt.Registry, options ...validate.Option) validate.ValueValidator {
+func (r *ratchetingValueValidator) SubPropertyValidator(field string, schema *spec.Schema, rootSchema any, root string, formats strfmt.Registry, options ...validate.Option) validate.ValueValidator {
 	childNode := r.correlation.Key(field)
 	if childNode == nil || (r.path == "" && isTypeMetaField(field)) {
 		// Defer to default validation if we cannot correlate the old value
@@ -191,7 +191,7 @@ func (r *ratchetingValueValidator) SubPropertyValidator(field string, schema *sp
 // use for the child.
 //
 // If the old value cannot be correlated, then default validation is used.
-func (r *ratchetingValueValidator) SubIndexValidator(index int, schema *spec.Schema, rootSchema interface{}, root string, formats strfmt.Registry, options ...validate.Option) validate.ValueValidator {
+func (r *ratchetingValueValidator) SubIndexValidator(index int, schema *spec.Schema, rootSchema any, root string, formats strfmt.Registry, options ...validate.Option) validate.ValueValidator {
 	childNode := r.correlation.Index(index)
 	if childNode == nil {
 		return validate.NewSchemaValidator(schema, rootSchema, root, formats, options...)
@@ -213,7 +213,7 @@ func (r ratchetingValueValidator) SetPath(path string) {
 	// Unused by kube-openapi
 }
 
-func (r ratchetingValueValidator) Applies(source interface{}, valueKind reflect.Kind) bool {
+func (r ratchetingValueValidator) Applies(source any, valueKind reflect.Kind) bool {
 	return true
 }
 

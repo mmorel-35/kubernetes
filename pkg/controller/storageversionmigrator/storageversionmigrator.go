@@ -86,10 +86,10 @@ func NewSVMController(
 	}
 
 	_, _ = svmInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			svmController.addSVM(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			svmController.updateSVM(logger, oldObj, newObj)
 		},
 	})
@@ -101,13 +101,13 @@ func (svmc *SVMController) Name() string {
 	return svmc.controllerName
 }
 
-func (svmc *SVMController) addSVM(logger klog.Logger, obj interface{}) {
+func (svmc *SVMController) addSVM(logger klog.Logger, obj any) {
 	svm := obj.(*svmv1alpha1.StorageVersionMigration)
 	logger.V(4).Info("Adding", "svm", klog.KObj(svm))
 	svmc.enqueue(svm)
 }
 
-func (svmc *SVMController) updateSVM(logger klog.Logger, oldObj, newObj interface{}) {
+func (svmc *SVMController) updateSVM(logger klog.Logger, oldObj, newObj any) {
 	oldSVM := oldObj.(*svmv1alpha1.StorageVersionMigration)
 	newSVM := newObj.(*svmv1alpha1.StorageVersionMigration)
 	logger.V(4).Info("Updating", "svm", klog.KObj(oldSVM))

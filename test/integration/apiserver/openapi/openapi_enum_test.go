@@ -68,7 +68,7 @@ func TestEnablingOpenAPIEnumTypes(t *testing.T) {
 						Default:     "TCP",
 						Type:        []string{"string"},
 						Format:      "",
-						Enum:        []interface{}{"SCTP", "TCP", "UDP"},
+						Enum:        []any{"SCTP", "TCP", "UDP"},
 					},
 				}
 				defs[typeToAddEnum] = def

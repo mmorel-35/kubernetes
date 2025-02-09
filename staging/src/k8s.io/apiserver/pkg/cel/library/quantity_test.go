@@ -101,7 +101,7 @@ func testQuantity(t *testing.T, expr string, expectResult ref.Val, expectRuntime
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-	res, _, err := prog.Eval(map[string]interface{}{})
+	res, _, err := prog.Eval(map[string]any{})
 	if len(expectRuntimeErrPattern) > 0 {
 		if err == nil {
 			t.Fatalf("no runtime error thrown. Expected: %v", expectRuntimeErrPattern)

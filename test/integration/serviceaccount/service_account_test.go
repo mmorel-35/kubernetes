@@ -335,7 +335,7 @@ func TestLegacyServiceAccountTokenTracking(t *testing.T) {
 // startServiceAccountTestServerAndWaitForCaches returns a started server
 // It is the responsibility of the caller to ensure the returned stopFunc is called
 func startServiceAccountTestServerAndWaitForCaches(ctx context.Context, t *testing.T) (clientset.Interface, *restclient.Config, func(), clientinformers.SharedInformerFactory, error) {
-	var serviceAccountKey interface{}
+	var serviceAccountKey any
 
 	ctx, cancel := context.WithCancel(ctx)
 

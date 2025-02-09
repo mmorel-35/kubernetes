@@ -855,7 +855,7 @@ func closeOnCall(h http.Handler) (chan struct{}, http.Handler) {
 }
 
 func crdConverter(desiredAPIVersion string, obj runtime.RawExtension) (runtime.RawExtension, error) {
-	u := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	u := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := json.Unmarshal(obj.Raw, u); err != nil {
 		return runtime.RawExtension{}, fmt.Errorf("failed to deserialize object: %s with error: %w", string(obj.Raw), err)
 	}

@@ -35,159 +35,159 @@ import (
 func TestRestoreObjectMeta(t *testing.T) {
 	tests := []struct {
 		name          string
-		original      map[string]interface{}
-		converted     map[string]interface{}
-		expected      map[string]interface{}
+		original      map[string]any
+		converted     map[string]any
+		expected      map[string]any
 		expectedError bool
 	}{
 		{"no converted metadata",
-			map[string]interface{}{"metadata": map[string]interface{}{}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"spec": map[string]interface{}{}},
-			map[string]interface{}{"spec": map[string]interface{}{}},
+			map[string]any{"metadata": map[string]any{}, "spec": map[string]any{}},
+			map[string]any{"spec": map[string]any{}},
+			map[string]any{"spec": map[string]any{}},
 			true,
 		},
 		{"invalid converted metadata",
-			map[string]interface{}{"metadata": map[string]interface{}{}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": []interface{}{"foo"}},
-			map[string]interface{}{"metadata": []interface{}{"foo"}},
+			map[string]any{"metadata": map[string]any{}, "spec": map[string]any{}},
+			map[string]any{"metadata": []any{"foo"}},
+			map[string]any{"metadata": []any{"foo"}},
 			true,
 		},
 		{"no original metadata",
-			map[string]interface{}{"spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{}, "spec": map[string]interface{}{}},
+			map[string]any{"spec": map[string]any{}},
+			map[string]any{"metadata": map[string]any{}, "spec": map[string]any{}},
+			map[string]any{"metadata": map[string]any{}, "spec": map[string]any{}},
 			false,
 		},
 		{"invalid original metadata",
-			map[string]interface{}{"metadata": []interface{}{"foo"}},
-			map[string]interface{}{"metadata": map[string]interface{}{}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": []interface{}{"foo"}, "spec": map[string]interface{}{}},
+			map[string]any{"metadata": []any{"foo"}},
+			map[string]any{"metadata": map[string]any{}, "spec": map[string]any{}},
+			map[string]any{"metadata": []any{"foo"}, "spec": map[string]any{}},
 			true,
 		},
 		{"changed label, annotations and non-label",
-			map[string]interface{}{"metadata": map[string]interface{}{
+			map[string]any{"metadata": map[string]any{
 				"foo":         "bar",
-				"labels":      map[string]interface{}{"a": "A", "b": "B"},
-				"annotations": map[string]interface{}{"a": "1", "b": "2"},
-			}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{
+				"labels":      map[string]any{"a": "A", "b": "B"},
+				"annotations": map[string]any{"a": "1", "b": "2"},
+			}, "spec": map[string]any{}},
+			map[string]any{"metadata": map[string]any{
 				"foo":         "abc",
-				"labels":      map[string]interface{}{"a": "AA", "b": "B"},
-				"annotations": map[string]interface{}{"a": "1", "b": "22"},
-			}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{
+				"labels":      map[string]any{"a": "AA", "b": "B"},
+				"annotations": map[string]any{"a": "1", "b": "22"},
+			}, "spec": map[string]any{}},
+			map[string]any{"metadata": map[string]any{
 				"foo":         "bar",
-				"labels":      map[string]interface{}{"a": "AA", "b": "B"},
-				"annotations": map[string]interface{}{"a": "1", "b": "22"},
-			}, "spec": map[string]interface{}{}},
+				"labels":      map[string]any{"a": "AA", "b": "B"},
+				"annotations": map[string]any{"a": "1", "b": "22"},
+			}, "spec": map[string]any{}},
 			false,
 		},
 		{"added labels and annotations",
-			map[string]interface{}{"metadata": map[string]interface{}{
+			map[string]any{"metadata": map[string]any{
 				"foo": "bar",
-			}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{
+			}, "spec": map[string]any{}},
+			map[string]any{"metadata": map[string]any{
 				"foo":         "abc",
-				"labels":      map[string]interface{}{"a": "AA", "b": "B"},
-				"annotations": map[string]interface{}{"a": "1", "b": "22"},
-			}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{
+				"labels":      map[string]any{"a": "AA", "b": "B"},
+				"annotations": map[string]any{"a": "1", "b": "22"},
+			}, "spec": map[string]any{}},
+			map[string]any{"metadata": map[string]any{
 				"foo":         "bar",
-				"labels":      map[string]interface{}{"a": "AA", "b": "B"},
-				"annotations": map[string]interface{}{"a": "1", "b": "22"},
-			}, "spec": map[string]interface{}{}},
+				"labels":      map[string]any{"a": "AA", "b": "B"},
+				"annotations": map[string]any{"a": "1", "b": "22"},
+			}, "spec": map[string]any{}},
 			false,
 		},
 		{"added labels and annotations, with nil before",
-			map[string]interface{}{"metadata": map[string]interface{}{
+			map[string]any{"metadata": map[string]any{
 				"foo":         "bar",
 				"labels":      nil,
 				"annotations": nil,
-			}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{
+			}, "spec": map[string]any{}},
+			map[string]any{"metadata": map[string]any{
 				"foo":         "abc",
-				"labels":      map[string]interface{}{"a": "AA", "b": "B"},
-				"annotations": map[string]interface{}{"a": "1", "b": "22"},
-			}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{
+				"labels":      map[string]any{"a": "AA", "b": "B"},
+				"annotations": map[string]any{"a": "1", "b": "22"},
+			}, "spec": map[string]any{}},
+			map[string]any{"metadata": map[string]any{
 				"foo":         "bar",
-				"labels":      map[string]interface{}{"a": "AA", "b": "B"},
-				"annotations": map[string]interface{}{"a": "1", "b": "22"},
-			}, "spec": map[string]interface{}{}},
+				"labels":      map[string]any{"a": "AA", "b": "B"},
+				"annotations": map[string]any{"a": "1", "b": "22"},
+			}, "spec": map[string]any{}},
 			false,
 		},
 		{"removed labels and annotations",
-			map[string]interface{}{"metadata": map[string]interface{}{
+			map[string]any{"metadata": map[string]any{
 				"foo":         "bar",
-				"labels":      map[string]interface{}{"a": "AA", "b": "B"},
-				"annotations": map[string]interface{}{"a": "1", "b": "22"},
-			}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{
+				"labels":      map[string]any{"a": "AA", "b": "B"},
+				"annotations": map[string]any{"a": "1", "b": "22"},
+			}, "spec": map[string]any{}},
+			map[string]any{"metadata": map[string]any{
 				"foo": "abc",
-			}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{
+			}, "spec": map[string]any{}},
+			map[string]any{"metadata": map[string]any{
 				"foo": "bar",
-			}, "spec": map[string]interface{}{}},
+			}, "spec": map[string]any{}},
 			false,
 		},
 		{"nil'ed labels and annotations",
-			map[string]interface{}{"metadata": map[string]interface{}{
+			map[string]any{"metadata": map[string]any{
 				"foo":         "bar",
-				"labels":      map[string]interface{}{"a": "AA", "b": "B"},
-				"annotations": map[string]interface{}{"a": "1", "b": "22"},
-			}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{
+				"labels":      map[string]any{"a": "AA", "b": "B"},
+				"annotations": map[string]any{"a": "1", "b": "22"},
+			}, "spec": map[string]any{}},
+			map[string]any{"metadata": map[string]any{
 				"foo":         "abc",
 				"labels":      nil,
 				"annotations": nil,
-			}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{
+			}, "spec": map[string]any{}},
+			map[string]any{"metadata": map[string]any{
 				"foo": "bar",
-			}, "spec": map[string]interface{}{}},
+			}, "spec": map[string]any{}},
 			false,
 		},
 		{"added labels and annotations",
-			map[string]interface{}{"metadata": map[string]interface{}{
+			map[string]any{"metadata": map[string]any{
 				"foo": "bar",
-			}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{
+			}, "spec": map[string]any{}},
+			map[string]any{"metadata": map[string]any{
 				"foo":         "abc",
-				"labels":      map[string]interface{}{"a": nil, "b": "B"},
-				"annotations": map[string]interface{}{"a": nil, "b": "22"},
-			}, "spec": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{
+				"labels":      map[string]any{"a": nil, "b": "B"},
+				"annotations": map[string]any{"a": nil, "b": "22"},
+			}, "spec": map[string]any{}},
+			map[string]any{"metadata": map[string]any{
 				"foo": "bar",
-			}, "spec": map[string]interface{}{}},
+			}, "spec": map[string]any{}},
 			true,
 		},
 		{"invalid label key",
-			map[string]interface{}{"metadata": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{"labels": map[string]interface{}{"some/non-qualified/label": "x"}}},
-			map[string]interface{}{"metadata": map[string]interface{}{}},
+			map[string]any{"metadata": map[string]any{}},
+			map[string]any{"metadata": map[string]any{"labels": map[string]any{"some/non-qualified/label": "x"}}},
+			map[string]any{"metadata": map[string]any{}},
 			true,
 		},
 		{"invalid annotation key",
-			map[string]interface{}{"metadata": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{"labels": map[string]interface{}{"some/non-qualified/label": "x"}}},
-			map[string]interface{}{"metadata": map[string]interface{}{}},
+			map[string]any{"metadata": map[string]any{}},
+			map[string]any{"metadata": map[string]any{"labels": map[string]any{"some/non-qualified/label": "x"}}},
+			map[string]any{"metadata": map[string]any{}},
 			true,
 		},
 		{"invalid label value",
-			map[string]interface{}{"metadata": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{"labels": map[string]interface{}{"foo": "üäö"}}},
-			map[string]interface{}{"metadata": map[string]interface{}{}},
+			map[string]any{"metadata": map[string]any{}},
+			map[string]any{"metadata": map[string]any{"labels": map[string]any{"foo": "üäö"}}},
+			map[string]any{"metadata": map[string]any{}},
 			true,
 		},
 		{"too big label value",
-			map[string]interface{}{"metadata": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{"labels": map[string]interface{}{"foo": strings.Repeat("x", validation.LabelValueMaxLength+1)}}},
-			map[string]interface{}{"metadata": map[string]interface{}{}},
+			map[string]any{"metadata": map[string]any{}},
+			map[string]any{"metadata": map[string]any{"labels": map[string]any{"foo": strings.Repeat("x", validation.LabelValueMaxLength+1)}}},
+			map[string]any{"metadata": map[string]any{}},
 			true,
 		},
 		{"too big annotation value",
-			map[string]interface{}{"metadata": map[string]interface{}{}},
-			map[string]interface{}{"metadata": map[string]interface{}{"annotations": map[string]interface{}{"foo": strings.Repeat("x", 256*(1<<10)+1)}}},
-			map[string]interface{}{"metadata": map[string]interface{}{}},
+			map[string]any{"metadata": map[string]any{}},
+			map[string]any{"metadata": map[string]any{"annotations": map[string]any{"foo": strings.Repeat("x", 256*(1<<10)+1)}}},
+			map[string]any{"metadata": map[string]any{}},
 			true,
 		},
 	}
@@ -207,9 +207,9 @@ func TestRestoreObjectMeta(t *testing.T) {
 }
 
 func TestGetObjectsToConvert(t *testing.T) {
-	v1Object := &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "foo/v1", "kind": "Widget", "metadata": map[string]interface{}{"name": "myv1"}}}
-	v2Object := &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "foo/v2", "kind": "Widget", "metadata": map[string]interface{}{"name": "myv2"}}}
-	v3Object := &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "foo/v3", "kind": "Widget", "metadata": map[string]interface{}{"name": "myv3"}}}
+	v1Object := &unstructured.Unstructured{Object: map[string]any{"apiVersion": "foo/v1", "kind": "Widget", "metadata": map[string]any{"name": "myv1"}}}
+	v2Object := &unstructured.Unstructured{Object: map[string]any{"apiVersion": "foo/v2", "kind": "Widget", "metadata": map[string]any{"name": "myv2"}}}
+	v3Object := &unstructured.Unstructured{Object: map[string]any{"apiVersion": "foo/v3", "kind": "Widget", "metadata": map[string]any{"name": "myv3"}}}
 
 	testcases := []struct {
 		Name       string
@@ -280,7 +280,7 @@ func TestGetObjectsToConvert(t *testing.T) {
 
 func TestCreateConversionReviewObjects(t *testing.T) {
 	objects := []runtime.RawExtension{
-		{Object: &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "foo/v2", "Kind": "Widget"}}},
+		{Object: &unstructured.Unstructured{Object: map[string]any{"apiVersion": "foo/v2", "Kind": "Widget"}}},
 	}
 
 	testcases := []struct {
@@ -339,7 +339,7 @@ func TestCreateConversionReviewObjects(t *testing.T) {
 }
 
 func TestGetConvertedObjectsFromResponse(t *testing.T) {
-	v1Object := &unstructured.Unstructured{Object: map[string]interface{}{"apiVersion": "foo/v1", "kind": "Widget", "metadata": map[string]interface{}{"name": "myv1"}}}
+	v1Object := &unstructured.Unstructured{Object: map[string]any{"apiVersion": "foo/v1", "kind": "Widget", "metadata": map[string]any{"name": "myv1"}}}
 
 	testcases := []struct {
 		Name     string

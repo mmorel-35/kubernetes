@@ -136,7 +136,7 @@ func (pl *NodePorts) EventsToRegister(_ context.Context) ([]framework.ClusterEve
 
 // isSchedulableAfterPodDeleted is invoked whenever a pod deleted. It checks whether
 // that change made a previously unschedulable pod schedulable.
-func (pl *NodePorts) isSchedulableAfterPodDeleted(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *NodePorts) isSchedulableAfterPodDeleted(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	deletedPod, _, err := util.As[*v1.Pod](oldObj, nil)
 	if err != nil {
 		return framework.Queue, err

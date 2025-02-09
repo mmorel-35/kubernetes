@@ -92,7 +92,7 @@ func TestExplainOpenAPIClient(t *testing.T) {
 	discoveryBytes, err := gv.Schema("application/json")
 	require.NoError(t, err)
 
-	var doc map[string]interface{}
+	var doc map[string]any
 	err = json.Unmarshal(discoveryBytes, &doc)
 	require.NoError(t, err)
 

@@ -29,7 +29,7 @@ func testHeapObjectKeyFunc(obj testHeapObject) string {
 
 type testHeapObject struct {
 	name string
-	val  interface{}
+	val  any
 }
 
 type testMetricRecorder int
@@ -52,7 +52,7 @@ func (tmr *testMetricRecorder) Clear() {
 	}
 }
 
-func mkHeapObj(name string, val interface{}) testHeapObject {
+func mkHeapObj(name string, val any) testHeapObject {
 	return testHeapObject{name: name, val: val}
 }
 

@@ -86,11 +86,11 @@ func NewNamespaceController(
 	// configure the namespace informer event handlers
 	namespaceInformer.Informer().AddEventHandlerWithResyncPeriod(
 		cache.ResourceEventHandlerFuncs{
-			AddFunc: func(obj interface{}) {
+			AddFunc: func(obj any) {
 				namespace := obj.(*v1.Namespace)
 				namespaceController.enqueueNamespace(namespace)
 			},
-			UpdateFunc: func(oldObj, newObj interface{}) {
+			UpdateFunc: func(oldObj, newObj any) {
 				namespace := newObj.(*v1.Namespace)
 				namespaceController.enqueueNamespace(namespace)
 			},
@@ -117,7 +117,7 @@ func nsControllerRateLimiter() workqueue.TypedRateLimiter[string] {
 
 // enqueueNamespace adds an object to the controller work queue
 // obj could be an *v1.Namespace, or a DeletionFinalStateUnknown item.
-func (nm *NamespaceController) enqueueNamespace(obj interface{}) {
+func (nm *NamespaceController) enqueueNamespace(obj any) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("Couldn't get key for object %+v: %v", obj, err))

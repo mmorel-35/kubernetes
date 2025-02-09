@@ -88,10 +88,10 @@ func NewTTLController(ctx context.Context, nodeInformer informers.NodeInformer, 
 	}
 	logger := klog.FromContext(ctx)
 	nodeInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			ttlc.addNode(logger, obj)
 		},
-		UpdateFunc: func(old, newObj interface{}) {
+		UpdateFunc: func(old, newObj any) {
 			ttlc.updateNode(logger, old, newObj)
 		},
 		DeleteFunc: ttlc.deleteNode,
@@ -138,7 +138,7 @@ func (ttlc *Controller) Run(ctx context.Context, workers int) {
 	<-ctx.Done()
 }
 
-func (ttlc *Controller) addNode(logger klog.Logger, obj interface{}) {
+func (ttlc *Controller) addNode(logger klog.Logger, obj any) {
 	node, ok := obj.(*v1.Node)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("unexpected object type: %v", obj))
@@ -157,7 +157,7 @@ func (ttlc *Controller) addNode(logger klog.Logger, obj interface{}) {
 	ttlc.enqueueNode(logger, node)
 }
 
-func (ttlc *Controller) updateNode(logger klog.Logger, _, newObj interface{}) {
+func (ttlc *Controller) updateNode(logger klog.Logger, _, newObj any) {
 	node, ok := newObj.(*v1.Node)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("unexpected object type: %v", newObj))
@@ -171,7 +171,7 @@ func (ttlc *Controller) updateNode(logger klog.Logger, _, newObj interface{}) {
 	ttlc.enqueueNode(logger, node)
 }
 
-func (ttlc *Controller) deleteNode(obj interface{}) {
+func (ttlc *Controller) deleteNode(obj any) {
 	_, ok := obj.(*v1.Node)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)

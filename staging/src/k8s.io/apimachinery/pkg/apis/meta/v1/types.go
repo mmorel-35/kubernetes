@@ -1420,7 +1420,7 @@ func (f FieldsV1) String() string {
 	return string(f.Raw)
 }
 
-// TODO: Table does not generate to protobuf because of the interface{} - fix protobuf
+// TODO: Table does not generate to protobuf because of the any - fix protobuf
 //   generation to support a meta type that can accept any valid JSON. This can be introduced
 //   in a v1 because clients a) receive an error if they try to access proto today, and b)
 //   once introduced they would be able to gracefully switch over to using it.
@@ -1475,7 +1475,7 @@ type TableRow struct {
 	// int64), booleans, simple maps, lists, or null. See the type field of the column definition for a
 	// more detailed description.
 	// +listType=atomic
-	Cells []interface{} `json:"cells"`
+	Cells []any `json:"cells"`
 	// conditions describe additional status of a row that are relevant for a human user. These conditions
 	// apply to the row, not to the object, and will be specific to table output. The only defined
 	// condition type is 'Completed', for a row that indicates a resource that has run to completion and

@@ -1435,7 +1435,7 @@ func TestControllerV2SyncCronJob(t *testing.T) {
 type fakeQueue struct {
 	workqueue.TypedRateLimitingInterface[string]
 	delay time.Duration
-	key   interface{}
+	key   any
 }
 
 func (f *fakeQueue) AddAfter(key string, delay time.Duration) {

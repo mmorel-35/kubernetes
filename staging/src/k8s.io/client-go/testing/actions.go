@@ -93,7 +93,7 @@ func NewRootGetSubresourceActionWithOptions(resource schema.GroupVersionResource
 	return action
 }
 
-func NewRootListAction(resource schema.GroupVersionResource, kind schema.GroupVersionKind, opts interface{}) ListActionImpl {
+func NewRootListAction(resource schema.GroupVersionResource, kind schema.GroupVersionKind, opts any) ListActionImpl {
 	action := ListActionImpl{}
 	action.Verb = "list"
 	action.Resource = resource
@@ -119,7 +119,7 @@ func NewRootListActionWithOptions(resource schema.GroupVersionResource, kind sch
 	return action
 }
 
-func NewListAction(resource schema.GroupVersionResource, kind schema.GroupVersionKind, namespace string, opts interface{}) ListActionImpl {
+func NewListAction(resource schema.GroupVersionResource, kind schema.GroupVersionKind, namespace string, opts any) ListActionImpl {
 	action := ListActionImpl{}
 	action.Verb = "list"
 	action.Resource = resource
@@ -396,7 +396,7 @@ func NewDeleteSubresourceActionWithOptions(resource schema.GroupVersionResource,
 	return action
 }
 
-func NewRootDeleteCollectionAction(resource schema.GroupVersionResource, opts interface{}) DeleteCollectionActionImpl {
+func NewRootDeleteCollectionAction(resource schema.GroupVersionResource, opts any) DeleteCollectionActionImpl {
 	listOpts, _ := opts.(metav1.ListOptions)
 	return NewRootDeleteCollectionActionWithOptions(resource, metav1.DeleteOptions{}, listOpts)
 }
@@ -414,7 +414,7 @@ func NewRootDeleteCollectionActionWithOptions(resource schema.GroupVersionResour
 	return action
 }
 
-func NewDeleteCollectionAction(resource schema.GroupVersionResource, namespace string, opts interface{}) DeleteCollectionActionImpl {
+func NewDeleteCollectionAction(resource schema.GroupVersionResource, namespace string, opts any) DeleteCollectionActionImpl {
 	listOpts, _ := opts.(metav1.ListOptions)
 	return NewDeleteCollectionActionWithOptions(resource, namespace, metav1.DeleteOptions{}, listOpts)
 }
@@ -433,7 +433,7 @@ func NewDeleteCollectionActionWithOptions(resource schema.GroupVersionResource, 
 	return action
 }
 
-func NewRootWatchAction(resource schema.GroupVersionResource, opts interface{}) WatchActionImpl {
+func NewRootWatchAction(resource schema.GroupVersionResource, opts any) WatchActionImpl {
 	listOpts, _ := opts.(metav1.ListOptions)
 	return NewRootWatchActionWithOptions(resource, listOpts)
 }
@@ -450,7 +450,7 @@ func NewRootWatchActionWithOptions(resource schema.GroupVersionResource, opts me
 	return action
 }
 
-func ExtractFromListOptions(opts interface{}) (labelSelector labels.Selector, fieldSelector fields.Selector, resourceVersion string) {
+func ExtractFromListOptions(opts any) (labelSelector labels.Selector, fieldSelector fields.Selector, resourceVersion string) {
 	var err error
 	switch t := opts.(type) {
 	case metav1.ListOptions:
@@ -475,7 +475,7 @@ func ExtractFromListOptions(opts interface{}) (labelSelector labels.Selector, fi
 	return labelSelector, fieldSelector, resourceVersion
 }
 
-func NewWatchAction(resource schema.GroupVersionResource, namespace string, opts interface{}) WatchActionImpl {
+func NewWatchAction(resource schema.GroupVersionResource, namespace string, opts any) WatchActionImpl {
 	listOpts, _ := opts.(metav1.ListOptions)
 	return NewWatchActionWithOptions(resource, namespace, listOpts)
 }
@@ -530,7 +530,7 @@ type Action interface {
 
 type GenericAction interface {
 	Action
-	GetValue() interface{}
+	GetValue() any
 }
 
 type GetAction interface {
@@ -625,10 +625,10 @@ func (a ActionImpl) DeepCopy() Action {
 
 type GenericActionImpl struct {
 	ActionImpl
-	Value interface{}
+	Value any
 }
 
-func (a GenericActionImpl) GetValue() interface{} {
+func (a GenericActionImpl) GetValue() any {
 	return a.Value
 }
 

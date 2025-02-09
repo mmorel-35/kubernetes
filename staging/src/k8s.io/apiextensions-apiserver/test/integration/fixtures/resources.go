@@ -174,17 +174,17 @@ func NewNoxuV1CustomResourceDefinition(scope apiextensionsv1.ResourceScope) *api
 // NewVersionedNoxuInstance returns a WishIHadChosenNoxu instance for a given version
 func NewVersionedNoxuInstance(namespace, name, version string) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "mygroup.example.com/" + version,
 			"kind":       "WishIHadChosenNoxu",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace": namespace,
 				"name":      name,
 			},
-			"content": map[string]interface{}{
+			"content": map[string]any{
 				"key": "value",
 			},
-			"num": map[string]interface{}{
+			"num": map[string]any{
 				"num1": noxuInstanceNum,
 				"num2": 1000000,
 			},
@@ -297,14 +297,14 @@ func NewCurletV1CustomResourceDefinition(scope apiextensionsv1.ResourceScope) *a
 // NewCurletInstance returns a Curlet instance.
 func NewCurletInstance(namespace, name string) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "mygroup.example.com/v1beta1",
 			"kind":       "Curlet",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace": namespace,
 				"name":      name,
 			},
-			"content": map[string]interface{}{
+			"content": map[string]any{
 				"key": "value",
 			},
 		},
@@ -456,10 +456,10 @@ func isWatchCachePrimed(crd *apiextensionsv1.CustomResourceDefinition, dynamicCl
 	resourceClient := resourceClientForVersion(crd, dynamicClientSet, ns, versions[0])
 	instanceName := "setup-instance"
 	instance := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": crd.Spec.Group + "/" + versions[0],
 			"kind":       crd.Spec.Names.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace": ns,
 				"name":      instanceName,
 			},
@@ -468,7 +468,7 @@ func isWatchCachePrimed(crd *apiextensionsv1.CustomResourceDefinition, dynamicCl
 			"gamma":   "bar",
 			"delta":   "hello",
 			"epsilon": "foobar",
-			"spec":    map[string]interface{}{},
+			"spec":    map[string]any{},
 		},
 	}
 	createdInstance, err := resourceClient.Create(context.TODO(), instance, metav1.CreateOptions{})

@@ -194,7 +194,7 @@ func AddDriverDefinition(filename string) error {
 		return fmt.Errorf("%q: DriverInfo.Name not set", filename)
 	}
 
-	args := []interface{}{"External Storage"}
+	args := []any{"External Storage"}
 	args = append(args, storageframework.GetDriverNameWithFeatureTags(driver)...)
 	args = append(args, func() {
 		storageframework.DefineTestSuites(driver, testsuites.CSISuites)
@@ -403,7 +403,7 @@ func (d *driverDefinition) GetSnapshotClass(ctx context.Context, e2econfig *stor
 		snapshotClass, err := f.DynamicClient.Resource(utils.SnapshotClassGVR).Get(ctx, d.SnapshotClass.FromExistingClassName, metav1.GetOptions{})
 		framework.ExpectNoError(err, "getting snapshot class %s", d.SnapshotClass.FromExistingClassName)
 
-		if params, ok := snapshotClass.Object["parameters"].(map[string]interface{}); ok {
+		if params, ok := snapshotClass.Object["parameters"].(map[string]any); ok {
 			for k, v := range params {
 				parameters[k] = v.(string)
 			}
@@ -416,7 +416,7 @@ func (d *driverDefinition) GetSnapshotClass(ctx context.Context, e2econfig *stor
 		snapshotClass, err := loadSnapshotClass(d.SnapshotClass.FromFile)
 		framework.ExpectNoError(err, "load snapshot class from %s", d.SnapshotClass.FromFile)
 
-		if params, ok := snapshotClass.Object["parameters"].(map[string]interface{}); ok {
+		if params, ok := snapshotClass.Object["parameters"].(map[string]any); ok {
 			for k, v := range params {
 				parameters[k] = v.(string)
 			}

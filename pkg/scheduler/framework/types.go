@@ -249,7 +249,7 @@ type ClusterEventWithHint struct {
 //   - For example, the given event is "Node deleted", the `oldObj` will be that deleted Node.
 //   - `oldObj` is nil if the event is add event.
 //   - `newObj` is nil if the event is delete event.
-type QueueingHintFn func(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (QueueingHint, error)
+type QueueingHintFn func(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (QueueingHint, error)
 
 type QueueingHint int
 

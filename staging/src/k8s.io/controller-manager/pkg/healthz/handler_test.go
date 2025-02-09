@@ -137,9 +137,9 @@ func TestMutableHealthzHandler(t *testing.T) {
 // TestConcurrentChecks tests that the handler would not block on concurrent healthz requests.
 func TestConcurrentChecks(t *testing.T) {
 	const N = 5
-	stopChan := make(chan interface{})
+	stopChan := make(chan any)
 	defer close(stopChan) // always close no matter passing or not
-	concurrentChan := make(chan interface{}, N)
+	concurrentChan := make(chan any, N)
 	var concurrentCount int32
 	pausingCheck := healthz.NamedCheck("pausing", func(r *http.Request) error {
 		atomic.AddInt32(&concurrentCount, 1)

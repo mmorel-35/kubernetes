@@ -356,7 +356,7 @@ func scope(namespaced bool) meta.RESTScope {
 // JSONToUnstructured converts a JSON stub to unstructured.Unstructured and
 // returns a dynamic resource client that can be used to interact with it
 func JSONToUnstructured(stub, namespace string, mapping *meta.RESTMapping, dynamicClient dynamic.Interface) (dynamic.ResourceInterface, *unstructured.Unstructured, error) {
-	typeMetaAdder := map[string]interface{}{}
+	typeMetaAdder := map[string]any{}
 	if err := json.Unmarshal([]byte(stub), &typeMetaAdder); err != nil {
 		return nil, nil, err
 	}

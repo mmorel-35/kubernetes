@@ -100,9 +100,9 @@ func NewController(ctx context.Context, p ControllerParameters) (*PersistentVolu
 
 	p.VolumeInformer.Informer().AddEventHandler(
 		cache.ResourceEventHandlerFuncs{
-			AddFunc:    func(obj interface{}) { controller.enqueueWork(ctx, controller.volumeQueue, obj) },
-			UpdateFunc: func(oldObj, newObj interface{}) { controller.enqueueWork(ctx, controller.volumeQueue, newObj) },
-			DeleteFunc: func(obj interface{}) { controller.enqueueWork(ctx, controller.volumeQueue, obj) },
+			AddFunc:    func(obj any) { controller.enqueueWork(ctx, controller.volumeQueue, obj) },
+			UpdateFunc: func(oldObj, newObj any) { controller.enqueueWork(ctx, controller.volumeQueue, newObj) },
+			DeleteFunc: func(obj any) { controller.enqueueWork(ctx, controller.volumeQueue, obj) },
 		},
 	)
 	controller.volumeLister = p.VolumeInformer.Lister()
@@ -110,9 +110,9 @@ func NewController(ctx context.Context, p ControllerParameters) (*PersistentVolu
 
 	p.ClaimInformer.Informer().AddEventHandler(
 		cache.ResourceEventHandlerFuncs{
-			AddFunc:    func(obj interface{}) { controller.enqueueWork(ctx, controller.claimQueue, obj) },
-			UpdateFunc: func(oldObj, newObj interface{}) { controller.enqueueWork(ctx, controller.claimQueue, newObj) },
-			DeleteFunc: func(obj interface{}) { controller.enqueueWork(ctx, controller.claimQueue, obj) },
+			AddFunc:    func(obj any) { controller.enqueueWork(ctx, controller.claimQueue, obj) },
+			UpdateFunc: func(oldObj, newObj any) { controller.enqueueWork(ctx, controller.claimQueue, newObj) },
+			DeleteFunc: func(obj any) { controller.enqueueWork(ctx, controller.claimQueue, obj) },
 		},
 	)
 	controller.claimLister = p.ClaimInformer.Lister()
@@ -169,7 +169,7 @@ func (ctrl *PersistentVolumeController) initializeCaches(logger klog.Logger, vol
 }
 
 // enqueueWork adds volume or claim to given work queue.
-func (ctrl *PersistentVolumeController) enqueueWork(ctx context.Context, queue workqueue.TypedInterface[string], obj interface{}) {
+func (ctrl *PersistentVolumeController) enqueueWork(ctx context.Context, queue workqueue.TypedInterface[string], obj any) {
 	// Beware of "xxx deleted" events
 	logger := klog.FromContext(ctx)
 	if unknown, ok := obj.(cache.DeletedFinalStateUnknown); ok && unknown.Obj != nil {
@@ -184,11 +184,11 @@ func (ctrl *PersistentVolumeController) enqueueWork(ctx context.Context, queue w
 	queue.Add(objName)
 }
 
-func (ctrl *PersistentVolumeController) storeVolumeUpdate(logger klog.Logger, volume interface{}) (bool, error) {
+func (ctrl *PersistentVolumeController) storeVolumeUpdate(logger klog.Logger, volume any) (bool, error) {
 	return storeObjectUpdate(logger, ctrl.volumes.store, volume, "volume")
 }
 
-func (ctrl *PersistentVolumeController) storeClaimUpdate(logger klog.Logger, claim interface{}) (bool, error) {
+func (ctrl *PersistentVolumeController) storeClaimUpdate(logger klog.Logger, claim any) (bool, error) {
 	return storeObjectUpdate(logger, ctrl.claims, claim, "claim")
 }
 
@@ -672,7 +672,7 @@ func getVolumeStatusForLogging(volume *v1.PersistentVolume) string {
 // callback (i.e. with events from etcd) or with an object modified by the
 // controller itself. Returns "true", if the cache was updated, false if the
 // object is an old version and should be ignored.
-func storeObjectUpdate(logger klog.Logger, store cache.Store, obj interface{}, className string) (bool, error) {
+func storeObjectUpdate(logger klog.Logger, store cache.Store, obj any, className string) (bool, error) {
 	objName, err := controller.KeyFunc(obj)
 	if err != nil {
 		return false, fmt.Errorf("couldn't get key for object %+v: %w", obj, err)

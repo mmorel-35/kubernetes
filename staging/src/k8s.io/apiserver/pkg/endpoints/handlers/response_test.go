@@ -118,7 +118,7 @@ func TestCacheableObject(t *testing.T) {
 	podTable := &metav1.Table{
 		Rows: []metav1.TableRow{
 			{
-				Cells: []interface{}{pod.Name, pod.CreationTimestamp.Time.UTC().Format(time.RFC3339)},
+				Cells: []any{pod.Name, pod.CreationTimestamp.Time.UTC().Format(time.RFC3339)},
 			},
 		},
 	}

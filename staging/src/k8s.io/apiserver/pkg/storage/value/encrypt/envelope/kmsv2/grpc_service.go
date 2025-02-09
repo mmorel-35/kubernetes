@@ -144,7 +144,7 @@ func (g *gRPCService) Status(ctx context.Context) (*kmsservice.StatusResponse, e
 }
 
 func recordMetricsInterceptor(providerName string) grpc.UnaryClientInterceptor {
-	return func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+	return func(ctx context.Context, method string, req, reply any, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
 		start := NowFunc()
 		respErr := invoker(ctx, method, req, reply, cc, opts...)
 		elapsed := NowFunc().Sub(start)

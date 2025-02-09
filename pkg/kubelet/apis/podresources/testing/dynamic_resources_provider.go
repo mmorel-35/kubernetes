@@ -67,7 +67,7 @@ type MockDynamicResourcesProvider_GetDynamicResources_Call struct {
 // GetDynamicResources is a helper method to define mock.On call
 //   - pod *v1.Pod
 //   - container *v1.Container
-func (_e *MockDynamicResourcesProvider_Expecter) GetDynamicResources(pod interface{}, container interface{}) *MockDynamicResourcesProvider_GetDynamicResources_Call {
+func (_e *MockDynamicResourcesProvider_Expecter) GetDynamicResources(pod any, container any) *MockDynamicResourcesProvider_GetDynamicResources_Call {
 	return &MockDynamicResourcesProvider_GetDynamicResources_Call{Call: _e.mock.On("GetDynamicResources", pod, container)}
 }
 

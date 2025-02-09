@@ -105,15 +105,15 @@ func NewAutoRegisterController(apiServiceInformer informers.APIServiceInformer, 
 	c.syncHandler = c.checkAPIService
 
 	apiServiceInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			cast := obj.(*v1.APIService)
 			c.queue.Add(cast.Name)
 		},
-		UpdateFunc: func(_, obj interface{}) {
+		UpdateFunc: func(_, obj any) {
 			cast := obj.(*v1.APIService)
 			c.queue.Add(cast.Name)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			cast, ok := obj.(*v1.APIService)
 			if !ok {
 				tombstone, ok := obj.(cache.DeletedFinalStateUnknown)

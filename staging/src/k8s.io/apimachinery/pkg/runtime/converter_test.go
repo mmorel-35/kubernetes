@@ -70,15 +70,15 @@ type C struct {
 	F []bool         `json:"cf"`
 	G []int          `json:"cg"`
 	H float32        `json:"ch"`
-	I []interface{}  `json:"ci"`
+	I []any          `json:"ci"`
 }
 
 type D struct {
-	A []interface{} `json:"da"`
+	A []any `json:"da"`
 }
 
 type E struct {
-	A interface{} `json:"ea"`
+	A any `json:"ea"`
 }
 
 type F struct {
@@ -169,14 +169,14 @@ func (c *CustomPointer) MarshalJSON() ([]byte, error) {
 	return c.data, nil
 }
 
-func doRoundTrip(t *testing.T, item interface{}) {
+func doRoundTrip(t *testing.T, item any) {
 	data, err := json.Marshal(item)
 	if err != nil {
 		t.Errorf("Error when marshaling object: %v", err)
 		return
 	}
 
-	unstr := make(map[string]interface{})
+	unstr := make(map[string]any)
 	err = json.Unmarshal(data, &unstr)
 	if err != nil {
 		t.Errorf("Error when unmarshaling to unstructured: %v", err)
@@ -221,11 +221,11 @@ func doRoundTrip(t *testing.T, item interface{}) {
 func TestRoundTrip(t *testing.T) {
 	intVal := int64(42)
 	testCases := []struct {
-		obj interface{}
+		obj any
 	}{
 		{
 			obj: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind": "List",
 				},
 				// Not testing a list with nil Items because items is a non-optional field and hence
@@ -236,12 +236,12 @@ func TestRoundTrip(t *testing.T) {
 		},
 		{
 			obj: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind": "List",
 				},
 				Items: []unstructured.Unstructured{
 					{
-						Object: map[string]interface{}{
+						Object: map[string]any{
 							"kind": "Pod",
 						},
 					},
@@ -250,17 +250,17 @@ func TestRoundTrip(t *testing.T) {
 		},
 		{
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"kind": "Pod",
 				},
 			},
 		},
 		{
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "v1",
 					"kind":       "Foo",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name": "foo1",
 					},
 				},
@@ -278,7 +278,7 @@ func TestRoundTrip(t *testing.T) {
 				A: []A{},
 				C: "ccc",
 				E: map[string]int{},
-				I: []interface{}{},
+				I: []any{},
 			},
 		},
 		{
@@ -316,19 +316,19 @@ func TestRoundTrip(t *testing.T) {
 				F: []bool{true, false, false},
 				G: []int{1, 2, 5},
 				H: 3.3,
-				I: []interface{}{nil, nil, nil},
+				I: []any{nil, nil, nil},
 			},
 		},
 		{
-			// Test slice of interface{} with empty slices.
+			// Test slice of any with empty slices.
 			obj: &D{
-				A: []interface{}{[]interface{}{}, []interface{}{}},
+				A: []any{[]any{}, []any{}},
 			},
 		},
 		{
-			// Test slice of interface{} with different values.
+			// Test slice of any with different values.
 			obj: &D{
-				A: []interface{}{float64(3.5), int64(4), "3.0", nil},
+				A: []any{float64(3.5), int64(4), "3.0", nil},
 			},
 		},
 	}
@@ -546,7 +546,7 @@ func TestUnknownFields(t *testing.T) {
 
 	testCases := []struct {
 		jsonData            string
-		obj                 interface{}
+		obj                 any
 		returnUnknownFields bool
 		expectedErrs        []string
 	}{
@@ -598,7 +598,7 @@ func TestUnknownFields(t *testing.T) {
 
 	for i, tc := range testCases {
 		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
-			unstr := make(map[string]interface{})
+			unstr := make(map[string]any)
 			err := json.Unmarshal([]byte(tc.jsonData), &unstr)
 			if err != nil {
 				t.Errorf("Error when unmarshaling to unstructured: %v", err)
@@ -665,9 +665,9 @@ func BenchmarkFromUnstructuredWithValidation(b *testing.B) {
 
 // Verifies that:
 // 1) serialized json -> object
-// 2) serialized json -> map[string]interface{} -> object
+// 2) serialized json -> map[string]any -> object
 // produces the same object.
-func doUnrecognized(t *testing.T, jsonData string, item interface{}, expectedErr error) {
+func doUnrecognized(t *testing.T, jsonData string, item any, expectedErr error) {
 	unmarshalledObj := reflect.New(reflect.TypeOf(item).Elem()).Interface()
 	err := json.Unmarshal([]byte(jsonData), unmarshalledObj)
 	if (err != nil) != (expectedErr != nil) {
@@ -675,7 +675,7 @@ func doUnrecognized(t *testing.T, jsonData string, item interface{}, expectedErr
 		return
 	}
 
-	unstr := make(map[string]interface{})
+	unstr := make(map[string]any)
 	err = json.Unmarshal([]byte(jsonData), &unstr)
 	if err != nil {
 		t.Errorf("Error when unmarshaling to unstructured: %v", err)
@@ -695,7 +695,7 @@ func doUnrecognized(t *testing.T, jsonData string, item interface{}, expectedErr
 func TestUnrecognized(t *testing.T) {
 	testCases := []struct {
 		data string
-		obj  interface{}
+		obj  any
 		err  error
 	}{
 		{
@@ -886,13 +886,13 @@ func TestUnrecognized(t *testing.T) {
 }
 
 func TestDeepCopyJSON(t *testing.T) {
-	src := map[string]interface{}{
+	src := map[string]any{
 		"a": nil,
 		"b": int64(123),
-		"c": map[string]interface{}{
+		"c": map[string]any{
 			"a": "b",
 		},
-		"d": []interface{}{
+		"d": []any{
 			int64(1), int64(2),
 		},
 		"e": "estr",
@@ -904,7 +904,7 @@ func TestDeepCopyJSON(t *testing.T) {
 }
 
 func TestFloatIntConversion(t *testing.T) {
-	unstr := map[string]interface{}{"fd": float64(3)}
+	unstr := map[string]any{"fd": float64(3)}
 
 	var obj F
 	if err := runtime.NewTestUnstructuredConverter(simpleEquality).FromUnstructured(unstr, &obj); err != nil {
@@ -926,7 +926,7 @@ func TestFloatIntConversion(t *testing.T) {
 }
 
 func TestIntFloatConversion(t *testing.T) {
-	unstr := map[string]interface{}{"ch": int64(3)}
+	unstr := map[string]any{"ch": int64(3)}
 
 	var obj C
 	if err := runtime.NewTestUnstructuredConverter(simpleEquality).FromUnstructured(unstr, &obj); err != nil {
@@ -950,15 +950,15 @@ func TestIntFloatConversion(t *testing.T) {
 func TestCustomToUnstructured(t *testing.T) {
 	testcases := []struct {
 		Data     string
-		Expected interface{}
+		Expected any
 	}{
 		{Data: `null`, Expected: nil},
 		{Data: `true`, Expected: true},
 		{Data: `false`, Expected: false},
-		{Data: `[]`, Expected: []interface{}{}},
-		{Data: `[1]`, Expected: []interface{}{int64(1)}},
-		{Data: `{}`, Expected: map[string]interface{}{}},
-		{Data: `{"a":1}`, Expected: map[string]interface{}{"a": int64(1)}},
+		{Data: `[]`, Expected: []any{}},
+		{Data: `[1]`, Expected: []any{int64(1)}},
+		{Data: `{}`, Expected: map[string]any{}},
+		{Data: `{"a":1}`, Expected: map[string]any{"a": int64(1)}},
 		{Data: `0`, Expected: int64(0)},
 		{Data: `0.0`, Expected: float64(0)},
 	}
@@ -983,11 +983,11 @@ func TestCustomToUnstructured(t *testing.T) {
 
 func TestCustomToUnstructuredTopLevel(t *testing.T) {
 	// Only objects are supported at the top level
-	topLevelCases := []interface{}{
+	topLevelCases := []any{
 		&CustomValue{data: []byte(`{"a":1}`)},
 		&CustomPointer{data: []byte(`{"a":1}`)},
 	}
-	expected := map[string]interface{}{"a": int64(1)}
+	expected := map[string]any{"a": int64(1)}
 	for i, obj := range topLevelCases {
 		obj := obj
 		t.Run(strconv.Itoa(i), func(t *testing.T) {

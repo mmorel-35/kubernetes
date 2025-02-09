@@ -108,7 +108,7 @@ func NewTokensController(logger klog.Logger, serviceAccounts informers.ServiceAc
 	e.secretSynced = secrets.Informer().HasSynced
 	secrets.Informer().AddEventHandlerWithOptions(
 		cache.FilteringResourceEventHandler{
-			FilterFunc: func(obj interface{}) bool {
+			FilterFunc: func(obj any) bool {
 				switch t := obj.(type) {
 				case *v1.Secret:
 					return t.Type == v1.SecretTypeServiceAccountToken
@@ -185,13 +185,13 @@ func (e *TokensController) Run(ctx context.Context, workers int) {
 	logger.V(1).Info("Shutting down")
 }
 
-func (e *TokensController) queueServiceAccountSync(obj interface{}) {
+func (e *TokensController) queueServiceAccountSync(obj any) {
 	if serviceAccount, ok := obj.(*v1.ServiceAccount); ok {
 		e.syncServiceAccountQueue.Add(makeServiceAccountKey(serviceAccount))
 	}
 }
 
-func (e *TokensController) queueServiceAccountUpdateSync(oldObj interface{}, newObj interface{}) {
+func (e *TokensController) queueServiceAccountUpdateSync(oldObj any, newObj any) {
 	if serviceAccount, ok := newObj.(*v1.ServiceAccount); ok {
 		e.syncServiceAccountQueue.Add(makeServiceAccountKey(serviceAccount))
 	}
@@ -214,13 +214,13 @@ func retryOrForget[T comparable](logger klog.Logger, queue workqueue.TypedRateLi
 	queue.Forget(key)
 }
 
-func (e *TokensController) queueSecretSync(obj interface{}) {
+func (e *TokensController) queueSecretSync(obj any) {
 	if secret, ok := obj.(*v1.Secret); ok {
 		e.syncSecretQueue.Add(makeSecretQueueKey(secret))
 	}
 }
 
-func (e *TokensController) queueSecretUpdateSync(oldObj interface{}, newObj interface{}) {
+func (e *TokensController) queueSecretUpdateSync(oldObj any, newObj any) {
 	if secret, ok := newObj.(*v1.Secret); ok {
 		e.syncSecretQueue.Add(makeSecretQueueKey(secret))
 	}
@@ -590,7 +590,7 @@ func makeServiceAccountKey(sa *v1.ServiceAccount) serviceAccountQueueKey {
 	}
 }
 
-func parseServiceAccountKey(key interface{}) (serviceAccountQueueKey, error) {
+func parseServiceAccountKey(key any) (serviceAccountQueueKey, error) {
 	queueKey, ok := key.(serviceAccountQueueKey)
 	if !ok || len(queueKey.namespace) == 0 || len(queueKey.name) == 0 || len(queueKey.uid) == 0 {
 		return serviceAccountQueueKey{}, fmt.Errorf("invalid serviceaccount key: %#v", key)
@@ -620,7 +620,7 @@ func makeSecretQueueKey(secret *v1.Secret) secretQueueKey {
 	}
 }
 
-func parseSecretQueueKey(key interface{}) (secretQueueKey, error) {
+func parseSecretQueueKey(key any) (secretQueueKey, error) {
 	queueKey, ok := key.(secretQueueKey)
 	if !ok || len(queueKey.namespace) == 0 || len(queueKey.name) == 0 || len(queueKey.uid) == 0 || len(queueKey.saName) == 0 {
 		return secretQueueKey{}, fmt.Errorf("invalid secret key: %#v", key)

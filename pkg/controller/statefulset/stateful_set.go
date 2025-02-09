@@ -115,15 +115,15 @@ func NewStatefulSetController(
 
 	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		// lookup the statefulset and enqueue
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			ssc.addPod(logger, obj)
 		},
 		// lookup current and old statefulset if labels changed
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			ssc.updatePod(logger, oldObj, newObj)
 		},
 		// lookup statefulset accounting for deletion tombstones
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			ssc.deletePod(logger, obj)
 		},
 	})
@@ -133,7 +133,7 @@ func NewStatefulSetController(
 	setInformer.Informer().AddEventHandler(
 		cache.ResourceEventHandlerFuncs{
 			AddFunc: ssc.enqueueStatefulSet,
-			UpdateFunc: func(old, cur interface{}) {
+			UpdateFunc: func(old, cur any) {
 				oldPS := old.(*apps.StatefulSet)
 				curPS := cur.(*apps.StatefulSet)
 				if oldPS.Status.Replicas != curPS.Status.Replicas {
@@ -178,7 +178,7 @@ func (ssc *StatefulSetController) Run(ctx context.Context, workers int) {
 }
 
 // addPod adds the statefulset for the pod to the sync queue
-func (ssc *StatefulSetController) addPod(logger klog.Logger, obj interface{}) {
+func (ssc *StatefulSetController) addPod(logger klog.Logger, obj any) {
 	pod := obj.(*v1.Pod)
 
 	if pod.DeletionTimestamp != nil {
@@ -212,7 +212,7 @@ func (ssc *StatefulSetController) addPod(logger klog.Logger, obj interface{}) {
 }
 
 // updatePod adds the statefulset for the current and old pods to the sync queue.
-func (ssc *StatefulSetController) updatePod(logger klog.Logger, old, cur interface{}) {
+func (ssc *StatefulSetController) updatePod(logger klog.Logger, old, cur any) {
 	curPod := cur.(*v1.Pod)
 	oldPod := old.(*v1.Pod)
 	if curPod.ResourceVersion == oldPod.ResourceVersion {
@@ -271,7 +271,7 @@ func (ssc *StatefulSetController) updatePod(logger klog.Logger, old, cur interfa
 }
 
 // deletePod enqueues the statefulset for the pod accounting for deletion tombstones.
-func (ssc *StatefulSetController) deletePod(logger klog.Logger, obj interface{}) {
+func (ssc *StatefulSetController) deletePod(logger klog.Logger, obj any) {
 	pod, ok := obj.(*v1.Pod)
 
 	// When a delete is dropped, the relist will notice a pod in the store not
@@ -407,7 +407,7 @@ func (ssc *StatefulSetController) resolveControllerRef(namespace string, control
 }
 
 // enqueueStatefulSet enqueues the given statefulset in the work queue.
-func (ssc *StatefulSetController) enqueueStatefulSet(obj interface{}) {
+func (ssc *StatefulSetController) enqueueStatefulSet(obj any) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("couldn't get key for object %+v: %v", obj, err))

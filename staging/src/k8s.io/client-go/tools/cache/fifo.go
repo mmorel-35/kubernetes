@@ -25,7 +25,7 @@ import (
 
 // PopProcessFunc is passed to Pop() method of Queue interface.
 // It is supposed to process the accumulator popped from the queue.
-type PopProcessFunc func(obj interface{}, isInInitialList bool) error
+type PopProcessFunc func(obj any, isInInitialList bool) error
 
 // ErrFIFOClosed used when FIFO is closed
 var ErrFIFOClosed = errors.New("DeltaFIFO: manipulating with closed queue")
@@ -48,7 +48,7 @@ type Queue interface {
 	// return that (key, accumulator) association to the Queue as part
 	// of the atomic processing and (b) return the inner error from
 	// Pop.
-	Pop(PopProcessFunc) (interface{}, error)
+	Pop(PopProcessFunc) (any, error)
 
 	// HasSynced returns true if the first batch of keys have all been
 	// popped.  The first batch of keys are those of the first Replace
@@ -66,9 +66,9 @@ type Queue interface {
 //
 // NOTE: This function is deprecated and may be removed in the future without
 // additional warning.
-func Pop(queue Queue) interface{} {
-	var result interface{}
-	queue.Pop(func(obj interface{}, isInInitialList bool) error {
+func Pop(queue Queue) any {
+	var result any
+	queue.Pop(func(obj any, isInInitialList bool) error {
 		result = obj
 		return nil
 	})
@@ -97,7 +97,7 @@ type FIFO struct {
 	lock sync.RWMutex
 	cond sync.Cond
 	// We depend on the property that every key in `items` is also in `queue`
-	items map[string]interface{}
+	items map[string]any
 	queue []string
 
 	// populated is true if the first batch of items inserted by Replace() has been populated
@@ -142,7 +142,7 @@ func (f *FIFO) hasSynced_locked() bool {
 
 // Add inserts an item, and puts it in the queue. The item is only enqueued
 // if it doesn't already exist in the set.
-func (f *FIFO) Add(obj interface{}) error {
+func (f *FIFO) Add(obj any) error {
 	id, err := f.keyFunc(obj)
 	if err != nil {
 		return KeyError{obj, err}
@@ -159,14 +159,14 @@ func (f *FIFO) Add(obj interface{}) error {
 }
 
 // Update is the same as Add in this implementation.
-func (f *FIFO) Update(obj interface{}) error {
+func (f *FIFO) Update(obj any) error {
 	return f.Add(obj)
 }
 
 // Delete removes an item. It doesn't add it to the queue, because
 // this implementation assumes the consumer only cares about the objects,
 // not the order in which they were created/added.
-func (f *FIFO) Delete(obj interface{}) error {
+func (f *FIFO) Delete(obj any) error {
 	id, err := f.keyFunc(obj)
 	if err != nil {
 		return KeyError{obj, err}
@@ -191,7 +191,7 @@ func (f *FIFO) IsClosed() bool {
 // so if you don't successfully process it, it should be added back with
 // AddIfNotPresent(). process function is called under lock, so it is safe
 // update data structures in it that need to be in sync with the queue.
-func (f *FIFO) Pop(process PopProcessFunc) (interface{}, error) {
+func (f *FIFO) Pop(process PopProcessFunc) (any, error) {
 	f.lock.Lock()
 	defer f.lock.Unlock()
 	for {
@@ -226,8 +226,8 @@ func (f *FIFO) Pop(process PopProcessFunc) (interface{}, error) {
 // 'f' takes ownership of the map, you should not reference the map again
 // after calling this function. f's queue is reset, too; upon return, it
 // will contain the items in the map, in no particular order.
-func (f *FIFO) Replace(list []interface{}, resourceVersion string) error {
-	items := make(map[string]interface{}, len(list))
+func (f *FIFO) Replace(list []any, resourceVersion string) error {
+	items := make(map[string]any, len(list))
 	for _, item := range list {
 		key, err := f.keyFunc(item)
 		if err != nil {
@@ -280,7 +280,7 @@ func (f *FIFO) Resync() error {
 // process.
 func NewFIFO(keyFunc KeyFunc) *FIFO {
 	f := &FIFO{
-		items:   map[string]interface{}{},
+		items:   map[string]any{},
 		queue:   []string{},
 		keyFunc: keyFunc,
 	}

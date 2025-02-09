@@ -73,7 +73,7 @@ func (g *factoryGenerator) GenerateType(c *generator.Context, t *types.Type, w i
 		gvInterfaces[groupPkgName] = c.Universe.Type(types.Name{Package: path.Join(g.outputPackage, groupPkgName), Name: "Interface"})
 		gvNewFuncs[groupPkgName] = c.Universe.Function(types.Name{Package: path.Join(g.outputPackage, groupPkgName), Name: "New"})
 	}
-	m := map[string]interface{}{
+	m := map[string]any{
 		"cacheSharedIndexInformer":       c.Universe.Type(cacheSharedIndexInformer),
 		"cacheTransformFunc":             c.Universe.Type(cacheTransformFunc),
 		"groupVersions":                  g.groupVersions,

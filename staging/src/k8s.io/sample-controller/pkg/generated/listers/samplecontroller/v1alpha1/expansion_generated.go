@@ -20,8 +20,8 @@ package v1alpha1
 
 // FooListerExpansion allows custom methods to be added to
 // FooLister.
-type FooListerExpansion interface{}
+type FooListerExpansion any
 
 // FooNamespaceListerExpansion allows custom methods to be added to
 // FooNamespaceLister.
-type FooNamespaceListerExpansion interface{}
+type FooNamespaceListerExpansion any

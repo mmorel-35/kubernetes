@@ -157,7 +157,7 @@ func TestOverlappingCustomResourceAPIService(t *testing.T) {
 		t.Fatal(err)
 	}
 	// Result was served by built-in handler, not CR handler
-	if _, hasDefaultedCRField := v1DynamicList.Items[0].Object["spec"].(map[string]interface{})["bar"]; hasDefaultedCRField {
+	if _, hasDefaultedCRField := v1DynamicList.Items[0].Object["spec"].(map[string]any)["bar"]; hasDefaultedCRField {
 		t.Fatalf("expected no CR defaulting, got %#v", v1DynamicList.Items[0].Object)
 	}
 
@@ -320,7 +320,7 @@ func TestOverlappingCustomResourceCustomResourceDefinition(t *testing.T) {
 		t.Fatal(err)
 	}
 	// Result was served by built-in handler, not CR handler
-	if _, hasDefaultedCRField := v1DynamicList.Items[0].Object["spec"].(map[string]interface{})["bar"]; hasDefaultedCRField {
+	if _, hasDefaultedCRField := v1DynamicList.Items[0].Object["spec"].(map[string]any)["bar"]; hasDefaultedCRField {
 		t.Fatalf("expected no CR defaulting, got %#v", v1DynamicList.Items[0].Object)
 	}
 

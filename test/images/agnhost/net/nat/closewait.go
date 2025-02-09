@@ -60,12 +60,12 @@ func NewCloseWaitServer() common.Runner {
 }
 
 // NewOptions allocates new options structure.
-func (server *closeWaitServer) NewOptions() interface{} {
+func (server *closeWaitServer) NewOptions() any {
 	return &CloseWaitServerOptions{}
 }
 
 // Run the server-side of the test.
-func (server *closeWaitServer) Run(logger *log.Logger, rawOptions interface{}) error {
+func (server *closeWaitServer) Run(logger *log.Logger, rawOptions any) error {
 	if options, ok := rawOptions.(*CloseWaitServerOptions); ok {
 		server.options = options
 	} else {
@@ -136,12 +136,12 @@ func NewCloseWaitClient() common.Runner {
 }
 
 // NewOptions allocates new options structure.
-func (client *closeWaitClient) NewOptions() interface{} {
+func (client *closeWaitClient) NewOptions() any {
 	return &CloseWaitClientOptions{}
 }
 
 // Run the client.m
-func (client *closeWaitClient) Run(logger *log.Logger, rawOptions interface{}) error {
+func (client *closeWaitClient) Run(logger *log.Logger, rawOptions any) error {
 	if options, ok := rawOptions.(*CloseWaitClientOptions); ok {
 		client.options = options
 	} else {

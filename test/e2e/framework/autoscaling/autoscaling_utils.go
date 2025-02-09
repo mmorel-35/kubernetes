@@ -975,18 +975,18 @@ func CreateCustomResourceDefinition(ctx context.Context, c crdclientset.Interfac
 
 func CreateCustomSubresourceInstance(ctx context.Context, namespace, name string, client dynamic.ResourceInterface, definition *apiextensionsv1.CustomResourceDefinition) (*unstructured.Unstructured, error) {
 	instance := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": crdGroup + "/" + crdVersion,
 			"kind":       crdKind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace": namespace,
 				"name":      name,
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"num":      int64(1),
 				"replicas": int64(1),
 			},
-			"status": map[string]interface{}{
+			"status": map[string]any{
 				"replicas": int64(1),
 				"selector": "name=" + name,
 			},

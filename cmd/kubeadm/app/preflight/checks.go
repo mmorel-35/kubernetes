@@ -779,7 +779,7 @@ func (evc ExternalEtcdVersionCheck) getHTTPClient(config *tls.Config) *http.Clie
 	return &http.Client{Timeout: externalEtcdRequestTimeout, Transport: netutil.SetOldTransportDefaults(&http.Transport{})}
 }
 
-func getEtcdVersionResponse(client *http.Client, url string, target interface{}) error {
+func getEtcdVersionResponse(client *http.Client, url string, target any) error {
 	loopCount := externalEtcdRequestRetries + 1
 	var err error
 	var stopRetry bool

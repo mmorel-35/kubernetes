@@ -69,7 +69,7 @@ func newProber(
 }
 
 // recordContainerEvent should be used by the prober for all container related events.
-func (pb *prober) recordContainerEvent(pod *v1.Pod, container *v1.Container, eventType, reason, message string, args ...interface{}) {
+func (pb *prober) recordContainerEvent(pod *v1.Pod, container *v1.Container, eventType, reason, message string, args ...any) {
 	ref, err := kubecontainer.GenerateContainerRef(pod, container)
 	if err != nil {
 		klog.ErrorS(err, "Can't make a ref to pod and container", "pod", klog.KObj(pod), "containerName", container.Name)

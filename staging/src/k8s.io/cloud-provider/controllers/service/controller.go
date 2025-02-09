@@ -133,7 +133,7 @@ func New(
 
 	serviceInformer.Informer().AddEventHandlerWithResyncPeriod(
 		cache.ResourceEventHandlerFuncs{
-			AddFunc: func(cur interface{}) {
+			AddFunc: func(cur any) {
 				svc, ok := cur.(*v1.Service)
 				// Check cleanup here can provide a remedy when controller failed to handle
 				// changes before it exiting (e.g. crashing, restart, etc.).
@@ -141,7 +141,7 @@ func New(
 					s.enqueueService(cur)
 				}
 			},
-			UpdateFunc: func(old, cur interface{}) {
+			UpdateFunc: func(old, cur any) {
 				oldSvc, ok1 := old.(*v1.Service)
 				curSvc, ok2 := cur.(*v1.Service)
 				if ok1 && ok2 && (needsUpdate(oldSvc, curSvc) || needsCleanup(curSvc)) {
@@ -158,10 +158,10 @@ func New(
 
 	nodeInformer.Informer().AddEventHandlerWithResyncPeriod(
 		cache.ResourceEventHandlerFuncs{
-			AddFunc: func(cur interface{}) {
+			AddFunc: func(cur any) {
 				s.enqueueNode(cur)
 			},
-			UpdateFunc: func(old, cur interface{}) {
+			UpdateFunc: func(old, cur any) {
 				oldNode, ok := old.(*v1.Node)
 				if !ok {
 					return
@@ -178,7 +178,7 @@ func New(
 
 				s.enqueueNode(curNode)
 			},
-			DeleteFunc: func(old interface{}) {
+			DeleteFunc: func(old any) {
 				s.enqueueNode(old)
 			},
 		},
@@ -189,7 +189,7 @@ func New(
 }
 
 // obj could be an *v1.Service, or a DeletionFinalStateUnknown marker item.
-func (c *Controller) enqueueService(obj interface{}) {
+func (c *Controller) enqueueService(obj any) {
 	key, err := cache.DeletionHandlingMetaNamespaceKeyFunc(obj)
 	if err != nil {
 		runtime.HandleError(fmt.Errorf("couldn't get key for object %#v: %v", obj, err))
@@ -199,7 +199,7 @@ func (c *Controller) enqueueService(obj interface{}) {
 }
 
 // obj could be an *v1.Service, or a DeletionFinalStateUnknown marker item.
-func (c *Controller) enqueueNode(obj interface{}) {
+func (c *Controller) enqueueNode(obj any) {
 	key, err := cache.DeletionHandlingMetaNamespaceKeyFunc(obj)
 	if err != nil {
 		runtime.HandleError(fmt.Errorf("couldn't get key for object %#v: %v", obj, err))
@@ -483,7 +483,7 @@ func (s *serviceCache) ListKeys() []string {
 }
 
 // GetByKey returns the value stored in the serviceMap under the given key
-func (s *serviceCache) GetByKey(key string) (interface{}, bool, error) {
+func (s *serviceCache) GetByKey(key string) (any, bool, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	if v, ok := s.serviceMap[key]; ok {

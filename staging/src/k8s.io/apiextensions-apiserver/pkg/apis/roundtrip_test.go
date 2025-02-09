@@ -51,10 +51,10 @@ func TestCompatibility(t *testing.T) {
 
 	// Fill unstructured JSON field types
 	opts.FillFuncs = map[reflect.Type]roundtrip.FillFunc{
-		reflect.TypeOf(&apiextensionsv1.JSON{}): func(s string, i int, obj interface{}) {
+		reflect.TypeOf(&apiextensionsv1.JSON{}): func(s string, i int, obj any) {
 			obj.(*apiextensionsv1.JSON).Raw = []byte(strconv.Quote(s + "Value"))
 		},
-		reflect.TypeOf(&apiextensionsv1beta1.JSON{}): func(s string, i int, obj interface{}) {
+		reflect.TypeOf(&apiextensionsv1beta1.JSON{}): func(s string, i int, obj any) {
 			obj.(*apiextensionsv1beta1.JSON).Raw = []byte(strconv.Quote(s + "Value"))
 		},
 	}

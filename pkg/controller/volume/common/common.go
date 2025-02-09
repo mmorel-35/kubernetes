@@ -32,8 +32,8 @@ const (
 // PodPVCIndexFunc creates an index function that returns PVC keys (=
 // namespace/name) for given pod.  This includes the PVCs
 // that might be created for generic ephemeral volumes.
-func PodPVCIndexFunc() func(obj interface{}) ([]string, error) {
-	return func(obj interface{}) ([]string, error) {
+func PodPVCIndexFunc() func(obj any) ([]string, error) {
+	return func(obj any) ([]string, error) {
 		pod, ok := obj.(*v1.Pod)
 		if !ok {
 			return []string{}, nil

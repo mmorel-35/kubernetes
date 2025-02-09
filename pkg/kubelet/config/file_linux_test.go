@@ -43,7 +43,7 @@ import (
 )
 
 func TestExtractFromNonExistentFile(t *testing.T) {
-	ch := make(chan interface{}, 1)
+	ch := make(chan any, 1)
 	lw := newSourceFile("/some/fake/file", "localhost", time.Millisecond, ch)
 	err := lw.doWatch()
 	if err == nil {
@@ -52,7 +52,7 @@ func TestExtractFromNonExistentFile(t *testing.T) {
 }
 
 func TestUpdateOnNonExistentFile(t *testing.T) {
-	ch := make(chan interface{})
+	ch := make(chan any)
 	NewSourceFile("random_non_existent_path", "localhost", time.Millisecond, ch)
 	select {
 	case got := <-ch:
@@ -80,7 +80,7 @@ func TestReadPodsFromFileExistAlready(t *testing.T) {
 			defer os.RemoveAll(dirName)
 			file := testCase.writeToFile(dirName, "test_pod_manifest", t)
 
-			ch := make(chan interface{})
+			ch := make(chan any)
 			NewSourceFile(file, hostname, time.Millisecond, ch)
 			select {
 			case got := <-ch:
@@ -251,7 +251,7 @@ func watchFileAdded(watchDir bool, symlink bool, t *testing.T) {
 				createSymbolicLink(dirName, linkedDirName, fileName, t)
 			}
 
-			ch := make(chan interface{})
+			ch := make(chan any)
 			if watchDir {
 				NewSourceFile(dirName, hostname, 100*time.Millisecond, ch)
 			} else {
@@ -305,7 +305,7 @@ func watchFileChanged(watchDir bool, symlink bool, period time.Duration, t *test
 			}
 
 			var file string
-			ch := make(chan interface{})
+			ch := make(chan any)
 			func() {
 				testCase.lock.Lock()
 				defer testCase.lock.Unlock()
@@ -359,7 +359,7 @@ func watchFileChanged(watchDir bool, symlink bool, period time.Duration, t *test
 	}
 }
 
-func expectUpdate(t *testing.T, ch chan interface{}, testCase *testCase) {
+func expectUpdate(t *testing.T, ch chan any, testCase *testCase) {
 	timer := time.After(5 * time.Second)
 	for {
 		select {
@@ -390,7 +390,7 @@ func expectUpdate(t *testing.T, ch chan interface{}, testCase *testCase) {
 	}
 }
 
-func expectEmptyUpdate(t *testing.T, ch chan interface{}) {
+func expectEmptyUpdate(t *testing.T, ch chan any) {
 	timer := time.After(5 * time.Second)
 	for {
 		select {

@@ -37,7 +37,7 @@ func TestEqualities(t *testing.T) {
 	}
 
 	type Case struct {
-		a, b  interface{}
+		a, b  any
 		equal bool
 	}
 
@@ -123,7 +123,7 @@ func TestDerivatives(t *testing.T) {
 	}
 
 	table := []struct {
-		a, b  interface{}
+		a, b  any
 		equal bool
 	}{
 		{1, 2, true},

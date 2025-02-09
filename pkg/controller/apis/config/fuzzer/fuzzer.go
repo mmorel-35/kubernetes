@@ -26,8 +26,8 @@ import (
 )
 
 // Funcs returns the fuzzer functions for the kube-controller manager apis.
-func Funcs(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+func Funcs(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(obj *kubectrlmgrconfig.KubeControllerManagerConfiguration, c fuzz.Continue) {
 			c.FuzzNoCustom(obj)
 			obj.Generic.Address = fmt.Sprintf("%d.%d.%d.%d", c.Intn(256), c.Intn(256), c.Intn(256), c.Intn(256))

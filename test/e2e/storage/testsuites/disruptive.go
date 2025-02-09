@@ -43,7 +43,7 @@ func InitCustomDisruptiveTestSuite(patterns []storageframework.TestPattern) stor
 	return &disruptiveTestSuite{
 		tsInfo: storageframework.TestSuiteInfo{
 			Name:         "disruptive",
-			TestTags:     []interface{}{framework.WithDisruptive(), framework.WithLabel("LinuxOnly")},
+			TestTags:     []any{framework.WithDisruptive(), framework.WithLabel("LinuxOnly")},
 			TestPatterns: patterns,
 		},
 	}

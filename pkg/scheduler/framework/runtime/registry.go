@@ -42,7 +42,7 @@ func FactoryAdapter(fts plfeature.Features, withFts PluginFactoryWithFts) Plugin
 }
 
 // DecodeInto decodes configuration whose type is *runtime.Unknown to the interface into.
-func DecodeInto(obj runtime.Object, into interface{}) error {
+func DecodeInto(obj runtime.Object, into any) error {
 	if obj == nil {
 		return nil
 	}

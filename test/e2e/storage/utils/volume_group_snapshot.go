@@ -61,7 +61,7 @@ func WaitForVolumeGroupSnapshotReady(ctx context.Context, c dynamic.Interface, n
 			framework.Logf("VolumeGroupSnapshot %s found but is not ready.", volumeGroupSnapshotName)
 			return false
 		}
-		value := status.(map[string]interface{})
+		value := status.(map[string]any)
 		if value["readyToUse"] == true {
 			framework.Logf("VolumeSnapshot %s found and is ready", volumeGroupSnapshotName)
 			return true
@@ -86,10 +86,10 @@ func GenerateVolumeGroupSnapshotClassSpec(
 		deletionPolicy = "Delete"
 	}
 	volumeGroupSnapshotClass := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       "VolumeGroupSnapshotClass",
 			"apiVersion": VolumeGroupSnapshotAPIVersion,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				// Name must be unique, so let's base it on namespace name and use GenerateName
 				"name": names.SimpleNameGenerator.GenerateName(ns),
 			},

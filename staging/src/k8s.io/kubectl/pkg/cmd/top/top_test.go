@@ -44,7 +44,7 @@ func TestTopSubcommandsExist(t *testing.T) {
 	}
 }
 
-func marshallBody(metrics interface{}) (io.ReadCloser, error) {
+func marshallBody(metrics any) (io.ReadCloser, error) {
 	result, err := json.Marshal(metrics)
 	if err != nil {
 		return nil, err

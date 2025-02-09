@@ -267,7 +267,7 @@ type ObjectConvertor interface {
 	// method does not mutate the in object, but the in and out object might share data structures,
 	// i.e. the out object cannot be mutated without mutating the in object as well.
 	// The context argument will be passed to all nested conversions.
-	Convert(in, out, context interface{}) error
+	Convert(in, out, context any) error
 	// ConvertToVersion takes the provided object and converts it the provided version. This
 	// method does not mutate the in object, but the in and out object might share data structures,
 	// i.e. the out object cannot be mutated without mutating the in object as well.
@@ -359,7 +359,7 @@ type CacheableObject interface {
 	GetObject() Object
 }
 
-// Unstructured objects store values as map[string]interface{}, with only values that can be serialized
+// Unstructured objects store values as map[string]any, with only values that can be serialized
 // to JSON allowed.
 type Unstructured interface {
 	Object
@@ -367,11 +367,11 @@ type Unstructured interface {
 	// This should be called instead of reflect.New() for unstructured types because the go type alone does not preserve kind/apiVersion info.
 	NewEmptyInstance() Unstructured
 	// UnstructuredContent returns a non-nil map with this object's contents. Values may be
-	// []interface{}, map[string]interface{}, or any primitive type. Contents are typically serialized to
+	// []any, map[string]any, or any primitive type. Contents are typically serialized to
 	// and from JSON. SetUnstructuredContent should be used to mutate the contents.
-	UnstructuredContent() map[string]interface{}
+	UnstructuredContent() map[string]any
 	// SetUnstructuredContent updates the object content to match the provided map.
-	SetUnstructuredContent(map[string]interface{})
+	SetUnstructuredContent(map[string]any)
 	// IsList returns true if this type is a list or matches the list convention - has an array called "items".
 	IsList() bool
 	// EachListItem should pass a single item out of the list as an Object to the provided function. Any

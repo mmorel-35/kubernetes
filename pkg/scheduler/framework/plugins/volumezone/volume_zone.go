@@ -302,7 +302,7 @@ func (pl *VolumeZone) getPersistentVolumeClaimNameFromPod(pod *v1.Pod) []string 
 
 // isSchedulableAfterPersistentVolumeClaimChange is invoked whenever a PersistentVolumeClaim added or updated.
 // It checks whether the change of PVC has made a previously unschedulable pod schedulable.
-func (pl *VolumeZone) isSchedulableAfterPersistentVolumeClaimChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *VolumeZone) isSchedulableAfterPersistentVolumeClaimChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	_, modifiedPVC, err := util.As[*v1.PersistentVolumeClaim](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, fmt.Errorf("unexpected objects in isSchedulableAfterPersistentVolumeClaimChange: %w", err)
@@ -335,7 +335,7 @@ func (pl *VolumeZone) isPVCRequestedFromPod(logger klog.Logger, pvc *v1.Persiste
 // isSchedulableAfterStorageClassAdded is invoked whenever a StorageClass is added.
 // It checks whether the addition of StorageClass has made a previously unschedulable pod schedulable.
 // Only a new StorageClass with WaitForFirstConsumer will cause a pod to become schedulable.
-func (pl *VolumeZone) isSchedulableAfterStorageClassAdded(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *VolumeZone) isSchedulableAfterStorageClassAdded(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	_, addedStorageClass, err := util.As[*storage.StorageClass](nil, newObj)
 	if err != nil {
 		return framework.Queue, fmt.Errorf("unexpected objects in isSchedulableAfterStorageClassAdded: %w", err)
@@ -352,7 +352,7 @@ func (pl *VolumeZone) isSchedulableAfterStorageClassAdded(logger klog.Logger, po
 // isSchedulableAfterPersistentVolumeChange is invoked whenever a PersistentVolume added or updated.
 // It checks whether the change of PV has made a previously unschedulable pod schedulable.
 // Changing the PV topology labels could cause the pod to become schedulable.
-func (pl *VolumeZone) isSchedulableAfterPersistentVolumeChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *VolumeZone) isSchedulableAfterPersistentVolumeChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	originalPV, modifiedPV, err := util.As[*v1.PersistentVolume](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, fmt.Errorf("unexpected objects in isSchedulableAfterPersistentVolumeChange: %w", err)

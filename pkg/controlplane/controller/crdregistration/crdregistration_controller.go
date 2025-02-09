@@ -75,17 +75,17 @@ func NewCRDRegistrationController(crdinformer crdinformers.CustomResourceDefinit
 	c.syncHandler = c.handleVersionUpdate
 
 	crdinformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			cast := obj.(*apiextensionsv1.CustomResourceDefinition)
 			c.enqueueCRD(cast)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			// Enqueue both old and new object to make sure we remove and add appropriate API services.
 			// The working queue will resolve any duplicates and only changes will stay in the queue.
 			c.enqueueCRD(oldObj.(*apiextensionsv1.CustomResourceDefinition))
 			c.enqueueCRD(newObj.(*apiextensionsv1.CustomResourceDefinition))
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			cast, ok := obj.(*apiextensionsv1.CustomResourceDefinition)
 			if !ok {
 				tombstone, ok := obj.(cache.DeletedFinalStateUnknown)

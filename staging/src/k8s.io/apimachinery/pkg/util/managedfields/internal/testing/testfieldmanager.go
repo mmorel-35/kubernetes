@@ -34,7 +34,7 @@ import (
 type FakeObjectCreater struct{}
 
 func (f *FakeObjectCreater) New(gvk schema.GroupVersionKind) (runtime.Object, error) {
-	u := unstructured.Unstructured{Object: map[string]interface{}{}}
+	u := unstructured.Unstructured{Object: map[string]any{}}
 	u.SetAPIVersion(gvk.GroupVersion().String())
 	u.SetKind(gvk.Kind)
 	return &u, nil
@@ -45,7 +45,7 @@ func (f *FakeObjectCreater) New(gvk schema.GroupVersionKind) (runtime.Object, er
 type FakeObjectConvertor struct{}
 
 //nolint:staticcheck,ineffassign // SA4009 backwards compatibility
-func (c *FakeObjectConvertor) Convert(in, out, context interface{}) error {
+func (c *FakeObjectConvertor) Convert(in, out, context any) error {
 	out = in
 	return nil
 }

@@ -41,7 +41,7 @@ var (
 // klog.FromContext(ctx) already skips over the panic handler itself and
 // several other intermediate functions, ideally such that the log output
 // is attributed to the code which triggered the panic.
-var PanicHandlers = []func(context.Context, interface{}){logPanic}
+var PanicHandlers = []func(context.Context, any){logPanic}
 
 // HandleCrash simply catches a crash and logs an error. Meant to be called via
 // defer.  Additional context-specific handlers can be provided, and will be
@@ -51,12 +51,12 @@ var PanicHandlers = []func(context.Context, interface{}){logPanic}
 // E.g., you can provide one or more additional handlers for something like shutting down go routines gracefully.
 //
 // Contextual logging: HandleCrashWithContext or HandleCrashWithLogger should be used instead of HandleCrash in code which supports contextual logging.
-func HandleCrash(additionalHandlers ...func(interface{})) {
+func HandleCrash(additionalHandlers ...func(any)) {
 	if r := recover(); r != nil {
-		additionalHandlersWithContext := make([]func(context.Context, interface{}), len(additionalHandlers))
+		additionalHandlersWithContext := make([]func(context.Context, any), len(additionalHandlers))
 		for i, handler := range additionalHandlers {
 			handler := handler // capture loop variable
-			additionalHandlersWithContext[i] = func(_ context.Context, r interface{}) {
+			additionalHandlersWithContext[i] = func(_ context.Context, r any) {
 				handler(r)
 			}
 		}
@@ -73,7 +73,7 @@ func HandleCrash(additionalHandlers ...func(interface{})) {
 // E.g., you can provide one or more additional handlers for something like shutting down go routines gracefully.
 //
 // The context is used to determine how to log.
-func HandleCrashWithContext(ctx context.Context, additionalHandlers ...func(context.Context, interface{})) {
+func HandleCrashWithContext(ctx context.Context, additionalHandlers ...func(context.Context, any)) {
 	if r := recover(); r != nil {
 		handleCrash(ctx, r, additionalHandlers...)
 	}
@@ -85,7 +85,7 @@ func HandleCrashWithContext(ctx context.Context, additionalHandlers ...func(cont
 // handlers and logging the panic message.
 //
 // E.g., you can provide one or more additional handlers for something like shutting down go routines gracefully.
-func HandleCrashWithLogger(logger klog.Logger, additionalHandlers ...func(context.Context, interface{})) {
+func HandleCrashWithLogger(logger klog.Logger, additionalHandlers ...func(context.Context, any)) {
 	if r := recover(); r != nil {
 		ctx := klog.NewContext(context.Background(), logger)
 		handleCrash(ctx, r, additionalHandlers...)
@@ -95,7 +95,7 @@ func HandleCrashWithLogger(logger klog.Logger, additionalHandlers ...func(contex
 // handleCrash is the common implementation of the HandleCrash* variants.
 // Having those call a common implementation ensures that the stack depth
 // is the same regardless through which path the handlers get invoked.
-func handleCrash(ctx context.Context, r any, additionalHandlers ...func(context.Context, interface{})) {
+func handleCrash(ctx context.Context, r any, additionalHandlers ...func(context.Context, any)) {
 	// We don't really know how many call frames to skip because the Go
 	// panic handler is between us and the code where the panic occurred.
 	// If it's one function (as in Go 1.21), then skipping four levels
@@ -116,7 +116,7 @@ func handleCrash(ctx context.Context, r any, additionalHandlers ...func(context.
 }
 
 // logPanic logs the caller tree when a panic occurs (except in the special case of http.ErrAbortHandler).
-func logPanic(ctx context.Context, r interface{}) {
+func logPanic(ctx context.Context, r any) {
 	if r == http.ErrAbortHandler {
 		// honor the http.ErrAbortHandler sentinel panic value:
 		//   ErrAbortHandler is a sentinel panic value to abort a handler.
@@ -149,7 +149,7 @@ func logPanic(ctx context.Context, r interface{}) {
 // should be packaged up into a testable and reusable object.
 var ErrorHandlers = []ErrorHandler{
 	logError,
-	func(_ context.Context, _ error, _ string, _ ...interface{}) {
+	func(_ context.Context, _ error, _ string, _ ...any) {
 		(&rudimentaryErrorBackoff{
 			lastErrorTime: time.Now(),
 			// 1ms was the number folks were able to stomach as a global rate limit.
@@ -160,7 +160,7 @@ var ErrorHandlers = []ErrorHandler{
 	},
 }
 
-type ErrorHandler func(ctx context.Context, err error, msg string, keysAndValues ...interface{})
+type ErrorHandler func(ctx context.Context, err error, msg string, keysAndValues ...any)
 
 // HandlerError is a method to invoke when a non-user facing piece of code cannot
 // return an error and needs to indicate it has been ignored. Invoking this method
@@ -199,20 +199,20 @@ func HandleError(err error) {
 // This variant should be used instead of HandleError because it supports
 // structured, contextual logging. Alternatively, [HandleErrorWithLogger] can
 // be used if a logger is available instead of a context.
-func HandleErrorWithContext(ctx context.Context, err error, msg string, keysAndValues ...interface{}) {
+func HandleErrorWithContext(ctx context.Context, err error, msg string, keysAndValues ...any) {
 	handleError(ctx, err, msg, keysAndValues...)
 }
 
 // HandleErrorWithLogger is an alternative to [HandlerErrorWithContext] which accepts
 // a logger for contextual logging.
-func HandleErrorWithLogger(logger klog.Logger, err error, msg string, keysAndValues ...interface{}) {
+func HandleErrorWithLogger(logger klog.Logger, err error, msg string, keysAndValues ...any) {
 	handleError(klog.NewContext(context.Background(), logger), err, msg, keysAndValues...)
 }
 
 // handleError is the common implementation of the HandleError* variants.
 // Using this common implementation ensures that the stack depth
 // is the same regardless through which path the handlers get invoked.
-func handleError(ctx context.Context, err error, msg string, keysAndValues ...interface{}) {
+func handleError(ctx context.Context, err error, msg string, keysAndValues ...any) {
 	for _, fn := range ErrorHandlers {
 		fn(ctx, err, msg, keysAndValues...)
 	}
@@ -220,7 +220,7 @@ func handleError(ctx context.Context, err error, msg string, keysAndValues ...in
 
 // logError prints an error with the call stack of the location it was reported.
 // It expects to be called as <caller> -> HandleError[WithContext] -> handleError -> logError.
-func logError(ctx context.Context, err error, msg string, keysAndValues ...interface{}) {
+func logError(ctx context.Context, err error, msg string, keysAndValues ...any) {
 	logger := klog.FromContext(ctx).WithCallDepth(3)
 	logger = klog.LoggerWithName(logger, "UnhandledError")
 	logger.Error(err, msg, keysAndValues...) //nolint:logcheck // logcheck complains about unknown key/value pairs.

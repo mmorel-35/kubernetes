@@ -41,7 +41,7 @@ func schema_k8sio_api_apps_v1_DeploymentCondition(ref common.ReferenceCallback) 
 							Default:     "",
 							Type:        []string{"string"},
 							Format:      "",
-							Enum:        []interface{}{"Available", "Progressing", "ReplicaFailure"}},
+							Enum:        []any{"Available", "Progressing", "ReplicaFailure"}},
 					},
 					"status": {
 						SchemaProps: spec.SchemaProps{
@@ -49,19 +49,19 @@ func schema_k8sio_api_apps_v1_DeploymentCondition(ref common.ReferenceCallback) 
 							Default:     "",
 							Type:        []string{"string"},
 							Format:      "",
-							Enum:        []interface{}{"False", "True", "Unknown"}},
+							Enum:        []any{"False", "True", "Unknown"}},
 					},
 					"lastUpdateTime": {
 						SchemaProps: spec.SchemaProps{
 							Description: "The last time this condition was updated.",
-							Default:     map[string]interface{}{},
+							Default:     map[string]any{},
 							Ref:         ref("k8s.io/apimachinery/pkg/apis/meta/v1.Time"),
 						},
 					},
 					"lastTransitionTime": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Last time the condition transitioned from one status to another.",
-							Default:     map[string]interface{}{},
+							Default:     map[string]any{},
 							Ref:         ref("k8s.io/apimachinery/pkg/apis/meta/v1.Time"),
 						},
 					},

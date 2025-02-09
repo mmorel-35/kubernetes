@@ -291,42 +291,42 @@ func NewExternalScheme() (*runtime.Scheme, meta.RESTMapper, runtime.Codec) {
 }
 
 func registerConversions(s *runtime.Scheme) error {
-	if err := s.AddConversionFunc((*InternalType)(nil), (*ExternalType)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*InternalType)(nil), (*ExternalType)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertInternalTypeToExternalType(a.(*InternalType), b.(*ExternalType), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*InternalType)(nil), (*ExternalType2)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*InternalType)(nil), (*ExternalType2)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertInternalTypeToExternalType2(a.(*InternalType), b.(*ExternalType2), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*ExternalType)(nil), (*InternalType)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*ExternalType)(nil), (*InternalType)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertExternalTypeToInternalType(a.(*ExternalType), b.(*InternalType), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*ExternalType2)(nil), (*InternalType)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*ExternalType2)(nil), (*InternalType)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertExternalType2ToInternalType(a.(*ExternalType2), b.(*InternalType), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*InternalNamespacedType)(nil), (*ExternalNamespacedType)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*InternalNamespacedType)(nil), (*ExternalNamespacedType)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertInternalNamespacedTypeToExternalNamespacedType(a.(*InternalNamespacedType), b.(*ExternalNamespacedType), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*InternalNamespacedType)(nil), (*ExternalNamespacedType2)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*InternalNamespacedType)(nil), (*ExternalNamespacedType2)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertInternalNamespacedTypeToExternalNamespacedType2(a.(*InternalNamespacedType), b.(*ExternalNamespacedType2), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*ExternalNamespacedType)(nil), (*InternalNamespacedType)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*ExternalNamespacedType)(nil), (*InternalNamespacedType)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertExternalNamespacedTypeToInternalNamespacedType(a.(*ExternalNamespacedType), b.(*InternalNamespacedType), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddConversionFunc((*ExternalNamespacedType2)(nil), (*InternalNamespacedType)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddConversionFunc((*ExternalNamespacedType2)(nil), (*InternalNamespacedType)(nil), func(a, b any, scope conversion.Scope) error {
 		return convertExternalNamespacedType2ToInternalNamespacedType(a.(*ExternalNamespacedType2), b.(*InternalNamespacedType), scope)
 	}); err != nil {
 		return err

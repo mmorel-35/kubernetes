@@ -91,7 +91,7 @@ func (wrapper verbosityLevelPflag) String() string {
 	return strconv.FormatInt(int64(*wrapper.value), 10)
 }
 
-func (wrapper verbosityLevelPflag) Get() interface{} {
+func (wrapper verbosityLevelPflag) Get() any {
 	if wrapper.value == nil {
 		return VerbosityLevel(0)
 	}

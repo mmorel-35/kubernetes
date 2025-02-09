@@ -79,8 +79,8 @@ func getRandomDualStackCIDR(c fuzz.Continue) []string {
 }
 
 // Funcs returns the fuzzer functions for the kube-proxy apis.
-func Funcs(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+func Funcs(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(obj *kubeproxyconfig.KubeProxyConfiguration, c fuzz.Continue) {
 			c.FuzzNoCustom(obj)
 			obj.BindAddress = fmt.Sprintf("%d.%d.%d.%d", c.Intn(256), c.Intn(256), c.Intn(256), c.Intn(256))

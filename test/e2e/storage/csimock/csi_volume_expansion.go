@@ -654,7 +654,7 @@ func waitForAllocatedResource(ctx context.Context, pvc *v1.PersistentVolumeClaim
 
 func createExpansionHook(expectedExpansionStatus expansionStatus) *drivers.Hooks {
 	return &drivers.Hooks{
-		Pre: func(ctx context.Context, method string, request interface{}) (reply interface{}, err error) {
+		Pre: func(ctx context.Context, method string, request any) (reply any, err error) {
 			switch expectedExpansionStatus {
 			case expansionFailedMissingStagingPath:
 				expansionRequest, ok := request.(*csipbv1.NodeExpandVolumeRequest)

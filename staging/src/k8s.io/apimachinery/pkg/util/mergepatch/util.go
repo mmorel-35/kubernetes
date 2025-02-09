@@ -25,13 +25,13 @@ import (
 )
 
 // PreconditionFunc asserts that an incompatible change is not present within a patch.
-type PreconditionFunc func(interface{}) bool
+type PreconditionFunc func(any) bool
 
 // RequireKeyUnchanged returns a precondition function that fails if the provided key
 // is present in the patch (indicating that its value has changed).
 func RequireKeyUnchanged(key string) PreconditionFunc {
-	return func(patch interface{}) bool {
-		patchMap, ok := patch.(map[string]interface{})
+	return func(patch any) bool {
+		patchMap, ok := patch.(map[string]any)
 		if !ok {
 			return true
 		}
@@ -46,8 +46,8 @@ func RequireKeyUnchanged(key string) PreconditionFunc {
 // if the metadata.key is present in the patch (indicating its value
 // has changed).
 func RequireMetadataKeyUnchanged(key string) PreconditionFunc {
-	return func(patch interface{}) bool {
-		patchMap, ok := patch.(map[string]interface{})
+	return func(patch any) bool {
+		patchMap, ok := patch.(map[string]any)
 		if !ok {
 			return true
 		}
@@ -55,7 +55,7 @@ func RequireMetadataKeyUnchanged(key string) PreconditionFunc {
 		if !ok {
 			return true
 		}
-		patchMap2, ok := patchMap1.(map[string]interface{})
+		patchMap2, ok := patchMap1.(map[string]any)
 		if !ok {
 			return true
 		}
@@ -64,7 +64,7 @@ func RequireMetadataKeyUnchanged(key string) PreconditionFunc {
 	}
 }
 
-func ToYAMLOrError(v interface{}) string {
+func ToYAMLOrError(v any) string {
 	y, err := toYAML(v)
 	if err != nil {
 		return err.Error()
@@ -73,7 +73,7 @@ func ToYAMLOrError(v interface{}) string {
 	return y
 }
 
-func toYAML(v interface{}) (string, error) {
+func toYAML(v any) (string, error) {
 	y, err := yaml.Marshal(v)
 	if err != nil {
 		return "", fmt.Errorf("yaml marshal failed:%v\n%v\n", err, dump.Pretty(v))
@@ -89,11 +89,11 @@ func toYAML(v interface{}) (string, error) {
 //
 // NOTE: Numbers with different types (e.g. int(0) vs int64(0)) will be detected as conflicts.
 // Make sure the unmarshaling of left and right are consistent (e.g. use the same library).
-func HasConflicts(left, right interface{}) (bool, error) {
+func HasConflicts(left, right any) (bool, error) {
 	switch typedLeft := left.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		switch typedRight := right.(type) {
-		case map[string]interface{}:
+		case map[string]any:
 			for key, leftValue := range typedLeft {
 				rightValue, ok := typedRight[key]
 				if !ok {
@@ -108,9 +108,9 @@ func HasConflicts(left, right interface{}) (bool, error) {
 		default:
 			return true, nil
 		}
-	case []interface{}:
+	case []any:
 		switch typedRight := right.(type) {
-		case []interface{}:
+		case []any:
 			if len(typedLeft) != len(typedRight) {
 				return true, nil
 			}

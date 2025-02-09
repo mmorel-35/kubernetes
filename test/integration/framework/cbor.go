@@ -44,7 +44,7 @@ func AssertRequestResponseAsCBOR(t testing.TB) transport.WrapperFunc {
 					t.Error(err)
 				}
 				if len(requestbody) > 0 {
-					err = direct.Unmarshal(requestbody, new(interface{}))
+					err = direct.Unmarshal(requestbody, new(any))
 					if err != nil {
 						t.Errorf("non-cbor request: 0x%x", requestbody)
 					}
@@ -71,7 +71,7 @@ func AssertRequestResponseAsCBOR(t testing.TB) transport.WrapperFunc {
 				if buf.Len() == 0 {
 					return
 				}
-				if err := direct.Unmarshal(buf.Bytes(), new(interface{})); err != nil {
+				if err := direct.Unmarshal(buf.Bytes(), new(any)); err != nil {
 					t.Errorf("non-cbor response: 0x%x", buf.Bytes())
 				}
 			})

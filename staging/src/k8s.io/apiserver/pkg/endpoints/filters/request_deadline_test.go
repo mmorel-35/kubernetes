@@ -285,7 +285,7 @@ func TestWithRequestDeadlineWithInvalidTimeoutIsAudited(t *testing.T) {
 
 func TestWithRequestDeadlineWithPanic(t *testing.T) {
 	var (
-		panicErrGot interface{}
+		panicErrGot any
 		ctxGot      context.Context
 	)
 

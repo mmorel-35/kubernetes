@@ -113,22 +113,22 @@ func TestCRDExponentialRecursionBug(t *testing.T) {
 	crClient := dynamicClient.Resource(gvr)
 
 	instance := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": gvr.Group + "/" + gvr.Version,
 			"kind":       crd.Spec.Names.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "instanceame",
 			},
-			"spec": map[string]interface{}{},
+			"spec": map[string]any{},
 		},
 	}
 
 	// create a object with nested fields to trigger the bug
-	var m map[string]interface{}
-	m = instance.Object["spec"].(map[string]interface{})
+	var m map[string]any
+	m = instance.Object["spec"].(map[string]any)
 	for i := 0; i < 50; i++ {
-		m[fmt.Sprintf("field%d", i)] = map[string]interface{}{}
-		m = m[fmt.Sprintf("field%d", i)].(map[string]interface{})
+		m[fmt.Sprintf("field%d", i)] = map[string]any{}
+		m = m[fmt.Sprintf("field%d", i)].(map[string]any)
 	}
 
 	_, err = crClient.Create(context.TODO(), instance, metav1.CreateOptions{})

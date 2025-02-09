@@ -31,57 +31,57 @@ type klogWrapper struct{}
 
 const klogWrapperDepth = 4
 
-func (klogWrapper) Info(args ...interface{}) {
+func (klogWrapper) Info(args ...any) {
 	if klogV := klog.V(5); klogV.Enabled() {
 		klogV.InfoSDepth(klogWrapperDepth, fmt.Sprint(args...))
 	}
 }
 
-func (klogWrapper) Infoln(args ...interface{}) {
+func (klogWrapper) Infoln(args ...any) {
 	if klogV := klog.V(5); klogV.Enabled() {
 		klogV.InfoSDepth(klogWrapperDepth, fmt.Sprintln(args...))
 	}
 }
 
-func (klogWrapper) Infof(format string, args ...interface{}) {
+func (klogWrapper) Infof(format string, args ...any) {
 	if klogV := klog.V(5); klogV.Enabled() {
 		klog.V(5).InfoSDepth(klogWrapperDepth, fmt.Sprintf(format, args...))
 	}
 }
 
-func (klogWrapper) Warning(args ...interface{}) {
+func (klogWrapper) Warning(args ...any) {
 	klog.WarningDepth(klogWrapperDepth, args...)
 }
 
-func (klogWrapper) Warningln(args ...interface{}) {
+func (klogWrapper) Warningln(args ...any) {
 	klog.WarningDepth(klogWrapperDepth, fmt.Sprintln(args...))
 }
 
-func (klogWrapper) Warningf(format string, args ...interface{}) {
+func (klogWrapper) Warningf(format string, args ...any) {
 	klog.WarningDepth(klogWrapperDepth, fmt.Sprintf(format, args...))
 }
 
-func (klogWrapper) Error(args ...interface{}) {
+func (klogWrapper) Error(args ...any) {
 	klog.ErrorDepth(klogWrapperDepth, args...)
 }
 
-func (klogWrapper) Errorln(args ...interface{}) {
+func (klogWrapper) Errorln(args ...any) {
 	klog.ErrorDepth(klogWrapperDepth, fmt.Sprintln(args...))
 }
 
-func (klogWrapper) Errorf(format string, args ...interface{}) {
+func (klogWrapper) Errorf(format string, args ...any) {
 	klog.ErrorDepth(klogWrapperDepth, fmt.Sprintf(format, args...))
 }
 
-func (klogWrapper) Fatal(args ...interface{}) {
+func (klogWrapper) Fatal(args ...any) {
 	klog.FatalDepth(klogWrapperDepth, args...)
 }
 
-func (klogWrapper) Fatalln(args ...interface{}) {
+func (klogWrapper) Fatalln(args ...any) {
 	klog.FatalDepth(klogWrapperDepth, fmt.Sprintln(args...))
 }
 
-func (klogWrapper) Fatalf(format string, args ...interface{}) {
+func (klogWrapper) Fatalf(format string, args ...any) {
 	klog.FatalDepth(klogWrapperDepth, fmt.Sprintf(format, args...))
 }
 

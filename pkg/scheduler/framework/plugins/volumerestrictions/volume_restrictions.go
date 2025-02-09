@@ -347,7 +347,7 @@ func (pl *VolumeRestrictions) EventsToRegister(_ context.Context) ([]framework.C
 
 // isSchedulableAfterPersistentVolumeClaimAdded is invoked whenever a PersistentVolumeClaim added or changed, It checks whether
 // that change made a previously unschedulable pod schedulable.
-func (pl *VolumeRestrictions) isSchedulableAfterPersistentVolumeClaimAdded(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *VolumeRestrictions) isSchedulableAfterPersistentVolumeClaimAdded(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	_, newPersistentVolumeClaim, err := util.As[*v1.PersistentVolumeClaim](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, fmt.Errorf("unexpected objects in isSchedulableAfterPersistentVolumeClaimChange: %w", err)
@@ -373,7 +373,7 @@ func (pl *VolumeRestrictions) isSchedulableAfterPersistentVolumeClaimAdded(logge
 
 // isSchedulableAfterPodDeleted is invoked whenever a pod deleted,
 // It checks whether the deleted pod will conflict with volumes of other pods on the same node
-func (pl *VolumeRestrictions) isSchedulableAfterPodDeleted(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *VolumeRestrictions) isSchedulableAfterPodDeleted(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	deletedPod, _, err := util.As[*v1.Pod](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, fmt.Errorf("unexpected objects in isSchedulableAfterPodDeleted: %w", err)

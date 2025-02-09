@@ -111,7 +111,7 @@ type TContext interface {
 	//
 	//     myAmazingThing := func(int, error) { ...}
 	//     tCtx.Expect(myAmazingThing()).Should(gomega.Equal(1))
-	Expect(actual interface{}, extra ...interface{}) gomega.Assertion
+	Expect(actual any, extra ...any) gomega.Assertion
 
 	// ExpectNoError asserts that no error has occurred.
 	//
@@ -129,7 +129,7 @@ type TContext interface {
 	// assertions has the advantage that the failure message is short (good for
 	// aggregation in https://go.k8s.io/triage) with more details captured in the
 	// test log output (good when investigating one particular failure).
-	ExpectNoError(err error, explain ...interface{})
+	ExpectNoError(err error, explain ...any)
 
 	// Logger returns a logger for the current test. This is a shortcut
 	// for calling klog.FromContext.
@@ -242,7 +242,7 @@ func Init(tb TB, opts ...InitOption) TContext {
 	ctx := interruptCtx
 	if c.PerTestOutput {
 		config := ktesting.NewConfig(
-			ktesting.AnyToString(func(v interface{}) string {
+			ktesting.AnyToString(func(v any) string {
 				// For basic types where the string
 				// representation is "obvious" we use
 				// fmt.Sprintf because format.Object always
@@ -392,12 +392,12 @@ func (tCtx tContext) CleanupCtx(cb func(TContext)) {
 	cleanupCtx(tCtx, cb)
 }
 
-func (tCtx tContext) Expect(actual interface{}, extra ...interface{}) gomega.Assertion {
+func (tCtx tContext) Expect(actual any, extra ...any) gomega.Assertion {
 	tCtx.Helper()
 	return expect(tCtx, actual, extra...)
 }
 
-func (tCtx tContext) ExpectNoError(err error, explain ...interface{}) {
+func (tCtx tContext) ExpectNoError(err error, explain ...any) {
 	tCtx.Helper()
 	expectNoError(tCtx, err, explain...)
 }

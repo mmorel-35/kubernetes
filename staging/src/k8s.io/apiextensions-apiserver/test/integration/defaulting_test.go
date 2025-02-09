@@ -214,7 +214,7 @@ func testDefaulting(t *testing.T, watchCache bool) {
 		t.Fatal(err)
 	}
 
-	mustExist := func(obj map[string]interface{}, pths [][]string) {
+	mustExist := func(obj map[string]any, pths [][]string) {
 		t.Helper()
 		for _, pth := range pths {
 			if _, found, _ := unstructured.NestedFieldNoCopy(obj, pth...); !found {
@@ -222,7 +222,7 @@ func testDefaulting(t *testing.T, watchCache bool) {
 			}
 		}
 	}
-	mustNotExist := func(obj map[string]interface{}, pths [][]string) {
+	mustNotExist := func(obj map[string]any, pths [][]string) {
 		t.Helper()
 		for _, pth := range pths {
 			if fld, found, _ := unstructured.NestedFieldNoCopy(obj, pth...); found {
@@ -253,7 +253,7 @@ func testDefaulting(t *testing.T, watchCache bool) {
 			t.Fatal(err)
 		}
 	}
-	addDefault := func(version string, key string, value interface{}) {
+	addDefault := func(version string, key string, value any) {
 		t.Helper()
 		updateCRD(func(obj *apiextensionsv1.CustomResourceDefinition) {
 			for _, root := range []string{"spec", "status"} {
@@ -306,7 +306,7 @@ func testDefaulting(t *testing.T, watchCache bool) {
 	mustNotExist(foo.Object, [][]string{{"status"}})
 
 	t.Logf("Updating status and expecting 'a' and 'b' to show up.")
-	unstructured.SetNestedField(foo.Object, map[string]interface{}{}, "status")
+	unstructured.SetNestedField(foo.Object, map[string]any{}, "status")
 	if foo, err = fooClient.UpdateStatus(context.TODO(), foo, metav1.UpdateOptions{}); err != nil {
 		t.Fatal(err)
 	}
@@ -641,14 +641,14 @@ func TestCustomResourceDefaultingOfMetaFields(t *testing.T) {
 
 	tests := []struct {
 		path  []string
-		value interface{}
+		value any
 	}{
-		{[]string{"fields"}, map[string]interface{}{"metadata": map[string]interface{}{}}},
-		{[]string{"fullMetadata"}, map[string]interface{}{}},
+		{[]string{"fields"}, map[string]any{"metadata": map[string]any{}}},
+		{[]string{"fullMetadata"}, map[string]any{}},
 		{[]string{"fullObject"}, nil},
 		{[]string{"spanning", "embedded"}, nil},
-		{[]string{"preserve-fields"}, map[string]interface{}{"metadata": map[string]interface{}{}}},
-		{[]string{"preserve-fullMetadata"}, map[string]interface{}{}},
+		{[]string{"preserve-fields"}, map[string]any{"metadata": map[string]any{}}},
+		{[]string{"preserve-fullMetadata"}, map[string]any{}},
 		{[]string{"preserve-fullObject"}, nil},
 		{[]string{"preserve-spanning", "embedded"}, nil},
 	}
@@ -702,10 +702,10 @@ func TestCustomResourceDefaultingOfMetaFields(t *testing.T) {
 				}
 				if !found {
 					t.Errorf("expected defaulted objected, didn't find any")
-				} else if expected := map[string]interface{}{
+				} else if expected := map[string]any{
 					"apiVersion": "foos/v1",
 					"kind":       "Foo",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"name": "Bar",
 					},
 				}; !reflect.DeepEqual(obj, expected) {
@@ -716,7 +716,7 @@ func TestCustomResourceDefaultingOfMetaFields(t *testing.T) {
 	}
 }
 
-func jsonPtr(x interface{}) *apiextensionsv1.JSON {
+func jsonPtr(x any) *apiextensionsv1.JSON {
 	bs, err := json.Marshal(x)
 	if err != nil {
 		panic(err)

@@ -24,7 +24,7 @@ import (
 // cache is an interface for caching the limits of a particular type
 type cache interface {
 	// get the rate limiter associated with the specified key
-	get(key interface{}) flowcontrol.RateLimiter
+	get(key any) flowcontrol.RateLimiter
 }
 
 // singleCache is a cache that only stores a single, constant item
@@ -33,7 +33,7 @@ type singleCache struct {
 	rateLimiter flowcontrol.RateLimiter
 }
 
-func (c *singleCache) get(key interface{}) flowcontrol.RateLimiter {
+func (c *singleCache) get(key any) flowcontrol.RateLimiter {
 	return c.rateLimiter
 }
 
@@ -45,7 +45,7 @@ type lruCache struct {
 	cache *lru.Cache
 }
 
-func (c *lruCache) get(key interface{}) flowcontrol.RateLimiter {
+func (c *lruCache) get(key any) flowcontrol.RateLimiter {
 	value, found := c.cache.Get(key)
 	if !found {
 		rateLimter := c.rateLimiterFactory()

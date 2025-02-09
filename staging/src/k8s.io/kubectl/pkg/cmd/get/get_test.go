@@ -115,13 +115,13 @@ func TestGetUnknownSchemaObject(t *testing.T) {
 	t.Logf("actual: %#v", actual[0])
 	for i, obj := range actual {
 		expectedJSON := runtime.EncodeOrDie(codec, expected[i])
-		expectedMap := map[string]interface{}{}
+		expectedMap := map[string]any{}
 		if err := json.Unmarshal([]byte(expectedJSON), &expectedMap); err != nil {
 			t.Fatal(err)
 		}
 
 		actualJSON := runtime.EncodeOrDie(codec, obj)
-		actualMap := map[string]interface{}{}
+		actualMap := map[string]any{}
 		if err := json.Unmarshal([]byte(actualJSON), &actualMap); err != nil {
 			t.Fatal(err)
 		}
@@ -968,7 +968,7 @@ func sortTestTableData() []runtime.Object {
 			},
 			Rows: []metav1beta1.TableRow{
 				{
-					Cells: []interface{}{"c", "custom-c"},
+					Cells: []any{"c", "custom-c"},
 					Object: runtime.RawExtension{
 						Object: &corev1.Pod{
 							TypeMeta:   metav1.TypeMeta{APIVersion: "v1", Kind: "Pod"},
@@ -984,7 +984,7 @@ func sortTestTableData() []runtime.Object {
 					},
 				},
 				{
-					Cells: []interface{}{"b", "custom-b"},
+					Cells: []any{"b", "custom-b"},
 					Object: runtime.RawExtension{
 						Object: &corev1.Pod{
 							TypeMeta:   metav1.TypeMeta{APIVersion: "v1", Kind: "Pod"},
@@ -1000,7 +1000,7 @@ func sortTestTableData() []runtime.Object {
 					},
 				},
 				{
-					Cells: []interface{}{"a", "custom-a"},
+					Cells: []any{"a", "custom-a"},
 					Object: runtime.RawExtension{
 						Object: &corev1.Pod{
 							TypeMeta:   metav1.TypeMeta{APIVersion: "v1", Kind: "Pod"},
@@ -2232,7 +2232,7 @@ func TestWatchResourceTable(t *testing.T) {
 		ColumnDefinitions: columns,
 		Rows: []metav1beta1.TableRow{
 			{
-				Cells: []interface{}{"a", true},
+				Cells: []any{"a", true},
 				Object: runtime.RawExtension{
 					Object: &corev1.Pod{
 						TypeMeta:   metav1.TypeMeta{APIVersion: "v1", Kind: "Pod"},
@@ -2241,7 +2241,7 @@ func TestWatchResourceTable(t *testing.T) {
 				},
 			},
 			{
-				Cells: []interface{}{"b", true},
+				Cells: []any{"b", true},
 				Object: runtime.RawExtension{
 					Object: &corev1.Pod{
 						TypeMeta:   metav1.TypeMeta{APIVersion: "v1", Kind: "Pod"},
@@ -2259,7 +2259,7 @@ func TestWatchResourceTable(t *testing.T) {
 				TypeMeta:          metav1.TypeMeta{APIVersion: "meta.k8s.io/v1beta1", Kind: "Table"},
 				ColumnDefinitions: columns, // first event includes the columns
 				Rows: []metav1beta1.TableRow{{
-					Cells: []interface{}{"a", false},
+					Cells: []any{"a", false},
 					Object: runtime.RawExtension{
 						Object: &corev1.Pod{
 							TypeMeta:   metav1.TypeMeta{APIVersion: "v1", Kind: "Pod"},
@@ -2274,7 +2274,7 @@ func TestWatchResourceTable(t *testing.T) {
 			Object: &metav1beta1.Table{
 				ColumnDefinitions: []metav1beta1.TableColumnDefinition{},
 				Rows: []metav1beta1.TableRow{{
-					Cells: []interface{}{"b", false},
+					Cells: []any{"b", false},
 					Object: runtime.RawExtension{
 						Object: &corev1.Pod{
 							TypeMeta:   metav1.TypeMeta{APIVersion: "v1", Kind: "Pod"},
@@ -2801,7 +2801,7 @@ func podTableObjBody(codec runtime.Codec, pods ...corev1.Pod) io.ReadCloser {
 		codec.Encode(&pods[i], b)
 		table.Rows = append(table.Rows, metav1beta1.TableRow{
 			Object: runtime.RawExtension{Raw: b.Bytes()},
-			Cells:  []interface{}{pods[i].Name, "0/0", "", int64(0), "<unknown>", "<none>", "<none>", "<none>", "<none>"},
+			Cells:  []any{pods[i].Name, "0/0", "", int64(0), "<unknown>", "<none>", "<none>", "<none>", "<none>"},
 		})
 	}
 	data, err := json.Marshal(table)
@@ -2825,7 +2825,7 @@ func podV1TableObjBody(codec runtime.Codec, pods ...corev1.Pod) io.ReadCloser {
 		codec.Encode(&pods[i], b)
 		table.Rows = append(table.Rows, metav1.TableRow{
 			Object: runtime.RawExtension{Raw: b.Bytes()},
-			Cells:  []interface{}{pods[i].Name, "0/0", "", int64(0), "<unknown>", "<none>", "<none>", "<none>", "<none>"},
+			Cells:  []any{pods[i].Name, "0/0", "", int64(0), "<unknown>", "<none>", "<none>", "<none>", "<none>"},
 		})
 	}
 	data, err := json.Marshal(table)
@@ -2854,7 +2854,7 @@ func podTableWatchBody(codec runtime.Codec, events []watch.Event) io.ReadCloser 
 				ColumnDefinitions: columns,
 				Rows: []metav1.TableRow{{
 					Object: runtime.RawExtension{Raw: b.Bytes()},
-					Cells:  []interface{}{e.Object.(*corev1.Pod).Name, "0/0", "", int64(0), "<unknown>", "<none>", "<none>", "<none>", "<none>"},
+					Cells:  []any{e.Object.(*corev1.Pod).Name, "0/0", "", int64(0), "<unknown>", "<none>", "<none>", "<none>", "<none>"},
 				}}},
 		})
 	}
@@ -2878,7 +2878,7 @@ func serviceTableObjBody(codec runtime.Codec, services ...corev1.Service) io.Rea
 		codec.Encode(&services[i], b)
 		table.Rows = append(table.Rows, metav1.TableRow{
 			Object: runtime.RawExtension{Raw: b.Bytes()},
-			Cells:  []interface{}{services[i].Name, "ClusterIP", "<none>", "<none>", "<none>", "<unknown>"},
+			Cells:  []any{services[i].Name, "ClusterIP", "<none>", "<none>", "<none>", "<unknown>"},
 		})
 	}
 	return cmdtesting.ObjBody(codec, table)
@@ -2900,7 +2900,7 @@ func nodeTableObjBody(codec runtime.Codec, nodes ...corev1.Node) io.ReadCloser {
 		codec.Encode(&nodes[i], b)
 		table.Rows = append(table.Rows, metav1.TableRow{
 			Object: runtime.RawExtension{Raw: b.Bytes()},
-			Cells:  []interface{}{nodes[i].Name, "Unknown", "<none>", "<unknown>", ""},
+			Cells:  []any{nodes[i].Name, "Unknown", "<none>", "<unknown>", ""},
 		})
 	}
 	return cmdtesting.ObjBody(codec, table)
@@ -2927,7 +2927,7 @@ func componentStatusTableObjBody(codec runtime.Codec, componentStatuses ...corev
 		}
 		table.Rows = append(table.Rows, metav1.TableRow{
 			Object: runtime.RawExtension{Raw: b.Bytes()},
-			Cells:  []interface{}{v.Name, status, v.Conditions[0].Message, v.Conditions[0].Error},
+			Cells:  []any{v.Name, status, v.Conditions[0].Message, v.Conditions[0].Error},
 		})
 	}
 	return cmdtesting.ObjBody(codec, table)
@@ -2955,7 +2955,7 @@ func replicationControllersScaleSubresourceTableObjBody(codec runtime.Codec, rep
 		codec.Encode(&replicationControllers[i], b)
 		table.Rows = append(table.Rows, metav1.TableRow{
 			Object: runtime.RawExtension{Raw: b.Bytes()},
-			Cells:  []interface{}{replicationControllers[i].Name, replicationControllers[i].Spec.Replicas, replicationControllers[i].Status.Replicas},
+			Cells:  []any{replicationControllers[i].Name, replicationControllers[i].Spec.Replicas, replicationControllers[i].Status.Replicas},
 		})
 	}
 	return cmdtesting.ObjBody(codec, table)

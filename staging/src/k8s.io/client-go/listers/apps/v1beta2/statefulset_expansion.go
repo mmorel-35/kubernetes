@@ -33,7 +33,7 @@ type StatefulSetListerExpansion interface {
 
 // StatefulSetNamespaceListerExpansion allows custom methods to be added to
 // StatefulSetNamespaceLister.
-type StatefulSetNamespaceListerExpansion interface{}
+type StatefulSetNamespaceListerExpansion any
 
 // GetPodStatefulSets returns a list of StatefulSets that potentially match a pod.
 // Only the one specified in the Pod's ControllerRef will actually manage it.

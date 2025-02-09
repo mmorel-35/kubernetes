@@ -30,11 +30,11 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func nilPointerFor[T interface{}]() *T {
+func nilPointerFor[T any]() *T {
 	return nil
 }
 
-// TestRoundtrip roundtrips object serialization to interface{} and back via CBOR.
+// TestRoundtrip roundtrips object serialization to any and back via CBOR.
 func TestRoundtrip(t *testing.T) {
 	type modePair struct {
 		enc modes.EncMode
@@ -44,11 +44,11 @@ func TestRoundtrip(t *testing.T) {
 	for _, tc := range []struct {
 		name      string
 		modePairs []modePair
-		obj       interface{}
+		obj       any
 	}{
 		{
 			name: "nil slice",
-			obj:  []interface{}(nil),
+			obj:  []any(nil),
 		},
 		{
 			name: "byte array",
@@ -56,23 +56,23 @@ func TestRoundtrip(t *testing.T) {
 		},
 		{
 			name: "nil map",
-			obj:  map[string]interface{}(nil),
+			obj:  map[string]any(nil),
 		},
 		{
 			name: "empty slice",
-			obj:  []interface{}{},
+			obj:  []any{},
 		},
 		{
 			name: "empty map",
-			obj:  map[string]interface{}{},
+			obj:  map[string]any{},
 		},
 		{
 			name: "nil pointer to slice",
-			obj:  nilPointerFor[[]interface{}](),
+			obj:  nilPointerFor[[]any](),
 		},
 		{
 			name: "nil pointer to map",
-			obj:  nilPointerFor[map[string]interface{}](),
+			obj:  nilPointerFor[map[string]any](),
 		},
 		{
 			name: "nonempty string",
@@ -243,25 +243,25 @@ func TestRoundtrip(t *testing.T) {
 		{
 			name: "nil pointer to slice as struct field",
 			obj: struct {
-				V *[]interface{} `json:"v"`
+				V *[]any `json:"v"`
 			}{},
 		},
 		{
 			name: "nil pointer to slice as struct field with omitempty",
 			obj: struct {
-				V *[]interface{} `json:"v,omitempty"`
+				V *[]any `json:"v,omitempty"`
 			}{},
 		},
 		{
 			name: "nil pointer to map as struct field",
 			obj: struct {
-				V *map[string]interface{} `json:"v"`
+				V *map[string]any `json:"v"`
 			}{},
 		},
 		{
 			name: "nil pointer to map as struct field with omitempty",
 			obj: struct {
-				V *map[string]interface{} `json:"v,omitempty"`
+				V *map[string]any `json:"v,omitempty"`
 			}{},
 		},
 	} {
@@ -295,7 +295,7 @@ func TestRoundtrip(t *testing.T) {
 					t.Fatalf("unexpected error from Marshal of original: %v", err)
 				}
 
-				var iface interface{}
+				var iface any
 				if err := modePair.dec.Unmarshal(cborFromOriginal, &iface); err != nil {
 					t.Fatalf("unexpected error from Unmarshal into %T: %v", &iface, err)
 				}
@@ -306,13 +306,13 @@ func TestRoundtrip(t *testing.T) {
 				}
 
 				{
-					// interface{} to interface{}
-					var iface2 interface{}
+					// any to any
+					var iface2 any
 					if err := modePair.dec.Unmarshal(cborFromIface, &iface2); err != nil {
 						t.Fatalf("unexpected error from Unmarshal into %T: %v", &iface2, err)
 					}
 					if diff := cmp.Diff(iface, iface2); diff != "" {
-						t.Errorf("unexpected difference on roundtrip from interface{} to interface{}:\n%s", diff)
+						t.Errorf("unexpected difference on roundtrip from any to any:\n%s", diff)
 					}
 				}
 
@@ -329,14 +329,14 @@ func TestRoundtrip(t *testing.T) {
 				}
 
 				{
-					// original to interface{} to original
+					// original to any to original
 					finalViaIface := reflect.New(reflect.TypeOf(original))
 					err = modePair.dec.Unmarshal(cborFromIface, finalViaIface.Interface())
 					if err != nil {
 						t.Fatalf("unexpected error from Unmarshal into %T: %v", finalViaIface.Interface(), err)
 					}
 					if diff := cmp.Diff(original, finalViaIface.Elem().Interface()); diff != "" {
-						t.Errorf("unexpected difference on roundtrip from original to interface{} to original:\n%s", diff)
+						t.Errorf("unexpected difference on roundtrip from original to any to original:\n%s", diff)
 					}
 				}
 			})
@@ -356,12 +356,12 @@ func TestRoundtripTextEncoding(t *testing.T) {
 					t.Fatal(err)
 				}
 
-				var unstructured interface{}
+				var unstructured any
 				if err := decMode.Unmarshal(c, &unstructured); err != nil {
 					t.Fatal(err)
 				}
 				if diff := cmp.Diff(base64.StdEncoding.EncodeToString(original), unstructured); diff != "" {
-					t.Errorf("[]byte to interface{}: unexpected diff:\n%s", diff)
+					t.Errorf("[]byte to any: unexpected diff:\n%s", diff)
 				}
 
 				var s string
@@ -390,12 +390,12 @@ func TestRoundtripTextEncoding(t *testing.T) {
 					t.Fatal(err)
 				}
 
-				var unstructured interface{}
+				var unstructured any
 				if err := decMode.Unmarshal(c, &unstructured); err != nil {
 					t.Fatal(err)
 				}
 				if diff := cmp.Diff(original, unstructured); diff != "" {
-					t.Errorf("string to interface{}: unexpected diff:\n%s", diff)
+					t.Errorf("string to any: unexpected diff:\n%s", diff)
 				}
 
 				var b []byte

@@ -42,10 +42,10 @@ const (
 
 func newUnstructured(apiVersion, kind, namespace, name string) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": apiVersion,
 			"kind":       kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace": namespace,
 				"name":      name,
 			},
@@ -53,7 +53,7 @@ func newUnstructured(apiVersion, kind, namespace, name string) *unstructured.Uns
 	}
 }
 
-func newUnstructuredWithSpec(spec map[string]interface{}) *unstructured.Unstructured {
+func newUnstructuredWithSpec(spec map[string]any) *unstructured.Unstructured {
 	u := newUnstructured(testAPIVersion, testKind, testNamespace, testName)
 	u.Object["spec"] = spec
 	return u
@@ -69,10 +69,10 @@ func TestGet(t *testing.T) {
 	}
 
 	expected := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "group/version",
 			"kind":       "TheKind",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      "name-foo",
 				"namespace": "ns-foo",
 			},
@@ -91,7 +91,7 @@ func TestListDecoding(t *testing.T) {
 	}
 	list := uncastObj.(*unstructured.UnstructuredList)
 	expectedList := &unstructured.UnstructuredList{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "group/version",
 			"kind":       "TheKindList",
 		},
@@ -110,7 +110,7 @@ func TestGetDecoding(t *testing.T) {
 	}
 	get := uncastObj.(*unstructured.Unstructured)
 	expectedObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "group/version",
 			"kind":       "TheKind",
 		},
@@ -156,7 +156,7 @@ func Test_ListKind(t *testing.T) {
 			{Group: "group", Version: "version", Resource: "thekinds"}: "TheKindList",
 		},
 		&unstructured.UnstructuredList{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"apiVersion": "group/version",
 				"kind":       "TheKindList",
 			},
@@ -173,10 +173,10 @@ func Test_ListKind(t *testing.T) {
 	}
 
 	expectedList := &unstructured.UnstructuredList{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "group/version",
 			"kind":       "TheKindList",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"continue":        "",
 				"resourceVersion": "",
 			},
@@ -250,51 +250,51 @@ func TestPatch(t *testing.T) {
 	testCases := []patchTestCase{
 		{
 			name:       "jsonpatch fails with merge type",
-			object:     newUnstructuredWithSpec(map[string]interface{}{"foo": "bar"}),
+			object:     newUnstructuredWithSpec(map[string]any{"foo": "bar"}),
 			patchType:  types.StrategicMergePatchType,
 			patchBytes: []byte(`[]`),
 			wantErrMsg: "invalid JSON document",
 		}, {
 			name:      "jsonpatch works with empty patch",
-			object:    newUnstructuredWithSpec(map[string]interface{}{"foo": "bar"}),
+			object:    newUnstructuredWithSpec(map[string]any{"foo": "bar"}),
 			patchType: types.JSONPatchType,
 			// No-op
 			patchBytes:            []byte(`[]`),
-			expectedPatchedObject: newUnstructuredWithSpec(map[string]interface{}{"foo": "bar"}),
+			expectedPatchedObject: newUnstructuredWithSpec(map[string]any{"foo": "bar"}),
 		}, {
 			name:      "jsonpatch works with simple change patch",
-			object:    newUnstructuredWithSpec(map[string]interface{}{"foo": "bar"}),
+			object:    newUnstructuredWithSpec(map[string]any{"foo": "bar"}),
 			patchType: types.JSONPatchType,
 			// change spec.foo from bar to foobar
 			patchBytes:            []byte(`[{"op": "replace", "path": "/spec/foo", "value": "foobar"}]`),
-			expectedPatchedObject: newUnstructuredWithSpec(map[string]interface{}{"foo": "foobar"}),
+			expectedPatchedObject: newUnstructuredWithSpec(map[string]any{"foo": "foobar"}),
 		}, {
 			name:      "jsonpatch works with simple addition",
-			object:    newUnstructuredWithSpec(map[string]interface{}{"foo": "bar"}),
+			object:    newUnstructuredWithSpec(map[string]any{"foo": "bar"}),
 			patchType: types.JSONPatchType,
 			// add spec.newvalue = dummy
 			patchBytes:            []byte(`[{"op": "add", "path": "/spec/newvalue", "value": "dummy"}]`),
-			expectedPatchedObject: newUnstructuredWithSpec(map[string]interface{}{"foo": "bar", "newvalue": "dummy"}),
+			expectedPatchedObject: newUnstructuredWithSpec(map[string]any{"foo": "bar", "newvalue": "dummy"}),
 		}, {
 			name:      "jsonpatch works with simple deletion",
-			object:    newUnstructuredWithSpec(map[string]interface{}{"foo": "bar", "toremove": "shouldnotbehere"}),
+			object:    newUnstructuredWithSpec(map[string]any{"foo": "bar", "toremove": "shouldnotbehere"}),
 			patchType: types.JSONPatchType,
 			// remove spec.newvalue = dummy
 			patchBytes:            []byte(`[{"op": "remove", "path": "/spec/toremove"}]`),
-			expectedPatchedObject: newUnstructuredWithSpec(map[string]interface{}{"foo": "bar"}),
+			expectedPatchedObject: newUnstructuredWithSpec(map[string]any{"foo": "bar"}),
 		}, {
 			name:      "strategic merge patch fails with JSONPatch",
-			object:    newUnstructuredWithSpec(map[string]interface{}{"foo": "bar"}),
+			object:    newUnstructuredWithSpec(map[string]any{"foo": "bar"}),
 			patchType: types.StrategicMergePatchType,
 			// add spec.newvalue = dummy
 			patchBytes: []byte(`[{"op": "add", "path": "/spec/newvalue", "value": "dummy"}]`),
 			wantErrMsg: "invalid JSON document",
 		}, {
 			name:                  "merge patch works with simple replacement",
-			object:                newUnstructuredWithSpec(map[string]interface{}{"foo": "bar"}),
+			object:                newUnstructuredWithSpec(map[string]any{"foo": "bar"}),
 			patchType:             types.MergePatchType,
 			patchBytes:            []byte(`{ "spec": { "foo": "baz" } }`),
-			expectedPatchedObject: newUnstructuredWithSpec(map[string]interface{}{"foo": "baz"}),
+			expectedPatchedObject: newUnstructuredWithSpec(map[string]any{"foo": "baz"}),
 		},
 		// TODO: Add tests for strategic merge using v1.Pod for example to ensure the test cases
 		// demonstrate expected use cases.

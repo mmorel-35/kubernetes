@@ -72,7 +72,7 @@ func TestTypes_MapType(t *testing.T) {
 	}
 }
 
-func testValue(t *testing.T, id int64, val interface{}) *DynValue {
+func testValue(t *testing.T, id int64, val any) *DynValue {
 	t.Helper()
 	dv, err := NewDynValue(id, val)
 	if err != nil {

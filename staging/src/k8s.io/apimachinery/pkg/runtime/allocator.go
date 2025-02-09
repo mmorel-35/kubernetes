@@ -33,7 +33,7 @@ import (
 //	consider introducing multiple pools for storing buffers of different sizes
 //	perhaps this could allow us to be more efficient.
 var AllocatorPool = sync.Pool{
-	New: func() interface{} {
+	New: func() any {
 		return &Allocator{}
 	},
 }

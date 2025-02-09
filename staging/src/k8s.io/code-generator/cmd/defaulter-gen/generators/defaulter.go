@@ -35,28 +35,28 @@ import (
 	"k8s.io/klog/v2"
 )
 
-var typeZeroValue = map[string]interface{}{
-	"uint":        0.,
-	"uint8":       0.,
-	"uint16":      0.,
-	"uint32":      0.,
-	"uint64":      0.,
-	"int":         0.,
-	"int8":        0.,
-	"int16":       0.,
-	"int32":       0.,
-	"int64":       0.,
-	"byte":        0.,
-	"float64":     0.,
-	"float32":     0.,
-	"bool":        false,
-	"time.Time":   "",
-	"string":      "",
-	"integer":     0.,
-	"number":      0.,
-	"boolean":     false,
-	"[]byte":      "", // base64 encoded characters
-	"interface{}": interface{}(nil),
+var typeZeroValue = map[string]any{
+	"uint":      0.,
+	"uint8":     0.,
+	"uint16":    0.,
+	"uint32":    0.,
+	"uint64":    0.,
+	"int":       0.,
+	"int8":      0.,
+	"int16":     0.,
+	"int32":     0.,
+	"int64":     0.,
+	"byte":      0.,
+	"float64":   0.,
+	"float32":   0.,
+	"bool":      false,
+	"time.Time": "",
+	"string":    "",
+	"integer":   0.,
+	"number":    0.,
+	"boolean":   false,
+	"[]byte":    "", // base64 encoded characters
+	"any":       any(nil),
 }
 
 // These are the comment tags that carry parameters for defaulter generation.
@@ -555,7 +555,7 @@ func populateDefaultValue(node *callNode, t *types.Type, tags string, commentLin
 		return node
 	}
 	var symbolReference types.Name
-	var defaultValue interface{}
+	var defaultValue any
 	if id, ok := parseSymbolReference(defaultString, commentPackage); ok {
 		symbolReference = id
 		defaultString = ""
@@ -784,7 +784,7 @@ func (g *genDefaulter) Init(c *generator.Context, w io.Writer) error {
 	sw.Do("func RegisterDefaults(scheme $.|raw$) error {\n", schemePtr)
 	for _, t := range g.typesForInit {
 		args := defaultingArgsFromType(t)
-		sw.Do("scheme.AddTypeDefaultingFunc(&$.inType|raw${}, func(obj interface{}) { $.inType|objectdefaultfn$(obj.(*$.inType|raw$)) })\n", args)
+		sw.Do("scheme.AddTypeDefaultingFunc(&$.inType|raw${}, func(obj any) { $.inType|objectdefaultfn$(obj.(*$.inType|raw$)) })\n", args)
 	}
 	sw.Do("return nil\n", nil)
 	sw.Do("}\n\n", nil)
@@ -983,7 +983,7 @@ func (n *callNode) writeCalls(varName string, isVarPointer bool, sw *generator.S
 	}
 }
 
-func getTypeZeroValue(t string) (interface{}, error) {
+func getTypeZeroValue(t string) (any, error) {
 	defaultZero, ok := typeZeroValue[t]
 	if !ok {
 		return nil, fmt.Errorf("cannot find zero value for type %v in typeZeroValue", t)

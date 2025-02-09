@@ -34,11 +34,11 @@ import (
 
 type SchemaValidator interface {
 	SchemaCreateValidator
-	ValidateUpdate(new, old interface{}, options ...ValidationOption) *validate.Result
+	ValidateUpdate(new, old any, options ...ValidationOption) *validate.Result
 }
 
 type SchemaCreateValidator interface {
-	Validate(value interface{}, options ...ValidationOption) *validate.Result
+	Validate(value any, options ...ValidationOption) *validate.Result
 }
 
 type ValidationOptions struct {
@@ -82,11 +82,11 @@ type basicSchemaValidator struct {
 	*validate.SchemaValidator
 }
 
-func (s basicSchemaValidator) Validate(new interface{}, options ...ValidationOption) *validate.Result {
+func (s basicSchemaValidator) Validate(new any, options ...ValidationOption) *validate.Result {
 	return s.SchemaValidator.Validate(new)
 }
 
-func (s basicSchemaValidator) ValidateUpdate(new, old interface{}, options ...ValidationOption) *validate.Result {
+func (s basicSchemaValidator) ValidateUpdate(new, old any, options ...ValidationOption) *validate.Result {
 	return s.Validate(new, options...)
 }
 
@@ -123,7 +123,7 @@ func NewSchemaValidatorFromOpenAPI(openapiSchema *spec.Schema) SchemaValidator {
 //
 // If feature `CRDValidationRatcheting` is disabled, this behaves identically to
 // ValidateCustomResource(customResource).
-func ValidateCustomResourceUpdate(fldPath *field.Path, customResource, old interface{}, validator SchemaValidator, options ...ValidationOption) field.ErrorList {
+func ValidateCustomResourceUpdate(fldPath *field.Path, customResource, old any, validator SchemaValidator, options ...ValidationOption) field.ErrorList {
 	// Additional feature gate check for sanity
 	if !utilfeature.DefaultFeatureGate.Enabled(features.CRDValidationRatcheting) {
 		return ValidateCustomResource(nil, customResource, validator)
@@ -141,7 +141,7 @@ func ValidateCustomResourceUpdate(fldPath *field.Path, customResource, old inter
 
 // ValidateCustomResource validates the Custom Resource against the schema in the CustomResourceDefinition.
 // CustomResource is a JSON data structure.
-func ValidateCustomResource(fldPath *field.Path, customResource interface{}, validator SchemaCreateValidator, options ...ValidationOption) field.ErrorList {
+func ValidateCustomResource(fldPath *field.Path, customResource any, validator SchemaCreateValidator, options ...ValidationOption) field.ErrorList {
 	if validator == nil {
 		return nil
 	}
@@ -211,14 +211,14 @@ func kubeOpenAPIResultToFieldErrors(fldPath *field.Path, result *validate.Result
 				allErrs = append(allErrs, field.TooMany(errPath, int(actual), int(max)))
 
 			case openapierrors.InvalidTypeCode:
-				value := interface{}("")
+				value := any("")
 				if err.Value != nil {
 					value = err.Value
 				}
 				allErrs = append(allErrs, field.TypeInvalid(errPath, value, err.Error()))
 
 			default:
-				value := interface{}("")
+				value := any("")
 				if err.Value != nil {
 					value = err.Value
 				}
@@ -283,7 +283,7 @@ func ConvertJSONSchemaPropsWithPostProcess(in *apiextensions.JSONSchemaProps, ou
 	}
 
 	if in.Enum != nil {
-		out.Enum = make([]interface{}, len(in.Enum))
+		out.Enum = make([]any, len(in.Enum))
 		for k, v := range in.Enum {
 			out.Enum[k] = v
 		}
@@ -403,8 +403,8 @@ func ConvertJSONSchemaPropsWithPostProcess(in *apiextensions.JSONSchemaProps, ou
 	return nil
 }
 
-func convertSliceToInterfaceSlice[T any](in []T) []interface{} {
-	var res []interface{}
+func convertSliceToInterfaceSlice[T any](in []T) []any {
+	var res []any
 	for _, v := range in {
 		res = append(res, v)
 	}

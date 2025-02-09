@@ -140,7 +140,7 @@ func (c *crConverter) ConvertFieldLabel(gvk schema.GroupVersionKind, label, valu
 	}
 }
 
-func (c *crConverter) Convert(in, out, context interface{}) error {
+func (c *crConverter) Convert(in, out, context any) error {
 	// Special-case typed scale conversion if this custom resource supports a scale endpoint
 	if c.convertScale {
 		_, isInScale := in.(*autoscalingv1.Scale)
@@ -226,7 +226,7 @@ func (c *safeConverterWrapper) ConvertFieldLabel(gvk schema.GroupVersionKind, la
 }
 
 // Convert makes a copy of in object and then delegate the call to the unsafe converter.
-func (c *safeConverterWrapper) Convert(in, out, context interface{}) error {
+func (c *safeConverterWrapper) Convert(in, out, context any) error {
 	inObject, ok := in.(runtime.Object)
 	if !ok {
 		return fmt.Errorf("input type %T in not valid for object conversion", in)

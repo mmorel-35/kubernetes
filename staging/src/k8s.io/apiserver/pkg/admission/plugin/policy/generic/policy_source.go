@@ -160,13 +160,13 @@ func (s *policySource[P, B, E]) Run(ctx context.Context) error {
 	s.refreshPolicies()
 
 	notifyFuncs := cache.ResourceEventHandlerFuncs{
-		AddFunc: func(_ interface{}) {
+		AddFunc: func(_ any) {
 			s.notify()
 		},
-		UpdateFunc: func(_, _ interface{}) {
+		UpdateFunc: func(_, _ any) {
 			s.notify()
 		},
-		DeleteFunc: func(_ interface{}) {
+		DeleteFunc: func(_ any) {
 			s.notify()
 		},
 	}

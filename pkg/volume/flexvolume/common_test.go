@@ -69,7 +69,7 @@ func fakeRunner(fakeCommands ...exectesting.FakeCommandAction) exec.Interface {
 	}
 }
 
-func fakeResultOutput(result interface{}) exectesting.FakeAction {
+func fakeResultOutput(result any) exectesting.FakeAction {
 	return func() ([]byte, []byte, error) {
 		bytes, err := json.Marshal(result)
 		if err != nil {

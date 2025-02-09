@@ -31,7 +31,7 @@ import (
 // be set to application/apply-patch with the appropriate structured syntax name suffix (today,
 // either +yaml or +cbor, see
 // https://www.iana.org/assignments/media-type-structured-suffix/media-type-structured-suffix.xhtml).
-func NewRequest(client rest.Interface, applyConfiguration interface{}) (*rest.Request, error) {
+func NewRequest(client rest.Interface, applyConfiguration any) (*rest.Request, error) {
 	pt := types.ApplyYAMLPatchType
 	marshal := json.Marshal
 

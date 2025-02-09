@@ -29,7 +29,7 @@ import (
 type jsonpathTest struct {
 	name        string
 	template    string
-	input       interface{}
+	input       any
 	expect      string
 	expectError bool
 }
@@ -109,22 +109,22 @@ func testFailJSONPath(tests []jsonpathTest, t *testing.T) {
 }
 
 func TestTypesInput(t *testing.T) {
-	types := map[string]interface{}{
+	types := map[string]any{
 		"bools":      []bool{true, false, true, false},
 		"integers":   []int{1, 2, 3, 4},
 		"floats":     []float64{1.0, 2.2, 3.3, 4.0},
 		"strings":    []string{"one", "two", "three", "four"},
-		"interfaces": []interface{}{true, "one", 1, 1.1},
-		"maps": []map[string]interface{}{
+		"interfaces": []any{true, "one", 1, 1.1},
+		"maps": []map[string]any{
 			{"name": "one", "value": 1},
 			{"name": "two", "value": 2.02},
 			{"name": "three", "value": 3.03},
 			{"name": "four", "value": 4.04},
 		},
 		"structs": []struct {
-			Name  string      `json:"name"`
-			Value interface{} `json:"value"`
-			Type  string      `json:"type"`
+			Name  string `json:"name"`
+			Value any    `json:"value"`
+			Type  string `json:"type"`
 		}{
 			{Name: "one", Value: 1, Type: "integer"},
 			{Name: "two", Value: 2.002, Type: "float"},
@@ -304,7 +304,7 @@ func TestJSONInput(t *testing.T) {
 		{"id": "i6", "x":  1, "y":  4 },
 		{"id": "i7", "x":  null, "y":  4 }
 	]`)
-	var pointsData interface{}
+	var pointsData any
 	err := json.Unmarshal(pointsJSON, &pointsData)
 	if err != nil {
 		t.Error(err)
@@ -365,7 +365,7 @@ func TestKubernetes(t *testing.T) {
 	  	}
 	  ]
 	}`)
-	var nodesData interface{}
+	var nodesData any
 	err := json.Unmarshal(input, &nodesData)
 	if err != nil {
 		t.Error(err)
@@ -398,7 +398,7 @@ func TestKubernetes(t *testing.T) {
 
 func TestEmptyRange(t *testing.T) {
 	var input = []byte(`{"items":[]}`)
-	var emptyList interface{}
+	var emptyList any
 	err := json.Unmarshal(input, &emptyList)
 	if err != nil {
 		t.Error(err)
@@ -455,7 +455,7 @@ func TestNestedRanges(t *testing.T) {
 			}
 		]
 	}`)
-	var data interface{}
+	var data any
 	err := json.Unmarshal(input, &data)
 	if err != nil {
 		t.Error(err)
@@ -578,7 +578,7 @@ func TestFilterPartialMatchesSometimesMissingAnnotations(t *testing.T) {
 			}
 		]
 	}`)
-	var data interface{}
+	var data any
 	err := json.Unmarshal(input, &data)
 	if err != nil {
 		t.Fatal(err)
@@ -637,7 +637,7 @@ func TestNegativeIndex(t *testing.T) {
 						"name": "fake3"
 					}]}}`)
 
-	var data interface{}
+	var data any
 	err := json.Unmarshal(input, &data)
 	if err != nil {
 		t.Fatal(err)
@@ -799,7 +799,7 @@ func TestRunningPodsJSONPathOutput(t *testing.T) {
 			}
 		]
 	}`)
-	var data interface{}
+	var data any
 	err := json.Unmarshal(input, &data)
 	if err != nil {
 		t.Fatal(err)
@@ -852,7 +852,7 @@ func TestStep(t *testing.T) {
 						"name": "fake5"
 					}]}}`)
 
-	var data interface{}
+	var data any
 	err := json.Unmarshal(input, &data)
 	if err != nil {
 		t.Fatal(err)

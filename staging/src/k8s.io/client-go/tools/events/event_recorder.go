@@ -42,7 +42,7 @@ type recorderImpl struct {
 
 var _ EventRecorder = &recorderImpl{}
 
-func (recorder *recorderImpl) Eventf(regarding runtime.Object, related runtime.Object, eventtype, reason, action, note string, args ...interface{}) {
+func (recorder *recorderImpl) Eventf(regarding runtime.Object, related runtime.Object, eventtype, reason, action, note string, args ...any) {
 	recorder.eventf(klog.Background(), regarding, related, eventtype, reason, action, note, args...)
 }
 
@@ -53,7 +53,7 @@ type recorderImplLogger struct {
 
 var _ EventRecorderLogger = &recorderImplLogger{}
 
-func (recorder *recorderImplLogger) Eventf(regarding runtime.Object, related runtime.Object, eventtype, reason, action, note string, args ...interface{}) {
+func (recorder *recorderImplLogger) Eventf(regarding runtime.Object, related runtime.Object, eventtype, reason, action, note string, args ...any) {
 	recorder.eventf(recorder.logger, regarding, related, eventtype, reason, action, note, args...)
 }
 
@@ -61,7 +61,7 @@ func (recorder *recorderImplLogger) WithLogger(logger klog.Logger) EventRecorder
 	return &recorderImplLogger{recorderImpl: recorder.recorderImpl, logger: logger}
 }
 
-func (recorder *recorderImpl) eventf(logger klog.Logger, regarding runtime.Object, related runtime.Object, eventtype, reason, action, note string, args ...interface{}) {
+func (recorder *recorderImpl) eventf(logger klog.Logger, regarding runtime.Object, related runtime.Object, eventtype, reason, action, note string, args ...any) {
 	timestamp := metav1.MicroTime{Time: time.Now()}
 	message := fmt.Sprintf(note, args...)
 	refRegarding, err := reference.GetReference(recorder.scheme, regarding)

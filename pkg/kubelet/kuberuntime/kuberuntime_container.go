@@ -79,7 +79,7 @@ var (
 // in particular, it ensures that a containerID never appears in an event message as that
 // is prone to causing a lot of distinct events that do not count well.
 // it replaces any reference to a containerID with the containerName which is stable, and is what users know.
-func (m *kubeGenericRuntimeManager) recordContainerEvent(pod *v1.Pod, container *v1.Container, containerID, eventType, reason, message string, args ...interface{}) {
+func (m *kubeGenericRuntimeManager) recordContainerEvent(pod *v1.Pod, container *v1.Container, containerID, eventType, reason, message string, args ...any) {
 	ref, err := kubecontainer.GenerateContainerRef(pod, container)
 	if err != nil {
 		klog.ErrorS(err, "Can't make a container ref", "pod", klog.KObj(pod), "podUID", pod.UID, "containerName", container.Name)

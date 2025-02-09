@@ -576,7 +576,7 @@ func TestMemCacheGroupsAndMaybeResources(t *testing.T) {
 
 	for _, test := range tests {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-			var body interface{}
+			var body any
 			switch req.URL.Path {
 			case "/api":
 				body = test.corev1

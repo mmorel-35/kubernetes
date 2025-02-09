@@ -18,6 +18,6 @@ limitations under the License.
 
 package v1beta1
 
-type NodeMetricsExpansion interface{}
+type NodeMetricsExpansion any
 
-type PodMetricsExpansion interface{}
+type PodMetricsExpansion any

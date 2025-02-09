@@ -1,6 +1,6 @@
-//This package is copied from Go library text/template.
-//The original private functions eq, ge, gt, le, lt, and ne
-//are exported as public functions.
+// This package is copied from Go library text/template.
+// The original private functions eq, ge, gt, le, lt, and ne
+// are exported as public functions.
 package template
 
 import (
@@ -46,7 +46,7 @@ func basicKind(v reflect.Value) (kind, error) {
 }
 
 // Equal evaluates the comparison a == b || a == c || ...
-func Equal(arg1 interface{}, arg2 ...interface{}) (bool, error) {
+func Equal(arg1 any, arg2 ...any) (bool, error) {
 	v1 := reflect.ValueOf(arg1)
 	k1, err := basicKind(v1)
 	if err != nil {
@@ -98,14 +98,14 @@ func Equal(arg1 interface{}, arg2 ...interface{}) (bool, error) {
 }
 
 // NotEqual evaluates the comparison a != b.
-func NotEqual(arg1, arg2 interface{}) (bool, error) {
+func NotEqual(arg1, arg2 any) (bool, error) {
 	// != is the inverse of ==.
 	equal, err := Equal(arg1, arg2)
 	return !equal, err
 }
 
 // Less evaluates the comparison a < b.
-func Less(arg1, arg2 interface{}) (bool, error) {
+func Less(arg1, arg2 any) (bool, error) {
 	v1 := reflect.ValueOf(arg1)
 	k1, err := basicKind(v1)
 	if err != nil {
@@ -147,7 +147,7 @@ func Less(arg1, arg2 interface{}) (bool, error) {
 }
 
 // LessEqual evaluates the comparison <= b.
-func LessEqual(arg1, arg2 interface{}) (bool, error) {
+func LessEqual(arg1, arg2 any) (bool, error) {
 	// <= is < or ==.
 	lessThan, err := Less(arg1, arg2)
 	if lessThan || err != nil {
@@ -157,7 +157,7 @@ func LessEqual(arg1, arg2 interface{}) (bool, error) {
 }
 
 // Greater evaluates the comparison a > b.
-func Greater(arg1, arg2 interface{}) (bool, error) {
+func Greater(arg1, arg2 any) (bool, error) {
 	// > is the inverse of <=.
 	lessOrEqual, err := LessEqual(arg1, arg2)
 	if err != nil {
@@ -167,7 +167,7 @@ func Greater(arg1, arg2 interface{}) (bool, error) {
 }
 
 // GreaterEqual evaluates the comparison a >= b.
-func GreaterEqual(arg1, arg2 interface{}) (bool, error) {
+func GreaterEqual(arg1, arg2 any) (bool, error) {
 	// >= is the inverse of <.
 	lessThan, err := Less(arg1, arg2)
 	if err != nil {

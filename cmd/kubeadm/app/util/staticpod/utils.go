@@ -432,7 +432,7 @@ func GetUsersAndGroups() (*users.UsersAndGroups, error) {
 // which follows pointers and prints actual values of the nested objects
 // ensuring the hash does not change when a pointer changes.
 // Copied from k8s.io/kubernetes/pkg/util/hash/hash.go#DeepHashObject
-func DeepHashObject(hasher hash.Hash, objectToWrite interface{}) {
+func DeepHashObject(hasher hash.Hash, objectToWrite any) {
 	hasher.Reset()
 	fmt.Fprintf(hasher, "%v", dump.ForHash(objectToWrite))
 }

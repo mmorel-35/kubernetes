@@ -444,11 +444,11 @@ func withNodeNameAndNamespaceIndex(options *setupOptions) {
 		},
 	}
 	options.indexers = map[string]cache.IndexFunc{
-		"f:spec.nodeName": func(obj interface{}) ([]string, error) {
+		"f:spec.nodeName": func(obj any) ([]string, error) {
 			pod := obj.(*example.Pod)
 			return []string{pod.Spec.NodeName}, nil
 		},
-		"f:metadata.namespace": func(obj interface{}) ([]string, error) {
+		"f:metadata.namespace": func(obj any) ([]string, error) {
 			pod := obj.(*example.Pod)
 			return []string{pod.ObjectMeta.Namespace}, nil
 		},

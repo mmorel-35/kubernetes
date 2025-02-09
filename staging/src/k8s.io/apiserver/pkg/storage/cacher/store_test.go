@@ -50,7 +50,7 @@ func testStoreSingleKey(t *testing.T, store storeIndexer) {
 	require.NoError(t, store.Update(testStorageElement("foo", "baz", 3)))
 	assertStoreSingleKey(t, store, "foo", "baz", 3)
 
-	require.NoError(t, store.Replace([]interface{}{testStorageElement("foo", "bar", 4)}, ""))
+	require.NoError(t, store.Replace([]any{testStorageElement("foo", "bar", 4)}, ""))
 	assertStoreSingleKey(t, store, "foo", "bar", 4)
 
 	require.NoError(t, store.Delete(testStorageElement("foo", "", 0)))
@@ -78,7 +78,7 @@ func testStoreIndexerSingleKey(t *testing.T, store storeIndexer) {
 	require.NoError(t, store.Add(testStorageElement("foo", "bar", 1)))
 	items, err = store.ByIndex("by_val", "bar")
 	require.NoError(t, err)
-	assert.Equal(t, []interface{}{
+	assert.Equal(t, []any{
 		testStorageElement("foo", "bar", 1),
 	}, items)
 
@@ -88,7 +88,7 @@ func testStoreIndexerSingleKey(t *testing.T, store storeIndexer) {
 	assert.Empty(t, items)
 	items, err = store.ByIndex("by_val", "baz")
 	require.NoError(t, err)
-	assert.Equal(t, []interface{}{
+	assert.Equal(t, []any{
 		testStorageElement("foo", "baz", 2),
 	}, items)
 
@@ -98,16 +98,16 @@ func testStoreIndexerSingleKey(t *testing.T, store storeIndexer) {
 	assert.Empty(t, items)
 	items, err = store.ByIndex("by_val", "baz")
 	require.NoError(t, err)
-	assert.Equal(t, []interface{}{
+	assert.Equal(t, []any{
 		testStorageElement("foo", "baz", 3),
 	}, items)
 
-	require.NoError(t, store.Replace([]interface{}{
+	require.NoError(t, store.Replace([]any{
 		testStorageElement("foo", "bar", 4),
 	}, ""))
 	items, err = store.ByIndex("by_val", "bar")
 	require.NoError(t, err)
-	assert.Equal(t, []interface{}{
+	assert.Equal(t, []any{
 		testStorageElement("foo", "bar", 4),
 	}, items)
 	items, err = store.ByIndex("by_val", "baz")
@@ -149,7 +149,7 @@ func assertStoreSingleKey(t *testing.T, store storeIndexer, expectKey, expectVal
 	assert.Equal(t, expectValue, item.(*storeElement).Object.(fakeObj).value)
 
 	items := store.List()
-	assert.Equal(t, []interface{}{testStorageElement(expectKey, expectValue, expectRV)}, items)
+	assert.Equal(t, []any{testStorageElement(expectKey, expectValue, expectRV)}, items)
 }
 
 func testStorageElement(key, value string, rv int) *storeElement {
@@ -166,7 +166,7 @@ func (f fakeObj) DeepCopyObject() runtime.Object   { return nil }
 
 var _ runtime.Object = (*fakeObj)(nil)
 
-func testStoreIndexFunc(obj interface{}) ([]string, error) {
+func testStoreIndexFunc(obj any) ([]string, error) {
 	return []string{obj.(fakeObj).value}, nil
 }
 

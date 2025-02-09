@@ -103,7 +103,7 @@ func (pl *NodeAffinity) EventsToRegister(_ context.Context) ([]framework.Cluster
 
 // isSchedulableAfterNodeChange is invoked whenever a node changed. It checks whether
 // that change made a previously unschedulable pod schedulable.
-func (pl *NodeAffinity) isSchedulableAfterNodeChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *NodeAffinity) isSchedulableAfterNodeChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	originalNode, modifiedNode, err := util.As[*v1.Node](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, err

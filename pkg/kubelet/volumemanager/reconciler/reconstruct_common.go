@@ -52,7 +52,7 @@ type podVolume struct {
 	volumeMode     v1.PersistentVolumeMode
 }
 
-func (p podVolume) MarshalLog() interface{} {
+func (p podVolume) MarshalLog() any {
 	return struct {
 		PodName        string `json:"podName"`
 		VolumeSpecName string `json:"volumeSpecName"`
@@ -82,7 +82,7 @@ type reconstructedVolume struct {
 	seLinuxMountContext string
 }
 
-func (rv reconstructedVolume) MarshalLog() interface{} {
+func (rv reconstructedVolume) MarshalLog() any {
 	return struct {
 		VolumeName          string `json:"volumeName"`
 		PodName             string `json:"podName"`
@@ -116,7 +116,7 @@ type globalVolumeInfo struct {
 	podVolumes        map[volumetypes.UniquePodName]*reconstructedVolume
 }
 
-func (gvi globalVolumeInfo) MarshalLog() interface{} {
+func (gvi globalVolumeInfo) MarshalLog() any {
 	podVolumes := make(map[volumetypes.UniquePodName]v1.UniqueVolumeName)
 	for podName, volume := range gvi.podVolumes {
 		podVolumes[podName] = volume.volumeName

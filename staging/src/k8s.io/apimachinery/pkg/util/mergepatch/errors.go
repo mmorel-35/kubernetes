@@ -32,17 +32,17 @@ var (
 	ErrUnsupportedStrategicMergePatchFormat = errors.New("strategic merge patch format is not supported")
 )
 
-func ErrNoMergeKey(m map[string]interface{}, k string) error {
+func ErrNoMergeKey(m map[string]any, k string) error {
 	return fmt.Errorf("map: %v does not contain declared merge key: %s", m, k)
 }
 
-func ErrBadArgType(expected, actual interface{}) error {
+func ErrBadArgType(expected, actual any) error {
 	return fmt.Errorf("expected a %s, but received a %s",
 		reflect.TypeOf(expected),
 		reflect.TypeOf(actual))
 }
 
-func ErrBadArgKind(expected, actual interface{}) error {
+func ErrBadArgKind(expected, actual any) error {
 	var expectedKindString, actualKindString string
 	if expected == nil {
 		expectedKindString = "nil"
@@ -57,7 +57,7 @@ func ErrBadArgKind(expected, actual interface{}) error {
 	return fmt.Errorf("expected a %s, but received a %s", expectedKindString, actualKindString)
 }
 
-func ErrBadPatchType(t interface{}, m map[string]interface{}) error {
+func ErrBadPatchType(t any, m map[string]any) error {
 	return fmt.Errorf("unknown patch type: %s in map: %v", t, m)
 }
 
@@ -72,7 +72,7 @@ type ErrPreconditionFailed struct {
 	message string
 }
 
-func NewErrPreconditionFailed(target map[string]interface{}) ErrPreconditionFailed {
+func NewErrPreconditionFailed(target map[string]any) ErrPreconditionFailed {
 	s := fmt.Sprintf("precondition failed for: %v", target)
 	return ErrPreconditionFailed{s}
 }

@@ -27,7 +27,7 @@ func TestStoreListOrdered(t *testing.T) {
 	assert.NoError(t, store.Add(testStorageElement("foo3", "bar3", 1)))
 	assert.NoError(t, store.Add(testStorageElement("foo1", "bar2", 2)))
 	assert.NoError(t, store.Add(testStorageElement("foo2", "bar1", 3)))
-	assert.Equal(t, []interface{}{
+	assert.Equal(t, []any{
 		testStorageElement("foo1", "bar2", 2),
 		testStorageElement("foo2", "bar1", 3),
 		testStorageElement("foo3", "bar3", 1),
@@ -43,7 +43,7 @@ func TestStoreListPrefix(t *testing.T) {
 
 	items, hasMore := store.ListPrefix("foo", "", 0)
 	assert.False(t, hasMore)
-	assert.Equal(t, []interface{}{
+	assert.Equal(t, []any{
 		testStorageElement("foo1", "bar2", 2),
 		testStorageElement("foo2", "bar1", 3),
 		testStorageElement("foo3", "bar3", 1),
@@ -51,31 +51,31 @@ func TestStoreListPrefix(t *testing.T) {
 
 	items, hasMore = store.ListPrefix("foo2", "", 0)
 	assert.False(t, hasMore)
-	assert.Equal(t, []interface{}{
+	assert.Equal(t, []any{
 		testStorageElement("foo2", "bar1", 3),
 	}, items)
 
 	items, hasMore = store.ListPrefix("foo", "", 1)
 	assert.True(t, hasMore)
-	assert.Equal(t, []interface{}{
+	assert.Equal(t, []any{
 		testStorageElement("foo1", "bar2", 2),
 	}, items)
 
 	items, hasMore = store.ListPrefix("foo", "foo1\x00", 1)
 	assert.True(t, hasMore)
-	assert.Equal(t, []interface{}{
+	assert.Equal(t, []any{
 		testStorageElement("foo2", "bar1", 3),
 	}, items)
 
 	items, hasMore = store.ListPrefix("foo", "foo2\x00", 1)
 	assert.False(t, hasMore)
-	assert.Equal(t, []interface{}{
+	assert.Equal(t, []any{
 		testStorageElement("foo3", "bar3", 1),
 	}, items)
 
 	items, hasMore = store.ListPrefix("bar", "", 0)
 	assert.False(t, hasMore)
-	assert.Equal(t, []interface{}{
+	assert.Equal(t, []any{
 		testStorageElement("bar", "baz", 4),
 	}, items)
 }

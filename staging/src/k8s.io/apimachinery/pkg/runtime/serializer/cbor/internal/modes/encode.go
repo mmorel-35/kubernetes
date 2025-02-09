@@ -122,7 +122,7 @@ func (em EncMode) options() cbor.EncOptions {
 	return em.delegate.EncOptions()
 }
 
-func (em EncMode) MarshalTo(v interface{}, w io.Writer) error {
+func (em EncMode) MarshalTo(v any, w io.Writer) error {
 	if buf, ok := w.(*buffer); ok {
 		return em.delegate.MarshalToBuffer(v, &buf.Buffer)
 	}
@@ -140,7 +140,7 @@ func (em EncMode) MarshalTo(v interface{}, w io.Writer) error {
 	return nil
 }
 
-func (em EncMode) Marshal(v interface{}) ([]byte, error) {
+func (em EncMode) Marshal(v any) ([]byte, error) {
 	buf := buffers.Get()
 	defer buffers.Put(buf)
 

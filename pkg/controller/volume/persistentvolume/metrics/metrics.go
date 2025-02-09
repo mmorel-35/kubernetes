@@ -55,12 +55,12 @@ var registerMetrics sync.Once
 
 // PVLister used to list persistent volumes.
 type PVLister interface {
-	List() []interface{}
+	List() []any
 }
 
 // PVCLister used to list persistent volume claims.
 type PVCLister interface {
-	List() []interface{}
+	List() []any
 }
 
 // Register all metrics for pv controller.

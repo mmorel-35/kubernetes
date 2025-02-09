@@ -210,7 +210,7 @@ func (o objectTrackerReact) Apply(action PatchActionImpl) (runtime.Object, error
 	ns := action.GetNamespace()
 	gvr := action.GetResource()
 
-	patchObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	patchObj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal(action.GetPatch(), &patchObj.Object); err != nil {
 		return nil, err
 	}
@@ -973,7 +973,7 @@ func (tc TypeConverter) ObjectToTyped(obj runtime.Object, opts ...typed.Validati
 func (tc TypeConverter) TypedToObject(value *typed.TypedValue) (runtime.Object, error) {
 	vu := value.AsValue().Unstructured()
 	switch o := vu.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		return &unstructured.Unstructured{Object: o}, nil
 	default:
 		return nil, fmt.Errorf("failed to convert value to unstructured for type %T", vu)

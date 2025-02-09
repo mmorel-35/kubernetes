@@ -29,7 +29,7 @@ import (
 
 func TestGomegaFormatObject(t *testing.T) {
 	for name, test := range map[string]struct {
-		value       interface{}
+		value       any
 		expected    string
 		indentation uint
 	}{

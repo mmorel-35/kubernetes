@@ -515,7 +515,7 @@ func RegisterExternalJWTSignerServer(s *grpc.Server, srv ExternalJWTSignerServer
 	s.RegisterService(&_ExternalJWTSigner_serviceDesc, srv)
 }
 
-func _ExternalJWTSigner_Sign_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ExternalJWTSigner_Sign_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(SignJWTRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -527,13 +527,13 @@ func _ExternalJWTSigner_Sign_Handler(srv interface{}, ctx context.Context, dec f
 		Server:     srv,
 		FullMethod: "/v1alpha1.ExternalJWTSigner/Sign",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ExternalJWTSignerServer).Sign(ctx, req.(*SignJWTRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ExternalJWTSigner_FetchKeys_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ExternalJWTSigner_FetchKeys_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(FetchKeysRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -545,13 +545,13 @@ func _ExternalJWTSigner_FetchKeys_Handler(srv interface{}, ctx context.Context, 
 		Server:     srv,
 		FullMethod: "/v1alpha1.ExternalJWTSigner/FetchKeys",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ExternalJWTSignerServer).FetchKeys(ctx, req.(*FetchKeysRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ExternalJWTSigner_Metadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ExternalJWTSigner_Metadata_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(MetadataRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -563,7 +563,7 @@ func _ExternalJWTSigner_Metadata_Handler(srv interface{}, ctx context.Context, d
 		Server:     srv,
 		FullMethod: "/v1alpha1.ExternalJWTSigner/Metadata",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(ExternalJWTSignerServer).Metadata(ctx, req.(*MetadataRequest))
 	}
 	return interceptor(ctx, in, info, handler)

@@ -21,14 +21,14 @@ import (
 )
 
 type mockPool struct {
-	v interface{}
+	v any
 }
 
-func (*mockPool) Get() interface{} {
+func (*mockPool) Get() any {
 	return nil
 }
 
-func (p *mockPool) Put(v interface{}) {
+func (p *mockPool) Put(v any) {
 	p.v = v
 }
 

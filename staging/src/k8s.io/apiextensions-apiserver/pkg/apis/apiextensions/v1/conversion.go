@@ -57,7 +57,7 @@ func Convert_apiextensions_JSON_To_v1_JSON(in *apiextensions.JSON, out *JSON, s 
 
 func Convert_v1_JSON_To_apiextensions_JSON(in *JSON, out *apiextensions.JSON, s conversion.Scope) error {
 	if in != nil {
-		var i interface{}
+		var i any
 		if len(in.Raw) > 0 && !bytes.Equal(in.Raw, nullLiteral) {
 			if err := json.Unmarshal(in.Raw, &i); err != nil {
 				return err

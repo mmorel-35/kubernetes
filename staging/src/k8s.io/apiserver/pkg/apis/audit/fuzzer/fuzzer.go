@@ -27,8 +27,8 @@ import (
 )
 
 // Funcs returns the fuzzer functions for the audit api group.
-func Funcs(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+func Funcs(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(e *audit.Event, c fuzz.Continue) {
 			c.FuzzNoCustom(e)
 			switch c.RandBool() {

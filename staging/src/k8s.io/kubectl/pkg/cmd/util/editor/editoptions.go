@@ -253,10 +253,10 @@ func (o *EditOptions) Run() error {
 				originalObj = infos[0].Object
 			default:
 				l := &unstructured.UnstructuredList{
-					Object: map[string]interface{}{
+					Object: map[string]any{
 						"kind":       "List",
 						"apiVersion": "v1",
-						"metadata":   map[string]interface{}{},
+						"metadata":   map[string]any{},
 					},
 				}
 				for _, info := range infos {
@@ -679,7 +679,7 @@ func (o *EditOptions) visitToPatch(originalInfos []*resource.Info, patchVisitor 
 				klog.V(4).Infof("Unable to calculate diff, no merge is possible: %v", err)
 				return err
 			}
-			var patchMap map[string]interface{}
+			var patchMap map[string]any
 			err = json.Unmarshal(patch, &patchMap)
 			if err != nil {
 				klog.V(4).Infof("Unable to calculate diff, no merge is possible: %v", err)

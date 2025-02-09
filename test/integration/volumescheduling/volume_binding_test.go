@@ -658,7 +658,7 @@ func TestPVAffinityConflict(t *testing.T) {
 		t.Fatalf("PVC %q failed to bind: %v", pvc.Name, err)
 	}
 
-	nodeMarkers := []interface{}{
+	nodeMarkers := []any{
 		markNodeAffinity,
 		markNodeSelector,
 	}

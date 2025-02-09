@@ -68,7 +68,7 @@ func (g *internalGenerator) GenerateType(c *generator.Context, _ *types.Type, w 
 	if err != nil {
 		return err
 	}
-	sw.Do(schemaBlock, map[string]interface{}{
+	sw.Do(schemaBlock, map[string]any{
 		"schemaYAML":   string(schemaYAML),
 		"smdParser":    smdParser,
 		"smdNewParser": smdNewParser,

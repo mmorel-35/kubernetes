@@ -68,7 +68,7 @@ func InitCustomSnapshottableStressTestSuite(patterns []storageframework.TestPatt
 			SupportedSizeRange: e2evolume.SizeRange{
 				Min: "1Mi",
 			},
-			TestTags: []interface{}{feature.VolumeSnapshotDataSource},
+			TestTags: []any{feature.VolumeSnapshotDataSource},
 		},
 	}
 }

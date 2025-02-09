@@ -41,7 +41,7 @@ type testGenerator struct {
 	Err   error
 }
 
-func (t *testGenerator) GenerateToken(ctx context.Context, sc *jwt.Claims, pc interface{}) (string, error) {
+func (t *testGenerator) GenerateToken(ctx context.Context, sc *jwt.Claims, pc any) (string, error) {
 	return t.Token, t.Err
 }
 

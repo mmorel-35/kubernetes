@@ -554,7 +554,7 @@ func TestConvertToTableList(t *testing.T) {
 			out: &metav1.Table{
 				ColumnDefinitions: columns,
 				Rows: []metav1.TableRow{
-					{Cells: []interface{}{"", "0/0", "", "0", "<unknown>", "<none>", "<none>", "<none>", "<none>"}, Object: runtime.RawExtension{Object: &api.Pod{}}},
+					{Cells: []any{"", "0/0", "", "0", "<unknown>", "<none>", "<none>", "<none>", "<none>"}, Object: runtime.RawExtension{Object: &api.Pod{}}},
 				},
 			},
 		},
@@ -563,7 +563,7 @@ func TestConvertToTableList(t *testing.T) {
 			out: &metav1.Table{
 				ColumnDefinitions: columns,
 				Rows: []metav1.TableRow{
-					{Cells: []interface{}{"foo", "1/2", "Pending", "10", "370d", "10.1.2.3", "test-node", "nominated-node", "1/2"}, Object: runtime.RawExtension{Object: pod1}},
+					{Cells: []any{"foo", "1/2", "Pending", "10", "370d", "10.1.2.3", "test-node", "nominated-node", "1/2"}, Object: runtime.RawExtension{Object: pod1}},
 				},
 			},
 		},
@@ -576,7 +576,7 @@ func TestConvertToTableList(t *testing.T) {
 			out: &metav1.Table{
 				ColumnDefinitions: columns,
 				Rows: []metav1.TableRow{
-					{Cells: []interface{}{"foo", "1/2", "Pending", "10", "370d", "10.1.2.3", "test-node", "nominated-node", "1/2"}, Object: runtime.RawExtension{Object: multiIPsPod}},
+					{Cells: []any{"foo", "1/2", "Pending", "10", "370d", "10.1.2.3", "test-node", "nominated-node", "1/2"}, Object: runtime.RawExtension{Object: multiIPsPod}},
 				},
 			},
 		},

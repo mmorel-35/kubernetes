@@ -25,7 +25,7 @@ import (
 // AccessorFunc returns a node x in obj on a fixed (implicitly encoded) JSON path
 // if that path exists in obj (found==true). If it does not exist, found is false.
 // If on the path the type of a field is wrong, an error is returned.
-type AccessorFunc func(obj map[string]interface{}) (x interface{}, found bool, err error)
+type AccessorFunc func(obj map[string]any) (x any, found bool, err error)
 
 // SurroundingObjectFunc is a surrounding object builder with a given x at a leaf.
 // Which leave is determined by the series of Index() and Child(k) calls.
@@ -57,17 +57,17 @@ type AccessorFunc func(obj map[string]interface{}) (x interface{}, found bool, e
 //	NewRootObjectFunc().Index().Child("foo"), then acc([{"foo": x}]) == x
 //	NewRootObjectFunc().Index().Child("foo").Child("bar"), then acc([{"foo": {"bar":x}}]) == x
 //	NewRootObjectFunc().Index().Child("foo").Child("bar").Index(), then acc([{"foo": {"bar":[x]}}]) == x
-type SurroundingObjectFunc func(focus interface{}) (map[string]interface{}, AccessorFunc, error)
+type SurroundingObjectFunc func(focus any) (map[string]any, AccessorFunc, error)
 
 // NewRootObjectFunc returns the identity function. The passed focus value
 // must be an object.
 func NewRootObjectFunc() SurroundingObjectFunc {
-	return func(x interface{}) (map[string]interface{}, AccessorFunc, error) {
-		obj, ok := x.(map[string]interface{})
+	return func(x any) (map[string]any, AccessorFunc, error) {
+		obj, ok := x.(map[string]any)
 		if !ok {
 			return nil, nil, fmt.Errorf("object root default value must be of object type")
 		}
-		return obj, func(root map[string]interface{}) (interface{}, bool, error) {
+		return obj, func(root map[string]any) (any, bool, error) {
 			return root, true, nil
 		}, nil
 	}
@@ -76,13 +76,13 @@ func NewRootObjectFunc() SurroundingObjectFunc {
 // WithTypeMeta returns a closure with the TypeMeta fields set if they are defined.
 // This mutates f(x).
 func (f SurroundingObjectFunc) WithTypeMeta(meta metav1.TypeMeta) SurroundingObjectFunc {
-	return func(x interface{}) (map[string]interface{}, AccessorFunc, error) {
+	return func(x any) (map[string]any, AccessorFunc, error) {
 		obj, acc, err := f(x)
 		if err != nil {
 			return nil, nil, err
 		}
 		if obj == nil {
-			obj = map[string]interface{}{}
+			obj = map[string]any{}
 		}
 		if _, found := obj["kind"]; !found {
 			obj["kind"] = meta.Kind
@@ -96,12 +96,12 @@ func (f SurroundingObjectFunc) WithTypeMeta(meta metav1.TypeMeta) SurroundingObj
 
 // Child returns a function x => f({k: x}) and the corresponding accessor.
 func (f SurroundingObjectFunc) Child(k string) SurroundingObjectFunc {
-	return func(x interface{}) (map[string]interface{}, AccessorFunc, error) {
-		obj, acc, err := f(map[string]interface{}{k: x})
+	return func(x any) (map[string]any, AccessorFunc, error) {
+		obj, acc, err := f(map[string]any{k: x})
 		if err != nil {
 			return nil, nil, err
 		}
-		return obj, func(obj map[string]interface{}) (interface{}, bool, error) {
+		return obj, func(obj map[string]any) (any, bool, error) {
 			x, found, err := acc(obj)
 			if err != nil {
 				return nil, false, fmt.Errorf(".%s%v", k, err)
@@ -109,7 +109,7 @@ func (f SurroundingObjectFunc) Child(k string) SurroundingObjectFunc {
 			if !found {
 				return nil, false, nil
 			}
-			if x, ok := x.(map[string]interface{}); !ok {
+			if x, ok := x.(map[string]any); !ok {
 				return nil, false, fmt.Errorf(".%s must be of object type", k)
 			} else if v, found := x[k]; !found {
 				return nil, false, nil
@@ -122,12 +122,12 @@ func (f SurroundingObjectFunc) Child(k string) SurroundingObjectFunc {
 
 // Index returns a function x => f([x]) and the corresponding accessor.
 func (f SurroundingObjectFunc) Index() SurroundingObjectFunc {
-	return func(focus interface{}) (map[string]interface{}, AccessorFunc, error) {
-		obj, acc, err := f([]interface{}{focus})
+	return func(focus any) (map[string]any, AccessorFunc, error) {
+		obj, acc, err := f([]any{focus})
 		if err != nil {
 			return nil, nil, err
 		}
-		return obj, func(obj map[string]interface{}) (interface{}, bool, error) {
+		return obj, func(obj map[string]any) (any, bool, error) {
 			x, found, err := acc(obj)
 			if err != nil {
 				return nil, false, fmt.Errorf("[]%v", err)
@@ -135,7 +135,7 @@ func (f SurroundingObjectFunc) Index() SurroundingObjectFunc {
 			if !found {
 				return nil, false, nil
 			}
-			if x, ok := x.([]interface{}); !ok {
+			if x, ok := x.([]any); !ok {
 				return nil, false, fmt.Errorf("[] must be of array type")
 			} else if len(x) == 0 {
 				return nil, false, nil

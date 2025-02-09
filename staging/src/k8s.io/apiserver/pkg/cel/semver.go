@@ -35,7 +35,7 @@ type Semver struct {
 	semver.Version
 }
 
-func (v Semver) ConvertToNative(typeDesc reflect.Type) (interface{}, error) {
+func (v Semver) ConvertToNative(typeDesc reflect.Type) (any, error) {
 	if reflect.TypeOf(v.Version).AssignableTo(typeDesc) {
 		return v.Version, nil
 	}
@@ -68,6 +68,6 @@ func (v Semver) Type() ref.Type {
 	return SemverType
 }
 
-func (v Semver) Value() interface{} {
+func (v Semver) Value() any {
 	return v.Version
 }

@@ -493,7 +493,7 @@ type simpleActivation struct {
 	self any
 }
 
-func (a *simpleActivation) ResolveName(name string) (interface{}, bool) {
+func (a *simpleActivation) ResolveName(name string) (any, bool) {
 	switch name {
 	case "self":
 		return a.self, true

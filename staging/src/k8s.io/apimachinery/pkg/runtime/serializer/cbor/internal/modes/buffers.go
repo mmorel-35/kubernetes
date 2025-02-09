@@ -28,8 +28,8 @@ type buffer struct {
 }
 
 type pool interface {
-	Get() interface{}
-	Put(interface{})
+	Get() any
+	Put(any)
 }
 
 type BufferProvider struct {

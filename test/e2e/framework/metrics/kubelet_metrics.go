@@ -195,7 +195,7 @@ func GetKubeletLatencyMetrics(ms KubeletMetrics, filterMetricNames sets.String) 
 }
 
 // HighLatencyKubeletOperations logs and counts the high latency metrics exported by the kubelet server via /metrics.
-func HighLatencyKubeletOperations(ctx context.Context, c clientset.Interface, threshold time.Duration, nodeName string, logFunc func(fmt string, args ...interface{})) (KubeletLatencyMetrics, error) {
+func HighLatencyKubeletOperations(ctx context.Context, c clientset.Interface, threshold time.Duration, nodeName string, logFunc func(fmt string, args ...any)) (KubeletLatencyMetrics, error) {
 	ms, err := GetKubeletMetrics(ctx, c, nodeName)
 	if err != nil {
 		return KubeletLatencyMetrics{}, err

@@ -498,7 +498,7 @@ func (r *Request) MaxRetries(maxRetries int) *Request {
 // If obj is a runtime.Object, marshal it correctly, and set Content-Type header.
 // If obj is a runtime.Object and nil, do nothing.
 // Otherwise, set an error.
-func (r *Request) Body(obj interface{}) *Request {
+func (r *Request) Body(obj any) *Request {
 	if r.err != nil {
 		return r
 	}

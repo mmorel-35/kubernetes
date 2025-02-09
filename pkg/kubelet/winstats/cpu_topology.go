@@ -51,7 +51,7 @@ const (
 type systemLogicalProcessorInformationEx struct {
 	Relationship uint32
 	Size         uint32
-	data         interface{}
+	data         any
 }
 
 type processorRelationship struct {
@@ -60,7 +60,7 @@ type processorRelationship struct {
 	Reserved        [20]byte
 	GroupCount      uint16
 	// groupMasks is an []GroupAffinity. In c++ this is a union of either one or many GroupAffinity based on GroupCount
-	GroupMasks interface{}
+	GroupMasks any
 }
 
 // GroupAffinity represents the processor group affinity of cpus
@@ -127,7 +127,7 @@ type numaNodeRelationship struct {
 	NodeNumber uint32
 	Reserved   [18]byte
 	GroupCount uint16
-	GroupMasks interface{} //[]GroupAffinity in c++ this is a union of either one or many GroupAffinity based on GroupCount
+	GroupMasks any //[]GroupAffinity in c++ this is a union of either one or many GroupAffinity based on GroupCount
 }
 
 type processor struct {

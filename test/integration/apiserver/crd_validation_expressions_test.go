@@ -70,13 +70,13 @@ func TestCustomResourceValidators(t *testing.T) {
 
 		t.Run("CRD creation MUST allow data that is valid according to x-kubernetes-validations", func(t *testing.T) {
 			name1 := names.SimpleNameGenerator.GenerateName("cr-1")
-			_, err = crClient.Create(context.TODO(), &unstructured.Unstructured{Object: map[string]interface{}{
+			_, err = crClient.Create(context.TODO(), &unstructured.Unstructured{Object: map[string]any{
 				"apiVersion": gvr.Group + "/" + gvr.Version,
 				"kind":       crd.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": name1,
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"x":     int64(2),
 					"y":     int64(2),
 					"limit": int64(123),
@@ -90,13 +90,13 @@ func TestCustomResourceValidators(t *testing.T) {
 			name1 := names.SimpleNameGenerator.GenerateName("cr-1")
 
 			// a spec create that is invalid MUST fail validation
-			cr := &unstructured.Unstructured{Object: map[string]interface{}{
+			cr := &unstructured.Unstructured{Object: map[string]any{
 				"apiVersion": gvr.Group + "/" + gvr.Version,
 				"kind":       crd.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": name1,
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"x": int64(-1),
 					"y": int64(0),
 				},
@@ -113,16 +113,16 @@ func TestCustomResourceValidators(t *testing.T) {
 			}
 
 			// a spec create that is valid MUST pass validation
-			cr.Object["spec"] = map[string]interface{}{
+			cr.Object["spec"] = map[string]any{
 				"x":     int64(2),
 				"y":     int64(2),
 				"extra": "anything?",
-				"floatMap": map[string]interface{}{
+				"floatMap": map[string]any{
 					"key1": 0.2,
 					"key2": 0.3,
 				},
-				"assocList": []interface{}{
-					map[string]interface{}{
+				"assocList": []any{
+					map[string]any{
 						"k": "a",
 						"v": "1",
 					},
@@ -138,25 +138,25 @@ func TestCustomResourceValidators(t *testing.T) {
 			// spec updates that are invalid MUST fail validation
 			cases := []struct {
 				name string
-				spec map[string]interface{}
+				spec map[string]any
 			}{
 				{
 					name: "spec vs. status default value",
-					spec: map[string]interface{}{
+					spec: map[string]any{
 						"x": 3,
 						"y": -4,
 					},
 				},
 				{
 					name: "nested string field",
-					spec: map[string]interface{}{
+					spec: map[string]any{
 						"extra": "something",
 					},
 				},
 				{
 					name: "nested array",
-					spec: map[string]interface{}{
-						"floatMap": map[string]interface{}{
+					spec: map[string]any{
+						"floatMap": map[string]any{
 							"key1": 0.1,
 							"key2": 0.2,
 						},
@@ -164,9 +164,9 @@ func TestCustomResourceValidators(t *testing.T) {
 				},
 				{
 					name: "nested associative list",
-					spec: map[string]interface{}{
-						"assocList": []interface{}{
-							map[string]interface{}{
+					spec: map[string]any{
+						"assocList": []any{
+							map[string]any{
 								"k": "a",
 								"v": "2",
 							},
@@ -190,7 +190,7 @@ func TestCustomResourceValidators(t *testing.T) {
 			}
 
 			// a status update that is invalid MUST fail validation
-			cr.Object["status"] = map[string]interface{}{
+			cr.Object["status"] = map[string]any{
 				"z": int64(5),
 			}
 			_, err = crClient.UpdateStatus(context.TODO(), cr, metav1.UpdateOptions{})
@@ -203,7 +203,7 @@ func TestCustomResourceValidators(t *testing.T) {
 			}
 
 			// a status update this is valid MUST pass validation
-			cr.Object["status"] = map[string]interface{}{
+			cr.Object["status"] = map[string]any{
 				"z": int64(3),
 			}
 
@@ -281,13 +281,13 @@ func TestCustomResourceValidators(t *testing.T) {
 		}
 		crClient := dynamicClient.Resource(gvr)
 		name1 := names.SimpleNameGenerator.GenerateName("cr-1")
-		cr := &unstructured.Unstructured{Object: map[string]interface{}{
+		cr := &unstructured.Unstructured{Object: map[string]any{
 			"apiVersion": gvr.Group + "/" + gvr.Version,
 			"kind":       crd.Spec.Names.Kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": name1,
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"list": genLargeArray(725, 20),
 			},
 		}}
@@ -313,13 +313,13 @@ func TestCustomResourceValidators(t *testing.T) {
 
 		t.Run("custom resource update MUST pass if a x-kubernetes-validations rule contains a valid transition rule", func(t *testing.T) {
 			name1 := names.SimpleNameGenerator.GenerateName("cr-1")
-			cr := &unstructured.Unstructured{Object: map[string]interface{}{
+			cr := &unstructured.Unstructured{Object: map[string]any{
 				"apiVersion": gvr.Group + "/" + gvr.Version,
 				"kind":       crd.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": name1,
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"someImmutableThing": "original",
 					"somethingElse":      "original",
 				},
@@ -328,7 +328,7 @@ func TestCustomResourceValidators(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Unexpected error creating custom resource: %v", err)
 			}
-			cr.Object["spec"].(map[string]interface{})["somethingElse"] = "new value"
+			cr.Object["spec"].(map[string]any)["somethingElse"] = "new value"
 			_, err = crClient.Update(context.TODO(), cr, metav1.UpdateOptions{})
 			if err != nil {
 				t.Fatalf("Unexpected error updating custom resource: %v", err)
@@ -336,13 +336,13 @@ func TestCustomResourceValidators(t *testing.T) {
 		})
 		t.Run("custom resource update MUST fail if a x-kubernetes-validations rule contains an invalid transition rule", func(t *testing.T) {
 			name1 := names.SimpleNameGenerator.GenerateName("cr-1")
-			cr := &unstructured.Unstructured{Object: map[string]interface{}{
+			cr := &unstructured.Unstructured{Object: map[string]any{
 				"apiVersion": gvr.Group + "/" + gvr.Version,
 				"kind":       crd.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": name1,
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"someImmutableThing": "original",
 					"somethingElse":      "original",
 				},
@@ -351,7 +351,7 @@ func TestCustomResourceValidators(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Unexpected error creating custom resource: %v", err)
 			}
-			cr.Object["spec"].(map[string]interface{})["someImmutableThing"] = "new value"
+			cr.Object["spec"].(map[string]any)["someImmutableThing"] = "new value"
 			_, err = crClient.Update(context.TODO(), cr, metav1.UpdateOptions{})
 			if err == nil {
 				t.Fatalf("Expected error updating custom resource: %v", err)
@@ -385,15 +385,15 @@ func TestCustomResourceValidators(t *testing.T) {
 
 		t.Run("custom resource update MUST fail if a x-kubernetes-validations if a transition rule contained in a mapList with default map keys fails validation", func(t *testing.T) {
 			name1 := names.SimpleNameGenerator.GenerateName("cr-1")
-			cr := &unstructured.Unstructured{Object: map[string]interface{}{
+			cr := &unstructured.Unstructured{Object: map[string]any{
 				"apiVersion": gvr.Group + "/" + gvr.Version,
 				"kind":       crd.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": name1,
 				},
-				"spec": map[string]interface{}{
-					"list": []interface{}{
-						map[string]interface{}{
+				"spec": map[string]any{
+					"list": []any{
+						map[string]any{
 							"k1": "x",
 							"v":  "value",
 						},
@@ -404,7 +404,7 @@ func TestCustomResourceValidators(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Unexpected error creating custom resource: %v", err)
 			}
-			item := cr.Object["spec"].(map[string]interface{})["list"].([]interface{})[0].(map[string]interface{})
+			item := cr.Object["spec"].(map[string]any)["list"].([]any)[0].(map[string]any)
 			item["k2"] = "DEFAULT"
 			item["v"] = "new value"
 			_, err = crClient.Update(context.TODO(), cr, metav1.UpdateOptions{})
@@ -451,13 +451,13 @@ func TestCustomResourceValidatorsWithBlockingErrors(t *testing.T) {
 
 		t.Run("CRD creation MUST allow data that is valid according to x-kubernetes-validations", func(t *testing.T) {
 			name1 := names.SimpleNameGenerator.GenerateName("cr-1")
-			_, err = crClient.Create(context.TODO(), &unstructured.Unstructured{Object: map[string]interface{}{
+			_, err = crClient.Create(context.TODO(), &unstructured.Unstructured{Object: map[string]any{
 				"apiVersion": gvr.Group + "/" + gvr.Version,
 				"kind":       crd.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": name1,
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"x":     int64(2),
 					"y":     int64(2),
 					"limit": int64(123),
@@ -471,13 +471,13 @@ func TestCustomResourceValidatorsWithBlockingErrors(t *testing.T) {
 			name1 := names.SimpleNameGenerator.GenerateName("cr-1")
 
 			// a spec create that is invalid MUST fail validation
-			cr := &unstructured.Unstructured{Object: map[string]interface{}{
+			cr := &unstructured.Unstructured{Object: map[string]any{
 				"apiVersion": gvr.Group + "/" + gvr.Version,
 				"kind":       crd.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": name1,
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"x": int64(-1),
 					"y": int64(0),
 				},
@@ -497,17 +497,17 @@ func TestCustomResourceValidatorsWithBlockingErrors(t *testing.T) {
 			name2 := names.SimpleNameGenerator.GenerateName("cr-2")
 
 			// a spec create that has maxLengh err MUST fail validation
-			cr := &unstructured.Unstructured{Object: map[string]interface{}{
+			cr := &unstructured.Unstructured{Object: map[string]any{
 				"apiVersion": gvr.Group + "/" + gvr.Version,
 				"kind":       crd.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": name2,
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"x":     int64(2),
 					"y":     int64(2),
 					"extra": strings.Repeat("x", 201),
-					"floatMap": map[string]interface{}{
+					"floatMap": map[string]any{
 						"key1": 0.2,
 						"key2": 0.3,
 					},
@@ -523,31 +523,31 @@ func TestCustomResourceValidatorsWithBlockingErrors(t *testing.T) {
 		t.Run("custom resource create and update MUST NOT allow data if there is blocking error of MaxItems", func(t *testing.T) {
 			name2 := names.SimpleNameGenerator.GenerateName("cr-2")
 			// a spec create that has maxItem err MUST fail validation
-			cr := &unstructured.Unstructured{Object: map[string]interface{}{
+			cr := &unstructured.Unstructured{Object: map[string]any{
 				"apiVersion": gvr.Group + "/" + gvr.Version,
 				"kind":       crd.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": name2,
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"x": int64(2),
 					"y": int64(2),
-					"floatMap": map[string]interface{}{
+					"floatMap": map[string]any{
 						"key1": 0.2,
 						"key2": 0.3,
 					},
-					"assocList": []interface{}{},
+					"assocList": []any{},
 					"limit":     nil,
 				},
 			}}
-			assocList := cr.Object["spec"].(map[string]interface{})["assocList"].([]interface{})
+			assocList := cr.Object["spec"].(map[string]any)["assocList"].([]any)
 			for i := 1; i <= 101; i++ {
-				assocList = append(assocList, map[string]interface{}{
+				assocList = append(assocList, map[string]any{
 					"k": "a",
 					"v": fmt.Sprintf("%d", i),
 				})
 			}
-			cr.Object["spec"].(map[string]interface{})["assocList"] = assocList
+			cr.Object["spec"].(map[string]any)["assocList"] = assocList
 
 			_, err = crClient.Create(context.TODO(), cr, metav1.CreateOptions{})
 			if err == nil || !strings.Contains(err.Error(), "some validation rules were not checked because the object was invalid; correct the existing errors to complete validation") {
@@ -557,18 +557,18 @@ func TestCustomResourceValidatorsWithBlockingErrors(t *testing.T) {
 		t.Run("custom resource create and update MUST NOT allow data if there is blocking error of MaxProperties", func(t *testing.T) {
 			name2 := names.SimpleNameGenerator.GenerateName("cr-2")
 			// a spec create that has maxItem err MUST fail validation
-			cr := &unstructured.Unstructured{Object: map[string]interface{}{
+			cr := &unstructured.Unstructured{Object: map[string]any{
 				"apiVersion": gvr.Group + "/" + gvr.Version,
 				"kind":       crd.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": name2,
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"x":        int64(2),
 					"y":        int64(2),
-					"floatMap": map[string]interface{}{},
-					"assocList": []interface{}{
-						map[string]interface{}{
+					"floatMap": map[string]any{},
+					"assocList": []any{
+						map[string]any{
 							"k": "a",
 							"v": "1",
 						},
@@ -576,7 +576,7 @@ func TestCustomResourceValidatorsWithBlockingErrors(t *testing.T) {
 					"limit": nil,
 				},
 			}}
-			floatMap := cr.Object["spec"].(map[string]interface{})["floatMap"].(map[string]interface{})
+			floatMap := cr.Object["spec"].(map[string]any)["floatMap"].(map[string]any)
 			for i := 1; i <= 101; i++ {
 				floatMap[fmt.Sprintf("key%d", i)] = float64(i) / 10
 			}
@@ -589,21 +589,21 @@ func TestCustomResourceValidatorsWithBlockingErrors(t *testing.T) {
 		t.Run("custom resource create and update MUST NOT allow data if there is blocking error of missing required field", func(t *testing.T) {
 			name2 := names.SimpleNameGenerator.GenerateName("cr-2")
 			// a spec create that has required err MUST fail validation
-			cr := &unstructured.Unstructured{Object: map[string]interface{}{
+			cr := &unstructured.Unstructured{Object: map[string]any{
 				"apiVersion": gvr.Group + "/" + gvr.Version,
 				"kind":       crd.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": name2,
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"x": int64(2),
 					"y": int64(2),
-					"floatMap": map[string]interface{}{
+					"floatMap": map[string]any{
 						"key1": 0.2,
 						"key2": 0.3,
 					},
-					"assocList": []interface{}{
-						map[string]interface{}{
+					"assocList": []any{
+						map[string]any{
 							"k": "1",
 						},
 					},
@@ -619,21 +619,21 @@ func TestCustomResourceValidatorsWithBlockingErrors(t *testing.T) {
 		t.Run("custom resource create and update MUST NOT allow data if there is blocking error of type", func(t *testing.T) {
 			name2 := names.SimpleNameGenerator.GenerateName("cr-2")
 			// a spec create that has required err MUST fail validation
-			cr := &unstructured.Unstructured{Object: map[string]interface{}{
+			cr := &unstructured.Unstructured{Object: map[string]any{
 				"apiVersion": gvr.Group + "/" + gvr.Version,
 				"kind":       crd.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": name2,
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"x": int64(2),
 					"y": int64(2),
-					"floatMap": map[string]interface{}{
+					"floatMap": map[string]any{
 						"key1": 0.2,
 						"key2": 0.3,
 					},
-					"assocList": []interface{}{
-						map[string]interface{}{
+					"assocList": []any{
+						map[string]any{
 							"k": "a",
 							"v": true,
 						},
@@ -683,15 +683,15 @@ func TestCustomResourceValidatorsWithSchemaConversion(t *testing.T) {
 
 	// Create a valid CR instance
 	name1 := names.SimpleNameGenerator.GenerateName("cr-1")
-	_, err = crClient.Create(context.TODO(), &unstructured.Unstructured{Object: map[string]interface{}{
+	_, err = crClient.Create(context.TODO(), &unstructured.Unstructured{Object: map[string]any{
 		"apiVersion": gvr.Group + "/" + gvr.Version,
 		"kind":       crd.Spec.Names.Kind,
-		"metadata": map[string]interface{}{
+		"metadata": map[string]any{
 			"name": name1,
 		},
-		"spec": map[string]interface{}{
-			"backend": []interface{}{
-				map[string]interface{}{
+		"spec": map[string]any{
+			"backend": []any{
+				map[string]any{
 					"replicas": 8,
 				},
 			},
@@ -716,22 +716,22 @@ func TestCustomResourceValidatorsWithSchemaConversion(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	oldCR.Object["metadata"].(map[string]interface{})["labels"] = map[string]interface{}{"key": "value"}
+	oldCR.Object["metadata"].(map[string]any)["labels"] = map[string]any{"key": "value"}
 	_, err = crClient.Update(context.TODO(), oldCR, metav1.UpdateOptions{})
 	if err == nil || !strings.Contains(err.Error(), "rule compiler initialization error: failed to convert to declType for CEL validation rules") {
 		t.Fatalf("expect error to contain \rule compiler initialization error: failed to convert to declType for CEL validation rules\" but get: %v", err)
 	}
 	// Create another CR instance with an array and be rejected
 	name2 := names.SimpleNameGenerator.GenerateName("cr-2")
-	_, err = crClient.Create(context.TODO(), &unstructured.Unstructured{Object: map[string]interface{}{
+	_, err = crClient.Create(context.TODO(), &unstructured.Unstructured{Object: map[string]any{
 		"apiVersion": gvr.Group + "/" + gvr.Version,
 		"kind":       crd.Spec.Names.Kind,
-		"metadata": map[string]interface{}{
+		"metadata": map[string]any{
 			"name": name2,
 		},
-		"spec": map[string]interface{}{
-			"backend": []interface{}{
-				map[string]interface{}{
+		"spec": map[string]any{
+			"backend": []any{
+				map[string]any{
 					"replicas": 7,
 				},
 			},

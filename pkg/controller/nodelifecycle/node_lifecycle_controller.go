@@ -360,16 +360,16 @@ func NewNodeLifecycleController(
 	nc.computeZoneStateFunc = nc.ComputeZoneState
 
 	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			pod := obj.(*v1.Pod)
 			nc.podUpdated(nil, pod)
 		},
-		UpdateFunc: func(prev, obj interface{}) {
+		UpdateFunc: func(prev, obj any) {
 			prevPod := prev.(*v1.Pod)
 			newPod := obj.(*v1.Pod)
 			nc.podUpdated(prevPod, newPod)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			pod, isPod := obj.(*v1.Pod)
 			// We can get DeletedFinalStateUnknown instead of *v1.Pod here and we need to handle that correctly.
 			if !isPod {
@@ -389,7 +389,7 @@ func NewNodeLifecycleController(
 	})
 	nc.podInformerSynced = podInformer.Informer().HasSynced
 	podInformer.Informer().AddIndexers(cache.Indexers{
-		nodeNameKeyIndex: func(obj interface{}) ([]string, error) {
+		nodeNameKeyIndex: func(obj any) ([]string, error) {
 			pod, ok := obj.(*v1.Pod)
 			if !ok {
 				return []string{}, nil

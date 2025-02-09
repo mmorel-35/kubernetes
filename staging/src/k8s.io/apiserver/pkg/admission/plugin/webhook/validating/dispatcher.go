@@ -141,7 +141,7 @@ func (d *validatingDispatcher) Dispatch(ctx context.Context, attr admission.Attr
 				recover()
 			}()
 			defer utilruntime.HandleCrash(
-				func(r interface{}) {
+				func(r any) {
 					if r == nil {
 						return
 					}

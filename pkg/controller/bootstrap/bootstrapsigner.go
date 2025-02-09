@@ -113,7 +113,7 @@ func NewSigner(cl clientset.Interface, secrets informers.SecretInformer, configM
 
 	configMaps.Informer().AddEventHandlerWithResyncPeriod(
 		cache.FilteringResourceEventHandler{
-			FilterFunc: func(obj interface{}) bool {
+			FilterFunc: func(obj any) bool {
 				switch t := obj.(type) {
 				case *v1.ConfigMap:
 					return t.Name == options.ConfigMapName && t.Namespace == options.ConfigMapNamespace
@@ -123,8 +123,8 @@ func NewSigner(cl clientset.Interface, secrets informers.SecretInformer, configM
 				}
 			},
 			Handler: cache.ResourceEventHandlerFuncs{
-				AddFunc:    func(_ interface{}) { e.pokeConfigMapSync() },
-				UpdateFunc: func(_, _ interface{}) { e.pokeConfigMapSync() },
+				AddFunc:    func(_ any) { e.pokeConfigMapSync() },
+				UpdateFunc: func(_, _ any) { e.pokeConfigMapSync() },
 			},
 		},
 		options.ConfigMapResync,
@@ -132,7 +132,7 @@ func NewSigner(cl clientset.Interface, secrets informers.SecretInformer, configM
 
 	secrets.Informer().AddEventHandlerWithResyncPeriod(
 		cache.FilteringResourceEventHandler{
-			FilterFunc: func(obj interface{}) bool {
+			FilterFunc: func(obj any) bool {
 				switch t := obj.(type) {
 				case *v1.Secret:
 					return t.Type == bootstrapapi.SecretTypeBootstrapToken && t.Namespace == e.secretNamespace
@@ -142,9 +142,9 @@ func NewSigner(cl clientset.Interface, secrets informers.SecretInformer, configM
 				}
 			},
 			Handler: cache.ResourceEventHandlerFuncs{
-				AddFunc:    func(_ interface{}) { e.pokeConfigMapSync() },
-				UpdateFunc: func(_, _ interface{}) { e.pokeConfigMapSync() },
-				DeleteFunc: func(_ interface{}) { e.pokeConfigMapSync() },
+				AddFunc:    func(_ any) { e.pokeConfigMapSync() },
+				UpdateFunc: func(_, _ any) { e.pokeConfigMapSync() },
+				DeleteFunc: func(_ any) { e.pokeConfigMapSync() },
 			},
 		},
 		options.SecretResync,

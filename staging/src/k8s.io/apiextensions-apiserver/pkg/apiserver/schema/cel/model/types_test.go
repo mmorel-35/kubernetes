@@ -102,7 +102,7 @@ func TestTypes_RuleTypesFieldMapping(t *testing.T) {
 	}
 }
 
-func testValue(t *testing.T, id int64, val interface{}) *apiservercel.DynValue {
+func testValue(t *testing.T, id int64, val any) *apiservercel.DynValue {
 	t.Helper()
 	dv, err := apiservercel.NewDynValue(id, val)
 	if err != nil {

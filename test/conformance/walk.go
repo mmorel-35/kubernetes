@@ -206,7 +206,7 @@ func getConformanceData(targetFrame frame) (*ConformanceData, error) {
 
 // scanFileForFrame will scan the target and look for a conformance comment attached to the function
 // described by the target frame. If the comment can't be found then nil, nil is returned.
-func scanFileForFrame(filename string, src interface{}, targetFrame frame) (*ConformanceData, error) {
+func scanFileForFrame(filename string, src any, targetFrame frame) (*ConformanceData, error) {
 	fset := token.NewFileSet() // positions are relative to fset
 	f, err := parser.ParseFile(fset, filename, src, parser.ParseComments)
 	if err != nil {

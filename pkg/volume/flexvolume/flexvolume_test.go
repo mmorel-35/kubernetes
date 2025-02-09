@@ -115,7 +115,7 @@ echo {"status": "Not supported"}
 exit 1
 `
 
-func installPluginUnderTest(t *testing.T, vendorName, plugName, tmpDir string, execScriptTempl string, execTemplateData *map[string]interface{}) {
+func installPluginUnderTest(t *testing.T, vendorName, plugName, tmpDir string, execScriptTempl string, execTemplateData *map[string]any) {
 	vendoredName := plugName
 	if vendorName != "" {
 		vendoredName = fmt.Sprintf("%s~%s", vendorName, plugName)
@@ -138,7 +138,7 @@ func installPluginUnderTest(t *testing.T, vendorName, plugName, tmpDir string, e
 		t.Errorf("Failed to set exec perms on plugin")
 	}
 	if execTemplateData == nil {
-		execTemplateData = &map[string]interface{}{
+		execTemplateData = &map[string]any{
 			"DevicePath": "/dev/sdx",
 			"OutputFile": filepath.Join(pluginDir, plugName+".out"),
 		}

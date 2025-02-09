@@ -85,7 +85,7 @@ func newBackoffStore() *backoffStore {
 	}
 }
 
-var backoffRecordKeyFunc = func(obj interface{}) (string, error) {
+var backoffRecordKeyFunc = func(obj any) (string, error) {
 	if u, ok := obj.(*backoffRecord); ok {
 		return u.key, nil
 	}

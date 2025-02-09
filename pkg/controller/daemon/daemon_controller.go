@@ -162,13 +162,13 @@ func NewDaemonSetsController(
 	}
 
 	daemonSetInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			dsc.addDaemonset(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			dsc.updateDaemonset(logger, oldObj, newObj)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			dsc.deleteDaemonset(logger, obj)
 		},
 	})
@@ -176,13 +176,13 @@ func NewDaemonSetsController(
 	dsc.dsStoreSynced = daemonSetInformer.Informer().HasSynced
 
 	historyInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			dsc.addHistory(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			dsc.updateHistory(logger, oldObj, newObj)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			dsc.deleteHistory(logger, obj)
 		},
 	})
@@ -192,13 +192,13 @@ func NewDaemonSetsController(
 	// Watch for creation/deletion of pods. The reason we watch is that we don't want a daemon set to create/delete
 	// more pods until all the effects (expectations) of a daemon set's create/delete have been observed.
 	podInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			dsc.addPod(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			dsc.updatePod(logger, oldObj, newObj)
 		},
-		DeleteFunc: func(obj interface{}) {
+		DeleteFunc: func(obj any) {
 			dsc.deletePod(logger, obj)
 		},
 	})
@@ -206,10 +206,10 @@ func NewDaemonSetsController(
 	dsc.podStoreSynced = podInformer.Informer().HasSynced
 
 	nodeInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			dsc.addNode(logger, obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			dsc.updateNode(logger, oldObj, newObj)
 		},
 	},
@@ -225,13 +225,13 @@ func NewDaemonSetsController(
 	return dsc, nil
 }
 
-func (dsc *DaemonSetsController) addDaemonset(logger klog.Logger, obj interface{}) {
+func (dsc *DaemonSetsController) addDaemonset(logger klog.Logger, obj any) {
 	ds := obj.(*apps.DaemonSet)
 	logger.V(4).Info("Adding daemon set", "daemonset", klog.KObj(ds))
 	dsc.enqueueDaemonSet(ds)
 }
 
-func (dsc *DaemonSetsController) updateDaemonset(logger klog.Logger, cur, old interface{}) {
+func (dsc *DaemonSetsController) updateDaemonset(logger klog.Logger, cur, old any) {
 	oldDS := old.(*apps.DaemonSet)
 	curDS := cur.(*apps.DaemonSet)
 
@@ -252,7 +252,7 @@ func (dsc *DaemonSetsController) updateDaemonset(logger klog.Logger, cur, old in
 	dsc.enqueueDaemonSet(curDS)
 }
 
-func (dsc *DaemonSetsController) deleteDaemonset(logger klog.Logger, obj interface{}) {
+func (dsc *DaemonSetsController) deleteDaemonset(logger klog.Logger, obj any) {
 	ds, ok := obj.(*apps.DaemonSet)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
@@ -343,7 +343,7 @@ func (dsc *DaemonSetsController) enqueue(ds *apps.DaemonSet) {
 	dsc.queue.Add(key)
 }
 
-func (dsc *DaemonSetsController) enqueueDaemonSetAfter(obj interface{}, after time.Duration) {
+func (dsc *DaemonSetsController) enqueueDaemonSetAfter(obj any, after time.Duration) {
 	key, err := controller.KeyFunc(obj)
 	if err != nil {
 		utilruntime.HandleError(fmt.Errorf("Couldn't get key for object %+v: %v", obj, err))
@@ -386,7 +386,7 @@ func (dsc *DaemonSetsController) getDaemonSetsForHistory(logger klog.Logger, his
 
 // addHistory enqueues the DaemonSet that manages a ControllerRevision when the ControllerRevision is created
 // or when the controller manager is restarted.
-func (dsc *DaemonSetsController) addHistory(logger klog.Logger, obj interface{}) {
+func (dsc *DaemonSetsController) addHistory(logger klog.Logger, obj any) {
 	history := obj.(*apps.ControllerRevision)
 	if history.DeletionTimestamp != nil {
 		// On a restart of the controller manager, it's possible for an object to
@@ -420,7 +420,7 @@ func (dsc *DaemonSetsController) addHistory(logger klog.Logger, obj interface{})
 // updateHistory figures out what DaemonSet(s) manage a ControllerRevision when the ControllerRevision
 // is updated and wake them up. If anything of the ControllerRevision has changed, we need to  awaken
 // both the old and new DaemonSets.
-func (dsc *DaemonSetsController) updateHistory(logger klog.Logger, old, cur interface{}) {
+func (dsc *DaemonSetsController) updateHistory(logger klog.Logger, old, cur any) {
 	curHistory := cur.(*apps.ControllerRevision)
 	oldHistory := old.(*apps.ControllerRevision)
 	if curHistory.ResourceVersion == oldHistory.ResourceVersion {
@@ -467,7 +467,7 @@ func (dsc *DaemonSetsController) updateHistory(logger klog.Logger, old, cur inte
 // deleteHistory enqueues the DaemonSet that manages a ControllerRevision when
 // the ControllerRevision is deleted. obj could be an *app.ControllerRevision, or
 // a DeletionFinalStateUnknown marker item.
-func (dsc *DaemonSetsController) deleteHistory(logger klog.Logger, obj interface{}) {
+func (dsc *DaemonSetsController) deleteHistory(logger klog.Logger, obj any) {
 	history, ok := obj.(*apps.ControllerRevision)
 
 	// When a delete is dropped, the relist will notice a ControllerRevision in the store not
@@ -500,7 +500,7 @@ func (dsc *DaemonSetsController) deleteHistory(logger klog.Logger, obj interface
 	dsc.enqueueDaemonSet(ds)
 }
 
-func (dsc *DaemonSetsController) addPod(logger klog.Logger, obj interface{}) {
+func (dsc *DaemonSetsController) addPod(logger klog.Logger, obj any) {
 	pod := obj.(*v1.Pod)
 
 	if pod.DeletionTimestamp != nil {
@@ -543,7 +543,7 @@ func (dsc *DaemonSetsController) addPod(logger klog.Logger, obj interface{}) {
 // When a pod is updated, figure out what sets manage it and wake them
 // up. If the labels of the pod have changed we need to awaken both the old
 // and new set. old and cur must be *v1.Pod types.
-func (dsc *DaemonSetsController) updatePod(logger klog.Logger, old, cur interface{}) {
+func (dsc *DaemonSetsController) updatePod(logger klog.Logger, old, cur any) {
 	curPod := cur.(*v1.Pod)
 	oldPod := old.(*v1.Pod)
 	if curPod.ResourceVersion == oldPod.ResourceVersion {
@@ -604,7 +604,7 @@ func (dsc *DaemonSetsController) updatePod(logger klog.Logger, old, cur interfac
 	}
 }
 
-func (dsc *DaemonSetsController) deletePod(logger klog.Logger, obj interface{}) {
+func (dsc *DaemonSetsController) deletePod(logger klog.Logger, obj any) {
 	pod, ok := obj.(*v1.Pod)
 	// When a delete is dropped, the relist will notice a pod in the store not
 	// in the list, leading to the insertion of a tombstone object which contains
@@ -642,7 +642,7 @@ func (dsc *DaemonSetsController) deletePod(logger klog.Logger, obj interface{}) 
 	dsc.enqueueDaemonSet(ds)
 }
 
-func (dsc *DaemonSetsController) addNode(logger klog.Logger, obj interface{}) {
+func (dsc *DaemonSetsController) addNode(logger klog.Logger, obj any) {
 	// TODO: it'd be nice to pass a hint with these enqueues, so that each ds would only examine the added node (unless it has other work to do, too).
 	dsList, err := dsc.dsLister.List(labels.Everything())
 	if err != nil {
@@ -664,7 +664,7 @@ func shouldIgnoreNodeUpdate(oldNode, curNode v1.Node) bool {
 		apiequality.Semantic.DeepEqual(oldNode.Spec.Taints, curNode.Spec.Taints)
 }
 
-func (dsc *DaemonSetsController) updateNode(logger klog.Logger, old, cur interface{}) {
+func (dsc *DaemonSetsController) updateNode(logger klog.Logger, old, cur any) {
 	oldNode := old.(*v1.Node)
 	curNode := cur.(*v1.Node)
 	if shouldIgnoreNodeUpdate(*oldNode, *curNode) {

@@ -47,7 +47,7 @@ func TestFrameworkContract(t *testing.T) {
 
 func TestNewFramework(t *testing.T) {
 	_, ctx := ktesting.NewTestContext(t)
-	var f interface{}
+	var f any
 	if f, _ = runtime.NewFramework(ctx, nil, nil); f != nil {
 		_, ok := f.(framework.Framework)
 		assert.True(t, ok)
@@ -55,7 +55,7 @@ func TestNewFramework(t *testing.T) {
 }
 
 func TestNewCycleState(t *testing.T) {
-	var state interface{} = framework.NewCycleState()
+	var state any = framework.NewCycleState()
 	_, ok := state.(*framework.CycleState)
 	assert.True(t, ok)
 }

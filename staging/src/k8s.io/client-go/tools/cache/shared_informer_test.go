@@ -62,18 +62,18 @@ func newTestListener(name string, resyncPeriod time.Duration, expected ...string
 	return l
 }
 
-func (l *testListener) OnAdd(obj interface{}, isInInitialList bool) {
+func (l *testListener) OnAdd(obj any, isInInitialList bool) {
 	l.handle(obj)
 }
 
-func (l *testListener) OnUpdate(old, new interface{}) {
+func (l *testListener) OnUpdate(old, new any) {
 	l.handle(new)
 }
 
-func (l *testListener) OnDelete(obj interface{}) {
+func (l *testListener) OnDelete(obj any) {
 }
 
-func (l *testListener) handle(obj interface{}) {
+func (l *testListener) handle(obj any) {
 	key, _ := MetaNamespaceKeyFunc(obj)
 	fmt.Printf("%s: handle: %v\n", l.name, key)
 	l.lock.Lock()
@@ -140,7 +140,7 @@ func TestIndexer(t *testing.T) {
 	// create the shared informer and resync every 1s
 	informer := NewSharedInformer(source, &v1.Pod{}, 1*time.Second).(*sharedIndexInformer)
 	err := informer.AddIndexers(map[string]IndexFunc{
-		"labels": func(obj interface{}) ([]string, error) {
+		"labels": func(obj any) ([]string, error) {
 			res := []string{}
 			for k := range obj.(*v1.Pod).Labels {
 				res = append(res, k)
@@ -183,7 +183,7 @@ func TestIndexer(t *testing.T) {
 
 	// Adding an index later is also fine
 	err = informer.AddIndexers(map[string]IndexFunc{
-		"labels-again": func(obj interface{}) ([]string, error) {
+		"labels-again": func(obj any) ([]string, error) {
 			res := []string{}
 			for k := range obj.(*v1.Pod).Labels {
 				res = append(res, k)
@@ -511,7 +511,7 @@ func TestSharedInformerStartRace(t *testing.T) {
 			default:
 			}
 			// Set dummy functions, just to test for race
-			informer.SetTransform(func(i interface{}) (interface{}, error) {
+			informer.SetTransform(func(i any) (any, error) {
 				return i, nil
 			})
 			informer.SetWatchErrorHandler(func(r *Reflector, err error) {
@@ -535,7 +535,7 @@ func TestSharedInformerTransformer(t *testing.T) {
 	source.Add(&v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod2", UID: "pod2", ResourceVersion: "2"}})
 
 	informer := NewSharedInformer(source, &v1.Pod{}, 1*time.Second).(*sharedIndexInformer)
-	informer.SetTransform(func(obj interface{}) (interface{}, error) {
+	informer.SetTransform(func(obj any) (any, error) {
 		if pod, ok := obj.(*v1.Pod); ok {
 			name := pod.GetName()
 
@@ -800,9 +800,9 @@ func TestSharedInformerHandlerAbuse(t *testing.T) {
 		// Keep adding and removing handler
 		// Make sure no duplicate events?
 		funcs := ResourceEventHandlerDetailedFuncs{
-			AddFunc:    func(obj interface{}, isInInitialList bool) {},
-			UpdateFunc: func(oldObj, newObj interface{}) {},
-			DeleteFunc: func(obj interface{}) {},
+			AddFunc:    func(obj any, isInInitialList bool) {},
+			UpdateFunc: func(oldObj, newObj any) {},
+			DeleteFunc: func(obj any) {},
 		}
 		handles := []ResourceEventHandlerRegistration{}
 

@@ -235,19 +235,19 @@ func (c *KubernetesAPIApprovalPolicyConformantConditionController) enqueue(obj *
 	c.queue.Add(key)
 }
 
-func (c *KubernetesAPIApprovalPolicyConformantConditionController) addCustomResourceDefinition(obj interface{}) {
+func (c *KubernetesAPIApprovalPolicyConformantConditionController) addCustomResourceDefinition(obj any) {
 	castObj := obj.(*apiextensionsv1.CustomResourceDefinition)
 	klog.V(4).Infof("Adding %s", castObj.Name)
 	c.enqueue(castObj)
 }
 
-func (c *KubernetesAPIApprovalPolicyConformantConditionController) updateCustomResourceDefinition(obj, _ interface{}) {
+func (c *KubernetesAPIApprovalPolicyConformantConditionController) updateCustomResourceDefinition(obj, _ any) {
 	castObj := obj.(*apiextensionsv1.CustomResourceDefinition)
 	klog.V(4).Infof("Updating %s", castObj.Name)
 	c.enqueue(castObj)
 }
 
-func (c *KubernetesAPIApprovalPolicyConformantConditionController) deleteCustomResourceDefinition(obj interface{}) {
+func (c *KubernetesAPIApprovalPolicyConformantConditionController) deleteCustomResourceDefinition(obj any) {
 	castObj, ok := obj.(*apiextensionsv1.CustomResourceDefinition)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)

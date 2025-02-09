@@ -58,18 +58,18 @@ var (
 // ReflectorStore is the subset of cache.Store that the reflector uses
 type ReflectorStore interface {
 	// Add adds the given object to the accumulator associated with the given object's key
-	Add(obj interface{}) error
+	Add(obj any) error
 
 	// Update updates the given object in the accumulator associated with the given object's key
-	Update(obj interface{}) error
+	Update(obj any) error
 
 	// Delete deletes the given object from the accumulator associated with the given object's key
-	Delete(obj interface{}) error
+	Delete(obj any) error
 
 	// Replace will delete the contents of the store, using instead the
 	// given list. Store takes ownership of the list, you should not reference
 	// it after calling this function.
-	Replace([]interface{}, string) error
+	Replace([]any, string) error
 
 	// Resync is meaningless in the terms appearing here but has
 	// meaning in some implementations that have non-trivial
@@ -203,7 +203,7 @@ func DefaultWatchErrorHandler(ctx context.Context, r *Reflector, err error) {
 
 // NewNamespaceKeyedIndexerAndReflector creates an Indexer and a Reflector
 // The indexer is configured to key on namespace
-func NewNamespaceKeyedIndexerAndReflector(lw ListerWatcher, expectedType interface{}, resyncPeriod time.Duration) (indexer Indexer, reflector *Reflector) {
+func NewNamespaceKeyedIndexerAndReflector(lw ListerWatcher, expectedType any, resyncPeriod time.Duration) (indexer Indexer, reflector *Reflector) {
 	indexer = NewIndexer(MetaNamespaceKeyFunc, Indexers{NamespaceIndex: MetaNamespaceIndexFunc})
 	reflector = NewReflector(lw, expectedType, indexer, resyncPeriod)
 	return indexer, reflector
@@ -211,13 +211,13 @@ func NewNamespaceKeyedIndexerAndReflector(lw ListerWatcher, expectedType interfa
 
 // NewReflector creates a new Reflector with its name defaulted to the closest source_file.go:line in the call stack
 // that is outside this package. See NewReflectorWithOptions for further information.
-func NewReflector(lw ListerWatcher, expectedType interface{}, store ReflectorStore, resyncPeriod time.Duration) *Reflector {
+func NewReflector(lw ListerWatcher, expectedType any, store ReflectorStore, resyncPeriod time.Duration) *Reflector {
 	return NewReflectorWithOptions(lw, expectedType, store, ReflectorOptions{ResyncPeriod: resyncPeriod})
 }
 
 // NewNamedReflector creates a new Reflector with the specified name. See NewReflectorWithOptions for further
 // information.
-func NewNamedReflector(name string, lw ListerWatcher, expectedType interface{}, store ReflectorStore, resyncPeriod time.Duration) *Reflector {
+func NewNamedReflector(name string, lw ListerWatcher, expectedType any, store ReflectorStore, resyncPeriod time.Duration) *Reflector {
 	return NewReflectorWithOptions(lw, expectedType, store, ReflectorOptions{Name: name, ResyncPeriod: resyncPeriod})
 }
 
@@ -256,7 +256,7 @@ type ReflectorOptions struct {
 // "yes".  This enables you to use reflectors to periodically process
 // everything as well as incrementally processing the things that
 // change.
-func NewReflectorWithOptions(lw ListerWatcher, expectedType interface{}, store ReflectorStore, options ReflectorOptions) *Reflector {
+func NewReflectorWithOptions(lw ListerWatcher, expectedType any, store ReflectorStore, options ReflectorOptions) *Reflector {
 	reflectorClock := options.Clock
 	if reflectorClock == nil {
 		reflectorClock = clock.RealClock{}
@@ -302,7 +302,7 @@ func NewReflectorWithOptions(lw ListerWatcher, expectedType interface{}, store R
 	return r
 }
 
-func getTypeDescriptionFromObject(expectedType interface{}) string {
+func getTypeDescriptionFromObject(expectedType any) string {
 	if expectedType == nil {
 		return defaultExpectedTypeName
 	}
@@ -322,7 +322,7 @@ func getTypeDescriptionFromObject(expectedType interface{}) string {
 	return gvk.String()
 }
 
-func getExpectedGVKFromObject(expectedType interface{}) *schema.GroupVersionKind {
+func getExpectedGVKFromObject(expectedType any) *schema.GroupVersionKind {
 	obj, ok := expectedType.(*unstructured.Unstructured)
 	if !ok {
 		return nil
@@ -573,7 +573,7 @@ func (r *Reflector) list(ctx context.Context) error {
 	var paginatedResult bool
 	var err error
 	listCh := make(chan struct{}, 1)
-	panicCh := make(chan interface{}, 1)
+	panicCh := make(chan any, 1)
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
@@ -784,7 +784,7 @@ func (r *Reflector) watchList(ctx context.Context) (watch.Interface, error) {
 
 // syncWith replaces the store's items with the given list.
 func (r *Reflector) syncWith(items []runtime.Object, resourceVersion string) error {
-	found := make([]interface{}, 0, len(items))
+	found := make([]any, 0, len(items))
 	for _, item := range items {
 		found = append(found, item)
 	}

@@ -53,7 +53,7 @@ type decodeError struct {
 	pos token.Pos
 }
 
-func newDecodeErrorf(node ast.Node, format string, a ...interface{}) *decodeError {
+func newDecodeErrorf(node ast.Node, format string, a ...any) *decodeError {
 	return &decodeError{
 		msg: fmt.Sprintf(format, a...),
 		pos: node.Pos(),

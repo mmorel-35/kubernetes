@@ -35,7 +35,7 @@ type namespacedLister[T runtime.Object] struct {
 }
 
 func (w namespacedLister[T]) List(selector labels.Selector) (ret []T, err error) {
-	err = cache.ListAllByNamespace(w.indexer, w.namespace, selector, func(m interface{}) {
+	err = cache.ListAllByNamespace(w.indexer, w.namespace, selector, func(m any) {
 		ret = append(ret, m.(T))
 	})
 	return ret, err
@@ -65,7 +65,7 @@ type lister[T runtime.Object] struct {
 }
 
 func (w lister[T]) List(selector labels.Selector) (ret []T, err error) {
-	err = cache.ListAll(w.indexer, selector, func(m interface{}) {
+	err = cache.ListAll(w.indexer, selector, func(m any) {
 		ret = append(ret, m.(T))
 	})
 	return ret, err

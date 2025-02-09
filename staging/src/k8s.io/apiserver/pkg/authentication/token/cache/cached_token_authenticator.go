@@ -119,7 +119,7 @@ func newWithClock(authenticator authenticator.Token, cacheErrs bool, successTTL,
 		cache: newStripedCache(32, fnvHashFunc, func() cache { return newSimpleCache(clock) }),
 
 		hashPool: &sync.Pool{
-			New: func() interface{} {
+			New: func() any {
 				return hmac.New(sha256.New, randomCacheKey)
 			},
 		},
@@ -158,7 +158,7 @@ func (a *cachedTokenAuthenticator) doAuthenticateToken(ctx context.Context, toke
 	defer doneBlocking()
 	defer doneAuthenticating(false)
 
-	c := a.group.DoChan(key, func() (val interface{}, _ error) {
+	c := a.group.DoChan(key, func() (val any, _ error) {
 		// always use one place to read and write the output of AuthenticateToken
 		record := &cacheRecord{}
 

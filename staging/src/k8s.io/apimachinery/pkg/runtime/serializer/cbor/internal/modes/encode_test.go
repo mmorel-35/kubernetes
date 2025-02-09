@@ -38,7 +38,7 @@ func TestEncode(t *testing.T) {
 	for _, tc := range []struct {
 		name          string
 		modes         []modes.EncMode
-		in            interface{}
+		in            any
 		want          []byte
 		assertOnError func(t *testing.T, e error)
 	}{

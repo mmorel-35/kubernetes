@@ -36,7 +36,7 @@ func NewFlakeReport() *FlakeReport {
 	}
 }
 
-func buildDescription(optionalDescription ...interface{}) string {
+func buildDescription(optionalDescription ...any) string {
 	switch len(optionalDescription) {
 	case 0:
 		return ""
@@ -48,7 +48,7 @@ func buildDescription(optionalDescription ...interface{}) string {
 // RecordFlakeIfError records the error (if non-nil) as a flake along with an optional description.
 // This can be used as a replacement of framework.ExpectNoError() for non-critical errors that can
 // be considered as 'flakes' to avoid causing failures in tests.
-func (f *FlakeReport) RecordFlakeIfError(err error, optionalDescription ...interface{}) {
+func (f *FlakeReport) RecordFlakeIfError(err error, optionalDescription ...any) {
 	if err == nil {
 		return
 	}

@@ -695,10 +695,10 @@ var _ = SIGDescribe("ResourceQuota", func() {
 		ginkgo.By("Creating a custom resource")
 		resourceClient := testcrd.DynamicClients["v1"]
 		testcr, err := instantiateCustomResource(ctx, &unstructured.Unstructured{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"apiVersion": testcrd.Crd.Spec.Group + "/" + testcrd.Crd.Spec.Versions[0].Name,
 				"kind":       testcrd.Crd.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": "test-cr-1",
 				},
 			},
@@ -713,10 +713,10 @@ var _ = SIGDescribe("ResourceQuota", func() {
 
 		ginkgo.By("Creating a second custom resource")
 		_, err = instantiateCustomResource(ctx, &unstructured.Unstructured{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"apiVersion": testcrd.Crd.Spec.Group + "/" + testcrd.Crd.Spec.Versions[0].Name,
 				"kind":       testcrd.Crd.Spec.Names.Kind,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name": "test-cr-2",
 				},
 			},

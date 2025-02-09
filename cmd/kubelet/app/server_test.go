@@ -78,7 +78,7 @@ func TestMergeKubeletConfigurations(t *testing.T) {
 		kubeletConfig           *kubeletconfiginternal.KubeletConfiguration
 		dropin1                 string
 		dropin2                 string
-		overwrittenConfigFields map[string]interface{}
+		overwrittenConfigFields map[string]any
 		cliArgs                 []string
 		name                    string
 		expectMergeError        string
@@ -103,7 +103,7 @@ kind: KubeletConfiguration
 port: 8080
 readOnlyPort: 10255
 `,
-			overwrittenConfigFields: map[string]interface{}{
+			overwrittenConfigFields: map[string]any{
 				"Port":         int32(8080),
 				"ReadOnlyPort": int32(10255),
 			},
@@ -134,7 +134,7 @@ readOnlyPort: 10257
 kubeReserved:
   memory: 100Mi
 `,
-			overwrittenConfigFields: map[string]interface{}{
+			overwrittenConfigFields: map[string]any{
 				"ReadOnlyPort": int32(10257),
 				"KubeReserved": map[string]string{
 					"cpu":    "200m",
@@ -172,7 +172,7 @@ clusterDNS:
   - 192.168.1.5
   - 192.168.1.8
 `,
-			overwrittenConfigFields: map[string]interface{}{
+			overwrittenConfigFields: map[string]any{
 				"Port":         int32(8080),
 				"ReadOnlyPort": int32(10255),
 				"SystemReserved": map[string]string{
@@ -195,7 +195,7 @@ kind: KubeletConfiguration
 port: 8080
 readOnlyPort: 10255
 `,
-			overwrittenConfigFields: map[string]interface{}{
+			overwrittenConfigFields: map[string]any{
 				"Port":         int32(8081),
 				"ReadOnlyPort": int32(10256),
 			},
@@ -214,7 +214,7 @@ readOnlyPort: 10255
 				Port:       int32(9090),
 				ClusterDNS: []string{"192.168.1.3"},
 			},
-			overwrittenConfigFields: map[string]interface{}{
+			overwrittenConfigFields: map[string]any{
 				"Port":       int32(9090),
 				"ClusterDNS": []string{"192.168.1.2"},
 			},
@@ -240,7 +240,7 @@ apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
 port: 0
 `,
-			overwrittenConfigFields: map[string]interface{}{
+			overwrittenConfigFields: map[string]any{
 				"ResolverConfig": "dropin1",    // overridden by dropin1
 				"Port":           int32(10250), // reset to 0 by dropin2, then re-defaulted
 				"ReadOnlyPort":   int32(234),   // preserved from original config

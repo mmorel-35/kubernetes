@@ -234,7 +234,7 @@ func TestCompatibility(t *testing.T) {
 // notZero asserts that i is not the zero value for its type
 // and repeats that check recursively for all pointers,
 // structs, maps, arrays, and slices.
-func notZeroRecursive(t *testing.T, i interface{}, path string) bool {
+func notZeroRecursive(t *testing.T, i any, path string) bool {
 	typeOfI := reflect.TypeOf(i)
 
 	if i == nil || reflect.DeepEqual(i, reflect.Zero(typeOfI).Interface()) {

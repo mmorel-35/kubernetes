@@ -127,7 +127,7 @@ func NewController(
 	// Set up an event handler for when Foo resources change
 	fooInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: controller.enqueueFoo,
-		UpdateFunc: func(old, new interface{}) {
+		UpdateFunc: func(old, new any) {
 			controller.enqueueFoo(new)
 		},
 	})
@@ -139,7 +139,7 @@ func NewController(
 	// https://github.com/kubernetes/community/blob/8cafef897a22026d42f5e5bb3f104febe7e29830/contributors/devel/controllers.md
 	deploymentInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: controller.handleObject,
-		UpdateFunc: func(old, new interface{}) {
+		UpdateFunc: func(old, new any) {
 			newDepl := new.(*appsv1.Deployment)
 			oldDepl := old.(*appsv1.Deployment)
 			if newDepl.ResourceVersion == oldDepl.ResourceVersion {
@@ -328,7 +328,7 @@ func (c *Controller) updateFooStatus(ctx context.Context, foo *samplev1alpha1.Fo
 // enqueueFoo takes a Foo resource and converts it into a namespace/name
 // string which is then put onto the work queue. This method should *not* be
 // passed resources of any type other than Foo.
-func (c *Controller) enqueueFoo(obj interface{}) {
+func (c *Controller) enqueueFoo(obj any) {
 	if objectRef, err := cache.ObjectToName(obj); err != nil {
 		utilruntime.HandleError(err)
 		return
@@ -342,7 +342,7 @@ func (c *Controller) enqueueFoo(obj interface{}) {
 // objects metadata.ownerReferences field for an appropriate OwnerReference.
 // It then enqueues that Foo resource to be processed. If the object does not
 // have an appropriate OwnerReference, it will simply be skipped.
-func (c *Controller) handleObject(obj interface{}) {
+func (c *Controller) handleObject(obj any) {
 	var object metav1.Object
 	var ok bool
 	logger := klog.FromContext(context.Background())

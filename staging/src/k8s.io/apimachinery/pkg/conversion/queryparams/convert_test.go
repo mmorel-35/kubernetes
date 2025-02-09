@@ -78,7 +78,7 @@ type childStructs struct {
 
 func (obj *childStructs) GetObjectKind() schema.ObjectKind { return schema.EmptyObjectKind }
 
-func validateResult(t *testing.T, input interface{}, actual, expected url.Values) {
+func validateResult(t *testing.T, input any, actual, expected url.Values) {
 	local := url.Values{}
 	for k, v := range expected {
 		local[k] = v
@@ -104,7 +104,7 @@ func TestConvert(t *testing.T) {
 	sinceTime := metav1.Date(2000, 1, 1, 12, 34, 56, 0, time.UTC)
 
 	tests := []struct {
-		input    interface{}
+		input    any
 		expected url.Values
 	}{
 		{

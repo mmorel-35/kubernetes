@@ -66,7 +66,7 @@ func NewLoggerCommand() *cobra.Command {
 
 			// Produce some output. Special types used by Kubernetes work.
 			podRef := klog.KObj(&metav1.ObjectMeta{Name: "some-pod", Namespace: "some-namespace"})
-			podRefs := klog.KObjSlice([]interface{}{
+			podRefs := klog.KObjSlice([]any{
 				&metav1.ObjectMeta{Name: "some-pod", Namespace: "some-namespace"},
 				nil,
 				&metav1.ObjectMeta{Name: "other-pod"},

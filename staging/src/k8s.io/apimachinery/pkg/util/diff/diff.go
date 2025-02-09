@@ -27,7 +27,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/dump"
 )
 
-func legacyDiff(a, b interface{}) string {
+func legacyDiff(a, b any) string {
 	return cmp.Diff(a, b)
 }
 
@@ -40,27 +40,27 @@ func StringDiff(a, b string) string {
 // ObjectDiff prints the diff of two go objects and fails if the objects
 // contain unhandled unexported fields.
 // DEPRECATED: use github.com/google/go-cmp/cmp.Diff
-func ObjectDiff(a, b interface{}) string {
+func ObjectDiff(a, b any) string {
 	return legacyDiff(a, b)
 }
 
 // ObjectGoPrintDiff prints the diff of two go objects and fails if the objects
 // contain unhandled unexported fields.
 // DEPRECATED: use github.com/google/go-cmp/cmp.Diff
-func ObjectGoPrintDiff(a, b interface{}) string {
+func ObjectGoPrintDiff(a, b any) string {
 	return legacyDiff(a, b)
 }
 
 // ObjectReflectDiff prints the diff of two go objects and fails if the objects
 // contain unhandled unexported fields.
 // DEPRECATED: use github.com/google/go-cmp/cmp.Diff
-func ObjectReflectDiff(a, b interface{}) string {
+func ObjectReflectDiff(a, b any) string {
 	return legacyDiff(a, b)
 }
 
 // ObjectGoPrintSideBySide prints a and b as textual dumps side by side,
 // enabling easy visual scanning for mismatches.
-func ObjectGoPrintSideBySide(a, b interface{}) string {
+func ObjectGoPrintSideBySide(a, b any) string {
 	sA := dump.Pretty(a)
 	sB := dump.Pretty(b)
 

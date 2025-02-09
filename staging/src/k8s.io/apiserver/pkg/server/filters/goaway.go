@@ -31,7 +31,7 @@ var (
 	// randPool used to get a rand.Rand and generate a random number thread-safely,
 	// which improve the performance of using rand.Rand with a locker
 	randPool = &sync.Pool{
-		New: func() interface{} {
+		New: func() any {
 			return rand.New(rand.NewSource(rand.Int63()))
 		},
 	}

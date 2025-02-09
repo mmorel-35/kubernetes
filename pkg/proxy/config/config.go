@@ -114,7 +114,7 @@ func (c *EndpointSliceConfig) Run(stopCh <-chan struct{}) {
 	}
 }
 
-func (c *EndpointSliceConfig) handleAddEndpointSlice(obj interface{}) {
+func (c *EndpointSliceConfig) handleAddEndpointSlice(obj any) {
 	endpointSlice, ok := obj.(*discoveryv1.EndpointSlice)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("unexpected object type: %T", obj))
@@ -126,7 +126,7 @@ func (c *EndpointSliceConfig) handleAddEndpointSlice(obj interface{}) {
 	}
 }
 
-func (c *EndpointSliceConfig) handleUpdateEndpointSlice(oldObj, newObj interface{}) {
+func (c *EndpointSliceConfig) handleUpdateEndpointSlice(oldObj, newObj any) {
 	oldEndpointSlice, ok := oldObj.(*discoveryv1.EndpointSlice)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("unexpected object type: %T", oldObj))
@@ -143,7 +143,7 @@ func (c *EndpointSliceConfig) handleUpdateEndpointSlice(oldObj, newObj interface
 	}
 }
 
-func (c *EndpointSliceConfig) handleDeleteEndpointSlice(obj interface{}) {
+func (c *EndpointSliceConfig) handleDeleteEndpointSlice(obj any) {
 	endpointSlice, ok := obj.(*discoveryv1.EndpointSlice)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
@@ -208,7 +208,7 @@ func (c *ServiceConfig) Run(stopCh <-chan struct{}) {
 	}
 }
 
-func (c *ServiceConfig) handleAddService(obj interface{}) {
+func (c *ServiceConfig) handleAddService(obj any) {
 	service, ok := obj.(*v1.Service)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("unexpected object type: %v", obj))
@@ -220,7 +220,7 @@ func (c *ServiceConfig) handleAddService(obj interface{}) {
 	}
 }
 
-func (c *ServiceConfig) handleUpdateService(oldObj, newObj interface{}) {
+func (c *ServiceConfig) handleUpdateService(oldObj, newObj any) {
 	oldService, ok := oldObj.(*v1.Service)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("unexpected object type: %v", oldObj))
@@ -237,7 +237,7 @@ func (c *ServiceConfig) handleUpdateService(oldObj, newObj interface{}) {
 	}
 }
 
-func (c *ServiceConfig) handleDeleteService(obj interface{}) {
+func (c *ServiceConfig) handleDeleteService(obj any) {
 	service, ok := obj.(*v1.Service)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
@@ -338,7 +338,7 @@ func (c *NodeConfig) Run(stopCh <-chan struct{}) {
 	}
 }
 
-func (c *NodeConfig) handleAddNode(obj interface{}) {
+func (c *NodeConfig) handleAddNode(obj any) {
 	node, ok := obj.(*v1.Node)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("unexpected object type: %v", obj))
@@ -350,7 +350,7 @@ func (c *NodeConfig) handleAddNode(obj interface{}) {
 	}
 }
 
-func (c *NodeConfig) handleUpdateNode(oldObj, newObj interface{}) {
+func (c *NodeConfig) handleUpdateNode(oldObj, newObj any) {
 	oldNode, ok := oldObj.(*v1.Node)
 	if !ok {
 		utilruntime.HandleError(fmt.Errorf("unexpected object type: %v", oldObj))
@@ -367,7 +367,7 @@ func (c *NodeConfig) handleUpdateNode(oldObj, newObj interface{}) {
 	}
 }
 
-func (c *NodeConfig) handleDeleteNode(obj interface{}) {
+func (c *NodeConfig) handleDeleteNode(obj any) {
 	node, ok := obj.(*v1.Node)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)
@@ -412,13 +412,13 @@ func NewServiceCIDRConfig(ctx context.Context, serviceCIDRInformer networkingv1i
 
 	handlerRegistration, _ := serviceCIDRInformer.Informer().AddEventHandlerWithResyncPeriod(
 		cache.ResourceEventHandlerFuncs{
-			AddFunc: func(obj interface{}) {
+			AddFunc: func(obj any) {
 				result.handleServiceCIDREvent(nil, obj)
 			},
-			UpdateFunc: func(oldObj, newObj interface{}) {
+			UpdateFunc: func(oldObj, newObj any) {
 				result.handleServiceCIDREvent(oldObj, newObj)
 			},
-			DeleteFunc: func(obj interface{}) {
+			DeleteFunc: func(obj any) {
 				result.handleServiceCIDREvent(obj, nil)
 			},
 		},
@@ -447,7 +447,7 @@ func (c *ServiceCIDRConfig) Run(stopCh <-chan struct{}) {
 
 // handleServiceCIDREvent is a helper function to handle Add, Update and Delete
 // events on ServiceCIDR objects and call downstream event handlers.
-func (c *ServiceCIDRConfig) handleServiceCIDREvent(oldObj, newObj interface{}) {
+func (c *ServiceCIDRConfig) handleServiceCIDREvent(oldObj, newObj any) {
 	var oldServiceCIDR, newServiceCIDR *networkingv1.ServiceCIDR
 	var ok bool
 

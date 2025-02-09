@@ -131,7 +131,7 @@ type cacheStore struct {
 	initialized bool
 }
 
-func (c *cacheStore) Replace(list []interface{}, resourceVersion string) error {
+func (c *cacheStore) Replace(list []any, resourceVersion string) error {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	err := c.Store.Replace(list, resourceVersion)

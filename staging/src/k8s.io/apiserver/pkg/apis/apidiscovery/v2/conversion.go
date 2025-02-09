@@ -44,52 +44,52 @@ import (
 // RegisterConversions adds conversion functions to the given scheme.
 // Public to allow building arbitrary schemes.
 func RegisterConversions(s *runtime.Scheme) error {
-	if err := s.AddGeneratedConversionFunc((*v2beta1.APIGroupDiscovery)(nil), (*v2.APIGroupDiscovery)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*v2beta1.APIGroupDiscovery)(nil), (*v2.APIGroupDiscovery)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convertv2beta1APIGroupDiscoveryTov2APIGroupDiscovery(a.(*v2beta1.APIGroupDiscovery), b.(*v2.APIGroupDiscovery), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v2.APIGroupDiscovery)(nil), (*v2beta1.APIGroupDiscovery)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*v2.APIGroupDiscovery)(nil), (*v2beta1.APIGroupDiscovery)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convertv2APIGroupDiscoveryTov2beta1APIGroupDiscovery(a.(*v2.APIGroupDiscovery), b.(*v2beta1.APIGroupDiscovery), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v2beta1.APIGroupDiscoveryList)(nil), (*v2.APIGroupDiscoveryList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*v2beta1.APIGroupDiscoveryList)(nil), (*v2.APIGroupDiscoveryList)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convertv2beta1APIGroupDiscoveryListTov2APIGroupDiscoveryList(a.(*v2beta1.APIGroupDiscoveryList), b.(*v2.APIGroupDiscoveryList), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v2.APIGroupDiscoveryList)(nil), (*v2beta1.APIGroupDiscoveryList)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*v2.APIGroupDiscoveryList)(nil), (*v2beta1.APIGroupDiscoveryList)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convertv2APIGroupDiscoveryListTov2beta1APIGroupDiscoveryList(a.(*v2.APIGroupDiscoveryList), b.(*v2beta1.APIGroupDiscoveryList), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v2beta1.APIResourceDiscovery)(nil), (*v2.APIResourceDiscovery)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*v2beta1.APIResourceDiscovery)(nil), (*v2.APIResourceDiscovery)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convertv2beta1APIResourceDiscoveryTov2APIResourceDiscovery(a.(*v2beta1.APIResourceDiscovery), b.(*v2.APIResourceDiscovery), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v2.APIResourceDiscovery)(nil), (*v2beta1.APIResourceDiscovery)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*v2.APIResourceDiscovery)(nil), (*v2beta1.APIResourceDiscovery)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convertv2APIResourceDiscoveryTov2beta1APIResourceDiscovery(a.(*v2.APIResourceDiscovery), b.(*v2beta1.APIResourceDiscovery), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v2beta1.APISubresourceDiscovery)(nil), (*v2.APISubresourceDiscovery)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*v2beta1.APISubresourceDiscovery)(nil), (*v2.APISubresourceDiscovery)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convertv2beta1APISubresourceDiscoveryTov2APISubresourceDiscovery(a.(*v2beta1.APISubresourceDiscovery), b.(*v2.APISubresourceDiscovery), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v2.APISubresourceDiscovery)(nil), (*v2beta1.APISubresourceDiscovery)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*v2.APISubresourceDiscovery)(nil), (*v2beta1.APISubresourceDiscovery)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convertv2APISubresourceDiscoveryTov2beta1APISubresourceDiscovery(a.(*v2.APISubresourceDiscovery), b.(*v2beta1.APISubresourceDiscovery), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v2beta1.APIVersionDiscovery)(nil), (*v2.APIVersionDiscovery)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*v2beta1.APIVersionDiscovery)(nil), (*v2.APIVersionDiscovery)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convertv2beta1APIVersionDiscoveryTov2APIVersionDiscovery(a.(*v2beta1.APIVersionDiscovery), b.(*v2.APIVersionDiscovery), scope)
 	}); err != nil {
 		return err
 	}
-	if err := s.AddGeneratedConversionFunc((*v2.APIVersionDiscovery)(nil), (*v2beta1.APIVersionDiscovery)(nil), func(a, b interface{}, scope conversion.Scope) error {
+	if err := s.AddGeneratedConversionFunc((*v2.APIVersionDiscovery)(nil), (*v2beta1.APIVersionDiscovery)(nil), func(a, b any, scope conversion.Scope) error {
 		return Convertv2APIVersionDiscoveryTov2beta1APIVersionDiscovery(a.(*v2.APIVersionDiscovery), b.(*v2beta1.APIVersionDiscovery), scope)
 	}); err != nil {
 		return err

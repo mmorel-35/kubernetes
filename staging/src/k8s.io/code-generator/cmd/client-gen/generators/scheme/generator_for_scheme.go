@@ -86,7 +86,7 @@ func (g *GenScheme) GenerateType(c *generator.Context, t *types.Type, w io.Write
 	allGroupVersions := clientgentypes.ToGroupVersionInfo(g.Groups, g.GroupGoNames)
 	allInstallGroups := clientgentypes.ToGroupInstallPackages(g.Groups, g.GroupGoNames)
 
-	m := map[string]interface{}{
+	m := map[string]any{
 		"publicScheme":              !g.PrivateScheme,
 		"allGroupVersions":          allGroupVersions,
 		"allInstallGroups":          allInstallGroups,

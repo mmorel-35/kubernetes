@@ -84,13 +84,13 @@ func newTableCRD() *apiextensionsv1.CustomResourceDefinition {
 
 func newTableInstance(name string) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "mygroup.example.com/v1",
 			"kind":       "Table",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": name,
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"alpha":   "foo_123",
 				"beta":    10,
 				"gamma":   "bar",
@@ -243,7 +243,7 @@ func TestTableGet(t *testing.T) {
 				if got, expected := tbl.Rows[0].Cells[3], int64(10); got != expected {
 					t.Errorf("expected cell[3] to equal %#v, got %#v", expected, got)
 				}
-				if got, expected := tbl.Rows[0].Cells[4], interface{}(nil); got != expected {
+				if got, expected := tbl.Rows[0].Cells[4], any(nil); got != expected {
 					t.Errorf("expected cell[4] to equal %#v although the type does not match the column, got %#v", expected, got)
 				}
 				if got, expected := tbl.Rows[0].Cells[5], "[1,2,3]"; got != expected {
@@ -341,7 +341,7 @@ func TestTableGet(t *testing.T) {
 				if got, expected := tbl.Rows[0].Cells[3], int64(10); got != expected {
 					t.Errorf("expected cell[3] to equal %#v, got %#v", expected, got)
 				}
-				if got, expected := tbl.Rows[0].Cells[4], interface{}(nil); got != expected {
+				if got, expected := tbl.Rows[0].Cells[4], any(nil); got != expected {
 					t.Errorf("expected cell[4] to equal %#v although the type does not match the column, got %#v", expected, got)
 				}
 				if got, expected := tbl.Rows[0].Cells[5], "[1,2,3]"; got != expected {

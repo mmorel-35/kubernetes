@@ -243,8 +243,8 @@ func AddOrUpdateLabelsOnNode(ctx context.Context, kubeClient clientset.Interface
 }
 
 // CreateAddNodeHandler creates an add node handler.
-func CreateAddNodeHandler(f func(node *v1.Node) error) func(obj interface{}) {
-	return func(originalObj interface{}) {
+func CreateAddNodeHandler(f func(node *v1.Node) error) func(obj any) {
+	return func(originalObj any) {
 		node := originalObj.(*v1.Node).DeepCopy()
 		if err := f(node); err != nil {
 			utilruntime.HandleError(fmt.Errorf("Error while processing Node Add: %v", err))
@@ -253,8 +253,8 @@ func CreateAddNodeHandler(f func(node *v1.Node) error) func(obj interface{}) {
 }
 
 // CreateUpdateNodeHandler creates a node update handler. (Common to lifecycle and ipam)
-func CreateUpdateNodeHandler(f func(oldNode, newNode *v1.Node) error) func(oldObj, newObj interface{}) {
-	return func(origOldObj, origNewObj interface{}) {
+func CreateUpdateNodeHandler(f func(oldNode, newNode *v1.Node) error) func(oldObj, newObj any) {
+	return func(origOldObj, origNewObj any) {
 		node := origNewObj.(*v1.Node).DeepCopy()
 		prevNode := origOldObj.(*v1.Node).DeepCopy()
 
@@ -265,8 +265,8 @@ func CreateUpdateNodeHandler(f func(oldNode, newNode *v1.Node) error) func(oldOb
 }
 
 // CreateDeleteNodeHandler creates a delete node handler. (Common to lifecycle and ipam)
-func CreateDeleteNodeHandler(logger klog.Logger, f func(node *v1.Node) error) func(obj interface{}) {
-	return func(originalObj interface{}) {
+func CreateDeleteNodeHandler(logger klog.Logger, f func(node *v1.Node) error) func(obj any) {
+	return func(originalObj any) {
 		originalNode, isNode := originalObj.(*v1.Node)
 		// We can get DeletedFinalStateUnknown instead of *v1.Node here and
 		// we need to handle that correctly. #34692

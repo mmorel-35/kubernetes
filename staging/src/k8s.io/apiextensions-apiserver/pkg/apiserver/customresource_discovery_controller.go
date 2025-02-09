@@ -362,13 +362,13 @@ func (c *DiscoveryController) enqueue(obj *apiextensionsv1.CustomResourceDefinit
 	}
 }
 
-func (c *DiscoveryController) addCustomResourceDefinition(obj interface{}) {
+func (c *DiscoveryController) addCustomResourceDefinition(obj any) {
 	castObj := obj.(*apiextensionsv1.CustomResourceDefinition)
 	klog.V(4).Infof("Adding customresourcedefinition %s", castObj.Name)
 	c.enqueue(castObj)
 }
 
-func (c *DiscoveryController) updateCustomResourceDefinition(oldObj, newObj interface{}) {
+func (c *DiscoveryController) updateCustomResourceDefinition(oldObj, newObj any) {
 	castNewObj := newObj.(*apiextensionsv1.CustomResourceDefinition)
 	castOldObj := oldObj.(*apiextensionsv1.CustomResourceDefinition)
 	klog.V(4).Infof("Updating customresourcedefinition %s", castOldObj.Name)
@@ -378,7 +378,7 @@ func (c *DiscoveryController) updateCustomResourceDefinition(oldObj, newObj inte
 	c.enqueue(castOldObj)
 }
 
-func (c *DiscoveryController) deleteCustomResourceDefinition(obj interface{}) {
+func (c *DiscoveryController) deleteCustomResourceDefinition(obj any) {
 	castObj, ok := obj.(*apiextensionsv1.CustomResourceDefinition)
 	if !ok {
 		tombstone, ok := obj.(cache.DeletedFinalStateUnknown)

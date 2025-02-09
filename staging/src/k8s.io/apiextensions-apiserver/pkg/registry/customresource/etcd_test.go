@@ -130,22 +130,22 @@ func createCustomResource(storage *customresource.REST, cr unstructured.Unstruct
 
 func validNewCustomResource() *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "mygroup.example.com/v1beta1",
 			"kind":       "Noxu",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace":         "default",
 				"name":              "foo",
 				"creationTimestamp": time.Now().Add(-time.Hour*12 - 30*time.Minute).UTC().Format(time.RFC3339),
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"replicas":         int64(7),
 				"string":           "string",
 				"float64":          float64(3.1415926),
 				"bool":             true,
-				"stringList":       []interface{}{"foo", "bar"},
-				"mixedList":        []interface{}{"foo", int64(42)},
-				"nonPrimitiveList": []interface{}{"foo", []interface{}{int64(1), int64(2)}},
+				"stringList":       []any{"foo", "bar"},
+				"mixedList":        []any{"foo", int64(42)},
+				"nonPrimitiveList": []any{"foo", []any{int64(1), int64(2)}},
 			},
 		},
 	}
@@ -303,7 +303,7 @@ func TestColumns(t *testing.T) {
 		}
 	}
 
-	expectedRows := [][]interface{}{
+	expectedRows := [][]any{
 		{
 			"foo",
 			"12h",
@@ -343,7 +343,7 @@ func TestStatusUpdate(t *testing.T) {
 
 	update := gottenObj.(*unstructured.Unstructured)
 	updateContent := update.Object
-	updateContent["status"] = map[string]interface{}{
+	updateContent["status"] = map[string]any{
 		"replicas": int64(7),
 	}
 
@@ -362,8 +362,8 @@ func TestStatusUpdate(t *testing.T) {
 	}
 	content := cr.UnstructuredContent()
 
-	spec := content["spec"].(map[string]interface{})
-	status := content["status"].(map[string]interface{})
+	spec := content["spec"].(map[string]any)
+	status := content["status"].(map[string]any)
 
 	if spec["replicas"].(int64) != 7 {
 		t.Errorf("we expected .spec.replicas to not be updated but it was updated to %v", spec["replicas"].(int64))
@@ -735,9 +735,9 @@ func getStatusReplicas(u *unstructured.Unstructured) int64 {
 	return val
 }
 
-func setNestedField(u *unstructured.Unstructured, value interface{}, fields ...string) {
+func setNestedField(u *unstructured.Unstructured, value any, fields ...string) {
 	if u.Object == nil {
-		u.Object = make(map[string]interface{})
+		u.Object = make(map[string]any)
 	}
 	unstructured.SetNestedField(u.Object, value, fields...)
 }

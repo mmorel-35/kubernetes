@@ -216,7 +216,7 @@ func assertCacheSize(t *testing.T, cache *requestCache, expectedSize int) {
 
 var requestUID = 0
 
-func nextRequest() interface{} {
+func nextRequest() any {
 	requestUID++
 	return requestUID
 }

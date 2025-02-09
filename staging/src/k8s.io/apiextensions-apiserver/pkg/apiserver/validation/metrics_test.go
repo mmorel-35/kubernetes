@@ -84,12 +84,12 @@ func TestMetrics(t *testing.T) {
 		{
 			desc: "valid noop update",
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"foo": "bar",
 				},
 			},
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"foo": "bar",
 				},
 			},
@@ -123,12 +123,12 @@ func TestMetrics(t *testing.T) {
 		{
 			desc: "valid change yields no metrics",
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"foo": "bar",
 				},
 			},
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"foo": "barx",
 				},
 			},
@@ -165,12 +165,12 @@ func TestMetrics(t *testing.T) {
 		{
 			desc: "invalid noop yields no metrics",
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"foo": "bar",
 				},
 			},
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"foo": "bar",
 				},
 			},
@@ -207,12 +207,12 @@ func TestMetrics(t *testing.T) {
 		{
 			desc: "ratcheted change object yields metrics",
 			obj: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"foo": "bar",
 				},
 			},
 			old: &unstructured.Unstructured{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"foo": "barx",
 				},
 			},

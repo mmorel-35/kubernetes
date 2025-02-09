@@ -42,7 +42,7 @@ type Stub struct {
 	preStartContainerFlag      bool
 	getPreferredAllocationFlag bool
 
-	stop   chan interface{}
+	stop   chan any
 	wg     sync.WaitGroup
 	update chan []*pluginapi.Device
 
@@ -105,7 +105,7 @@ func NewDevicePluginStub(devs []*pluginapi.Device, socket string, name string, p
 		getPreferredAllocationFlag: getPreferredAllocationFlag,
 		registerControlFunc:        defaultRegisterControlFunc,
 
-		stop:   make(chan interface{}),
+		stop:   make(chan any),
 		update: make(chan []*pluginapi.Device),
 
 		allocFunc:             defaultAllocFunc,

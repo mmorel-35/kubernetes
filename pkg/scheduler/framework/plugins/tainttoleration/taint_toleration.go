@@ -84,7 +84,7 @@ func (pl *TaintToleration) EventsToRegister(_ context.Context) ([]framework.Clus
 // isSchedulableAfterNodeChange is invoked for all node events reported by
 // an informer. It checks whether that change made a previously unschedulable
 // pod schedulable.
-func (pl *TaintToleration) isSchedulableAfterNodeChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *TaintToleration) isSchedulableAfterNodeChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	originalNode, modifiedNode, err := util.As[*v1.Node](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, err
@@ -218,7 +218,7 @@ func New(_ context.Context, _ runtime.Object, h framework.Handle, fts feature.Fe
 }
 
 // isSchedulableAfterPodTolerationChange is invoked whenever a pod's toleration changed.
-func (pl *TaintToleration) isSchedulableAfterPodTolerationChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *TaintToleration) isSchedulableAfterPodTolerationChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	_, modifiedPod, err := util.As[*v1.Pod](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, err

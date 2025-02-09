@@ -168,10 +168,10 @@ func newUnstructuredList(items ...*unstructured.Unstructured) *unstructured.Unst
 
 func newUnstructured(apiVersion, kind, namespace, name string) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": apiVersion,
 			"kind":       kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace": namespace,
 				"name":      name,
 				"uid":       "some-UID-value",
@@ -182,10 +182,10 @@ func newUnstructured(apiVersion, kind, namespace, name string) *unstructured.Uns
 
 func newUnstructuredWithGeneration(apiVersion, kind, namespace, name string, generation int64) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": apiVersion,
 			"kind":       kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace":  namespace,
 				"name":       name,
 				"uid":        "some-UID-value",
@@ -207,7 +207,7 @@ func newUnstructuredStatus(status *metav1.Status) runtime.Unstructured {
 
 func addCondition(in *unstructured.Unstructured, name, status string) *unstructured.Unstructured {
 	conditions, _, _ := unstructured.NestedSlice(in.Object, "status", "conditions")
-	conditions = append(conditions, map[string]interface{}{
+	conditions = append(conditions, map[string]any{
 		"type":   name,
 		"status": status,
 	})
@@ -217,7 +217,7 @@ func addCondition(in *unstructured.Unstructured, name, status string) *unstructu
 
 func addConditionWithObservedGeneration(in *unstructured.Unstructured, name, status string, observedGeneration int64) *unstructured.Unstructured {
 	conditions, _, _ := unstructured.NestedSlice(in.Object, "status", "conditions")
-	conditions = append(conditions, map[string]interface{}{
+	conditions = append(conditions, map[string]any{
 		"type":               name,
 		"status":             status,
 		"observedGeneration": observedGeneration,
@@ -226,11 +226,11 @@ func addConditionWithObservedGeneration(in *unstructured.Unstructured, name, sta
 	return in
 }
 
-// createUnstructured parses the yaml string into a map[string]interface{}.  Verifies that the string does not have
+// createUnstructured parses the yaml string into a map[string]any.  Verifies that the string does not have
 // any tab characters.
 func createUnstructured(t *testing.T, config string) *unstructured.Unstructured {
 	t.Helper()
-	result := map[string]interface{}{}
+	result := map[string]any{}
 
 	require.NotContains(t, config, "\t", "Yaml %s cannot contain tabs", config)
 	require.NoError(t, yaml.Unmarshal([]byte(config), &result), "Could not parse config:\n\n%s\n", config)
@@ -1200,7 +1200,7 @@ func TestWaitForDifferentJSONPathExpression(t *testing.T) {
 			expectedErr: None,
 		},
 		{
-			name: "matches complex types map[string]interface{} without value condition",
+			name: "matches complex types map[string]any without value condition",
 			fakeClient: func() *dynamicfakeclient.FakeDynamicClient {
 				fakeClient := dynamicfakeclient.NewSimpleDynamicClientWithCustomListKinds(scheme, listMapping)
 				fakeClient.PrependReactor("list", "theresource", func(action clienttesting.Action) (handled bool, ret runtime.Object, err error) {
@@ -1281,7 +1281,7 @@ func TestWaitForDifferentJSONPathExpression(t *testing.T) {
 			expectedErr: "given jsonpath expression matches more than one list",
 		},
 		{
-			name: "unsupported type []interface{}",
+			name: "unsupported type []any",
 			fakeClient: func() *dynamicfakeclient.FakeDynamicClient {
 				fakeClient := dynamicfakeclient.NewSimpleDynamicClientWithCustomListKinds(scheme, listMapping)
 				fakeClient.PrependReactor("list", "theresource", listReactionfunc)
@@ -1294,7 +1294,7 @@ func TestWaitForDifferentJSONPathExpression(t *testing.T) {
 			expectedErr: "jsonpath leads to a nested object or list which is not supported",
 		},
 		{
-			name: "unsupported type map[string]interface{}",
+			name: "unsupported type map[string]any",
 			fakeClient: func() *dynamicfakeclient.FakeDynamicClient {
 				fakeClient := dynamicfakeclient.NewSimpleDynamicClientWithCustomListKinds(scheme, listMapping)
 				fakeClient.PrependReactor("list", "theresource", func(action clienttesting.Action) (handled bool, ret runtime.Object, err error) {

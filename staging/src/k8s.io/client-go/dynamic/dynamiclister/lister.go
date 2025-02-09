@@ -40,7 +40,7 @@ func New(indexer cache.Indexer, gvr schema.GroupVersionResource) Lister {
 
 // List lists all resources in the indexer.
 func (l *dynamicLister) List(selector labels.Selector) (ret []*unstructured.Unstructured, err error) {
-	err = cache.ListAll(l.indexer, selector, func(m interface{}) {
+	err = cache.ListAll(l.indexer, selector, func(m any) {
 		ret = append(ret, m.(*unstructured.Unstructured))
 	})
 	return ret, err
@@ -72,7 +72,7 @@ type dynamicNamespaceLister struct {
 
 // List lists all resources in the indexer for a given namespace.
 func (l *dynamicNamespaceLister) List(selector labels.Selector) (ret []*unstructured.Unstructured, err error) {
-	err = cache.ListAllByNamespace(l.indexer, l.namespace, selector, func(m interface{}) {
+	err = cache.ListAllByNamespace(l.indexer, l.namespace, selector, func(m any) {
 		ret = append(ret, m.(*unstructured.Unstructured))
 	})
 	return ret, err

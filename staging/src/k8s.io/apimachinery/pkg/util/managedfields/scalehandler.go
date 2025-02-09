@@ -162,7 +162,7 @@ func (h *ScaleHandler) ToParent(scaleEntries []metav1.ManagedFieldsEntry) ([]met
 }
 
 func managedFieldsEntries(entries internal.ManagedInterface) ([]metav1.ManagedFieldsEntry, error) {
-	obj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	obj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := internal.EncodeObjectManagedFields(obj, entries); err != nil {
 		return nil, err
 	}

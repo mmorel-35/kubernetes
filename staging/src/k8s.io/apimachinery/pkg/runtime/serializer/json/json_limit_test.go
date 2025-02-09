@@ -120,7 +120,7 @@ func testcases() []testcase {
 	}
 }
 
-var decoders = map[string]func([]byte, interface{}) error{
+var decoders = map[string]func([]byte, any) error{
 	"gojson":   gojson.Unmarshal,
 	"utiljson": utiljson.Unmarshal,
 }
@@ -133,7 +133,7 @@ func TestJSONLimits(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			for decoderName, decoder := range decoders {
 				t.Run(decoderName, func(t *testing.T) {
-					v := map[string]interface{}{}
+					v := map[string]any{}
 					err := decoder(tc.data, &v)
 
 					if tc.checkErr != nil {
@@ -153,7 +153,7 @@ func BenchmarkJSONLimits(b *testing.B) {
 			for decoderName, decoder := range decoders {
 				b.Run(decoderName, func(b *testing.B) {
 					for i := 0; i < b.N; i++ {
-						v := map[string]interface{}{}
+						v := map[string]any{}
 						err := decoder(tc.data, &v)
 
 						if tc.checkErr != nil {

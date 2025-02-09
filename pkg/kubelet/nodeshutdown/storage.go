@@ -25,15 +25,15 @@ import (
 )
 
 type storage interface {
-	Store(data interface{}) (err error)
-	Load(data interface{}) (err error)
+	Store(data any) (err error)
+	Load(data any) (err error)
 }
 
 type localStorage struct {
 	Path string
 }
 
-func (l localStorage) Store(data interface{}) (err error) {
+func (l localStorage) Store(data any) (err error) {
 	b, err := json.Marshal(data)
 	if err != nil {
 		return err
@@ -41,7 +41,7 @@ func (l localStorage) Store(data interface{}) (err error) {
 	return atomicWrite(l.Path, b, 0644)
 }
 
-func (l localStorage) Load(data interface{}) (err error) {
+func (l localStorage) Load(data any) (err error) {
 	b, err := os.ReadFile(l.Path)
 	if err != nil {
 		if os.IsNotExist(err) {

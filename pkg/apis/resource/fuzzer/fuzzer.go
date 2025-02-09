@@ -27,8 +27,8 @@ import (
 //
 // Leaving fields empty which then get replaced by the default
 // leads to errors during roundtrip tests.
-var Funcs = func(codecs runtimeserializer.CodecFactory) []interface{} {
-	return []interface{}{
+var Funcs = func(codecs runtimeserializer.CodecFactory) []any {
+	return []any{
 		func(r *resource.DeviceRequest, c fuzz.Continue) {
 			c.FuzzNoCustom(r) // fuzz self without calling this function again
 

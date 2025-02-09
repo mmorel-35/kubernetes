@@ -53,7 +53,7 @@ func main() {
 	}
 }
 
-func generate(in io.Reader, out io.Writer, data interface{}) error {
+func generate(in io.Reader, out io.Writer, data any) error {
 	var buf bytes.Buffer
 	if _, err := buf.ReadFrom(in); err != nil {
 		return fmt.Errorf("reading input: %v", err)

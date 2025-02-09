@@ -86,8 +86,8 @@ var _ = SIGDescribe("PodTemplates", func() {
 		gomega.Expect(podTemplateRead.ObjectMeta.Name).To(gomega.Equal(podTemplateName))
 
 		// patch template
-		podTemplatePatch, err := json.Marshal(map[string]interface{}{
-			"metadata": map[string]interface{}{
+		podTemplatePatch, err := json.Marshal(map[string]any{
+			"metadata": map[string]any{
 				"labels": map[string]string{
 					"podtemplate": "patched",
 				},

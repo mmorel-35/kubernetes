@@ -20,16 +20,16 @@ package v1beta2
 
 // ControllerRevisionListerExpansion allows custom methods to be added to
 // ControllerRevisionLister.
-type ControllerRevisionListerExpansion interface{}
+type ControllerRevisionListerExpansion any
 
 // ControllerRevisionNamespaceListerExpansion allows custom methods to be added to
 // ControllerRevisionNamespaceLister.
-type ControllerRevisionNamespaceListerExpansion interface{}
+type ControllerRevisionNamespaceListerExpansion any
 
 // DeploymentListerExpansion allows custom methods to be added to
 // DeploymentLister.
-type DeploymentListerExpansion interface{}
+type DeploymentListerExpansion any
 
 // DeploymentNamespaceListerExpansion allows custom methods to be added to
 // DeploymentNamespaceLister.
-type DeploymentNamespaceListerExpansion interface{}
+type DeploymentNamespaceListerExpansion any

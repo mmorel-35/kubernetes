@@ -121,15 +121,15 @@ func TestBasicPatch(t *testing.T) {
 
 func TestJSONPatch(t *testing.T) {
 	patchObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "v1",
 			"kind":       "ConfigMap",
-			"metadata": map[string]interface{}{
-				"annotations": map[string]interface{}{
+			"metadata": map[string]any{
+				"annotations": map[string]any{
 					"foo": "bar",
 				},
 			},
-			"data": map[string]interface{}{
+			"data": map[string]any{
 				"myfield": "myvalue",
 			},
 		},
@@ -183,15 +183,15 @@ func TestJSONPatch(t *testing.T) {
 
 func TestSSAPatch(t *testing.T) {
 	patchObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "v1",
 			"kind":       "ConfigMap",
-			"metadata": map[string]interface{}{
-				"annotations": map[string]interface{}{
+			"metadata": map[string]any{
+				"annotations": map[string]any{
 					"foo": "bar",
 				},
 			},
-			"data": map[string]interface{}{
+			"data": map[string]any{
 				"myfield": "myvalue",
 			},
 		},
@@ -245,17 +245,17 @@ func TestSSAPatch(t *testing.T) {
 
 func TestSSAMapList(t *testing.T) {
 	patchObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "v1",
 			"kind":       "Pod",
-			"metadata": map[string]interface{}{
-				"annotations": map[string]interface{}{
+			"metadata": map[string]any{
+				"annotations": map[string]any{
 					"foo": "bar",
 				},
 			},
-			"spec": map[string]interface{}{
-				"initContainers": []interface{}{
-					map[string]interface{}{
+			"spec": map[string]any{
+				"initContainers": []any{
+					map[string]any{
 						"name":  "injected-init-container",
 						"image": "injected-image",
 					},

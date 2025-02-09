@@ -480,17 +480,17 @@ func (v *dummyController) LastSyncResourceVersion() string {
 }
 
 type updateNotification struct {
-	oldObj interface{}
-	newObj interface{}
+	oldObj any
+	newObj any
 }
 
 type addNotification struct {
-	newObj          interface{}
+	newObj          any
 	isInInitialList bool
 }
 
 type deleteNotification struct {
-	oldObj interface{}
+	oldObj any
 }
 
 func (s *sharedIndexInformer) SetWatchErrorHandler(handler WatchErrorHandler) error {
@@ -722,7 +722,7 @@ func (s *sharedIndexInformer) AddEventHandlerWithOptions(handler ResourceEventHa
 	return handle, nil
 }
 
-func (s *sharedIndexInformer) HandleDeltas(obj interface{}, isInInitialList bool) error {
+func (s *sharedIndexInformer) HandleDeltas(obj any, isInInitialList bool) error {
 	s.blockDeltas.Lock()
 	defer s.blockDeltas.Unlock()
 
@@ -733,7 +733,7 @@ func (s *sharedIndexInformer) HandleDeltas(obj interface{}, isInInitialList bool
 }
 
 // Conforms to ResourceEventHandler
-func (s *sharedIndexInformer) OnAdd(obj interface{}, isInInitialList bool) {
+func (s *sharedIndexInformer) OnAdd(obj any, isInInitialList bool) {
 	// Invocation of this function is locked under s.blockDeltas, so it is
 	// save to distribute the notification
 	s.cacheMutationDetector.AddObject(obj)
@@ -741,7 +741,7 @@ func (s *sharedIndexInformer) OnAdd(obj interface{}, isInInitialList bool) {
 }
 
 // Conforms to ResourceEventHandler
-func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
+func (s *sharedIndexInformer) OnUpdate(old, new any) {
 	isSync := false
 
 	// If is a Sync event, isSync should be true
@@ -763,7 +763,7 @@ func (s *sharedIndexInformer) OnUpdate(old, new interface{}) {
 }
 
 // Conforms to ResourceEventHandler
-func (s *sharedIndexInformer) OnDelete(old interface{}) {
+func (s *sharedIndexInformer) OnDelete(old any) {
 	// Invocation of this function is locked under s.blockDeltas, so it is
 	// save to distribute the notification
 	s.processor.distribute(deleteNotification{oldObj: old}, false)
@@ -863,7 +863,7 @@ func (p *sharedProcessor) removeListener(handle ResourceEventHandlerRegistration
 	return nil
 }
 
-func (p *sharedProcessor) distribute(obj interface{}, sync bool) {
+func (p *sharedProcessor) distribute(obj any, sync bool) {
 	p.listenersLock.RLock()
 	defer p.listenersLock.RUnlock()
 
@@ -955,8 +955,8 @@ func (p *sharedProcessor) resyncCheckPeriodChanged(logger klog.Logger, resyncChe
 // period of the listener.
 type processorListener struct {
 	logger klog.Logger
-	nextCh chan interface{}
-	addCh  chan interface{}
+	nextCh chan any
+	addCh  chan any
 
 	handler ResourceEventHandler
 
@@ -1001,8 +1001,8 @@ func (p *processorListener) HasSynced() bool {
 func newProcessListener(logger klog.Logger, handler ResourceEventHandler, requestedResyncPeriod, resyncPeriod time.Duration, now time.Time, bufferSize int, hasSynced func() bool) *processorListener {
 	ret := &processorListener{
 		logger:                logger,
-		nextCh:                make(chan interface{}),
-		addCh:                 make(chan interface{}),
+		nextCh:                make(chan any),
+		addCh:                 make(chan any),
 		handler:               handler,
 		syncTracker:           &synctrack.SingleFileTracker{UpstreamHasSynced: hasSynced},
 		pendingNotifications:  *buffer.NewRingGrowing(bufferSize),
@@ -1015,7 +1015,7 @@ func newProcessListener(logger klog.Logger, handler ResourceEventHandler, reques
 	return ret
 }
 
-func (p *processorListener) add(notification interface{}) {
+func (p *processorListener) add(notification any) {
 	if a, ok := notification.(addNotification); ok && a.isInInitialList {
 		p.syncTracker.Start()
 	}
@@ -1026,8 +1026,8 @@ func (p *processorListener) pop() {
 	defer utilruntime.HandleCrashWithLogger(p.logger)
 	defer close(p.nextCh) // Tell .run() to stop
 
-	var nextCh chan<- interface{}
-	var notification interface{}
+	var nextCh chan<- any
+	var notification any
 	for {
 		select {
 		case nextCh <- notification:

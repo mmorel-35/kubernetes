@@ -301,9 +301,9 @@ func checkExpectedPathsAtRoot(url string, expectedPaths []string, t *testing.T) 
 		if err != nil {
 			t.Fatal(err)
 		}
-		var result map[string]interface{}
+		var result map[string]any
 		json.Unmarshal(body, &result)
-		paths, ok := result["paths"].([]interface{})
+		paths, ok := result["paths"].([]any)
 		if !ok {
 			t.Errorf("paths not found")
 		}

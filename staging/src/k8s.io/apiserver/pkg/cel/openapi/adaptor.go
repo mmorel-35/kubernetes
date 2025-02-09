@@ -224,6 +224,6 @@ func SchemaDeclType(s *spec.Schema, isResourceRoot bool) *apiservercel.DeclType 
 	return common.SchemaDeclType(&Schema{Schema: s}, isResourceRoot)
 }
 
-func MakeMapList(sts *spec.Schema, items []interface{}) (rv common.MapList) {
+func MakeMapList(sts *spec.Schema, items []any) (rv common.MapList) {
 	return common.MakeMapList(&Schema{Schema: sts}, items)
 }

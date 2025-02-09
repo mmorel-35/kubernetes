@@ -65,7 +65,7 @@ func (j *JSONPath) Parse(text string) error {
 }
 
 // Execute bounds data into template and writes the result.
-func (j *JSONPath) Execute(wr io.Writer, data interface{}) error {
+func (j *JSONPath) Execute(wr io.Writer, data any) error {
 	fullResults, err := j.FindResults(data)
 	if err != nil {
 		return err
@@ -78,7 +78,7 @@ func (j *JSONPath) Execute(wr io.Writer, data interface{}) error {
 	return nil
 }
 
-func (j *JSONPath) FindResults(data interface{}) ([][]reflect.Value, error) {
+func (j *JSONPath) FindResults(data any) ([][]reflect.Value, error) {
 	if j.parser == nil {
 		return nil, fmt.Errorf("%s is an incomplete jsonpath template", j.name)
 	}
@@ -147,7 +147,7 @@ func (j *JSONPath) PrintResults(wr io.Writer, results []reflect.Value) error {
 	if j.outputJSON {
 		// convert the []reflect.Value to something that json
 		// will be able to marshal
-		r := make([]interface{}, 0, len(results))
+		r := make([]any, 0, len(results))
 		for i := range results {
 			r = append(r, results[i].Interface())
 		}
@@ -518,7 +518,7 @@ func (j *JSONPath) evalFilter(input []reflect.Value, node *FilterNode) ([]reflec
 				return input, err
 			}
 
-			var left, right interface{}
+			var left, right any
 			switch {
 			case len(lefts) == 0:
 				continue

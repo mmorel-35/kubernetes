@@ -328,7 +328,7 @@ func (d *Driver) SetUp(nodes *Nodes, resources Resources, devicesPerNode ...map[
 	rsName := ""
 	draAddr := path.Join(framework.TestContext.KubeletRootDir, "plugins", d.Name+".sock")
 	numNodes := int32(len(nodes.NodeNames))
-	err := utils.CreateFromManifests(ctx, d.f, d.f.Namespace, func(item interface{}) error {
+	err := utils.CreateFromManifests(ctx, d.f, d.f.Namespace, func(item any) error {
 		switch item := item.(type) {
 		case *appsv1.ReplicaSet:
 			item.Name += d.NameSuffix
@@ -421,10 +421,10 @@ func (d *Driver) SetUp(nodes *Nodes, resources Resources, devicesPerNode ...map[
 		}
 		plugin, err := app.StartPlugin(loggerCtx, "/cdi", d.Name, driverClient, nodename, fileOps,
 			kubeletplugin.GRPCVerbosity(0),
-			kubeletplugin.GRPCInterceptor(func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+			kubeletplugin.GRPCInterceptor(func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
 				return d.interceptor(nodename, ctx, req, info, handler)
 			}),
-			kubeletplugin.GRPCStreamInterceptor(func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) (err error) {
+			kubeletplugin.GRPCStreamInterceptor(func(srv any, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) (err error) {
 				return d.streamInterceptor(nodename, srv, ss, info, handler)
 			}),
 			kubeletplugin.PluginListener(listen(ctx, d.f, pod.Name, "plugin", 9001)),
@@ -583,7 +583,7 @@ func (d *Driver) IsGone(ctx context.Context) {
 	}).Should(gomega.BeEmpty())
 }
 
-func (d *Driver) interceptor(nodename string, ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+func (d *Driver) interceptor(nodename string, ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp any, err error) {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 
@@ -596,7 +596,7 @@ func (d *Driver) interceptor(nodename string, ctx context.Context, req interface
 	return handler(ctx, req)
 }
 
-func (d *Driver) streamInterceptor(nodename string, srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+func (d *Driver) streamInterceptor(nodename string, srv any, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 	// Stream calls block for a long time. We must not hold the lock while
 	// they are running.
 	d.mutex.Lock()

@@ -219,7 +219,7 @@ func TestGetImageUser(t *testing.T) {
 	type imageUserValues struct {
 		// getImageUser can return (*int64)(nil) so comparing with *uid will break
 		// type cannot be *int64 as Golang does not allow to take the address of a numeric constant"
-		uid      interface{}
+		uid      any
 		username string
 		err      error
 	}

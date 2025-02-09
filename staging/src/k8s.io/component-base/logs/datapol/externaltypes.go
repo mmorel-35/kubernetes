@@ -29,7 +29,7 @@ const (
 
 // GlobalDatapolicyMapping returns the list of sensitive datatypes are embedded
 // in types not native to Kubernetes.
-func GlobalDatapolicyMapping(v interface{}) []string {
+func GlobalDatapolicyMapping(v any) []string {
 	return byType(reflect.TypeOf(v))
 }
 

@@ -258,12 +258,12 @@ func TestCreatePVCPatch(t *testing.T) {
 	if err != nil {
 		t.Errorf("error creating patch bytes %v", err)
 	}
-	var patchMap map[string]interface{}
+	var patchMap map[string]any
 	err = json.Unmarshal(patchBytes, &patchMap)
 	if err != nil {
 		t.Errorf("error unmarshalling json patch : %v", err)
 	}
-	metadata, ok := patchMap["metadata"].(map[string]interface{})
+	metadata, ok := patchMap["metadata"].(map[string]any)
 	if !ok {
 		t.Errorf("error converting metadata to version map")
 	}

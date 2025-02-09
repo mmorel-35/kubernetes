@@ -66,7 +66,7 @@ func TestPreEnqueue(t *testing.T) {
 func Test_isSchedulableAfterPodChange(t *testing.T) {
 	testcases := map[string]struct {
 		pod            *v1.Pod
-		oldObj, newObj interface{}
+		oldObj, newObj any
 		expectedHint   framework.QueueingHint
 		expectedErr    bool
 	}{

@@ -384,10 +384,10 @@ func testCustomResourceConversionWebhook(ctx context.Context, f *framework.Frame
 	name := "cr-instance-1"
 	ginkgo.By("Creating a v1 custom resource")
 	crInstance := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       crd.Spec.Names.Kind,
 			"apiVersion": crd.Spec.Group + "/v1",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      name,
 				"namespace": f.Namespace.Name,
 			},
@@ -409,10 +409,10 @@ func testCRListConversion(ctx context.Context, f *framework.Framework, testCrd *
 	name2 := "cr-instance-2"
 	ginkgo.By("Creating a v1 custom resource")
 	crInstance := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       crd.Spec.Names.Kind,
 			"apiVersion": crd.Spec.Group + "/v1",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      name1,
 				"namespace": f.Namespace.Name,
 			},
@@ -429,10 +429,10 @@ func testCRListConversion(ctx context.Context, f *framework.Framework, testCrd *
 	framework.ExpectNoError(err)
 	ginkgo.By("Create a v2 custom resource")
 	crInstance = &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"kind":       crd.Spec.Names.Kind,
 			"apiVersion": crd.Spec.Group + "/v1",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":      name2,
 				"namespace": f.Namespace.Name,
 			},
@@ -482,10 +482,10 @@ func testCRListConversion(ctx context.Context, f *framework.Framework, testCrd *
 func waitWebhookConversionReady(ctx context.Context, f *framework.Framework, crd *apiextensionsv1.CustomResourceDefinition, customResourceClients map[string]dynamic.ResourceInterface, version string) {
 	framework.ExpectNoError(wait.PollUntilContextTimeout(ctx, 100*time.Millisecond, 30*time.Second, true, func(ctx context.Context) (bool, error) {
 		crInstance := &unstructured.Unstructured{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"kind":       crd.Spec.Names.Kind,
 				"apiVersion": crd.Spec.Group + "/" + version,
-				"metadata": map[string]interface{}{
+				"metadata": map[string]any{
 					"name":      f.UniqueName,
 					"namespace": f.Namespace.Name,
 				},

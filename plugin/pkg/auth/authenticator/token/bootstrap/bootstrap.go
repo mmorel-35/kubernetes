@@ -57,7 +57,7 @@ type TokenAuthenticator struct {
 // token but fails to meet some other criteria.
 //
 //	tokenErrorf(secret, "has invalid value for key %s", key)
-func tokenErrorf(s *corev1.Secret, format string, i ...interface{}) {
+func tokenErrorf(s *corev1.Secret, format string, i ...any) {
 	format = fmt.Sprintf("Bootstrap secret %s/%s matching bearer token ", s.Namespace, s.Name) + format
 	klog.V(3).Infof(format, i...)
 }

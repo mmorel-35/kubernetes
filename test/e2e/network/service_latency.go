@@ -310,14 +310,14 @@ func startEndpointWatcher(ctx context.Context, f *framework.Framework, q *endpoi
 		&v1.Endpoints{},
 		0,
 		cache.ResourceEventHandlerFuncs{
-			AddFunc: func(obj interface{}) {
+			AddFunc: func(obj any) {
 				if e, ok := obj.(*v1.Endpoints); ok {
 					if len(e.Subsets) > 0 && len(e.Subsets[0].Addresses) > 0 {
 						q.added(e)
 					}
 				}
 			},
-			UpdateFunc: func(old, cur interface{}) {
+			UpdateFunc: func(old, cur any) {
 				if e, ok := cur.(*v1.Endpoints); ok {
 					if len(e.Subsets) > 0 && len(e.Subsets[0].Addresses) > 0 {
 						q.added(e)

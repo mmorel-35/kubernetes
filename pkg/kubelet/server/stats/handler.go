@@ -163,7 +163,7 @@ func (h *handler) handleSummary(request *restful.Request, response *restful.Resp
 	}
 }
 
-func writeResponse(response *restful.Response, stats interface{}) {
+func writeResponse(response *restful.Response, stats any) {
 	if err := response.WriteAsJson(stats); err != nil {
 		klog.ErrorS(err, "Error writing response")
 	}

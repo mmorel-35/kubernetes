@@ -934,7 +934,7 @@ spec:
 			framework.Failf("failed to create custom resource with apply: %v:\n%v", err, string(result))
 		}
 
-		verifyList(result, []interface{}{"item1"})
+		verifyList(result, []any{"item1"})
 
 		crdYamlBody = []byte(fmt.Sprintf(`
 apiVersion: %s
@@ -956,7 +956,7 @@ spec:
 		}
 
 		// Since the list is atomic the contents of the list must completely be replaced by the latest apply
-		verifyList(result, []interface{}{"item2"})
+		verifyList(result, []any{"item2"})
 	})
 
 	/*
@@ -1107,7 +1107,7 @@ func verifyReplicas(b []byte, r int) {
 	if !ok {
 		framework.Failf("failed to find replicas number in response:\n%v", string(b))
 	}
-	specMap, ok := spec.(map[string]interface{})
+	specMap, ok := spec.(map[string]any)
 	if !ok {
 		framework.Failf("failed to find replicas number in response:\n%v", string(b))
 	}
@@ -1135,7 +1135,7 @@ func verifyNumPorts(b []byte, n int) {
 	if !ok {
 		framework.Failf("failed to find ports list in response:\n%v", string(b))
 	}
-	specMap, ok := spec.(map[string]interface{})
+	specMap, ok := spec.(map[string]any)
 	if !ok {
 		framework.Failf("failed to find ports list in response:\n%v", string(b))
 	}
@@ -1143,7 +1143,7 @@ func verifyNumPorts(b []byte, n int) {
 	if !ok {
 		framework.Failf("failed to find ports list in response:\n%v", string(b))
 	}
-	portsList, ok := ports.([]interface{})
+	portsList, ok := ports.([]any)
 	if !ok {
 		framework.Failf("failed to find ports list in response: expected array but got: %v", reflect.TypeOf(ports))
 	}
@@ -1153,7 +1153,7 @@ func verifyNumPorts(b []byte, n int) {
 }
 
 // verifyList checks that .spec.atomicList is the exact same as the expectedList provided
-func verifyList(b []byte, expectedList []interface{}) {
+func verifyList(b []byte, expectedList []any) {
 	obj := unstructured.Unstructured{}
 	err := obj.UnmarshalJSON(b)
 	if err != nil {
@@ -1163,7 +1163,7 @@ func verifyList(b []byte, expectedList []interface{}) {
 	if !ok {
 		framework.Failf("failed to find atomicList in response:\n%v", string(b))
 	}
-	specMap, ok := spec.(map[string]interface{})
+	specMap, ok := spec.(map[string]any)
 	if !ok {
 		framework.Failf("failed to find atomicList in response:\n%v", string(b))
 	}
@@ -1171,7 +1171,7 @@ func verifyList(b []byte, expectedList []interface{}) {
 	if !ok {
 		framework.Failf("failed to find atomicList in response:\n%v", string(b))
 	}
-	listString, ok := list.([]interface{})
+	listString, ok := list.([]any)
 	if !ok {
 		framework.Failf("failed to find atomicList in response:\n%v", string(b))
 	}

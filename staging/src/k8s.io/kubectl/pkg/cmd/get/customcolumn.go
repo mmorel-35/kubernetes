@@ -218,7 +218,7 @@ func (s *CustomColumnsPrinter) printOneObject(obj runtime.Object, parsers []*jso
 			return err
 		}
 		obj = &unstructured.Unstructured{
-			Object: map[string]interface{}{
+			Object: map[string]any{
 				"type":   u.Type,
 				"object": unstructuredObject,
 			},

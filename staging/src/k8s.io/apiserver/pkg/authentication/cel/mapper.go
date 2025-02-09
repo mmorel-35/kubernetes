@@ -58,7 +58,7 @@ func NewUserMapper(compilationResults []CompilationResult) UserMapper {
 
 // EvalClaimMapping evaluates the given claim mapping expression and returns a EvaluationResult.
 func (m *mapper) EvalClaimMapping(ctx context.Context, claims *unstructured.Unstructured) (EvaluationResult, error) {
-	results, err := m.eval(ctx, map[string]interface{}{claimsVarName: claims.Object})
+	results, err := m.eval(ctx, map[string]any{claimsVarName: claims.Object})
 	if err != nil {
 		return EvaluationResult{}, err
 	}
@@ -70,15 +70,15 @@ func (m *mapper) EvalClaimMapping(ctx context.Context, claims *unstructured.Unst
 
 // EvalClaimMappings evaluates the given expressions and returns a list of EvaluationResult.
 func (m *mapper) EvalClaimMappings(ctx context.Context, claims *unstructured.Unstructured) ([]EvaluationResult, error) {
-	return m.eval(ctx, map[string]interface{}{claimsVarName: claims.Object})
+	return m.eval(ctx, map[string]any{claimsVarName: claims.Object})
 }
 
 // EvalUser evaluates the given user expressions and returns a list of EvaluationResult.
 func (m *mapper) EvalUser(ctx context.Context, userInfo *unstructured.Unstructured) ([]EvaluationResult, error) {
-	return m.eval(ctx, map[string]interface{}{userVarName: userInfo.Object})
+	return m.eval(ctx, map[string]any{userVarName: userInfo.Object})
 }
 
-func (m *mapper) eval(ctx context.Context, input map[string]interface{}) ([]EvaluationResult, error) {
+func (m *mapper) eval(ctx context.Context, input map[string]any) ([]EvaluationResult, error) {
 	evaluations := make([]EvaluationResult, len(m.compilationResults))
 
 	for i, compilationResult := range m.compilationResults {

@@ -73,7 +73,7 @@ func (pl *NodeUnschedulable) EventsToRegister(_ context.Context) ([]framework.Cl
 }
 
 // isSchedulableAfterPodTolerationChange is invoked whenever a pod's toleration changed.
-func (pl *NodeUnschedulable) isSchedulableAfterPodTolerationChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *NodeUnschedulable) isSchedulableAfterPodTolerationChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	_, modifiedPod, err := util.As[*v1.Pod](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, err
@@ -104,7 +104,7 @@ func (pl *NodeUnschedulable) isSchedulableAfterPodTolerationChange(logger klog.L
 // isSchedulableAfterNodeChange is invoked for all node events reported by
 // an informer. It checks whether that change made a previously unschedulable
 // pod schedulable.
-func (pl *NodeUnschedulable) isSchedulableAfterNodeChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *NodeUnschedulable) isSchedulableAfterNodeChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	originalNode, modifiedNode, err := util.As[*v1.Node](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, err

@@ -61,7 +61,7 @@ func getName(params map[string]string) (string, error) {
 }
 
 // getParams returns map of generic parameters.
-func getParams(genericParams map[string]interface{}) (map[string]string, error) {
+func getParams(genericParams map[string]any) (map[string]string, error) {
 	params := map[string]string{}
 	for key, value := range genericParams {
 		strVal, isString := value.(string)
@@ -74,7 +74,7 @@ func getParams(genericParams map[string]interface{}) (map[string]string, error) 
 }
 
 // getArgs returns arguments for the container command.
-func getArgs(genericParams map[string]interface{}) ([]string, error) {
+func getArgs(genericParams map[string]any) ([]string, error) {
 	args := []string{}
 	val, found := genericParams["args"]
 	if found {
@@ -89,7 +89,7 @@ func getArgs(genericParams map[string]interface{}) ([]string, error) {
 }
 
 // getAnnotations returns map of annotations.
-func getAnnotations(genericParams map[string]interface{}) (map[string]string, error) {
+func getAnnotations(genericParams map[string]any) (map[string]string, error) {
 	annotationStrings, ok := genericParams["annotations"]
 	if !ok {
 		return nil, nil
@@ -110,7 +110,7 @@ func getAnnotations(genericParams map[string]interface{}) (map[string]string, er
 }
 
 // getEnvs returns environment variables.
-func getEnvs(genericParams map[string]interface{}) ([]v1.EnvVar, error) {
+func getEnvs(genericParams map[string]any) ([]v1.EnvVar, error) {
 	var envs []v1.EnvVar
 	envStrings, found := genericParams["env"]
 	if found {
@@ -256,7 +256,7 @@ func (BasicPod) ParamNames() []generate.GeneratorParam {
 	}
 }
 
-func (BasicPod) Generate(genericParams map[string]interface{}) (runtime.Object, error) {
+func (BasicPod) Generate(genericParams map[string]any) (runtime.Object, error) {
 	args, err := getArgs(genericParams)
 	if err != nil {
 		return nil, err

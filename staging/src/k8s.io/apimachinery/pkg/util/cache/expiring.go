@@ -34,7 +34,7 @@ func NewExpiring() *Expiring {
 func NewExpiringWithClock(clock clock.Clock) *Expiring {
 	return &Expiring{
 		clock: clock,
-		cache: make(map[interface{}]entry),
+		cache: make(map[any]entry),
 	}
 }
 
@@ -52,7 +52,7 @@ type Expiring struct {
 	// mu protects the below fields
 	mu sync.RWMutex
 	// cache is the internal map that backs the cache.
-	cache map[interface{}]entry
+	cache map[any]entry
 	// generation is used as a cheap resource version for cache entries. Cleanups
 	// are scheduled with a key and generation. When the cleanup runs, it first
 	// compares its generation with the current generation of the entry. It
@@ -67,13 +67,13 @@ type Expiring struct {
 }
 
 type entry struct {
-	val        interface{}
+	val        any
 	expiry     time.Time
 	generation uint64
 }
 
 // Get looks up an entry in the cache.
-func (c *Expiring) Get(key interface{}) (val interface{}, ok bool) {
+func (c *Expiring) Get(key any) (val any, ok bool) {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	e, ok := c.cache[key]
@@ -92,7 +92,7 @@ func (c *Expiring) Get(key interface{}) (val interface{}, ok bool) {
 // collection of expired entries occurs during calls to Set(), however calls to
 // Get() will not return expired entries that have not yet been garbage
 // collected.
-func (c *Expiring) Set(key interface{}, val interface{}, ttl time.Duration) {
+func (c *Expiring) Set(key any, val any, ttl time.Duration) {
 	now := c.clock.Now()
 	expiry := now.Add(ttl)
 
@@ -118,7 +118,7 @@ func (c *Expiring) Set(key interface{}, val interface{}, ttl time.Duration) {
 }
 
 // Delete deletes an entry in the map.
-func (c *Expiring) Delete(key interface{}) {
+func (c *Expiring) Delete(key any) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.del(key, 0)
@@ -131,7 +131,7 @@ func (c *Expiring) Delete(key interface{}) {
 // entry's generation is ignored and the entry is deleted.
 //
 // del must be called under the write lock.
-func (c *Expiring) del(key interface{}, generation uint64) {
+func (c *Expiring) del(key any, generation uint64) {
 	e, ok := c.cache[key]
 	if !ok {
 		return
@@ -167,7 +167,7 @@ func (c *Expiring) gc(now time.Time) {
 }
 
 type expiringHeapEntry struct {
-	key        interface{}
+	key        any
 	expiry     time.Time
 	generation uint64
 }
@@ -191,11 +191,11 @@ func (cq expiringHeap) Swap(i, j int) {
 	cq[i], cq[j] = cq[j], cq[i]
 }
 
-func (cq *expiringHeap) Push(c interface{}) {
+func (cq *expiringHeap) Push(c any) {
 	*cq = append(*cq, c.(*expiringHeapEntry))
 }
 
-func (cq *expiringHeap) Pop() interface{} {
+func (cq *expiringHeap) Pop() any {
 	c := (*cq)[cq.Len()-1]
 	*cq = (*cq)[:cq.Len()-1]
 	return c

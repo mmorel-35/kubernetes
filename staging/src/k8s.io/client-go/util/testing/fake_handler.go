@@ -27,13 +27,13 @@ import (
 // TestInterface is a simple interface providing Errorf, to make injection for
 // testing easier (insert 'yo dawg' meme here).
 type TestInterface interface {
-	Errorf(format string, args ...interface{})
-	Logf(format string, args ...interface{})
+	Errorf(format string, args ...any)
+	Logf(format string, args ...any)
 }
 
 // LogInterface is a simple interface to allow injection of Logf to report serving errors.
 type LogInterface interface {
-	Logf(format string, args ...interface{})
+	Logf(format string, args ...any)
 }
 
 // FakeHandler is to assist in testing HTTP requests. Notice that FakeHandler is

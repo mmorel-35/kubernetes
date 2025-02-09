@@ -37,11 +37,11 @@ import (
 	"k8s.io/klog/v2"
 )
 
-// UnstructuredConverter is an interface for converting between interface{}
+// UnstructuredConverter is an interface for converting between any
 // and map[string]interface representation.
 type UnstructuredConverter interface {
-	ToUnstructured(obj interface{}) (map[string]interface{}, error)
-	FromUnstructured(u map[string]interface{}, obj interface{}) error
+	ToUnstructured(obj any) (map[string]any, error)
+	FromUnstructured(u map[string]any, obj any) error
 }
 
 type structField struct {
@@ -69,7 +69,7 @@ func newFieldsCache() *fieldsCache {
 }
 
 var (
-	mapStringInterfaceType = reflect.TypeOf(map[string]interface{}{})
+	mapStringInterfaceType = reflect.TypeOf(map[string]any{})
 	stringType             = reflect.TypeOf(string(""))
 	fieldCache             = newFieldsCache()
 
@@ -95,7 +95,7 @@ func parseBool(key string) bool {
 	return value
 }
 
-// unstructuredConverter knows how to convert between interface{} and
+// unstructuredConverter knows how to convert between any and
 // Unstructured in both ways.
 type unstructuredConverter struct {
 	// If true, we will be additionally running conversion via json
@@ -231,10 +231,10 @@ func (c *fromUnstructuredContext) pushKey(key string) {
 
 }
 
-// FromUnstructuredWithValidation converts an object from map[string]interface{} representation into a concrete type.
+// FromUnstructuredWithValidation converts an object from map[string]any representation into a concrete type.
 // It uses encoding/json/Unmarshaler if object implements it or reflection if not.
 // It takes a validationDirective that indicates how to behave when it encounters unknown fields.
-func (c *unstructuredConverter) FromUnstructuredWithValidation(u map[string]interface{}, obj interface{}, returnUnknownFields bool) error {
+func (c *unstructuredConverter) FromUnstructuredWithValidation(u map[string]any, obj any, returnUnknownFields bool) error {
 	t := reflect.TypeOf(obj)
 	value := reflect.ValueOf(obj)
 	if t.Kind() != reflect.Pointer || value.IsNil() {
@@ -268,13 +268,13 @@ func (c *unstructuredConverter) FromUnstructuredWithValidation(u map[string]inte
 	return nil
 }
 
-// FromUnstructured converts an object from map[string]interface{} representation into a concrete type.
+// FromUnstructured converts an object from map[string]any representation into a concrete type.
 // It uses encoding/json/Unmarshaler if object implements it or reflection if not.
-func (c *unstructuredConverter) FromUnstructured(u map[string]interface{}, obj interface{}) error {
+func (c *unstructuredConverter) FromUnstructured(u map[string]any, obj any) error {
 	return c.FromUnstructuredWithValidation(u, obj, false)
 }
 
-func fromUnstructuredViaJSON(u map[string]interface{}, obj interface{}) error {
+func fromUnstructuredViaJSON(u map[string]any, obj any) error {
 	data, err := json.Marshal(u)
 	if err != nil {
 		return err
@@ -569,10 +569,10 @@ func interfaceFromUnstructured(sv, dv reflect.Value) error {
 	return nil
 }
 
-// ToUnstructured converts an object into map[string]interface{} representation.
+// ToUnstructured converts an object into map[string]any representation.
 // It uses encoding/json/Marshaler if object implements it or reflection if not.
-func (c *unstructuredConverter) ToUnstructured(obj interface{}) (map[string]interface{}, error) {
-	var u map[string]interface{}
+func (c *unstructuredConverter) ToUnstructured(obj any) (map[string]any, error) {
+	var u map[string]any
 	var err error
 	if unstr, ok := obj.(Unstructured); ok {
 		u = unstr.UnstructuredContent()
@@ -582,11 +582,11 @@ func (c *unstructuredConverter) ToUnstructured(obj interface{}) (map[string]inte
 		if t.Kind() != reflect.Pointer || value.IsNil() {
 			return nil, fmt.Errorf("ToUnstructured requires a non-nil pointer to an object, got %v", t)
 		}
-		u = map[string]interface{}{}
+		u = map[string]any{}
 		err = toUnstructured(value.Elem(), reflect.ValueOf(&u).Elem())
 	}
 	if c.mismatchDetection {
-		newUnstr := map[string]interface{}{}
+		newUnstr := map[string]any{}
 		newErr := toUnstructuredViaJSON(obj, &newUnstr)
 		if (err != nil) != (newErr != nil) {
 			klog.Fatalf("ToUnstructured unexpected error for %v: error: %v; newErr: %v", obj, err, newErr)
@@ -603,32 +603,32 @@ func (c *unstructuredConverter) ToUnstructured(obj interface{}) (map[string]inte
 
 // DeepCopyJSON deep copies the passed value, assuming it is a valid JSON representation i.e. only contains
 // types produced by json.Unmarshal() and also int64.
-// bool, int64, float64, string, []interface{}, map[string]interface{}, json.Number and nil
-func DeepCopyJSON(x map[string]interface{}) map[string]interface{} {
-	return DeepCopyJSONValue(x).(map[string]interface{})
+// bool, int64, float64, string, []any, map[string]any, json.Number and nil
+func DeepCopyJSON(x map[string]any) map[string]any {
+	return DeepCopyJSONValue(x).(map[string]any)
 }
 
 // DeepCopyJSONValue deep copies the passed value, assuming it is a valid JSON representation i.e. only contains
 // types produced by json.Unmarshal() and also int64.
-// bool, int64, float64, string, []interface{}, map[string]interface{}, json.Number and nil
-func DeepCopyJSONValue(x interface{}) interface{} {
+// bool, int64, float64, string, []any, map[string]any, json.Number and nil
+func DeepCopyJSONValue(x any) any {
 	switch x := x.(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		if x == nil {
-			// Typed nil - an interface{} that contains a type map[string]interface{} with a value of nil
+			// Typed nil - an any that contains a type map[string]any with a value of nil
 			return x
 		}
-		clone := make(map[string]interface{}, len(x))
+		clone := make(map[string]any, len(x))
 		for k, v := range x {
 			clone[k] = DeepCopyJSONValue(v)
 		}
 		return clone
-	case []interface{}:
+	case []any:
 		if x == nil {
-			// Typed nil - an interface{} that contains a type []interface{} with a value of nil
+			// Typed nil - an any that contains a type []any with a value of nil
 			return x
 		}
-		clone := make([]interface{}, len(x))
+		clone := make([]any, len(x))
 		for i, v := range x {
 			clone[i] = DeepCopyJSONValue(v)
 		}
@@ -640,7 +640,7 @@ func DeepCopyJSONValue(x interface{}) interface{} {
 	}
 }
 
-func toUnstructuredViaJSON(obj interface{}, u *map[string]interface{}) error {
+func toUnstructuredViaJSON(obj any, u *map[string]any) error {
 	data, err := json.Marshal(obj)
 	if err != nil {
 		return err
@@ -806,7 +806,7 @@ func structToUnstructured(sv, dv reflect.Value) error {
 	if dt.Kind() != reflect.Map {
 		return fmt.Errorf("cannot convert struct to: %v", dt.Kind())
 	}
-	realMap := dv.Interface().(map[string]interface{})
+	realMap := dv.Interface().(map[string]any)
 
 	for i := 0; i < st.NumField(); i++ {
 		fieldInfo := fieldInfoFromField(st, i)

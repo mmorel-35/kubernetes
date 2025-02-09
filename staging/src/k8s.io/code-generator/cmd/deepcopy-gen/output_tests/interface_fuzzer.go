@@ -26,7 +26,7 @@ import (
 // interfaceFuzzers contains fuzzer that set all interface to nil because our
 // JSON deepcopy does not work with it.
 // TODO: test also interface deepcopy
-var interfaceFuzzers = []interface{}{
+var interfaceFuzzers = []any{
 	func(s *aliases.AliasAliasInterface, c fuzz.Continue) {
 		if c.RandBool() {
 			*s = nil

@@ -64,7 +64,7 @@ func InitCustomGroupSnapshottableTestSuite(patterns []storageframework.TestPatte
 			SupportedSizeRange: e2evolume.SizeRange{
 				Min: "1Mi",
 			},
-			TestTags: []interface{}{feature.VolumeGroupSnapshotDataSource},
+			TestTags: []any{feature.VolumeGroupSnapshotDataSource},
 		},
 	}
 }
@@ -182,10 +182,10 @@ func (s *VolumeGroupSnapshottableTestSuite) DefineTests(driver storageframework.
 				err := framework.Gomega().Expect(status).NotTo(gomega.BeNil())
 				framework.ExpectNoError(err, "failed to get status of group snapshot")
 
-				volumeListMap := snapshot.VGSContent.Object["status"].(map[string]interface{})
+				volumeListMap := snapshot.VGSContent.Object["status"].(map[string]any)
 				err = framework.Gomega().Expect(volumeListMap).NotTo(gomega.BeNil())
 				framework.ExpectNoError(err, "failed to get volume snapshot list")
-				volumeSnapshotHandlePairList := volumeListMap["volumeSnapshotHandlePairList"].([]interface{})
+				volumeSnapshotHandlePairList := volumeListMap["volumeSnapshotHandlePairList"].([]any)
 				err = framework.Gomega().Expect(volumeSnapshotHandlePairList).NotTo(gomega.BeNil())
 				framework.ExpectNoError(err, "failed to get volume snapshot list")
 				err = framework.Gomega().Expect(len(volumeSnapshotHandlePairList)).To(gomega.Equal(groupTest.numVolumes))
@@ -193,10 +193,10 @@ func (s *VolumeGroupSnapshottableTestSuite) DefineTests(driver storageframework.
 				claimSize := groupTest.volumeGroup[0][0].Pvc.Spec.Resources.Requests.Storage().String()
 				for _, volume := range volumeSnapshotHandlePairList {
 					// Create a PVC from the snapshot
-					volumeHandle := volume.(map[string]interface{})["volumeHandle"].(string)
+					volumeHandle := volume.(map[string]any)["volumeHandle"].(string)
 					err = framework.Gomega().Expect(volumeHandle).NotTo(gomega.BeNil())
 					framework.ExpectNoError(err, "failed to get volume handle from volume")
-					uid := snapshot.VGSContent.Object["metadata"].(map[string]interface{})["uid"].(string)
+					uid := snapshot.VGSContent.Object["metadata"].(map[string]any)["uid"].(string)
 					err = framework.Gomega().Expect(uid).NotTo(gomega.BeNil())
 					framework.ExpectNoError(err, "failed to get uuid from content")
 					volumeSnapshotName := fmt.Sprintf("snapshot-%x", sha256.Sum256([]byte(

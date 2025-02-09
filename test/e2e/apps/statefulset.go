@@ -985,16 +985,16 @@ var _ = SIGDescribe("StatefulSet", func() {
 			waitForStatus(ctx, c, ss)
 
 			ginkgo.By("patching the StatefulSet")
-			ssPatch, err := json.Marshal(map[string]interface{}{
-				"metadata": map[string]interface{}{
+			ssPatch, err := json.Marshal(map[string]any{
+				"metadata": map[string]any{
 					"labels": map[string]string{"test-ss": "patched"},
 				},
-				"spec": map[string]interface{}{
+				"spec": map[string]any{
 					"replicas": ssPatchReplicas,
-					"template": map[string]interface{}{
-						"spec": map[string]interface{}{
+					"template": map[string]any{
+						"spec": map[string]any{
 							"terminationGracePeriodSeconds": &one,
-							"containers": [1]map[string]interface{}{{
+							"containers": [1]map[string]any{{
 								"name":  ssName,
 								"image": ssPatchImage,
 							}},

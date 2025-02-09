@@ -101,7 +101,7 @@ func NewCandidate(clientset kubernetes.Interface,
 	lc.queue = workqueue.NewTypedRateLimitingQueueWithConfig(workqueue.DefaultTypedControllerRateLimiter[int](), workqueue.TypedRateLimitingQueueConfig[int]{Name: "leasecandidate"})
 
 	h, err := leaseCandidateInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			if leasecandidate, ok := newObj.(*v1alpha2.LeaseCandidate); ok {
 				if leasecandidate.Spec.PingTime != nil && leasecandidate.Spec.PingTime.After(leasecandidate.Spec.RenewTime.Time) {
 					lc.enqueueLease()

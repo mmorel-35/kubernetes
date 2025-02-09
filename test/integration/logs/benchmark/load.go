@@ -39,7 +39,7 @@ type logMessage struct {
 	verbosity int
 	err       error
 	isError   bool
-	kvs       []interface{}
+	kvs       []any
 }
 
 const (
@@ -57,7 +57,7 @@ type logStats struct {
 
 	ArgCounts     map[string]int
 	OtherLines    []string
-	OtherArgs     []interface{}
+	OtherArgs     []any
 	MultiLineArgs [][]string
 	ObjectTypes   map[string]int
 }
@@ -158,12 +158,12 @@ var objectRE = regexp.MustCompile(`^&([a-zA-Z]*)\{`)
 
 func parseLine(line []byte, stats *logStats) (item logMessage, err error) {
 
-	content := map[string]interface{}{}
+	content := map[string]any{}
 	if err := json.Unmarshal(line, &content); err != nil {
 		return logMessage{}, fmt.Errorf("JSON parsing failed: %w", err)
 	}
 
-	kvs := map[string]interface{}{}
+	kvs := map[string]any{}
 	item.isError = true
 	for key, value := range content {
 		switch key {
@@ -255,8 +255,8 @@ var objectTypes = []reflect.Type{
 	reflect.TypeOf(&v1.Container{}),
 }
 
-func toObject(value interface{}) interface{} {
-	data, ok := value.(map[string]interface{})
+func toObject(value any) any {
+	data, ok := value.(map[string]any)
 	if !ok {
 		return nil
 	}

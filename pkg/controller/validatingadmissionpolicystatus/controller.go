@@ -77,10 +77,10 @@ func NewController(policyInformer informerv1.ValidatingAdmissionPolicyInformer, 
 		typeChecker:  typeChecker,
 	}
 	reg, err := policyInformer.Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			c.enqueuePolicy(obj)
 		},
-		UpdateFunc: func(oldObj, newObj interface{}) {
+		UpdateFunc: func(oldObj, newObj any) {
 			c.enqueuePolicy(newObj)
 		},
 	})

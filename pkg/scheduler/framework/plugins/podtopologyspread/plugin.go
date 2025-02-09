@@ -181,7 +181,7 @@ func hasConstraintWithNodeTaintsPolicyHonor(constraints []topologySpreadConstrai
 	return false
 }
 
-func (pl *PodTopologySpread) isSchedulableAfterPodChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *PodTopologySpread) isSchedulableAfterPodChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	originalPod, modifiedPod, err := util.As[*v1.Pod](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, err
@@ -277,7 +277,7 @@ func (pl *PodTopologySpread) getConstraints(pod *v1.Pod) ([]topologySpreadConstr
 }
 
 // isSchedulableAfterNodeChange returns Queue when node has topologyKey in its labels, else return QueueSkip.
-func (pl *PodTopologySpread) isSchedulableAfterNodeChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *PodTopologySpread) isSchedulableAfterNodeChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	originalNode, modifiedNode, err := util.As[*v1.Node](oldObj, newObj)
 	if err != nil {
 		return framework.Queue, err

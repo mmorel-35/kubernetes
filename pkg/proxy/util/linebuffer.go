@@ -29,7 +29,7 @@ type LineBuffer interface {
 	// Write takes a list of arguments, each a string or []string, joins all the
 	// individual strings with spaces, terminates with newline, and writes them to the
 	// buffer. Any other argument type will panic.
-	Write(args ...interface{})
+	Write(args ...any)
 
 	// WriteBytes writes bytes to the buffer, and terminates with newline.
 	WriteBytes(bytes []byte)
@@ -62,7 +62,7 @@ func NewLineBuffer() LineBuffer {
 }
 
 // Write is part of LineBuffer
-func (buf *realLineBuffer) Write(args ...interface{}) {
+func (buf *realLineBuffer) Write(args ...any) {
 	for i, arg := range args {
 		if i > 0 {
 			buf.b.WriteByte(' ')
@@ -130,7 +130,7 @@ func NewDiscardLineBuffer() LineBuffer {
 }
 
 // Write is part of LineBuffer
-func (buf *discardLineBuffer) Write(args ...interface{}) {
+func (buf *discardLineBuffer) Write(args ...any) {
 	buf.lines++
 }
 

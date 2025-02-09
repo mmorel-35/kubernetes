@@ -40,7 +40,7 @@ type EventRecorder interface {
 	// (ReportingController is a type of a Controller reporting an Event, e.g. k8s.io/node-controller, k8s.io/kubelet.)
 	// take in regarding's name; it should be in UpperCamelCase format (starting with a capital letter).
 	// 'note' is intended to be human readable.
-	Eventf(regarding runtime.Object, related runtime.Object, eventtype, reason, action, note string, args ...interface{})
+	Eventf(regarding runtime.Object, related runtime.Object, eventtype, reason, action, note string, args ...any)
 }
 
 // EventRecorderLogger extends EventRecorder such that a logger can

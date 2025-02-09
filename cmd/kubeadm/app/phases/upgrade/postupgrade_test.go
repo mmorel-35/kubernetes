@@ -309,11 +309,11 @@ func (cc *componentConfig) Unmarshal(docmap kubeadmapi.DocumentMap) error {
 	return nil
 }
 
-func (cc *componentConfig) Get() interface{} {
+func (cc *componentConfig) Get() any {
 	return &cc
 }
 
-func (cc *componentConfig) Set(cfg interface{}) {
+func (cc *componentConfig) Set(cfg any) {
 }
 
 func (cc *componentConfig) Default(_ *kubeadmapi.ClusterConfiguration, _ *kubeadmapi.APIEndpoint, _ *kubeadmapi.NodeRegistrationOptions) {

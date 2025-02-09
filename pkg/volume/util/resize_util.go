@@ -346,7 +346,7 @@ func createPVCPatch(
 }
 
 func addResourceVersion(patchBytes []byte, resourceVersion string) ([]byte, error) {
-	var patchMap map[string]interface{}
+	var patchMap map[string]any
 	err := json.Unmarshal(patchBytes, &patchMap)
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshalling patch: %v", err)

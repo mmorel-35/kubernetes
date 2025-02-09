@@ -109,7 +109,7 @@ func BenchmarkNewObject(b *testing.B) {
 					APIVersion: "v1",
 				},
 			})
-			appliedObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+			appliedObj := &unstructured.Unstructured{Object: map[string]any{}}
 			if err := yaml.Unmarshal(test.obj, &appliedObj.Object); err != nil {
 				b.Fatalf("Failed to parse yaml object: %v", err)
 			}
@@ -317,7 +317,7 @@ func BenchmarkRepeatedUpdate(b *testing.B) {
 	obj.Spec.Containers[0].Image = "nginx:4.3"
 	objs = append(objs, obj)
 
-	appliedObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	appliedObj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal(podBytes, &appliedObj.Object); err != nil {
 		b.Fatalf("error decoding YAML: %v", err)
 	}

@@ -514,14 +514,14 @@ func newInformerWatchPod(ctx context.Context, f *framework.Framework, mutex *syn
 		&v1.Pod{},
 		0,
 		cache.ResourceEventHandlerFuncs{
-			AddFunc: func(obj interface{}) {
+			AddFunc: func(obj any) {
 				p, ok := obj.(*v1.Pod)
 				if !ok {
 					framework.Failf("Failed to cast object %T to Pod", obj)
 				}
 				go checkPodRunning(p)
 			},
-			UpdateFunc: func(oldObj, newObj interface{}) {
+			UpdateFunc: func(oldObj, newObj any) {
 				p, ok := newObj.(*v1.Pod)
 				if !ok {
 					framework.Failf("Failed to cast object %T to Pod", newObj)

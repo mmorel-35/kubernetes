@@ -81,7 +81,7 @@ var _ = Describe("kubeadm-certs [copy-certs]", func() {
 		// Extract the etcd Type
 		etcdType := "local"
 		if _, ok := m["etcd"]; ok {
-			d := m["etcd"].(map[interface{}]interface{})
+			d := m["etcd"].(map[any]any)
 			if _, ok := d["external"]; ok {
 				etcdType = "external"
 			}

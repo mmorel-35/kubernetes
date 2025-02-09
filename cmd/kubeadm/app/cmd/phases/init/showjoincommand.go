@@ -107,7 +107,7 @@ func printJoinCommand(out io.Writer, adminKubeConfigPath, token string, i InitDa
 		return err
 	}
 
-	ctx := map[string]interface{}{
+	ctx := map[string]any{
 		"KubeConfigPath":          adminKubeConfigPath,
 		"ControlPlaneEndpoint":    i.Cfg().ControlPlaneEndpoint,
 		"UploadCerts":             i.UploadCerts(),

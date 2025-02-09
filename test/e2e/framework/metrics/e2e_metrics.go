@@ -91,7 +91,7 @@ func (m *ComponentCollection) PrintHumanReadable() string {
 // PrettyPrintJSON converts metrics to JSON format.
 // TODO: This function should be replaced with framework.PrettyPrintJSON after solving
 // circulary dependency between core framework and this metrics subpackage.
-func PrettyPrintJSON(metrics interface{}) string {
+func PrettyPrintJSON(metrics any) string {
 	output := &bytes.Buffer{}
 	if err := json.NewEncoder(output).Encode(metrics); err != nil {
 		framework.Logf("Error building encoder: %v", err)

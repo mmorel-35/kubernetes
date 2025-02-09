@@ -563,12 +563,12 @@ func TestPrune(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var in interface{}
+			var in any
 			if err := json.Unmarshal([]byte(tt.json), &in); err != nil {
 				t.Fatal(err)
 			}
 
-			var expectedObject interface{}
+			var expectedObject any
 			if err := json.Unmarshal([]byte(tt.expectedObject), &expectedObject); err != nil {
 				t.Fatal(err)
 			}
@@ -666,13 +666,13 @@ func BenchmarkPrune(b *testing.B) {
 		},
 	}
 
-	var obj map[string]interface{}
+	var obj map[string]any
 	err := json.Unmarshal([]byte(smallInstance), &obj)
 	if err != nil {
 		b.Fatal(err)
 	}
 
-	instances := make([]map[string]interface{}, 0, b.N)
+	instances := make([]map[string]any, 0, b.N)
 	for i := 0; i < b.N; i++ {
 		instances = append(instances, runtime.DeepCopyJSON(obj))
 	}
@@ -687,13 +687,13 @@ func BenchmarkDeepCopy(b *testing.B) {
 	b.StopTimer()
 	b.ReportAllocs()
 
-	var obj map[string]interface{}
+	var obj map[string]any
 	err := json.Unmarshal([]byte(smallInstance), &obj)
 	if err != nil {
 		b.Fatal(err)
 	}
 
-	instances := make([]map[string]interface{}, 0, b.N)
+	instances := make([]map[string]any, 0, b.N)
 
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
@@ -706,7 +706,7 @@ func BenchmarkUnmarshal(b *testing.B) {
 	b.StopTimer()
 	b.ReportAllocs()
 
-	instances := make([]map[string]interface{}, b.N)
+	instances := make([]map[string]any, b.N)
 
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {

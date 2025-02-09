@@ -49,7 +49,7 @@ func triggerFactory(t *testing.T) triggerFunc {
 
 func handler(rcvCh chan<- *unstructured.Unstructured) *cache.ResourceEventHandlerFuncs {
 	return &cache.ResourceEventHandlerFuncs{
-		AddFunc: func(obj interface{}) {
+		AddFunc: func(obj any) {
 			rcvCh <- obj.(*unstructured.Unstructured)
 		},
 	}
@@ -201,7 +201,7 @@ func TestDynamicSharedInformerFactory(t *testing.T) {
 			},
 			handler: func(rcvCh chan<- *unstructured.Unstructured) *cache.ResourceEventHandlerFuncs {
 				return &cache.ResourceEventHandlerFuncs{
-					AddFunc: func(obj interface{}) {
+					AddFunc: func(obj any) {
 						rcvCh <- obj.(*unstructured.Unstructured)
 					},
 				}
@@ -224,7 +224,7 @@ func TestDynamicSharedInformerFactory(t *testing.T) {
 			},
 			handler: func(rcvCh chan<- *unstructured.Unstructured) *cache.ResourceEventHandlerFuncs {
 				return &cache.ResourceEventHandlerFuncs{
-					UpdateFunc: func(old, updated interface{}) {
+					UpdateFunc: func(old, updated any) {
 						rcvCh <- updated.(*unstructured.Unstructured)
 					},
 				}
@@ -246,7 +246,7 @@ func TestDynamicSharedInformerFactory(t *testing.T) {
 			},
 			handler: func(rcvCh chan<- *unstructured.Unstructured) *cache.ResourceEventHandlerFuncs {
 				return &cache.ResourceEventHandlerFuncs{
-					DeleteFunc: func(obj interface{}) {
+					DeleteFunc: func(obj any) {
 						rcvCh <- obj.(*unstructured.Unstructured)
 					},
 				}
@@ -297,10 +297,10 @@ func TestDynamicSharedInformerFactory(t *testing.T) {
 
 func newUnstructured(apiVersion, kind, namespace, name string) *unstructured.Unstructured {
 	return &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": apiVersion,
 			"kind":       kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"namespace": namespace,
 				"name":      name,
 			},

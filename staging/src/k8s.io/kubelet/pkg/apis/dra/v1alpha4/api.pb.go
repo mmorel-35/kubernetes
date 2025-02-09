@@ -614,7 +614,7 @@ func RegisterNodeServer(s *grpc.Server, srv NodeServer) {
 	s.RegisterService(&_Node_serviceDesc, srv)
 }
 
-func _Node_NodePrepareResources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Node_NodePrepareResources_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(NodePrepareResourcesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -626,13 +626,13 @@ func _Node_NodePrepareResources_Handler(srv interface{}, ctx context.Context, de
 		Server:     srv,
 		FullMethod: "/v1alpha3.Node/NodePrepareResources",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(NodeServer).NodePrepareResources(ctx, req.(*NodePrepareResourcesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Node_NodeUnprepareResources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Node_NodeUnprepareResources_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(NodeUnprepareResourcesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -644,7 +644,7 @@ func _Node_NodeUnprepareResources_Handler(srv interface{}, ctx context.Context, 
 		Server:     srv,
 		FullMethod: "/v1alpha3.Node/NodeUnprepareResources",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(NodeServer).NodeUnprepareResources(ctx, req.(*NodeUnprepareResourcesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
@@ -1306,7 +1306,7 @@ func (this *Claim) String() string {
 	}, "")
 	return s
 }
-func valueToStringApi(v interface{}) string {
+func valueToStringApi(v any) string {
 	rv := reflect.ValueOf(v)
 	if rv.IsNil() {
 		return "nil"

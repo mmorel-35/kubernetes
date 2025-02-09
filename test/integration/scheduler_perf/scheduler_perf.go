@@ -2147,7 +2147,7 @@ func waitUntilPodsAttempted(tCtx ktesting.TContext, podInformer coreinformers.Po
 	return nil
 }
 
-func getSpecFromFile(path *string, spec interface{}) error {
+func getSpecFromFile(path *string, spec any) error {
 	bytes, err := os.ReadFile(*path)
 	if err != nil {
 		return err

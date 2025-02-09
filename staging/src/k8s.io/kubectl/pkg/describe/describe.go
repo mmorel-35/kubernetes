@@ -124,9 +124,9 @@ func Describer(restClientGetter genericclioptions.RESTClientGetter, mapping *met
 // PrefixWriter can write text at various indentation levels.
 type PrefixWriter interface {
 	// Write writes text with the specified indentation level.
-	Write(level int, format string, a ...interface{})
+	Write(level int, format string, a ...any)
 	// WriteLine writes an entire line with no indentation level.
-	WriteLine(a ...interface{})
+	WriteLine(a ...any)
 	// Flush forces indentation to be reset.
 	Flush()
 }
@@ -143,7 +143,7 @@ func NewPrefixWriter(out io.Writer) PrefixWriter {
 	return &prefixWriter{out: out}
 }
 
-func (pw *prefixWriter) Write(level int, format string, a ...interface{}) {
+func (pw *prefixWriter) Write(level int, format string, a ...any) {
 	levelSpace := "  "
 	prefix := ""
 	for i := 0; i < level; i++ {
@@ -153,7 +153,7 @@ func (pw *prefixWriter) Write(level int, format string, a ...interface{}) {
 	printers.WriteEscaped(pw.out, output)
 }
 
-func (pw *prefixWriter) WriteLine(a ...interface{}) {
+func (pw *prefixWriter) WriteLine(a ...any) {
 	output := fmt.Sprintln(a...)
 	printers.WriteEscaped(pw.out, output)
 }
@@ -178,11 +178,11 @@ func NewNestedPrefixWriter(out PrefixWriter, indent int) PrefixWriter {
 	return &nestedPrefixWriter{PrefixWriter: out, indent: indent}
 }
 
-func (npw *nestedPrefixWriter) Write(level int, format string, a ...interface{}) {
+func (npw *nestedPrefixWriter) Write(level int, format string, a ...any) {
 	npw.PrefixWriter.Write(level+npw.indent, format, a...)
 }
 
-func (npw *nestedPrefixWriter) WriteLine(a ...interface{}) {
+func (npw *nestedPrefixWriter) WriteLine(a ...any) {
 	npw.PrefixWriter.Write(npw.indent, "%s", fmt.Sprintln(a...))
 }
 
@@ -307,7 +307,7 @@ func (g *genericDescriber) Describe(namespace, name string, describerSettings De
 	})
 }
 
-func printUnstructuredContent(w PrefixWriter, level int, content map[string]interface{}, skipPrefix string, skip ...string) {
+func printUnstructuredContent(w PrefixWriter, level int, content map[string]any, skipPrefix string, skip ...string) {
 	fields := []string{}
 	for field := range content {
 		fields = append(fields, field)
@@ -317,7 +317,7 @@ func printUnstructuredContent(w PrefixWriter, level int, content map[string]inte
 	for _, field := range fields {
 		value := content[field]
 		switch typedValue := value.(type) {
-		case map[string]interface{}:
+		case map[string]any:
 			skipExpr := fmt.Sprintf("%s.%s", skipPrefix, field)
 			if slice.Contains[string](skip, skipExpr, nil) {
 				continue
@@ -325,7 +325,7 @@ func printUnstructuredContent(w PrefixWriter, level int, content map[string]inte
 			w.Write(level, "%s:\n", smartLabelFor(field))
 			printUnstructuredContent(w, level+1, typedValue, skipExpr, skip...)
 
-		case []interface{}:
+		case []any:
 			skipExpr := fmt.Sprintf("%s.%s", skipPrefix, field)
 			if slice.Contains[string](skip, skipExpr, nil) {
 				continue
@@ -333,7 +333,7 @@ func printUnstructuredContent(w PrefixWriter, level int, content map[string]inte
 			w.Write(level, "%s:\n", smartLabelFor(field))
 			for _, child := range typedValue {
 				switch typedChild := child.(type) {
-				case map[string]interface{}:
+				case map[string]any:
 					printUnstructuredContent(w, level+1, typedChild, skipExpr, skip...)
 				default:
 					w.Write(level+1, "%v\n", typedChild)
@@ -5097,7 +5097,7 @@ type Describers struct {
 // values). If no function registered with Add can satisfy the passed objects, an ErrNoDescriber will
 // be returned
 // TODO: reorder and partial match extra.
-func (d *Describers) DescribeObject(exact interface{}, extra ...interface{}) (string, error) {
+func (d *Describers) DescribeObject(exact any, extra ...any) (string, error) {
 	exactType := reflect.TypeOf(exact)
 	fns, ok := d.searchFns[exactType]
 	if !ok {
@@ -5135,7 +5135,7 @@ func (d *Describers) DescribeObject(exact interface{}, extra ...interface{}) (st
 //	func(...) (string, error)
 //
 // Any number of arguments may be provided.
-func (d *Describers) Add(fns ...interface{}) error {
+func (d *Describers) Add(fns ...any) error {
 	for _, fn := range fns {
 		fv := reflect.ValueOf(fn)
 		ft := fv.Type()
@@ -5203,7 +5203,7 @@ func (fn typeFunc) Matches(types []reflect.Type) bool {
 }
 
 // Describe invokes the nested function with the exact number of arguments.
-func (fn typeFunc) Describe(exact interface{}, extra ...interface{}) (string, error) {
+func (fn typeFunc) Describe(exact any, extra ...any) (string, error) {
 	values := []reflect.Value{reflect.ValueOf(exact)}
 	for i, obj := range extra {
 		if obj != nil {

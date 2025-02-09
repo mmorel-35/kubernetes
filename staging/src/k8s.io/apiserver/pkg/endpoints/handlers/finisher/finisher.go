@@ -41,7 +41,7 @@ type result struct {
 	// err stores the error returned by the ResultFunc function
 	err error
 	// reason stores the reason from a panic thrown by the ResultFunc function
-	reason interface{}
+	reason any
 }
 
 // Return processes the result returned by a ResultFunc function

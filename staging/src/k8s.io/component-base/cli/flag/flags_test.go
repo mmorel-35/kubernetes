@@ -34,14 +34,14 @@ type FakeLogger struct {
 
 func (logger *FakeLogger) Init(info logr.RuntimeInfo) {}
 func (logger *FakeLogger) Enabled(lvl int) bool       { return true }
-func (logger *FakeLogger) Info(lvl int, msg string, keysAndValues ...interface{}) {
+func (logger *FakeLogger) Info(lvl int, msg string, keysAndValues ...any) {
 	logger.infoBuffer.WriteString(msg)
 }
-func (logger *FakeLogger) Error(err error, msg string, keysAndValues ...interface{}) {
+func (logger *FakeLogger) Error(err error, msg string, keysAndValues ...any) {
 	logger.errorBuffer.WriteString(msg)
 }
-func (logger *FakeLogger) WithValues(keysAndValues ...interface{}) logr.LogSink { return logger }
-func (logger *FakeLogger) WithName(name string) logr.LogSink                    { return logger }
+func (logger *FakeLogger) WithValues(keysAndValues ...any) logr.LogSink { return logger }
+func (logger *FakeLogger) WithName(name string) logr.LogSink            { return logger }
 
 var _ logr.LogSink = &FakeLogger{}
 

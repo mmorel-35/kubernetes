@@ -81,7 +81,7 @@ func printModelDescriptionWithGenerator(
 		return fmt.Errorf("failed to fetch openapi schema for %s: %w", resourcePath, err)
 	}
 
-	var parsedV3Schema map[string]interface{}
+	var parsedV3Schema map[string]any
 	if err := json.Unmarshal(openAPISchemaBytes, &parsedV3Schema); err != nil {
 		return fmt.Errorf("failed to parse openapi schema for %s: %w", resourcePath, err)
 	}

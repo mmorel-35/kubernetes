@@ -34,7 +34,7 @@ func TestNoUpdateBeforeFirstApply(t *testing.T) {
 		return internal.NewSkipNonAppliedManager(m, &internaltesting.FakeObjectCreater{})
 	})
 
-	appliedObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	appliedObj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(`{
 		"apiVersion": "v1",
 		"kind": "Pod",
@@ -83,7 +83,7 @@ func TestUpdateBeforeFirstApply(t *testing.T) {
 		t.Fatalf("managedFields were tracked on update only: %v", m)
 	}
 
-	appliedObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	appliedObj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := yaml.Unmarshal([]byte(`{
 		"apiVersion": "v1",
 		"kind": "Pod",

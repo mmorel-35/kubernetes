@@ -87,9 +87,9 @@ var _ = SIGDescribe("CRDValidationRatcheting [Privileged:ClusterAdmin]", framewo
 	})
 
 	// Applies the given patch to the given GVR. The patch can be a string or a
-	// map[string]interface{}. If it is a string, it will be parsed as YAML or
+	// map[string]any. If it is a string, it will be parsed as YAML or
 	// JSON. If it is a map, it will be used as-is.
-	applyPatch := func(gvr schema.GroupVersionResource, name string, patchObj map[string]interface{}) error {
+	applyPatch := func(gvr schema.GroupVersionResource, name string, patchObj map[string]any) error {
 		gvk, err := restmapper.KindFor(gvr)
 		if err != nil {
 			return fmt.Errorf("no mapping for %s", gvr)
@@ -163,12 +163,12 @@ var _ = SIGDescribe("CRDValidationRatcheting [Privileged:ClusterAdmin]", framewo
 		counter := 0
 		err = wait.PollUntilContextCancel(context.TODO(), 100*time.Millisecond, true, func(_ context.Context) (done bool, err error) {
 			counter += 1
-			err = applyPatch(gvr, "sentinel-resource", map[string]interface{}{
-				"metadata": map[string]interface{}{
-					"finalizers": []interface{}{
+			err = applyPatch(gvr, "sentinel-resource", map[string]any{
+				"metadata": map[string]any{
+					"finalizers": []any{
 						"unqualified-finalizer",
 					},
-					"labels": map[string]interface{}{
+					"labels": map[string]any{
 						"#inv/($%)/alid=": ">htt$://",
 					},
 				},

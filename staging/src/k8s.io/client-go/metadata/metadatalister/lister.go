@@ -40,7 +40,7 @@ func New(indexer cache.Indexer, gvr schema.GroupVersionResource) Lister {
 
 // List lists all resources in the indexer.
 func (l *metadataLister) List(selector labels.Selector) (ret []*metav1.PartialObjectMetadata, err error) {
-	err = cache.ListAll(l.indexer, selector, func(m interface{}) {
+	err = cache.ListAll(l.indexer, selector, func(m any) {
 		ret = append(ret, m.(*metav1.PartialObjectMetadata))
 	})
 	return ret, err
@@ -72,7 +72,7 @@ type metadataNamespaceLister struct {
 
 // List lists all resources in the indexer for a given namespace.
 func (l *metadataNamespaceLister) List(selector labels.Selector) (ret []*metav1.PartialObjectMetadata, err error) {
-	err = cache.ListAllByNamespace(l.indexer, l.namespace, selector, func(m interface{}) {
+	err = cache.ListAllByNamespace(l.indexer, l.namespace, selector, func(m any) {
 		ret = append(ret, m.(*metav1.PartialObjectMetadata))
 	})
 	return ret, err

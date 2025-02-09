@@ -144,7 +144,7 @@ func searchPathForStableMetrics(path string) ([]metric, []error) {
 }
 
 // Pass either only filename of existing file or src including source code in any format and a filename that it comes from
-func searchFileForStableMetrics(filename string, src interface{}) ([]metric, []error) {
+func searchFileForStableMetrics(filename string, src any) ([]metric, []error) {
 	fileset := token.NewFileSet()
 	tree, err := parser.ParseFile(fileset, filename, src, parser.AllErrors)
 	if err != nil {

@@ -378,10 +378,10 @@ func (p *jsonPatcher) createNewObject(_ context.Context) (runtime.Object, error)
 }
 
 type jsonPatchOp struct {
-	Op    string      `json:"op"`
-	Path  string      `json:"path"`
-	From  string      `json:"from"`
-	Value interface{} `json:"value"`
+	Op    string `json:"op"`
+	Path  string `json:"path"`
+	From  string `json:"from"`
+	Value any    `json:"value"`
 }
 
 // applyJSPatch applies the patch. Input and output objects must both have
@@ -416,7 +416,7 @@ func (p *jsonPatcher) applyJSPatch(versionedJS []byte) (patchedJS []byte, strict
 		return patchedJS, strictErrors, nil
 	case types.MergePatchType:
 		if p.validationDirective == metav1.FieldValidationStrict || p.validationDirective == metav1.FieldValidationWarn {
-			v := map[string]interface{}{}
+			v := map[string]any{}
 			var err error
 			strictErrors, err = kjson.UnmarshalStrict(p.patchBytes, &v)
 			if err != nil {
@@ -471,7 +471,7 @@ func (p *smpPatcher) createNewObject(_ context.Context) (runtime.Object, error) 
 	return nil, errors.NewNotFound(p.resource.GroupResource(), p.name)
 }
 
-func newApplyPatcher(p *patcher, fieldManager *managedfields.FieldManager, unmarshalFn, unmarshalStrictFn func([]byte, interface{}) error) *applyPatcher {
+func newApplyPatcher(p *patcher, fieldManager *managedfields.FieldManager, unmarshalFn, unmarshalStrictFn func([]byte, any) error) *applyPatcher {
 	return &applyPatcher{
 		fieldManager:        fieldManager,
 		patch:               p.patchBytes,
@@ -493,8 +493,8 @@ type applyPatcher struct {
 	fieldManager        *managedfields.FieldManager
 	userAgent           string
 	validationDirective string
-	unmarshalFn         func(data []byte, v interface{}) error
-	unmarshalStrictFn   func(data []byte, v interface{}) error
+	unmarshalFn         func(data []byte, v any) error
+	unmarshalStrictFn   func(data []byte, v any) error
 }
 
 func (p *applyPatcher) applyPatchToCurrentObject(requestContext context.Context, obj runtime.Object) (runtime.Object, error) {
@@ -506,7 +506,7 @@ func (p *applyPatcher) applyPatchToCurrentObject(requestContext context.Context,
 		panic("FieldManager must be installed to run apply")
 	}
 
-	patchObj := &unstructured.Unstructured{Object: map[string]interface{}{}}
+	patchObj := &unstructured.Unstructured{Object: map[string]any{}}
 	if err := p.unmarshalFn(p.patch, &patchObj.Object); err != nil {
 		return nil, errors.NewBadRequest(fmt.Sprintf("error decoding YAML: %v", err))
 	}
@@ -519,7 +519,7 @@ func (p *applyPatcher) applyPatchToCurrentObject(requestContext context.Context,
 	// TODO: spawn something to track deciding whether a fieldValidation=Strict
 	// fatal error should return before an error from the apply operation
 	if p.validationDirective == metav1.FieldValidationStrict || p.validationDirective == metav1.FieldValidationWarn {
-		if err := p.unmarshalStrictFn(p.patch, &map[string]interface{}{}); err != nil {
+		if err := p.unmarshalStrictFn(p.patch, &map[string]any{}); err != nil {
 			if p.validationDirective == metav1.FieldValidationStrict {
 				return nil, errors.NewBadRequest(fmt.Sprintf("error strict decoding YAML: %v", err))
 			}
@@ -539,7 +539,7 @@ func (p *applyPatcher) createNewObject(requestContext context.Context) (runtime.
 
 // strategicPatchObject applies a strategic merge patch of `patchBytes` to
 // `originalObject` and stores the result in `objToUpdate`.
-// It additionally returns the map[string]interface{} representation of the
+// It additionally returns the map[string]any representation of the
 // `originalObject` and `patchBytes`.
 // NOTE: Both `originalObject` and `objToUpdate` are supposed to be versioned.
 func strategicPatchObject(
@@ -556,7 +556,7 @@ func strategicPatchObject(
 		return err
 	}
 
-	patchMap := make(map[string]interface{})
+	patchMap := make(map[string]any)
 	var strictErrs []error
 	if validationDirective == metav1.FieldValidationWarn || validationDirective == metav1.FieldValidationStrict {
 		strictErrs, err = kjson.UnmarshalStrict(patchBytes, &patchMap)
@@ -735,8 +735,8 @@ func (p *patcher) patchResource(ctx context.Context, scope *RequestScope) (runti
 func applyPatchToObject(
 	requestContext context.Context,
 	defaulter runtime.ObjectDefaulter,
-	originalMap map[string]interface{},
-	patchMap map[string]interface{},
+	originalMap map[string]any,
+	patchMap map[string]any,
 	objToUpdate runtime.Object,
 	schemaReferenceObj runtime.Object,
 	strictErrs []error,

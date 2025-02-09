@@ -153,7 +153,7 @@ func epPortsToEpsPorts(epPorts []corev1.EndpointPort) []discovery.EndpointPort {
 
 // getServiceFromDeleteAction parses a Service resource from a delete
 // action.
-func getServiceFromDeleteAction(obj interface{}) *corev1.Service {
+func getServiceFromDeleteAction(obj any) *corev1.Service {
 	if service, ok := obj.(*corev1.Service); ok {
 		return service
 	}
@@ -174,7 +174,7 @@ func getServiceFromDeleteAction(obj interface{}) *corev1.Service {
 
 // getEndpointsFromDeleteAction parses an Endpoints resource from a delete
 // action.
-func getEndpointsFromDeleteAction(obj interface{}) *corev1.Endpoints {
+func getEndpointsFromDeleteAction(obj any) *corev1.Endpoints {
 	if endpoints, ok := obj.(*corev1.Endpoints); ok {
 		return endpoints
 	}
@@ -194,7 +194,7 @@ func getEndpointsFromDeleteAction(obj interface{}) *corev1.Endpoints {
 }
 
 // getEndpointSliceFromDeleteAction parses an EndpointSlice from a delete action.
-func getEndpointSliceFromDeleteAction(obj interface{}) *discovery.EndpointSlice {
+func getEndpointSliceFromDeleteAction(obj any) *discovery.EndpointSlice {
 	if endpointSlice, ok := obj.(*discovery.EndpointSlice); ok {
 		return endpointSlice
 	}

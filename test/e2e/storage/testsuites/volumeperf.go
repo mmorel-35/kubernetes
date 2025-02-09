@@ -307,7 +307,7 @@ func newPVCWatch(ctx context.Context, f *framework.Framework, provisionCount int
 		&v1.PersistentVolumeClaim{},
 		0,
 		cache.ResourceEventHandlerFuncs{
-			UpdateFunc: func(oldObj, newObj interface{}) {
+			UpdateFunc: func(oldObj, newObj any) {
 				oldPVC, ok := oldObj.(*v1.PersistentVolumeClaim)
 				if !ok {
 					framework.Failf("Expected a PVC, got instead an old object of type %T", oldObj)

@@ -54,7 +54,7 @@ func TestJSONPrinter(t *testing.T) {
 	testPrinter(t, NewTypeSetter(scheme.Scheme).ToPrinter(&JSONPrinter{}), json.Unmarshal)
 }
 
-func testPrinter(t *testing.T, printer ResourcePrinter, unmarshalFunc func(data []byte, v interface{}) error) {
+func testPrinter(t *testing.T, printer ResourcePrinter, unmarshalFunc func(data []byte, v any) error) {
 	buf := bytes.NewBuffer([]byte{})
 
 	err := printer.PrintObj(&testData, buf)

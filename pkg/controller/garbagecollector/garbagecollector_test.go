@@ -246,7 +246,7 @@ func getPod(podName string, ownerReferences []metav1.OwnerReference) *v1.Pod {
 	}
 }
 
-func serilizeOrDie(t *testing.T, object interface{}) []byte {
+func serilizeOrDie(t *testing.T, object any) []byte {
 	data, err := json.Marshal(object)
 	if err != nil {
 		t.Fatal(err)
@@ -2654,7 +2654,7 @@ func assertState(s state) step {
 				}
 				if len(s.absentOwnerCache) != ctx.gc.absentOwnerCache.cache.Len() {
 					// only way to inspect is to drain them all, but that's ok because we're failing the test anyway
-					err := ctx.gc.absentOwnerCache.cache.SetEvictionFunc(func(key lru.Key, item interface{}) {
+					err := ctx.gc.absentOwnerCache.cache.SetEvictionFunc(func(key lru.Key, item any) {
 						found := false
 						for _, absent := range s.absentOwnerCache {
 							if absent == key {

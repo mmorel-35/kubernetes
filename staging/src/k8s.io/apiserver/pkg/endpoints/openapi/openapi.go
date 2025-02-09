@@ -108,10 +108,10 @@ func (s groupVersionKinds) Less(i, j int) bool {
 	return s[i].Group < s[j].Group
 }
 
-func (s groupVersionKinds) JSON() []interface{} {
-	j := []interface{}{}
+func (s groupVersionKinds) JSON() []any {
+	j := []any{}
 	for _, gvk := range s {
-		j = append(j, map[string]interface{}{
+		j = append(j, map[string]any{
 			"group":   gvk.Group,
 			"version": gvk.Version,
 			"kind":    gvk.Kind,

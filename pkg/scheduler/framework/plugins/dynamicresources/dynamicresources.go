@@ -200,7 +200,7 @@ func (pl *DynamicResources) PreEnqueue(ctx context.Context, pod *v1.Pod) (status
 // an informer. It checks whether that change made a previously unschedulable
 // pod schedulable. It errs on the side of letting a pod scheduling attempt
 // happen. The delete claim event will not invoke it, so newObj will never be nil.
-func (pl *DynamicResources) isSchedulableAfterClaimChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *DynamicResources) isSchedulableAfterClaimChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	originalClaim, modifiedClaim, err := schedutil.As[*resourceapi.ResourceClaim](oldObj, newObj)
 	if err != nil {
 		// Shouldn't happen.
@@ -264,7 +264,7 @@ func (pl *DynamicResources) isSchedulableAfterClaimChange(logger klog.Logger, po
 // isSchedulableAfterPodChange is invoked for update pod events reported by
 // an informer. It checks whether that change adds the ResourceClaim(s) that the
 // pod has been waiting for.
-func (pl *DynamicResources) isSchedulableAfterPodChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj interface{}) (framework.QueueingHint, error) {
+func (pl *DynamicResources) isSchedulableAfterPodChange(logger klog.Logger, pod *v1.Pod, oldObj, newObj any) (framework.QueueingHint, error) {
 	_, modifiedPod, err := schedutil.As[*v1.Pod](nil, newObj)
 	if err != nil {
 		// Shouldn't happen.
@@ -854,7 +854,7 @@ func (pl *DynamicResources) bindClaim(ctx context.Context, state *stateData, ind
 
 // statusUnschedulable ensures that there is a log message associated with the
 // line where the status originated.
-func statusUnschedulable(logger klog.Logger, reason string, kv ...interface{}) *framework.Status {
+func statusUnschedulable(logger klog.Logger, reason string, kv ...any) *framework.Status {
 	if loggerV := logger.V(5); loggerV.Enabled() {
 		helper, loggerV := loggerV.WithCallStackHelper()
 		helper()
@@ -867,7 +867,7 @@ func statusUnschedulable(logger klog.Logger, reason string, kv ...interface{}) *
 
 // statusError ensures that there is a log message associated with the
 // line where the error originated.
-func statusError(logger klog.Logger, err error, kv ...interface{}) *framework.Status {
+func statusError(logger klog.Logger, err error, kv ...any) *framework.Status {
 	if loggerV := logger.V(5); loggerV.Enabled() {
 		helper, loggerV := loggerV.WithCallStackHelper()
 		helper()

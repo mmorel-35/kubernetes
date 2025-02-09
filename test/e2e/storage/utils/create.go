@@ -55,8 +55,8 @@ import (
 //     and silently ignored
 //   - the latest stable API version for each item is used, regardless of what
 //     is specified in the manifest files
-func LoadFromManifests(files ...string) ([]interface{}, error) {
-	var items []interface{}
+func LoadFromManifests(files ...string) ([]any, error) {
+	var items []any
 	err := visitManifests(func(data []byte) error {
 		// Ignore any additional fields for now, just determine what we have.
 		var what What
@@ -121,7 +121,7 @@ func visitManifests(cb func([]byte) error, files ...string) error {
 // PatchItems has some limitations:
 // - only some common items are supported, unknown ones trigger an error
 // - only the latest stable API version for each item is supported
-func PatchItems(f *framework.Framework, driverNamespace *v1.Namespace, items ...interface{}) error {
+func PatchItems(f *framework.Framework, driverNamespace *v1.Namespace, items ...any) error {
 	for _, item := range items {
 		// Uncomment when debugging the loading and patching of items.
 		// Logf("patching original content of %T:\n%s", item, PrettyPrint(item))
@@ -146,7 +146,7 @@ func PatchItems(f *framework.Framework, driverNamespace *v1.Namespace, items ...
 // PatchItems has the some limitations as LoadFromManifests:
 // - only some common items are supported, unknown ones trigger an error
 // - only the latest stable API version for each item is supported
-func CreateItems(ctx context.Context, f *framework.Framework, ns *v1.Namespace, items ...interface{}) error {
+func CreateItems(ctx context.Context, f *framework.Framework, ns *v1.Namespace, items ...any) error {
 	var result error
 	for _, item := range items {
 		// Each factory knows which item(s) it supports, so try each one.
@@ -180,7 +180,7 @@ func CreateItems(ctx context.Context, f *framework.Framework, ns *v1.Namespace, 
 // CreateFromManifests is a combination of LoadFromManifests,
 // PatchItems, patching with an optional custom function,
 // and CreateItems.
-func CreateFromManifests(ctx context.Context, f *framework.Framework, driverNamespace *v1.Namespace, patch func(item interface{}) error, files ...string) error {
+func CreateFromManifests(ctx context.Context, f *framework.Framework, driverNamespace *v1.Namespace, patch func(item any) error, files ...string) error {
 	items, err := LoadFromManifests(files...)
 	if err != nil {
 		return fmt.Errorf("CreateFromManifests: %w", err)
@@ -235,14 +235,14 @@ type ItemFactory interface {
 	// error or a cleanup function for the created item.
 	// If the item is of an unsupported type, it must return
 	// an error that has errorItemNotSupported as cause.
-	Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, item interface{}) (func(ctx context.Context) error, error)
+	Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, item any) (func(ctx context.Context) error, error)
 }
 
 // describeItem always returns a string that describes the item,
 // usually by calling out to cache.MetaNamespaceKeyFunc which
 // concatenates namespace (if set) and name. If that fails, the entire
 // item gets converted to a string.
-func describeItem(item interface{}) string {
+func describeItem(item any) string {
 	key, err := cache.MetaNamespaceKeyFunc(item)
 	if err == nil && key != "" {
 		return fmt.Sprintf("%T: %s", item, key)
@@ -294,7 +294,7 @@ func PatchNamespace(f *framework.Framework, driverNamespace *v1.Namespace, item 
 	}
 }
 
-func patchItemRecursively(f *framework.Framework, driverNamespace *v1.Namespace, item interface{}) error {
+func patchItemRecursively(f *framework.Framework, driverNamespace *v1.Namespace, item any) error {
 	switch item := item.(type) {
 	case *rbacv1.Subject:
 		PatchNamespace(f, driverNamespace, &item.Namespace)
@@ -397,7 +397,7 @@ func (f *serviceAccountFactory) New() runtime.Object {
 	return &v1.ServiceAccount{}
 }
 
-func (*serviceAccountFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i interface{}) (func(ctx context.Context) error, error) {
+func (*serviceAccountFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i any) (func(ctx context.Context) error, error) {
 	item, ok := i.(*v1.ServiceAccount)
 	if !ok {
 		return nil, errorItemNotSupported
@@ -417,7 +417,7 @@ func (f *clusterRoleFactory) New() runtime.Object {
 	return &rbacv1.ClusterRole{}
 }
 
-func (*clusterRoleFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i interface{}) (func(ctx context.Context) error, error) {
+func (*clusterRoleFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i any) (func(ctx context.Context) error, error) {
 	item, ok := i.(*rbacv1.ClusterRole)
 	if !ok {
 		return nil, errorItemNotSupported
@@ -439,7 +439,7 @@ func (f *clusterRoleBindingFactory) New() runtime.Object {
 	return &rbacv1.ClusterRoleBinding{}
 }
 
-func (*clusterRoleBindingFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i interface{}) (func(ctx context.Context) error, error) {
+func (*clusterRoleBindingFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i any) (func(ctx context.Context) error, error) {
 	item, ok := i.(*rbacv1.ClusterRoleBinding)
 	if !ok {
 		return nil, errorItemNotSupported
@@ -460,7 +460,7 @@ func (f *roleFactory) New() runtime.Object {
 	return &rbacv1.Role{}
 }
 
-func (*roleFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i interface{}) (func(ctx context.Context) error, error) {
+func (*roleFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i any) (func(ctx context.Context) error, error) {
 	item, ok := i.(*rbacv1.Role)
 	if !ok {
 		return nil, errorItemNotSupported
@@ -481,7 +481,7 @@ func (f *roleBindingFactory) New() runtime.Object {
 	return &rbacv1.RoleBinding{}
 }
 
-func (*roleBindingFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i interface{}) (func(ctx context.Context) error, error) {
+func (*roleBindingFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i any) (func(ctx context.Context) error, error) {
 	item, ok := i.(*rbacv1.RoleBinding)
 	if !ok {
 		return nil, errorItemNotSupported
@@ -502,7 +502,7 @@ func (f *serviceFactory) New() runtime.Object {
 	return &v1.Service{}
 }
 
-func (*serviceFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i interface{}) (func(ctx context.Context) error, error) {
+func (*serviceFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i any) (func(ctx context.Context) error, error) {
 	item, ok := i.(*v1.Service)
 	if !ok {
 		return nil, errorItemNotSupported
@@ -523,7 +523,7 @@ func (f *statefulSetFactory) New() runtime.Object {
 	return &appsv1.StatefulSet{}
 }
 
-func (*statefulSetFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i interface{}) (func(ctx context.Context) error, error) {
+func (*statefulSetFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i any) (func(ctx context.Context) error, error) {
 	item, ok := i.(*appsv1.StatefulSet)
 	if !ok {
 		return nil, errorItemNotSupported
@@ -544,7 +544,7 @@ func (f *deploymentFactory) New() runtime.Object {
 	return &appsv1.Deployment{}
 }
 
-func (*deploymentFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i interface{}) (func(ctx context.Context) error, error) {
+func (*deploymentFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i any) (func(ctx context.Context) error, error) {
 	item, ok := i.(*appsv1.Deployment)
 	if !ok {
 		return nil, errorItemNotSupported
@@ -565,7 +565,7 @@ func (f *daemonSetFactory) New() runtime.Object {
 	return &appsv1.DaemonSet{}
 }
 
-func (*daemonSetFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i interface{}) (func(ctx context.Context) error, error) {
+func (*daemonSetFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i any) (func(ctx context.Context) error, error) {
 	item, ok := i.(*appsv1.DaemonSet)
 	if !ok {
 		return nil, errorItemNotSupported
@@ -586,7 +586,7 @@ func (f *replicaSetFactory) New() runtime.Object {
 	return &appsv1.ReplicaSet{}
 }
 
-func (*replicaSetFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i interface{}) (func(ctx context.Context) error, error) {
+func (*replicaSetFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i any) (func(ctx context.Context) error, error) {
 	item, ok := i.(*appsv1.ReplicaSet)
 	if !ok {
 		return nil, errorItemNotSupported
@@ -607,7 +607,7 @@ func (f *storageClassFactory) New() runtime.Object {
 	return &storagev1.StorageClass{}
 }
 
-func (*storageClassFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i interface{}) (func(ctx context.Context) error, error) {
+func (*storageClassFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i any) (func(ctx context.Context) error, error) {
 	item, ok := i.(*storagev1.StorageClass)
 	if !ok {
 		return nil, errorItemNotSupported
@@ -628,7 +628,7 @@ func (f *volumeAttributesClassFactory) New() runtime.Object {
 	return &storagev1beta1.VolumeAttributesClass{}
 }
 
-func (*volumeAttributesClassFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i interface{}) (func(ctx context.Context) error, error) {
+func (*volumeAttributesClassFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i any) (func(ctx context.Context) error, error) {
 	item, ok := i.(*storagev1beta1.VolumeAttributesClass)
 	if !ok {
 		return nil, errorItemNotSupported
@@ -649,7 +649,7 @@ func (f *csiDriverFactory) New() runtime.Object {
 	return &storagev1.CSIDriver{}
 }
 
-func (*csiDriverFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i interface{}) (func(ctx context.Context) error, error) {
+func (*csiDriverFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i any) (func(ctx context.Context) error, error) {
 	item, ok := i.(*storagev1.CSIDriver)
 	if !ok {
 		return nil, errorItemNotSupported
@@ -670,7 +670,7 @@ func (f *secretFactory) New() runtime.Object {
 	return &v1.Secret{}
 }
 
-func (*secretFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i interface{}) (func(ctx context.Context) error, error) {
+func (*secretFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i any) (func(ctx context.Context) error, error) {
 	item, ok := i.(*v1.Secret)
 	if !ok {
 		return nil, errorItemNotSupported
@@ -691,7 +691,7 @@ func (f *customResourceDefinitionFactory) New() runtime.Object {
 	return &apiextensionsv1.CustomResourceDefinition{}
 }
 
-func (*customResourceDefinitionFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i interface{}) (func(ctx context.Context) error, error) {
+func (*customResourceDefinitionFactory) Create(ctx context.Context, f *framework.Framework, ns *v1.Namespace, i any) (func(ctx context.Context) error, error) {
 	var err error
 	unstructCRD := &unstructured.Unstructured{}
 	gvr := schema.GroupVersionResource{Group: "apiextensions.k8s.io", Version: "v1", Resource: "customresourcedefinitions"}
@@ -715,7 +715,7 @@ func (*customResourceDefinitionFactory) Create(ctx context.Context, f *framework
 }
 
 // PrettyPrint returns a human-readable representation of an item.
-func PrettyPrint(item interface{}) string {
+func PrettyPrint(item any) string {
 	data, err := json.MarshalIndent(item, "", "  ")
 	if err == nil {
 		return string(data)

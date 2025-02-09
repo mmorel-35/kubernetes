@@ -49,7 +49,7 @@ import (
 //
 // Driver deployments that are different will have to do the patching
 // without this function, or skip patching entirely.
-func PatchCSIDeployment(f *e2eframework.Framework, o PatchCSIOptions, object interface{}) error {
+func PatchCSIDeployment(f *e2eframework.Framework, o PatchCSIOptions, object any) error {
 	rename := o.OldDriverName != "" && o.NewDriverName != "" &&
 		o.OldDriverName != o.NewDriverName
 

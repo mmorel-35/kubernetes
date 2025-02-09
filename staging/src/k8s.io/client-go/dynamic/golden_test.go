@@ -51,8 +51,8 @@ func TestGoldenRequest(t *testing.T) {
 			do: func(ctx context.Context, client dynamic.Interface) error {
 				_, err := client.Resource(schema.GroupVersionResource{Group: "flops", Version: "v1alpha1", Resource: "flips"}).Namespace("mops").Create(
 					ctx,
-					&unstructured.Unstructured{Object: map[string]interface{}{
-						"metadata": map[string]interface{}{"name": "mips"},
+					&unstructured.Unstructured{Object: map[string]any{
+						"metadata": map[string]any{"name": "mips"},
 					}},
 					metav1.CreateOptions{FieldValidation: "warn"},
 					"fin",
@@ -65,8 +65,8 @@ func TestGoldenRequest(t *testing.T) {
 			do: func(ctx context.Context, client dynamic.Interface) error {
 				_, err := client.Resource(schema.GroupVersionResource{Group: "flops", Version: "v1alpha1", Resource: "flips"}).Namespace("mops").Update(
 					ctx,
-					&unstructured.Unstructured{Object: map[string]interface{}{
-						"metadata": map[string]interface{}{"name": "mips"},
+					&unstructured.Unstructured{Object: map[string]any{
+						"metadata": map[string]any{"name": "mips"},
 					}},
 					metav1.UpdateOptions{FieldValidation: "warn"},
 					"fin",
@@ -79,8 +79,8 @@ func TestGoldenRequest(t *testing.T) {
 			do: func(ctx context.Context, client dynamic.Interface) error {
 				_, err := client.Resource(schema.GroupVersionResource{Group: "flops", Version: "v1alpha1", Resource: "flips"}).Namespace("mops").UpdateStatus(
 					ctx,
-					&unstructured.Unstructured{Object: map[string]interface{}{
-						"metadata": map[string]interface{}{"name": "mips"},
+					&unstructured.Unstructured{Object: map[string]any{
+						"metadata": map[string]any{"name": "mips"},
 					}},
 					metav1.UpdateOptions{FieldValidation: "warn"},
 				)
@@ -160,8 +160,8 @@ func TestGoldenRequest(t *testing.T) {
 				_, err := client.Resource(schema.GroupVersionResource{Group: "flops", Version: "v1alpha1", Resource: "flips"}).Namespace("mops").Apply(
 					ctx,
 					"mips",
-					&unstructured.Unstructured{Object: map[string]interface{}{
-						"metadata": map[string]interface{}{"name": "mips"},
+					&unstructured.Unstructured{Object: map[string]any{
+						"metadata": map[string]any{"name": "mips"},
 					}},
 					metav1.ApplyOptions{Force: true},
 					"fin",
@@ -175,8 +175,8 @@ func TestGoldenRequest(t *testing.T) {
 				_, err := client.Resource(schema.GroupVersionResource{Group: "flops", Version: "v1alpha1", Resource: "flips"}).Namespace("mops").ApplyStatus(
 					ctx,
 					"mips",
-					&unstructured.Unstructured{Object: map[string]interface{}{
-						"metadata": map[string]interface{}{"name": "mips"},
+					&unstructured.Unstructured{Object: map[string]any{
+						"metadata": map[string]any{"name": "mips"},
 					}},
 					metav1.ApplyOptions{Force: true},
 				)
@@ -262,12 +262,12 @@ func TestGoldenResponse(t *testing.T) {
 	for _, tc := range []struct {
 		name     string
 		response string // name of fixture containing a serialized HTTP1.1 response
-		do       func(t *testing.T, client dynamic.ResourceInterface) interface{}
+		do       func(t *testing.T, client dynamic.ResourceInterface) any
 	}{
 		{
 			name:     "create",
 			response: "nonlist",
-			do: func(t *testing.T, client dynamic.ResourceInterface) interface{} {
+			do: func(t *testing.T, client dynamic.ResourceInterface) any {
 				got, err := client.Create(context.Background(), &unstructured.Unstructured{}, metav1.CreateOptions{})
 				if err != nil {
 					t.Fatal(err)
@@ -279,8 +279,8 @@ func TestGoldenResponse(t *testing.T) {
 		{
 			name:     "update",
 			response: "nonlist",
-			do: func(t *testing.T, client dynamic.ResourceInterface) interface{} {
-				got, err := client.Update(context.Background(), &unstructured.Unstructured{Object: map[string]interface{}{"metadata": map[string]interface{}{"name": "name"}}}, metav1.UpdateOptions{})
+			do: func(t *testing.T, client dynamic.ResourceInterface) any {
+				got, err := client.Update(context.Background(), &unstructured.Unstructured{Object: map[string]any{"metadata": map[string]any{"name": "name"}}}, metav1.UpdateOptions{})
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -291,8 +291,8 @@ func TestGoldenResponse(t *testing.T) {
 		{
 			name:     "updatestatus",
 			response: "nonlist",
-			do: func(t *testing.T, client dynamic.ResourceInterface) interface{} {
-				got, err := client.UpdateStatus(context.Background(), &unstructured.Unstructured{Object: map[string]interface{}{"metadata": map[string]interface{}{"name": "name"}}}, metav1.UpdateOptions{})
+			do: func(t *testing.T, client dynamic.ResourceInterface) any {
+				got, err := client.UpdateStatus(context.Background(), &unstructured.Unstructured{Object: map[string]any{"metadata": map[string]any{"name": "name"}}}, metav1.UpdateOptions{})
 
 				if err != nil {
 					t.Fatal(err)
@@ -304,7 +304,7 @@ func TestGoldenResponse(t *testing.T) {
 		{
 			name:     "get",
 			response: "nonlist",
-			do: func(t *testing.T, client dynamic.ResourceInterface) interface{} {
+			do: func(t *testing.T, client dynamic.ResourceInterface) any {
 				got, err := client.Get(context.Background(), "name", metav1.GetOptions{})
 				if err != nil {
 					t.Fatal(err)
@@ -316,7 +316,7 @@ func TestGoldenResponse(t *testing.T) {
 		{
 			name:     "list",
 			response: "list",
-			do: func(t *testing.T, client dynamic.ResourceInterface) interface{} {
+			do: func(t *testing.T, client dynamic.ResourceInterface) any {
 				got, err := client.List(context.Background(), metav1.ListOptions{})
 				if err != nil {
 					t.Fatal(err)
@@ -329,14 +329,14 @@ func TestGoldenResponse(t *testing.T) {
 		{
 			name:     "watch",
 			response: "events",
-			do: func(t *testing.T, client dynamic.ResourceInterface) interface{} {
+			do: func(t *testing.T, client dynamic.ResourceInterface) any {
 				w, err := client.Watch(context.Background(), metav1.ListOptions{})
 				if err != nil {
 					t.Fatal(err)
 				}
 				defer w.Stop()
 
-				var got []interface{}
+				var got []any
 				for e := range w.ResultChan() {
 					u, err := runtime.DefaultUnstructuredConverter.ToUnstructured(&e)
 					if err != nil {
@@ -392,7 +392,7 @@ func TestGoldenResponse(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			var want interface{}
+			var want any
 			if err := json.Unmarshal(fixture, &want); err != nil {
 				t.Fatal(err)
 			}

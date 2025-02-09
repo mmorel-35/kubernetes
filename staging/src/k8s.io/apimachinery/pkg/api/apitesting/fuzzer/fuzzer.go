@@ -29,7 +29,7 @@ import (
 )
 
 // FuzzerFuncs returns a list of func(*SomeType, c fuzz.Continue) functions.
-type FuzzerFuncs func(codecs runtimeserializer.CodecFactory) []interface{}
+type FuzzerFuncs func(codecs runtimeserializer.CodecFactory) []any
 
 // FuzzerFor can randomly populate api objects that are destined for version.
 func FuzzerFor(funcs FuzzerFuncs, src rand.Source, codecs runtimeserializer.CodecFactory) *fuzz.Fuzzer {
@@ -44,8 +44,8 @@ func FuzzerFor(funcs FuzzerFuncs, src rand.Source, codecs runtimeserializer.Code
 // MergeFuzzerFuncs will merge the given funcLists, overriding early funcs with later ones if there first
 // argument has the same type.
 func MergeFuzzerFuncs(funcs ...FuzzerFuncs) FuzzerFuncs {
-	return FuzzerFuncs(func(codecs runtimeserializer.CodecFactory) []interface{} {
-		result := []interface{}{}
+	return FuzzerFuncs(func(codecs runtimeserializer.CodecFactory) []any {
+		result := []any{}
 		for _, f := range funcs {
 			if f != nil {
 				result = append(result, f(codecs)...)
@@ -57,9 +57,9 @@ func MergeFuzzerFuncs(funcs ...FuzzerFuncs) FuzzerFuncs {
 
 func NormalizeJSONRawExtension(ext *runtime.RawExtension) {
 	if json.Valid(ext.Raw) {
-		// RawExtension->JSON encodes struct fields in field index order while map[string]interface{}->JSON encodes
+		// RawExtension->JSON encodes struct fields in field index order while map[string]any->JSON encodes
 		// struct fields (i.e. keys in the map) lexicographically. We have to sort the fields here to ensure the
-		// JSON in the (RawExtension->)JSON->map[string]interface{}->JSON round trip results in identical JSON.
+		// JSON in the (RawExtension->)JSON->map[string]any->JSON round trip results in identical JSON.
 		var u any
 		err := kjson.Unmarshal(ext.Raw, &u)
 		if err != nil {

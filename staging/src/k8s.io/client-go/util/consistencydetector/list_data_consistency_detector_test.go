@@ -88,10 +88,10 @@ func TestCheckListFromCacheDataConsistencyIfRequestedInternalHappyPath(t *testin
 		{
 			name: "list detector works with a unstructured list",
 			listResponse: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "vTest",
 					"kind":       "rTestList",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"resourceVersion": "3",
 					},
 				},
@@ -103,10 +103,10 @@ func TestCheckListFromCacheDataConsistencyIfRequestedInternalHappyPath(t *testin
 			},
 			retrievedListOptions: metav1.ListOptions{TimeoutSeconds: ptr.To(int64(39))},
 			retrievedList: &unstructured.UnstructuredList{
-				Object: map[string]interface{}{
+				Object: map[string]any{
 					"apiVersion": "vTest",
 					"kind":       "rTestList",
-					"metadata": map[string]interface{}{
+					"metadata": map[string]any{
 						"resourceVersion": "3",
 					},
 				},

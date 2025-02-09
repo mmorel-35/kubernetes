@@ -57,7 +57,7 @@ var (
 // Config is a handle to a ComponentConfig object. Don't create these directly;
 // use New() instead.
 type Config struct {
-	val interface{}
+	val any
 }
 
 // InstallHandler adds an HTTP handler on the given mux for the "/configz"
@@ -92,7 +92,7 @@ func Delete(name string) {
 }
 
 // Set sets the ComponentConfig for this Config.
-func (v *Config) Set(val interface{}) {
+func (v *Config) Set(val any) {
 	configsGuard.Lock()
 	defer configsGuard.Unlock()
 	v.val = val

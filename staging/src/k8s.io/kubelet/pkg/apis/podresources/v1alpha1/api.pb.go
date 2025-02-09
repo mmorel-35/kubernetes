@@ -386,7 +386,7 @@ func RegisterPodResourcesListerServer(s *grpc.Server, srv PodResourcesListerServ
 	s.RegisterService(&_PodResourcesLister_serviceDesc, srv)
 }
 
-func _PodResourcesLister_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _PodResourcesLister_List_Handler(srv any, ctx context.Context, dec func(any) error, interceptor grpc.UnaryServerInterceptor) (any, error) {
 	in := new(ListPodResourcesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -398,7 +398,7 @@ func _PodResourcesLister_List_Handler(srv interface{}, ctx context.Context, dec 
 		Server:     srv,
 		FullMethod: "/v1alpha1.PodResourcesLister/List",
 	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+	handler := func(ctx context.Context, req any) (any, error) {
 		return srv.(PodResourcesListerServer).List(ctx, req.(*ListPodResourcesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
@@ -781,7 +781,7 @@ func (this *ContainerDevices) String() string {
 	}, "")
 	return s
 }
-func valueToStringApi(v interface{}) string {
+func valueToStringApi(v any) string {
 	rv := reflect.ValueOf(v)
 	if rv.IsNil() {
 		return "nil"

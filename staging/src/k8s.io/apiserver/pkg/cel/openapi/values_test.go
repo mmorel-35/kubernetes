@@ -47,7 +47,7 @@ var (
 			Items: &spec.SchemaOrArray{Schema: mapListElementSchema},
 		},
 		VendorExtensible: spec.VendorExtensible{
-			Extensions: map[string]interface{}{
+			Extensions: map[string]any{
 				extListType:    listTypeMap,
 				extListMapKeys: []any{"key"},
 			}},
@@ -65,7 +65,7 @@ var (
 					},
 				}}}},
 		VendorExtensible: spec.VendorExtensible{
-			Extensions: map[string]interface{}{
+			Extensions: map[string]any{
 				extListType:    listTypeMap,
 				extListMapKeys: []any{"key1", "key2"},
 			}},
@@ -75,7 +75,7 @@ var (
 			Type:  []string{"array"},
 			Items: &spec.SchemaOrArray{Schema: stringSchema}},
 		VendorExtensible: spec.VendorExtensible{
-			Extensions: map[string]interface{}{
+			Extensions: map[string]any{
 				extListType: listTypeSet,
 			}},
 	}
@@ -111,22 +111,22 @@ func TestEquality(t *testing.T) {
 	}{
 		{
 			name: "map lists are equal regardless of order",
-			lhs: UnstructuredToVal([]interface{}{
-				map[string]interface{}{
+			lhs: UnstructuredToVal([]any{
+				map[string]any{
 					"key": "a",
 					"val": 1,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key": "b",
 					"val": 2,
 				},
 			}, mapListSchema),
-			rhs: UnstructuredToVal([]interface{}{
-				map[string]interface{}{
+			rhs: UnstructuredToVal([]any{
+				map[string]any{
 					"key": "b",
 					"val": 2,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key": "a",
 					"val": 1,
 				},
@@ -135,22 +135,22 @@ func TestEquality(t *testing.T) {
 		},
 		{
 			name: "map lists are not equal if contents differs",
-			lhs: UnstructuredToVal([]interface{}{
-				map[string]interface{}{
+			lhs: UnstructuredToVal([]any{
+				map[string]any{
 					"key": "a",
 					"val": 1,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key": "b",
 					"val": 2,
 				},
 			}, mapListSchema),
-			rhs: UnstructuredToVal([]interface{}{
-				map[string]interface{}{
+			rhs: UnstructuredToVal([]any{
+				map[string]any{
 					"key": "a",
 					"val": 1,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key": "b",
 					"val": 3,
 				},
@@ -159,26 +159,26 @@ func TestEquality(t *testing.T) {
 		},
 		{
 			name: "map lists are not equal if length differs",
-			lhs: UnstructuredToVal([]interface{}{
-				map[string]interface{}{
+			lhs: UnstructuredToVal([]any{
+				map[string]any{
 					"key": "a",
 					"val": 1,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key": "b",
 					"val": 2,
 				},
 			}, mapListSchema),
-			rhs: UnstructuredToVal([]interface{}{
-				map[string]interface{}{
+			rhs: UnstructuredToVal([]any{
+				map[string]any{
 					"key": "a",
 					"val": 1,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key": "b",
 					"val": 2,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key": "c",
 					"val": 3,
 				},
@@ -187,25 +187,25 @@ func TestEquality(t *testing.T) {
 		},
 		{
 			name: "multi-key map lists are equal regardless of order",
-			lhs: UnstructuredToVal([]interface{}{
-				map[string]interface{}{
+			lhs: UnstructuredToVal([]any{
+				map[string]any{
 					"key1": "a1",
 					"key2": "a2",
 					"val":  1,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key1": "b1",
 					"key2": "b2",
 					"val":  2,
 				},
 			}, multiKeyMapListSchema),
-			rhs: UnstructuredToVal([]interface{}{
-				map[string]interface{}{
+			rhs: UnstructuredToVal([]any{
+				map[string]any{
 					"key1": "b1",
 					"key2": "b2",
 					"val":  2,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key1": "a1",
 					"key2": "a2",
 					"val":  1,
@@ -215,25 +215,25 @@ func TestEquality(t *testing.T) {
 		},
 		{
 			name: "multi-key map lists with different contents are not equal",
-			lhs: UnstructuredToVal([]interface{}{
-				map[string]interface{}{
+			lhs: UnstructuredToVal([]any{
+				map[string]any{
 					"key1": "a1",
 					"key2": "a2",
 					"val":  1,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key1": "b1",
 					"key2": "b2",
 					"val":  2,
 				},
 			}, multiKeyMapListSchema),
-			rhs: UnstructuredToVal([]interface{}{
-				map[string]interface{}{
+			rhs: UnstructuredToVal([]any{
+				map[string]any{
 					"key1": "a1",
 					"key2": "a2",
 					"val":  1,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key1": "b1",
 					"key2": "b2",
 					"val":  3,
@@ -243,25 +243,25 @@ func TestEquality(t *testing.T) {
 		},
 		{
 			name: "multi-key map lists with different keys are not equal",
-			lhs: UnstructuredToVal([]interface{}{
-				map[string]interface{}{
+			lhs: UnstructuredToVal([]any{
+				map[string]any{
 					"key1": "a1",
 					"key2": "a2",
 					"val":  1,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key1": "b1",
 					"key2": "b2",
 					"val":  2,
 				},
 			}, multiKeyMapListSchema),
-			rhs: UnstructuredToVal([]interface{}{
-				map[string]interface{}{
+			rhs: UnstructuredToVal([]any{
+				map[string]any{
 					"key1": "a1",
 					"key2": "a2",
 					"val":  1,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key1": "c1",
 					"key2": "c2",
 					"val":  3,
@@ -271,20 +271,20 @@ func TestEquality(t *testing.T) {
 		},
 		{
 			name: "multi-key map lists with different lengths are not equal",
-			lhs: UnstructuredToVal([]interface{}{
-				map[string]interface{}{
+			lhs: UnstructuredToVal([]any{
+				map[string]any{
 					"key1": "a1",
 					"key2": "a2",
 					"val":  1,
 				},
 			}, multiKeyMapListSchema),
-			rhs: UnstructuredToVal([]interface{}{
-				map[string]interface{}{
+			rhs: UnstructuredToVal([]any{
+				map[string]any{
 					"key1": "a1",
 					"key2": "a2",
 					"val":  1,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key1": "b1",
 					"key2": "b2",
 					"val":  3,
@@ -294,98 +294,98 @@ func TestEquality(t *testing.T) {
 		},
 		{
 			name:  "set lists are equal regardless of order",
-			lhs:   UnstructuredToVal([]interface{}{"a", "b"}, setListSchema),
-			rhs:   UnstructuredToVal([]interface{}{"b", "a"}, setListSchema),
+			lhs:   UnstructuredToVal([]any{"a", "b"}, setListSchema),
+			rhs:   UnstructuredToVal([]any{"b", "a"}, setListSchema),
 			equal: true,
 		},
 		{
 			name:  "set lists are not equal if contents differ",
-			lhs:   UnstructuredToVal([]interface{}{"a", "b"}, setListSchema),
-			rhs:   UnstructuredToVal([]interface{}{"a", "c"}, setListSchema),
+			lhs:   UnstructuredToVal([]any{"a", "b"}, setListSchema),
+			rhs:   UnstructuredToVal([]any{"a", "c"}, setListSchema),
 			equal: false,
 		},
 		{
 			name:  "set lists are not equal if lengths differ",
-			lhs:   UnstructuredToVal([]interface{}{"a", "b"}, setListSchema),
-			rhs:   UnstructuredToVal([]interface{}{"a", "b", "c"}, setListSchema),
+			lhs:   UnstructuredToVal([]any{"a", "b"}, setListSchema),
+			rhs:   UnstructuredToVal([]any{"a", "b", "c"}, setListSchema),
 			equal: false,
 		},
 		{
 			name:  "identical atomic lists are equal",
-			lhs:   UnstructuredToVal([]interface{}{"a", "b"}, atomicListSchema),
-			rhs:   UnstructuredToVal([]interface{}{"a", "b"}, atomicListSchema),
+			lhs:   UnstructuredToVal([]any{"a", "b"}, atomicListSchema),
+			rhs:   UnstructuredToVal([]any{"a", "b"}, atomicListSchema),
 			equal: true,
 		},
 		{
 			name:  "atomic lists are not equal if order differs",
-			lhs:   UnstructuredToVal([]interface{}{"a", "b"}, atomicListSchema),
-			rhs:   UnstructuredToVal([]interface{}{"b", "a"}, atomicListSchema),
+			lhs:   UnstructuredToVal([]any{"a", "b"}, atomicListSchema),
+			rhs:   UnstructuredToVal([]any{"b", "a"}, atomicListSchema),
 			equal: false,
 		},
 		{
 			name:  "atomic lists are not equal if contents differ",
-			lhs:   UnstructuredToVal([]interface{}{"a", "b"}, atomicListSchema),
-			rhs:   UnstructuredToVal([]interface{}{"a", "c"}, atomicListSchema),
+			lhs:   UnstructuredToVal([]any{"a", "b"}, atomicListSchema),
+			rhs:   UnstructuredToVal([]any{"a", "c"}, atomicListSchema),
 			equal: false,
 		},
 		{
 			name:  "atomic lists are not equal if lengths differ",
-			lhs:   UnstructuredToVal([]interface{}{"a", "b"}, atomicListSchema),
-			rhs:   UnstructuredToVal([]interface{}{"a", "b", "c"}, atomicListSchema),
+			lhs:   UnstructuredToVal([]any{"a", "b"}, atomicListSchema),
+			rhs:   UnstructuredToVal([]any{"a", "b", "c"}, atomicListSchema),
 			equal: false,
 		},
 		{
 			name:  "empty objects are equal",
-			lhs:   UnstructuredToVal(map[string]interface{}{}, emptyObjectSchema),
-			rhs:   UnstructuredToVal(map[string]interface{}{}, emptyObjectSchema),
+			lhs:   UnstructuredToVal(map[string]any{}, emptyObjectSchema),
+			rhs:   UnstructuredToVal(map[string]any{}, emptyObjectSchema),
 			equal: true,
 		},
 		{
 			name:  "identical objects are equal",
-			lhs:   UnstructuredToVal(map[string]interface{}{"field1": "a", "field2": "b"}, objectSchema),
-			rhs:   UnstructuredToVal(map[string]interface{}{"field1": "a", "field2": "b"}, objectSchema),
+			lhs:   UnstructuredToVal(map[string]any{"field1": "a", "field2": "b"}, objectSchema),
+			rhs:   UnstructuredToVal(map[string]any{"field1": "a", "field2": "b"}, objectSchema),
 			equal: true,
 		},
 		{
 			name:  "objects are equal regardless of field order",
-			lhs:   UnstructuredToVal(map[string]interface{}{"field1": "a", "field2": "b"}, objectSchema),
-			rhs:   UnstructuredToVal(map[string]interface{}{"field2": "b", "field1": "a"}, objectSchema),
+			lhs:   UnstructuredToVal(map[string]any{"field1": "a", "field2": "b"}, objectSchema),
+			rhs:   UnstructuredToVal(map[string]any{"field2": "b", "field1": "a"}, objectSchema),
 			equal: true,
 		},
 		{
 			name:  "objects are not equal if contents differs",
-			lhs:   UnstructuredToVal(map[string]interface{}{"field1": "a", "field2": "b"}, objectSchema),
-			rhs:   UnstructuredToVal(map[string]interface{}{"field1": "a", "field2": "c"}, objectSchema),
+			lhs:   UnstructuredToVal(map[string]any{"field1": "a", "field2": "b"}, objectSchema),
+			rhs:   UnstructuredToVal(map[string]any{"field1": "a", "field2": "c"}, objectSchema),
 			equal: false,
 		},
 		{
 			name:  "objects are not equal if length differs",
-			lhs:   UnstructuredToVal(map[string]interface{}{"field1": "a", "field2": "b"}, objectSchema),
-			rhs:   UnstructuredToVal(map[string]interface{}{"field1": "a"}, objectSchema),
+			lhs:   UnstructuredToVal(map[string]any{"field1": "a", "field2": "b"}, objectSchema),
+			rhs:   UnstructuredToVal(map[string]any{"field1": "a"}, objectSchema),
 			equal: false,
 		},
 		{
 			name:  "identical maps are equal",
-			lhs:   UnstructuredToVal(map[string]interface{}{"key1": "a", "key2": "b"}, mapSchema),
-			rhs:   UnstructuredToVal(map[string]interface{}{"key1": "a", "key2": "b"}, mapSchema),
+			lhs:   UnstructuredToVal(map[string]any{"key1": "a", "key2": "b"}, mapSchema),
+			rhs:   UnstructuredToVal(map[string]any{"key1": "a", "key2": "b"}, mapSchema),
 			equal: true,
 		},
 		{
 			name:  "maps are equal regardless of field order",
-			lhs:   UnstructuredToVal(map[string]interface{}{"key1": "a", "key2": "b"}, mapSchema),
-			rhs:   UnstructuredToVal(map[string]interface{}{"key2": "b", "key1": "a"}, mapSchema),
+			lhs:   UnstructuredToVal(map[string]any{"key1": "a", "key2": "b"}, mapSchema),
+			rhs:   UnstructuredToVal(map[string]any{"key2": "b", "key1": "a"}, mapSchema),
 			equal: true,
 		},
 		{
 			name:  "maps are not equal if contents differs",
-			lhs:   UnstructuredToVal(map[string]interface{}{"key1": "a", "key2": "b"}, mapSchema),
-			rhs:   UnstructuredToVal(map[string]interface{}{"key1": "a", "key2": "c"}, mapSchema),
+			lhs:   UnstructuredToVal(map[string]any{"key1": "a", "key2": "b"}, mapSchema),
+			rhs:   UnstructuredToVal(map[string]any{"key1": "a", "key2": "c"}, mapSchema),
 			equal: false,
 		},
 		{
 			name:  "maps are not equal if length differs",
-			lhs:   UnstructuredToVal(map[string]interface{}{"key1": "a", "key2": "b"}, mapSchema),
-			rhs:   UnstructuredToVal(map[string]interface{}{"key1": "a", "key2": "b", "key3": "c"}, mapSchema),
+			lhs:   UnstructuredToVal(map[string]any{"key1": "a", "key2": "b"}, mapSchema),
+			rhs:   UnstructuredToVal(map[string]any{"key1": "a", "key2": "b", "key3": "c"}, mapSchema),
 			equal: false,
 		},
 	}
@@ -415,22 +415,22 @@ func TestEquality(t *testing.T) {
 func TestLister(t *testing.T) {
 	cases := []struct {
 		name         string
-		unstructured []interface{}
+		unstructured []any
 		schema       *spec.Schema
 		itemSchema   *spec.Schema
 		size         int64
 		notContains  []ref.Val
-		addition     []interface{}
-		expectAdded  []interface{}
+		addition     []any
+		expectAdded  []any
 	}{
 		{
 			name: "map list",
-			unstructured: []interface{}{
-				map[string]interface{}{
+			unstructured: []any{
+				map[string]any{
 					"key": "a",
 					"val": 1,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key": "b",
 					"val": 2,
 				},
@@ -439,35 +439,35 @@ func TestLister(t *testing.T) {
 			itemSchema: mapListElementSchema,
 			size:       2,
 			notContains: []ref.Val{
-				UnstructuredToVal(map[string]interface{}{
+				UnstructuredToVal(map[string]any{
 					"key": "a",
 					"val": 2,
 				}, mapListElementSchema),
-				UnstructuredToVal(map[string]interface{}{
+				UnstructuredToVal(map[string]any{
 					"key": "c",
 					"val": 1,
 				}, mapListElementSchema),
 			},
-			addition: []interface{}{
-				map[string]interface{}{
+			addition: []any{
+				map[string]any{
 					"key": "b",
 					"val": 3,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key": "c",
 					"val": 4,
 				},
 			},
-			expectAdded: []interface{}{
-				map[string]interface{}{
+			expectAdded: []any{
+				map[string]any{
 					"key": "a",
 					"val": 1,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key": "b",
 					"val": 3,
 				},
-				map[string]interface{}{
+				map[string]any{
 					"key": "c",
 					"val": 4,
 				},
@@ -475,23 +475,23 @@ func TestLister(t *testing.T) {
 		},
 		{
 			name:         "set list",
-			unstructured: []interface{}{"a", "b"},
+			unstructured: []any{"a", "b"},
 			schema:       setListSchema,
 			itemSchema:   stringSchema,
 			size:         2,
 			notContains:  []ref.Val{UnstructuredToVal("c", stringSchema)},
-			addition:     []interface{}{"b", "c"},
-			expectAdded:  []interface{}{"a", "b", "c"},
+			addition:     []any{"b", "c"},
+			expectAdded:  []any{"a", "b", "c"},
 		},
 		{
 			name:         "atomic list",
-			unstructured: []interface{}{"a", "b"},
+			unstructured: []any{"a", "b"},
 			schema:       atomicListSchema,
 			itemSchema:   stringSchema,
 			size:         2,
 			notContains:  []ref.Val{UnstructuredToVal("c", stringSchema)},
-			addition:     []interface{}{"b", "c"},
-			expectAdded:  []interface{}{"a", "b", "b", "c"},
+			addition:     []any{"b", "c"},
+			expectAdded:  []any{"a", "b", "b", "c"},
 		},
 	}
 
@@ -541,7 +541,7 @@ func TestLister(t *testing.T) {
 func TestMapper(t *testing.T) {
 	cases := []struct {
 		name           string
-		unstructured   map[string]interface{}
+		unstructured   map[string]any
 		schema         *spec.Schema
 		propertySchema func(key string) (*spec.Schema, bool)
 		size           int64
@@ -549,7 +549,7 @@ func TestMapper(t *testing.T) {
 	}{
 		{
 			name: "object",
-			unstructured: map[string]interface{}{
+			unstructured: map[string]any{
 				"field1": "a",
 				"field2": "b",
 			},
@@ -567,7 +567,7 @@ func TestMapper(t *testing.T) {
 		},
 		{
 			name: "map",
-			unstructured: map[string]interface{}{
+			unstructured: map[string]any{
 				"key1": "a",
 				"key2": "b",
 			},
@@ -587,8 +587,8 @@ func TestMapper(t *testing.T) {
 				t.Errorf("Expected Size to return %d but got %d", tc.size, mapper.Size().Value())
 			}
 			iter := mapper.Iterator()
-			iterResults := map[interface{}]struct{}{}
-			keys := map[interface{}]struct{}{}
+			iterResults := map[any]struct{}{}
+			keys := map[any]struct{}{}
 			for k := range tc.unstructured {
 				keys[k] = struct{}{}
 				get := mapper.Get(types.String(k)).Value()
@@ -621,16 +621,16 @@ func TestMapper(t *testing.T) {
 }
 
 func BenchmarkUnstructuredToVal(b *testing.B) {
-	u := []interface{}{
-		map[string]interface{}{
+	u := []any{
+		map[string]any{
 			"key": "a",
 			"val": 1,
 		},
-		map[string]interface{}{
+		map[string]any{
 			"key": "b",
 			"val": 2,
 		},
-		map[string]interface{}{
+		map[string]any{
 			"key": "@b",
 			"val": 2,
 		},
@@ -647,12 +647,12 @@ func BenchmarkUnstructuredToVal(b *testing.B) {
 }
 
 func BenchmarkUnstructuredToValWithEscape(b *testing.B) {
-	u := []interface{}{
-		map[string]interface{}{
+	u := []any{
+		map[string]any{
 			"key": "a.1",
 			"val": "__i.1",
 		},
-		map[string]interface{}{
+		map[string]any{
 			"key": "b.1",
 			"val": 2,
 		},
