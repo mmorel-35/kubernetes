@@ -199,8 +199,8 @@ func (g *genGoMarshal) generateForOptionalAlias(w io.Writer, locator ProtobufLoc
 	g.emitUnmarshalOptionalAlias(w, typeName, &field)
 	// Only emit String() if the type doesn't already define one. Check by
 	// looking at both the genng-scanned methods and the Init pre-scan.
-	_, hasStringMethod := t.Methods["String"]
-	if !hasStringMethod && !g.typesWithValueStringMethod[typeName] {
+	_, typeDefinesStringMethod := t.Methods["String"]
+	if !typeDefinesStringMethod && !g.typesWithValueStringMethod[typeName] {
 		g.emitString(w, typeName, nil, true)
 	}
 	return nil
