@@ -172,8 +172,6 @@ func (p *protobufPackage) ExtractGeneratedType(t *ast.TypeSpec) bool {
 func (p *protobufPackage) generatorsFunc(c *generator.Context) []generator.Generator {
 	generators := []generator.Generator{}
 
-	p.Imports.AddNullable()
-
 	generators = append(generators, &genProtoIDL{
 		GoGenerator: generator.GoGenerator{
 			OutputFilename: "generated", // the extension is added later
@@ -185,6 +183,21 @@ func (p *protobufPackage) generatorsFunc(c *generator.Context) []generator.Gener
 		omitGogo:       p.OmitGogo,
 		omitFieldTypes: p.OmitFieldTypes,
 	})
+
+	// Generate the Go marshal/unmarshal code directly from Go types,
+	// replacing the former protoc-gen-gogo pipeline.  This runs on every
+	// pass so the file is always up-to-date; the output is idempotent.
+	generators = append(generators, &genGoMarshal{
+		GoGenerator: generator.GoGenerator{
+			OutputFilename: "generated.pb",
+		},
+		localPackage:   types.Name{Package: p.Name(), Path: p.Path()},
+		localGoPackage: types.Name{Package: p.Path(), Name: p.GoPackageName()},
+		protoImports:   p.Imports,
+		generateAll:    p.GenerateAll,
+		omitFieldTypes: p.OmitFieldTypes,
+	})
+
 	return generators
 }
 

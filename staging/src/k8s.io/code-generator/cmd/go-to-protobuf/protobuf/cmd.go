@@ -19,10 +19,8 @@ limitations under the License.
 package protobuf
 
 import (
-	"bytes"
 	"fmt"
 	"log"
-	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -102,9 +100,6 @@ func Run(g *Generator) {
 		log.Fatalf("Both apimachinery-packages and packages are empty. At least one package must be specified.")
 	}
 
-	if g.DropGogoGo && g.SkipGeneratedRewrite {
-		log.Fatalf("--drop-gogo-go=true and --skip-generated-rewrite=true are mutually exclusive")
-	}
 
 	// Build up a list of packages to load from all the inputs.  Track the
 	// special modifiers for each.  NOTE: This does not support pkg/... syntax.
@@ -245,91 +240,11 @@ func Run(g *Generator) {
 		return
 	}
 
-	if _, err := exec.LookPath("protoc"); err != nil {
-		log.Fatalf("Unable to find 'protoc': %v", err)
-	}
-
-	searchArgs := []string{"-I", ".", "-I", g.OutputDir}
-	if len(g.ProtoImport) != 0 {
-		for _, s := range g.ProtoImport {
-			searchArgs = append(searchArgs, "-I", s)
-		}
-	}
-	// Despite docs saying that `--gogo_out=paths=source_relative:.` will
-	// output the .pb.go file to the same directory as the .proto file, it
-	// doesn't. Given example.com/foo/bar.proto (found in one of the -I paths
-	// above), the output becomes
-	// $output_base/example.com/foo/example.com/foo/bar.pb.go - basically
-	// useless.  Users should set the output-dir to a single dir under which
-	// all the packages in question live (e.g. staging/src in kubernetes).
-	// Alternately, we could generate into a temp path and then move the
-	// resulting file back to the input dir, but that seems brittle in other
-	// ways.
-	args := searchArgs
-	args = append(args, fmt.Sprintf("--gogo_out=%s", g.OutputDir))
-
-	buf := &bytes.Buffer{}
-	if len(g.Conditional) > 0 {
-		fmt.Fprintf(buf, "// +build %s\n\n", g.Conditional)
-	}
-	buf.Write(boilerplate)
-
-	for _, outputPackage := range outputPackages {
-		p := outputPackage.(*protobufPackage)
-
-		path := filepath.Join(g.OutputDir, p.ImportPath())
-		outputPath := filepath.Join(g.OutputDir, p.OutputPath())
-
-		// generate the gogoprotobuf protoc
-		cmd := exec.Command("protoc", append(args, path)...)
-		out, err := cmd.CombinedOutput()
-		if err != nil {
-			log.Println(strings.Join(cmd.Args, " "))
-			log.Println(string(out))
-			log.Fatalf("Unable to run protoc on %s: %v", p.Name(), err)
-		}
-
-		if g.SkipGeneratedRewrite {
-			continue
-		}
-
-		// alter the generated protobuf file to remove the generated types (but leave the serializers) and rewrite the
-		// package statement to match the desired package name
-		if err := RewriteGeneratedGogoProtobufFile(outputPath, p.ExtractGeneratedType, p.OptionalTypeName, buf.Bytes(), g.DropGogoGo); err != nil {
-			log.Fatalf("Unable to rewrite generated %s: %v", outputPath, err)
-		}
-
-		outputPaths := []string{outputPath}
-
-		// sort imports
-		cmd = exec.Command("goimports", append([]string{"-w"}, outputPaths...)...)
-		out, err = cmd.CombinedOutput()
-		if len(out) > 0 {
-			log.Print(string(out))
-		}
-		if err != nil {
-			log.Println(strings.Join(cmd.Args, " "))
-			log.Fatalf("Unable to rewrite imports for %s: %v", p.Name(), err)
-		}
-
-		// format and simplify the generated file
-		cmd = exec.Command("gofmt", append([]string{"-s", "-w"}, outputPaths...)...)
-		out, err = cmd.CombinedOutput()
-		if len(out) > 0 {
-			log.Print(string(out))
-		}
-		if err != nil {
-			log.Println(strings.Join(cmd.Args, " "))
-			log.Fatalf("Unable to apply gofmt for %s: %v", p.Name(), err)
-		}
-	}
-
-	if g.SkipGeneratedRewrite {
-		return
-	}
-
 	if !g.KeepGogoproto {
-		// generate, but do so without gogoprotobuf extensions
+		// Re-generate the .proto files without gogoproto extensions (clean IDL).
+		// The genGoMarshal generator also runs in this pass, producing the
+		// generated.pb.go files directly from Go type information, without
+		// requiring protoc or protoc-gen-gogo.
 		for _, outputPackage := range outputPackages {
 			p := outputPackage.(*protobufPackage)
 			p.OmitGogo = true
@@ -338,6 +253,7 @@ func Run(g *Generator) {
 			log.Fatalf("Failed executing local generator: %v", err)
 		}
 	}
+
 
 	for _, outputPackage := range outputPackages {
 		p := outputPackage.(*protobufPackage)
