@@ -197,7 +197,10 @@ func (g *genGoMarshal) generateForOptionalAlias(w io.Writer, locator ProtobufLoc
 	g.emitMarshalOptionalAlias(w, typeName, &field)
 	g.emitSizeOptionalAlias(w, typeName, &field)
 	g.emitUnmarshalOptionalAlias(w, typeName, &field)
-	if !g.typesWithValueStringMethod[typeName] {
+	// Only emit String() if the type doesn't already define one. Check by
+	// looking at both the genng-scanned methods and the Init pre-scan.
+	_, hasMethod := t.Methods["String"]
+	if !hasMethod && !g.typesWithValueStringMethod[typeName] {
 		g.emitString(w, typeName, nil, true)
 	}
 	return nil
@@ -361,7 +364,7 @@ func (g *genGoMarshal) emitMarshalRepeatedField(w io.Writer, f *protoField, fiel
 		// string / bytes
 		fmt.Fprintf(w, "\t\t\ti -= len(%s)\n\t\t\tcopy(dAtA[i:], %s)\n\t\t\ti = encodeVarintGenerated(dAtA, i, uint64(len(%s)))\n", elem, elem, elem)
 	}
-	fmt.Fprintf(w, "%s\n", indentTagCode(tagCode, "\t\t"))
+	fmt.Fprintf(w, "%s\n", indentTagCode(tagCode, "\t\t\t"))
 	fmt.Fprint(w, "\t\t}\n\t}\n")
 }
 
@@ -436,7 +439,7 @@ func (g *genGoMarshal) emitMarshalMapField(w io.Writer, f *protoField, fieldAcce
 	// Write the map entry outer length.
 	fmt.Fprint(w, "\t\t\ti = encodeVarintGenerated(dAtA, i, uint64(baseI-i))\n")
 	// Write the map entry tag.
-	fmt.Fprintf(w, "%s\n", indentTagCode(tagCode, "\t\t"))
+	fmt.Fprintf(w, "%s\n", indentTagCode(tagCode, "\t\t\t"))
 	fmt.Fprint(w, "\t\t}\n\t}\n")
 }
 
@@ -473,7 +476,7 @@ func (g *genGoMarshal) emitMarshalOptionalAlias(w io.Writer, typeName string, f 
 		// string
 		fmt.Fprintf(w, "\t\t\ti -= len(%s)\n\t\t\tcopy(dAtA[i:], %s)\n\t\t\ti = encodeVarintGenerated(dAtA, i, uint64(len(%s)))\n", elem, elem, elem)
 	}
-	fmt.Fprintf(w, "%s\n", indentTagCode(tagCode, "\t\t"))
+	fmt.Fprintf(w, "%s\n", indentTagCode(tagCode, "\t\t\t"))
 	fmt.Fprint(w, "\t\t}\n\t}\n")
 	fmt.Fprint(w, "\treturn len(dAtA) - i, nil\n}\n\n")
 }
