@@ -199,8 +199,8 @@ func (g *genGoMarshal) generateForOptionalAlias(w io.Writer, locator ProtobufLoc
 	g.emitUnmarshalOptionalAlias(w, typeName, &field)
 	// Only emit String() if the type doesn't already define one. Check by
 	// looking at both the genng-scanned methods and the Init pre-scan.
-	_, hasMethod := t.Methods["String"]
-	if !hasMethod && !g.typesWithValueStringMethod[typeName] {
+	_, hasStringMethod := t.Methods["String"]
+	if !hasStringMethod && !g.typesWithValueStringMethod[typeName] {
 		g.emitString(w, typeName, nil, true)
 	}
 	return nil
@@ -409,13 +409,6 @@ func (g *genGoMarshal) emitMarshalMapField(w io.Writer, f *protoField, fieldAcce
 	case isProtoMessageType(f.Type.Elem):
 		g.emitMapValueMessage(w, valAccess, castVal)
 	case isVarintType(valProtoName) && valPkg == "":
-		if castVal != "" {
-			castValPkg, castValTyp, castValAlias := castTypeComponents(castVal)
-			if castValPkg != "" {
-				g.addImport(castValPkg, castValAlias)
-			}
-			_ = castValTyp
-		}
 		fmt.Fprintf(w, "\t\t\ti = encodeVarintGenerated(dAtA, i, uint64(%s))\n", valAccess)
 		fmt.Fprint(w, "\t\t\ti--\n\t\t\tdAtA[i] = 0x10\n") // field 2, wire type 0
 	case valProtoName == "bool" && valPkg == "":
@@ -590,19 +583,16 @@ func (g *genGoMarshal) emitSizeMapField(w io.Writer, f *protoField, fieldAccess,
 	//                    + 1 (val tag) + sovGenerated(valLen) + valLen
 	//                    + outer tag size + sovGenerated(total)
 	fmt.Fprint(w, "\t\t\tmapEntrySize := 1 + len(k) + sovGenerated(uint64(len(k)))\n")
+	fmt.Fprint(w, "\t\t\t_ = v\n")
 	switch {
 	case isProtoMessageType(f.Type.Elem):
-		fmt.Fprintf(w, "\t\t\t_ = v\n")
 		fmt.Fprintf(w, "\t\t\tmapEntrySize += 1 + v.Size() + sovGenerated(uint64(v.Size()))\n")
 	case isVarintType(valProtoName) && valPkg == "":
-		fmt.Fprintf(w, "\t\t\t_ = v\n")
 		fmt.Fprintf(w, "\t\t\tmapEntrySize += 1 + sovGenerated(uint64(v))\n")
 	case valProtoName == "bool" && valPkg == "":
-		fmt.Fprintf(w, "\t\t\t_ = v\n")
 		fmt.Fprint(w, "\t\t\tmapEntrySize += 1 + 1\n")
 	default:
 		// string/bytes value
-		fmt.Fprintf(w, "\t\t\t_ = v\n")
 		fmt.Fprintf(w, "\t\t\tmapEntrySize += 1 + len(v) + sovGenerated(uint64(len(v)))\n")
 	}
 	fmt.Fprintf(w, "\t\t\tn += mapEntrySize + %s + sovGenerated(uint64(mapEntrySize))\n", ts)
@@ -913,9 +903,6 @@ func (g *genGoMarshal) emitUnmarshalMapField(w io.Writer, f *protoField, fieldAc
 	switch {
 	case isProtoMessageType(f.Type.Elem):
 		fmt.Fprint(w, unmarshalMapMsgVal)
-		if castVal != "" {
-			_ = castVal
-		}
 	case isVarintType(valProto) && valPkg == "":
 		fmt.Fprintf(w, "\t\t\t\t\tvar mapvaltemp %s\n", protoToGoType(valProto))
 		fmt.Fprint(w, unmarshalMapVarintKeyLoop("mapvaltemp", protoToGoType(valProto)))
@@ -1015,12 +1002,11 @@ func (g *genGoMarshal) emitString(w io.Writer, typeName string, fields []protoFi
 		goName := g.goFieldName(&f)
 		fieldExpr := "this." + goName
 		protoName := f.Type.Name.Name
-		pkg := f.Type.Name.Package
 		if f.Map {
 			fmt.Fprintf(w, "\t\t`%s:` + fmt.Sprintf(\"%%v\", %s) + `,`,\n", goName, fieldExpr)
 			continue
 		}
-		if f.Repeated || (f.Nullable && !isMessageType(&f)) {
+		if f.Repeated {
 			fmt.Fprintf(w, "\t\t`%s:` + fmt.Sprintf(\"%%v\", %s) + `,`,\n", goName, fieldExpr)
 			continue
 		}
@@ -1032,7 +1018,12 @@ func (g *genGoMarshal) emitString(w io.Writer, typeName string, fields []protoFi
 			}
 			continue
 		}
-		_ = pkg
+		if f.Nullable {
+			// Pointer to a primitive type: use valueToStringGenerated for nil-safe formatting.
+			g.addImport("reflect", "reflect")
+			fmt.Fprintf(w, "\t\t`%s:` + valueToStringGenerated(%s) + `,`,\n", goName, fieldExpr)
+			continue
+		}
 		fmt.Fprintf(w, "\t\t`%s:` + fmt.Sprintf(\"%%v\", %s) + `,`,\n", goName, fieldExpr)
 	}
 	fmt.Fprint(w, "\t\t`}`,\n\t}, \"\")\n\treturn s\n}\n\n")
@@ -1682,12 +1673,7 @@ var (
 	ErrIntOverflowGenerated          = fmt.Errorf("proto: integer overflow")
 	ErrUnexpectedEndOfGroupGenerated = fmt.Errorf("proto: unexpected end of group")
 )
-`
-
-// valueToStringGenerated is a helper emitted for pointer fields in String().
-// It's referenced by the generated String() implementations.
-func valueToStringGeneratedHelper() string {
-	return `func valueToStringGenerated(v interface{}) string {
+func valueToStringGenerated(v interface{}) string {
 	rv := reflect.ValueOf(v)
 	if rv.IsNil() {
 		return "nil"
@@ -1696,4 +1682,3 @@ func valueToStringGeneratedHelper() string {
 	return fmt.Sprintf("*%v", pv)
 }
 `
-}
