@@ -403,11 +403,16 @@ func (g *genGoMarshal) emitMarshalMapField(w io.Writer, f *protoField, fieldAcce
 
 	valAccess := fieldAccess + "[" + mapKeyExpr + "]"
 
+	// For message values, extract to a local variable because map index
+	// expressions are not addressable (needed for pointer-receiver MarshalToSizedBuffer).
+	if isProtoMessageType(f.Type.Elem) {
+		fmt.Fprintf(w, "\t\t\tv := %s\n", valAccess)
+	}
 	fmt.Fprint(w, "\t\t\tbaseI := i\n")
 	// Write value first (field 2), then key (field 1), then total length.
 	switch {
 	case isProtoMessageType(f.Type.Elem):
-		g.emitMapValueMessage(w, valAccess, castVal)
+		g.emitMapValueMessage(w, "&v", castVal)
 	case isVarintType(valProtoName) && valPkg == "":
 		fmt.Fprintf(w, "\t\t\ti = encodeVarintGenerated(dAtA, i, uint64(%s))\n", valAccess)
 		fmt.Fprint(w, "\t\t\ti--\n\t\t\tdAtA[i] = 0x10\n") // field 2, wire type 0
@@ -586,7 +591,9 @@ func (g *genGoMarshal) emitSizeMapField(w io.Writer, f *protoField, fieldAccess,
 	fmt.Fprint(w, "\t\t\t_ = v\n")
 	switch {
 	case isProtoMessageType(f.Type.Elem):
-		fmt.Fprintf(w, "\t\t\tmapEntrySize += 1 + v.Size() + sovGenerated(uint64(v.Size()))\n")
+		// Compute v.Size() once; reuse l for both the length value and sovGenerated.
+		fmt.Fprint(w, "\t\t\tl = v.Size()\n")
+		fmt.Fprint(w, "\t\t\tmapEntrySize += 1 + l + sovGenerated(uint64(l))\n")
 	case isVarintType(valProtoName) && valPkg == "":
 		fmt.Fprintf(w, "\t\t\tmapEntrySize += 1 + sovGenerated(uint64(v))\n")
 	case valProtoName == "bool" && valPkg == "":
