@@ -172,6 +172,12 @@ func (p *protobufPackage) ExtractGeneratedType(t *ast.TypeSpec) bool {
 func (p *protobufPackage) generatorsFunc(c *generator.Context) []generator.Generator {
 	generators := []generator.Generator{}
 
+	// When gogoproto options are emitted (OmitGogo=false), the generated .proto
+	// file references gogoproto.* options and must import gogo.proto.
+	if !p.OmitGogo {
+		p.Imports.AddNullable()
+	}
+
 	generators = append(generators, &genProtoIDL{
 		GoGenerator: generator.GoGenerator{
 			OutputFilename: "generated", // the extension is added later

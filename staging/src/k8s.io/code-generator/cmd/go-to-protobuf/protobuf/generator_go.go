@@ -19,6 +19,7 @@ package protobuf
 import (
 	"fmt"
 	"io"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -122,6 +123,7 @@ func (g *genGoMarshal) Imports(c *generator.Context) []string {
 			out = append(out, fmt.Sprintf("%s %s", alias, strconv.Quote(path)))
 		}
 	}
+	sort.Strings(out)
 	return out
 }
 
@@ -378,16 +380,37 @@ func (g *genGoMarshal) emitMarshalMapField(w io.Writer, f *protoField, fieldAcce
 	valProtoName := f.Type.Elem.Name.Name
 	valPkg := f.Type.Elem.Name.Package
 
-	// Sort keys for deterministic output.
+	// Sort keys for deterministic output. The slice element type and sort
+	// function depend on the proto key type so the generated code compiles
+	// for integer and bool keys, not just string keys.
 	keysVar := "keysFor" + g.goFieldName(f)
 	fmt.Fprintf(w, "\tif len(%s) > 0 {\n", fieldAccess)
-	fmt.Fprintf(w, "\t\t%s := make([]string, 0, len(%s))\n", keysVar, fieldAccess)
-	fmt.Fprintf(w, "\t\tfor k := range %s {\n\t\t\t%s = append(%s, string(k))\n\t\t}\n", fieldAccess, keysVar, keysVar)
-	fmt.Fprintf(w, "\t\tsort.Strings(%s)\n", keysVar)
+
+	var keyExpr string // expression for the current key inside the iteration loop
+	switch {
+	case isVarintType(keyProtoName):
+		goKeyType := protoToGoType(keyProtoName)
+		fmt.Fprintf(w, "\t\t%s := make([]%s, 0, len(%s))\n", keysVar, goKeyType, fieldAccess)
+		fmt.Fprintf(w, "\t\tfor k := range %s {\n\t\t\t%s = append(%s, %s(k))\n\t\t}\n", fieldAccess, keysVar, keysVar, goKeyType)
+		fmt.Fprintf(w, "\t\tsort.Slice(%s, func(i, j int) bool { return %s[i] < %s[j] })\n", keysVar, keysVar, keysVar)
+		keyExpr = keysVar + "[iNdEx]"
+	case keyProtoName == "bool":
+		fmt.Fprintf(w, "\t\t%s := make([]bool, 0, len(%s))\n", keysVar, fieldAccess)
+		fmt.Fprintf(w, "\t\tfor k := range %s {\n\t\t\t%s = append(%s, bool(k))\n\t\t}\n", fieldAccess, keysVar, keysVar)
+		fmt.Fprintf(w, "\t\tsort.Slice(%s, func(i, j int) bool { return !%s[i] && %s[j] })\n", keysVar, keysVar, keysVar)
+		keyExpr = keysVar + "[iNdEx]"
+	default:
+		// String key (the common Kubernetes case; also handles castkey with string underlying).
+		fmt.Fprintf(w, "\t\t%s := make([]string, 0, len(%s))\n", keysVar, fieldAccess)
+		fmt.Fprintf(w, "\t\tfor k := range %s {\n\t\t\t%s = append(%s, string(k))\n\t\t}\n", fieldAccess, keysVar, keysVar)
+		fmt.Fprintf(w, "\t\tsort.Strings(%s)\n", keysVar)
+		keyExpr = keysVar + "[iNdEx]"
+	}
+
 	fmt.Fprintf(w, "\t\tfor iNdEx := len(%s) - 1; iNdEx >= 0; iNdEx-- {\n", keysVar)
 
-	// Reconstruct the key access with possible cast.
-	keyExpr := keysVar + "[iNdEx]"
+	// Build the map lookup expression: apply castkey cast if needed to convert
+	// back from the native slice type to the actual map key type.
 	mapKeyExpr := keyExpr
 	if castKey != "" {
 		castKeyPkg, castKeyType, castKeyAlias := castTypeComponents(castKey)
@@ -397,9 +420,9 @@ func (g *genGoMarshal) emitMarshalMapField(w io.Writer, f *protoField, fieldAcce
 		} else {
 			mapKeyExpr = castKeyType + "(" + keyExpr + ")"
 		}
-	} else if keyProtoName != "string" {
-		mapKeyExpr = keyProtoName + "(" + keyExpr + ")"
 	}
+	// (No proto-name cast needed when castKey is unset: the slice type already
+	//  matches the map key type for varint/bool, and string for string keys.)
 
 	valAccess := fieldAccess + "[" + mapKeyExpr + "]"
 
@@ -412,7 +435,7 @@ func (g *genGoMarshal) emitMarshalMapField(w io.Writer, f *protoField, fieldAcce
 	// Write value first (field 2), then key (field 1), then total length.
 	switch {
 	case isProtoMessageType(f.Type.Elem):
-		g.emitMapValueMessage(w, "&v", castVal)
+		g.emitMapValueMessage(w, "(&v)", castVal)
 	case isVarintType(valProtoName) && valPkg == "":
 		fmt.Fprintf(w, "\t\t\ti = encodeVarintGenerated(dAtA, i, uint64(%s))\n", valAccess)
 		fmt.Fprint(w, "\t\t\ti--\n\t\t\tdAtA[i] = 0x10\n") // field 2, wire type 0
@@ -424,13 +447,17 @@ func (g *genGoMarshal) emitMarshalMapField(w io.Writer, f *protoField, fieldAcce
 		fmt.Fprintf(w, "\t\t\ti -= len(%s)\n\t\t\tcopy(dAtA[i:], %s)\n\t\t\ti = encodeVarintGenerated(dAtA, i, uint64(len(%s)))\n", valAccess, valAccess, valAccess)
 		fmt.Fprint(w, "\t\t\ti--\n\t\t\tdAtA[i] = 0x12\n") // field 2, wire type 2
 	}
-	// Write key (field 1).
+	// Write key (field 1), encoding based on key proto type.
 	switch {
 	case isVarintType(keyProtoName):
+		// keyExpr is already the native integer type.
 		fmt.Fprintf(w, "\t\t\ti = encodeVarintGenerated(dAtA, i, uint64(%s))\n", keyExpr)
 		fmt.Fprint(w, "\t\t\ti--\n\t\t\tdAtA[i] = 0x8\n") // field 1, wire type 0
+	case keyProtoName == "bool":
+		fmt.Fprintf(w, "\t\t\ti--\n\t\t\tif %s {\n\t\t\t\tdAtA[i] = 1\n\t\t\t} else {\n\t\t\t\tdAtA[i] = 0\n\t\t\t}\n", keyExpr)
+		fmt.Fprint(w, "\t\t\ti--\n\t\t\tdAtA[i] = 0x8\n") // field 1, wire type 0
 	default:
-		// string key
+		// string key: keyExpr is a string.
 		fmt.Fprintf(w, "\t\t\ti -= len(%s)\n\t\t\tcopy(dAtA[i:], %s)\n\t\t\ti = encodeVarintGenerated(dAtA, i, uint64(len(%s)))\n", keyExpr, keyExpr, keyExpr)
 		fmt.Fprint(w, "\t\t\ti--\n\t\t\tdAtA[i] = 0xa\n") // field 1, wire type 2
 	}
@@ -578,17 +605,27 @@ func (g *genGoMarshal) emitSizeField(w io.Writer, f *protoField) {
 }
 
 func (g *genGoMarshal) emitSizeMapField(w io.Writer, f *protoField, fieldAccess, ts string) {
+	keyProtoName := f.Type.Key.Name.Name
 	valProtoName := f.Type.Elem.Name.Name
 	valPkg := f.Type.Elem.Name.Package
 
 	fmt.Fprintf(w, "\tif len(%s) > 0 {\n", fieldAccess)
 	fmt.Fprintf(w, "\t\tfor k, v := range %s {\n", fieldAccess)
-	// Each map entry is a length-delimited message with key (field1) and value (field2).
-	// Compute entry size:  1 (key tag) + sovGenerated(keyLen) + keyLen
-	//                    + 1 (val tag) + sovGenerated(valLen) + valLen
-	//                    + outer tag size + sovGenerated(total)
-	fmt.Fprint(w, "\t\t\tmapEntrySize := 1 + len(k) + sovGenerated(uint64(len(k)))\n")
+	fmt.Fprint(w, "\t\t\t_ = k\n")
 	fmt.Fprint(w, "\t\t\t_ = v\n")
+	// Each map entry is a length-delimited message with key (field1) and value (field2).
+	// Key size depends on the proto key type.
+	switch {
+	case isVarintType(keyProtoName):
+		// Varint key: 1 byte tag + varint-encoded value.
+		fmt.Fprint(w, "\t\t\tmapEntrySize := 1 + sovGenerated(uint64(k))\n")
+	case keyProtoName == "bool":
+		// Bool key: 1 byte tag + 1 byte value.
+		fmt.Fprint(w, "\t\t\tmapEntrySize := 1 + 1\n")
+	default:
+		// String key (the common Kubernetes case): 1 byte tag + varint(len) + bytes.
+		fmt.Fprint(w, "\t\t\tmapEntrySize := 1 + len(k) + sovGenerated(uint64(len(k)))\n")
+	}
 	switch {
 	case isProtoMessageType(f.Type.Elem):
 		// Compute v.Size() once; reuse l for both the length value and sovGenerated.
