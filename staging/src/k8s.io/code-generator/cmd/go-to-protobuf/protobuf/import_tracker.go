@@ -38,6 +38,8 @@ func NewImportTracker(local types.Name, typesToAdd ...*types.Type) *ImportTracke
 }
 
 // AddNullable ensures that support for the nullable Gogo-protobuf extension is added.
+// This is required whenever gogoproto options are emitted in the generated .proto file
+// (i.e. when OmitGogo is false).
 func (tracker *ImportTracker) AddNullable() {
 	tracker.AddType(&types.Type{
 		Kind: types.Protobuf,
@@ -48,3 +50,4 @@ func (tracker *ImportTracker) AddNullable() {
 		},
 	})
 }
+
