@@ -419,3 +419,48 @@ func TestEmitMarshalMapField_MessageValue(t *testing.T) {
 		t.Errorf("'v :=' must appear before 'baseI := i', got:\n%s", code)
 	}
 }
+
+// ---------------------------------------------------------------------------
+// emitUnmarshalMapField: cross-package message value type aliasing
+// ---------------------------------------------------------------------------
+
+func TestEmitUnmarshalMapField_CrossPackageMessageValue(t *testing.T) {
+	g := newGenGoMarshal()
+	// map[string]metav1.Time — value type is from another package.
+	f := &protoField{
+		Tag:  5,
+		Name: "DisruptedPods",
+		Map:  true,
+		Type: &types.Type{
+			Key: &types.Type{
+				Name: types.Name{Name: "string"},
+			},
+			Elem: &types.Type{
+				Name: types.Name{
+					Name:    "Time",
+					Package: "metav1",
+					Path:    "k8s.io/apimachinery/pkg/apis/meta/v1/generated.proto",
+				},
+			},
+		},
+		Extras: map[string]string{},
+	}
+
+	var buf bytes.Buffer
+	g.emitUnmarshalMapField(&buf, f, "m.DisruptedPods", "MyStruct", "")
+	code := buf.String()
+
+	// The generated code must qualify the value type with the import alias.
+	// For path "k8s.io/apimachinery/pkg/apis/meta/v1" the alias is
+	// "k8s_io_apimachinery_pkg_apis_meta_v1".
+	wantType := "k8s_io_apimachinery_pkg_apis_meta_v1.Time{}"
+	if !strings.Contains(code, wantType) {
+		t.Errorf("expected qualified type %q in unmarshal map field code, got:\n%s", wantType, code)
+	}
+
+	// The import must also have been recorded.
+	wantPkg := "k8s.io/apimachinery/pkg/apis/meta/v1"
+	if _, ok := g.neededImports[wantPkg]; !ok {
+		t.Errorf("expected import %q to be recorded, neededImports=%v", wantPkg, g.neededImports)
+	}
+}

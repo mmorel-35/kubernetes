@@ -23,6 +23,7 @@ import (
 	"strconv"
 	"strings"
 
+	gengo "k8s.io/gengo/v2"
 	"k8s.io/gengo/v2/generator"
 	"k8s.io/gengo/v2/namer"
 	"k8s.io/gengo/v2/types"
@@ -47,6 +48,10 @@ type genGoMarshal struct {
 	// neededImports tracks Go import path -> alias for the generated file.
 	// Populated during GenerateType, consumed by Imports().
 	neededImports map[string]string
+
+	// needsHelpers is set when at least one type had its marshal/unmarshal/size
+	// methods generated. Controls whether sharedHelpersCode is emitted in Finalize.
+	needsHelpers bool
 
 	// typesWithValueStringMethod holds types that already define a String()
 	// method with a value (non-pointer) receiver, so we can emit a separate
@@ -148,8 +153,13 @@ func (g *genGoMarshal) GenerateType(c *generator.Context, t *types.Type, w io.Wr
 }
 
 // Finalize writes the package-level shared helpers at the end of the file.
+// Helpers are only emitted when at least one type had marshal/unmarshal/size
+// methods generated, avoiding duplicate-symbol errors in packages that already
+// define these helpers in hand-written files (e.g. quantity_proto.go).
 func (g *genGoMarshal) Finalize(c *generator.Context, w io.Writer) error {
-	io.WriteString(w, sharedHelpersCode) //nolint:errcheck
+	if g.needsHelpers {
+		io.WriteString(w, sharedHelpersCode) //nolint:errcheck
+	}
 	return nil
 }
 
@@ -164,13 +174,43 @@ func (g *genGoMarshal) generateForStruct(w io.Writer, locator ProtobufLocator, t
 		return fmt.Errorf("unable to get fields for %s: %v", typeName, err)
 	}
 
+	// Parse protobuf.options.* comment tags (same logic as genProtoIDL.doStruct).
+	// This honours +protobuf.options.marshal=false (custom hand-written serializer)
+	// and +(gogoproto.goproto_stringer)=false (custom String() method).
+	generateMarshal := true
+	generateStringer := true
+	allOptions := gengo.ExtractCommentTags("+", t.CommentLines)
+	for k, v := range allOptions {
+		if !strings.HasPrefix(k, "protobuf.options.") {
+			continue
+		}
+		if len(v) == 0 {
+			continue
+		}
+		switch strings.TrimPrefix(k, "protobuf.options.") {
+		case "marshal":
+			if v[0] == "false" {
+				generateMarshal = false
+			}
+		case "(gogoproto.goproto_stringer)":
+			if v[0] == "false" {
+				generateStringer = false
+			}
+		}
+	}
+
 	g.emitReset(w, typeName, false)
-	g.emitMarshal(w, typeName, false)
-	g.emitMarshalTo(w, typeName, false)
-	g.emitMarshalToSizedBuffer(w, typeName, fields, false)
-	g.emitSize(w, typeName, fields, false)
-	g.emitUnmarshal(w, typeName, fields, false)
-	g.emitString(w, typeName, fields, false)
+	if generateMarshal {
+		g.needsHelpers = true
+		g.emitMarshal(w, typeName, false)
+		g.emitMarshalTo(w, typeName, false)
+		g.emitMarshalToSizedBuffer(w, typeName, fields, false)
+		g.emitSize(w, typeName, fields, false)
+		g.emitUnmarshal(w, typeName, fields, false)
+	}
+	if generateStringer {
+		g.emitString(w, typeName, fields, false)
+	}
 	return nil
 }
 
@@ -180,6 +220,12 @@ func (g *genGoMarshal) generateForStruct(w io.Writer, locator ProtobufLocator, t
 
 func (g *genGoMarshal) generateForOptionalAlias(w io.Writer, locator ProtobufLocator, t *types.Type) error {
 	typeName := t.Name.Name
+
+	// Map-backed optional aliases are not supported by the slice-oriented emit
+	// helpers below.  Skip them silently — the proto IDL is still generated.
+	if t.Underlying != nil && t.Underlying.Kind == types.Map {
+		return nil
+	}
 
 	// Build a synthetic protoField representing the single repeated/map field
 	// that wraps the alias's underlying type.
@@ -195,12 +241,13 @@ func (g *genGoMarshal) generateForOptionalAlias(w io.Writer, locator ProtobufLoc
 	// For optional aliases the items field is repeated or map.
 	// memberTypeToProtobufField will have set Repeated/Map already for slices/maps.
 
+	g.needsHelpers = true
 	g.emitReset(w, typeName, true)
 	g.emitMarshalOptionalAlias(w, typeName, &field)
 	g.emitSizeOptionalAlias(w, typeName, &field)
 	g.emitUnmarshalOptionalAlias(w, typeName, &field)
 	// Only emit String() if the type doesn't already define one. Check by
-	// looking at both the genng-scanned methods and the Init pre-scan.
+	// looking at both the gengo-scanned methods and the Init pre-scan.
 	_, typeDefinesStringMethod := t.Methods["String"]
 	if !typeDefinesStringMethod && !g.typesWithValueStringMethod[typeName] {
 		g.emitString(w, typeName, nil, true)
@@ -898,7 +945,7 @@ func (g *genGoMarshal) emitUnmarshalMapField(w io.Writer, f *protoField, fieldAc
 
 	// Determine key and value Go type names.
 	mapKeyGoType := g.mapKeyGoType(keyProto, castKey)
-	mapValGoType := g.mapValGoType(valProto, valPkg, castVal)
+	mapValGoType := g.mapValGoType(valProto, valPkg, f.Type.Elem.Name.Path, castVal)
 
 	fmt.Fprint(w, "\t\t\tvar mapkey ", mapKeyGoType, "\n")
 	if isProtoMessageType(f.Type.Elem) {
@@ -1122,7 +1169,7 @@ func (g *genGoMarshal) mapGoType(f *protoField, castType, castKey, castVal strin
 	}
 	// Construct map[K]V from key and value proto types.
 	keyType := g.mapKeyGoType(f.Type.Key.Name.Name, castKey)
-	valType := g.mapValGoType(f.Type.Elem.Name.Name, f.Type.Elem.Name.Package, castVal)
+	valType := g.mapValGoType(f.Type.Elem.Name.Name, f.Type.Elem.Name.Package, f.Type.Elem.Name.Path, castVal)
 	return "map[" + keyType + "]" + valType
 }
 
@@ -1138,7 +1185,7 @@ func (g *genGoMarshal) mapKeyGoType(keyProto, castKey string) string {
 	return protoToGoType(keyProto)
 }
 
-func (g *genGoMarshal) mapValGoType(valProto, valPkg, castVal string) string {
+func (g *genGoMarshal) mapValGoType(valProto, valPkg, valPath, castVal string) string {
 	if castVal != "" {
 		castPkg, castTyp, castAlias := castTypeComponents(castVal)
 		if castPkg != "" {
@@ -1148,8 +1195,15 @@ func (g *genGoMarshal) mapValGoType(valProto, valPkg, castVal string) string {
 		return castTyp
 	}
 	if valPkg != "" {
-		// message type from another proto package
-		return valProto // caller will have set the import
+		// message type from another proto package — use the same path→import-alias
+		// logic as messageGoType() so the generated code compiles.
+		goPkg := strings.TrimSuffix(valPath, "/generated.proto")
+		if goPkg != "" && goPkg != g.localGoPackage.Package {
+			alias := goImportAlias(goPkg)
+			g.addImport(goPkg, alias)
+			return alias + "." + valProto
+		}
+		return valProto
 	}
 	return protoToGoType(valProto)
 }
